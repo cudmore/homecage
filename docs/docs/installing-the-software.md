@@ -34,6 +34,8 @@ To return to the normal command prompt
 
     deactivate
     
+Install uv4l for live streaming (optional). Follow [this tutorial][5].
+
 Install DHT temperature sensor (optional)
 
     git clone https://github.com/adafruit/Adafruit_Python_DHT.git
@@ -75,7 +77,13 @@ The server can be configured by editing the `homecage/homecage_app/config.json` 
 }
 ```
 
+## Converting h264 files to mp4
+
+See this [blog post][6]
+
 [1]: http://wiringpi.com/
 [2]: http://flask.pocoo.org/
 [3]: https://sourceforge.net/projects/raspberry-gpio-python/
 [4]: https://github.com/adafruit/Adafruit_Python_DHT
+[5]: https://www.linux-projects.org/uv4l/installation/
+[6]: http://blog.cudmore.io/post/2017/11/01/libav-for-ffmpeg/

@@ -1,4 +1,4 @@
-Home cage surveillance is a system to record video of your animals in their home cage. It will record video 24/7 while controlling daytime and nighttime lights.
+Home cage surveillance is a system to record video of your animals in their home cage. It will record video 24/7 while controlling daytime and nighttime lights. IT also provides live video streaming to a web browser and manual control of white and IR lights.
 
 It is designed to run on a Raspberry Pi computer using a Raspberry Pi NoIR camera.
 
