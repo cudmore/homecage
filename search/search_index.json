@@ -2,8 +2,18 @@
     "docs": [
         {
             "location": "/", 
-            "text": "Home cage surveillance is a system to record video of your animals in their home cage. It will record video 24/7 while controlling daytime and nighttime lights. IT also provides live video streaming to a web browser and manual control of white and IR lights.\n\n\nIt is designed to run on a Raspberry Pi computer using a Raspberry Pi NoIR camera.\n\n\nThree interfaces are provided\n\n\n\n\ncommand line\n - A command line interface.\n\n\nweb\n - A point and click web browser interface.\n\n\nREST\n - A rest interface to communicate with a homecage server\n\n\n\n\nInstall\n\n\nThis software is in its early stages. In the future we will provide a \nstable\n release. Please see the \ninstalling the software\n page.", 
+            "text": "Home cage surveillance is a system to record video of your animals in their home cage.\n\n\nIt is designed to run on a Raspberry Pi computer using a Raspberry Pi NoIR camera.\n\n\nFeatures\n\n\n\n\nRecord video 24/7\n\n\nAutomaticall controls day-time and night-time lights.\n\n\nLive video streaming to a web browser\n\n\n\n\nInterface options\n\n\n\n\ncommand line\n - A command line interface.\n\n\nweb\n - A point and click web browser interface.\n\n\nREST\n - A rest interface to communicate with a homecage server\n\n\n\n\nInstall\n\n\nThis software is in its early stages. In the future we will provide a \nstable\n release. Please see the \ninstalling the software\n page.", 
             "title": "Getting started"
+        }, 
+        {
+            "location": "/#features", 
+            "text": "Record video 24/7  Automaticall controls day-time and night-time lights.  Live video streaming to a web browser", 
+            "title": "Features"
+        }, 
+        {
+            "location": "/#interface-options", 
+            "text": "command line  - A command line interface.  web  - A point and click web browser interface.  REST  - A rest interface to communicate with a homecage server", 
+            "title": "Interface options"
         }, 
         {
             "location": "/#install", 
