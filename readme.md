@@ -12,8 +12,9 @@ Three interfaces are provided
 
 ## Install
 
-This software is in its early stages. In the future we will provide a **stable** release. Please see the [installing the software](installing-the-software.md) page.
+This software is in its early stages. In the future we will provide a **stable** release. Please see the [installing the software][4] page.
 
 [1]: http://blog.cudmore.io/homecage/command-line/
 [2]: http://blog.cudmore.io/homecage/web-interface/
 [3]: http://blog.cudmore.io/homecage/rest-interface/
+[4]: http://blog.cudmore.io/homecage/installing-the-software/
