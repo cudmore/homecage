@@ -1,0 +1,17 @@
+site_name: Home cage surveillance
+
+theme:
+  #name: 'material'
+  name: 'readthedocs'
+  
+pages:
+    - Getting started: index.md
+    - Interfaces :
+        - Command line interface: command-line.md
+        - Web interface: web-interface.md
+        - REST interface: rest-interface.md
+    - Building :
+        - Hardware: building/hardware.md
+        - Software: building/software.md
+        - Wiring: building/wiring.md
+        - Troubleshooting: building/troubleshooting.md

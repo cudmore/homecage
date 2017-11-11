@@ -1,0 +1,32 @@
+#!/bin/bash
+
+
+uv4lPID=`pgrep -f uv4l`
+if [ -n "$uv4lPID" ]; then
+	echo "   stream: running"
+	ip=`ifconfig eth0 | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
+	
+	echo "      "http://$ip:8080/stream
+else
+	echo "   stream: off"
+fi
+
+videoPID=`pgrep -f video.py`
+if [ -n "$videoPID" ]; then
+	echo "   video: running"
+else
+	echo "   video: off"
+fi
+
+#lightsPID=`pgrep -f lights.py`
+#if [ -n "$lightsPID" ]; then
+#	echo "lights is running"
+#else
+#	echo "lights is not running"
+#fi
+
+#savePath="/home/pi/video"
+#for entry in "$savePath"/*
+#do
+#  echo "$entry"
+#done

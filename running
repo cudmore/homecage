@@ -1,0 +1,16 @@
+#!/bin/bash
+
+videoPID=`pgrep -f video.py`
+if [ -n "$videoPID" ]; then
+    echo video is running
+else
+    echo video is not running
+fi
+
+
+lightsPID=`pgrep -f lights.py`
+if [ -n "$lightsPID" ]; then
+    echo lights is running
+else
+    echo lights is not running
+fi

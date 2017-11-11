@@ -1,0 +1,68 @@
+#!/bin/bash
+
+function usage(){
+    echo "record - Illegal parameters"
+    echo "Usage:"
+    echo "   record start"
+    echo "   record stop"
+}
+
+function recordOn(){
+	uv4lPID=`pgrep -f uv4l`
+	if [ -n "$uv4lPID" ]; then
+		echo "stream is already running, use 'stream stop' to stop."
+		exit 1
+	fi
+
+	videoPID=`pgrep -f video.py`
+	if [ -n "$videoPID" ]; then
+		echo "video is already recording, use 'record stop' to stop."
+	else
+		echo "Starting video recording"
+		python /home/pi/Sites/homecage/video.py &
+	fi
+
+	lightsPID=`pgrep -f lights.py`
+	if [ -n "$lightsPID" ]; then
+		echo "lights is already running"
+	else
+		echo "Starting lights cycle"
+		python /home/pi/Sites/homecage/lights.py &
+	fi
+}
+
+function recordOff(){
+	videoPID=`pgrep -f video.py`
+	if [ -n "$videoPID" ]; then
+		echo "stopping video recording"
+		kill $videoPID > /dev/null
+	else
+		echo "video is not recording"
+	fi
+
+
+	lightsPID=`pgrep -f lights.py`
+	if [ -n "$lightsPID" ]; then
+		echo "stopping lights"
+		kill $lightsPID > /dev/null
+	else
+		echo "lights are not running"
+	fi
+}
+
+if [ "$#" -ne 1 ]; then
+    usage
+    exit 1
+fi
+
+
+case "$1" in
+	start) recordOn
+		;;
+	stop) recordOff
+		;;
+	*) usage
+		;;
+esac
+
+exit 0

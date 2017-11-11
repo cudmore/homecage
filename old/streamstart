@@ -1,0 +1,33 @@
+#!/bin/bash
+
+#see: http://www.linux-projects.org/modules/sections/index.php?op=viewarticle&artid=14
+
+#generate keys with
+#openssl genrsa -out selfsign.key 2048 && openssl req -new -x509 -key selfsign.key -out selfsign.crt -sha256
+
+#then run with
+
+#mjpeg
+#uv4l --driver raspicam --auto-video_nr --encoding mjpeg --width 640 --height 480 --enable-server on --server-option --ssl-private-key-file /home/pi/Sites/triggercamera/selfsign.key --server-option --ssl-certificate-file /home/pi/Sites/triggercamera/selfsign.crt 
+
+videoPID=`pgrep -f video.py`
+if [ -n "$videoPID" ]; then
+	echo "video is running, use 'videostop' to stop."
+	exit 1
+fi
+
+uv4lPID=`pgrep -f uv4l`
+if [ -n "$uv4lPID" ]; then
+	echo "stream is already running, use 'streamstop' to stop."
+	exit 1
+fi
+
+#h264
+uv4l --driver raspicam --auto-video_nr --encoding h264 --width 640 --height 480 --enable-server on
+
+#uv4l --driver raspicam --auto-video_nr --encoding mjpeg --width 640 --height 480 --enable-server on
+
+ip=`ifconfig eth0 | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
+
+echo View the stream at:
+echo "   "http://$ip:8080/stream
