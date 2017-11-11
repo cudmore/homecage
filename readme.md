@@ -6,10 +6,14 @@ Please see the [documentation](http://cudmore.github.io/homecage)
 
 Three interfaces are provided
 
-* **[command line](command-line.md)** - A command line interface.
-* **[web](web-interface.md)** - A point and click web browser interface.
-* **[REST](rest-interface.md)** - A rest interface to communicate with a homecage server
+* **[command line][1]** - A command line interface.
+* **[web][2]** - A point and click web browser interface.
+* **[REST][3]** - A rest interface to communicate with a homecage server
 
 ## Install
 
 This software is in its early stages. In the future we will provide a **stable** release. Please see the [installing the software](installing-the-software.md) page.
+
+[1]: http://blog.cudmore.io/homecage/command-line/
+[2]: http://blog.cudmore.io/homecage/web-interface/
+[3]: http://blog.cudmore.io/homecage/rest-interface/
