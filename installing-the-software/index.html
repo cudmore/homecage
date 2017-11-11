@@ -271,6 +271,26 @@
     Installation
   </a>
   
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#uv4l-for-live-video-streaming" title="uv4l for live video streaming" class="md-nav__link">
+    uv4l for live video streaming
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#temperature-sensor" title="Temperature sensor" class="md-nav__link">
+    Temperature sensor
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -374,6 +394,26 @@
     Installation
   </a>
   
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#uv4l-for-live-video-streaming" title="uv4l for live video streaming" class="md-nav__link">
+    uv4l for live video streaming
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#temperature-sensor" title="Temperature sensor" class="md-nav__link">
+    Temperature sensor
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -416,15 +456,13 @@
                 
                   <h1>Installing the software</h1>
                 
-                <p>The command line interface requires:</p>
+                <p>Homecage requires the following libraries:</p>
 <ul>
-<li><a href="http://wiringpi.com/">wiring pi</a> - This should be installed by default on the Raspberry Pi.</li>
-</ul>
-<p>The web server requires:</p>
-<ul>
-<li><a href="https://sourceforge.net/projects/raspberry-gpio-python/">GPIO</a> - Python library to control general purpose input/output (GPIO) on the Raspberry Pi. This should be installed by default.</li>
+<li><a href="http://wiringpi.com/">Wiring Pi</a> - Library that provides a command line interface to the GPIO pins. This should be installed by default.</li>
+<li><a href="https://sourceforge.net/projects/raspberry-gpio-python/">GPIO</a> - Python library to control GPIO pins. This should be installed by default.</li>
 <li><a href="http://flask.pocoo.org/">flask</a> - A python web server.</li>
-<li><a href="https://github.com/adafruit/Adafruit_Python_DHT">Adafruit_DHT</a> - Python library to read from a DHT temperature and humidity sensor.</li>
+<li><a href="https://www.linux-projects.org/uv4l/installation/">uv4l</a> - Library for live video streaming to a web browser</li>
+<li><a href="https://github.com/adafruit/Adafruit_Python_DHT">Adafruit_DHT</a> - (optional) Python library to read from a DHT temperature and humidity sensor.</li>
 </ul>
 <h2 id="installation">Installation</h2>
 <p>Clone the repository</p>
@@ -444,7 +482,9 @@ pip install flask
 <p>To return to the normal command prompt</p>
 <pre><code>deactivate
 </code></pre>
+<h3 id="uv4l-for-live-video-streaming">uv4l for live video streaming</h3>
 <p>Install uv4l for live streaming (optional). Follow <a href="https://www.linux-projects.org/uv4l/installation/">this tutorial</a>.</p>
+<h3 id="temperature-sensor">Temperature sensor</h3>
 <p>Install DHT temperature sensor (optional)</p>
 <pre><code>git clone https://github.com/adafruit/Adafruit_Python_DHT.git
 cd Adafruit_Python_DHT
@@ -481,6 +521,7 @@ python homecage/homecage_app/homecage_app.py
 </code></pre>
 
 <h2 id="converting-h264-files-to-mp4">Converting h264 files to mp4</h2>
+<p>The Raspberry camera saves .h264 video files. This format is very efficient and creates  small files (10 MB per 5 minutes) but does require conversion to mp4 to impose a time.</p>
 <p>See this <a href="http://blog.cudmore.io/post/2017/11/01/libav-for-ffmpeg/">blog post</a></p>
                 
                   

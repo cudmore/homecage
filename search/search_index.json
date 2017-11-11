@@ -22,7 +22,7 @@
         }, 
         {
             "location": "/command-line/", 
-            "text": "1) Log in to the Pi\n\n\nOn a Mac, use the terminal application in /Applications/Utilities/terminal.app\n\n\n# Type\nssh pi@10.16.80.162\n\n# Enter password\n[your_password]\n\n\n\n2) Change into the homecage directory\n\n\nAt the command prompt, type\n\n\ncd /Sites/homecage\n\n\n\n3) Get command help\n\n\nThe commands allow you to start and stop a video stream and video recording. They can also be used to turn the white and IR lights on and off.\n\n\nTo get help, at the command prompty, type \n\n\n./help\n\n\n\nThis returns\n\n\n Status\n    status - check the status\n Video Recording\n    record start\n    record stop\n Video Streaming\n    stream start\n    stream stop\n IR Light\n    light ir on\n    light ir off\n White Light\n    light white on\n    light white off\n\n\n\n4) Position the cages within a good field-of-view\n\n\nStart a video stream and then view the stream in a web browser.\n\n\nstream start\n\n# Returns\nView the stream at:\n   http://10.16.80.162:8080/stream\n\n\n\nIn any browser, go to the address \nhttp://10.16.80.162:8080/stream\n\n\nWhile positioning cages, turn the white and or IR LEDs on and off\n\n\n# Turn the white lights on\nlight white on\n\n# Turn the white lights off\nlight white off\n\n\n\nWhen your happy with position, stop the video stream\n\n\nstream stop\n\n\n\n5) Start continuous video recording\n\n\nrecord start\n\n\n\nThis will save recorded video into individual files, 5 minutes of video per file. This will also control the light cycle, at night (6 PM - 6 AM) the white light is off and the IR light is on. During the day (6 AM - 6 PM), the white light is on and the IR light is off. Both the duration of each video file at the timing of the light cycle can easily be changed.\n\n\n6) Mount the file server to get your video files\n\n\nOn a Mac, use \nFinder -\n Go -\n Connect To Server...\n and log in as follows\n\n\nafp://10.16.80.162\nusername: pi\npassword: poetry7d\n\n\n\nFiles are saved in the \n/video/\n folder. Video files have the .h264 extension. There are also text files (extension .txt) saved, these have a log of temperature and humidity as well as the time the lights were turned on and off.\n\n\n7) Log out of the Pi\n\n\nexit", 
+            "text": "1) Log in to the Pi\n\n\nOn a Mac, use the terminal application in /Applications/Utilities/terminal.app\n\n\n# Type\nssh pi@10.16.80.162\n\n# Enter password\n[your_password]\n\n\n\n2) Change into the homecage directory\n\n\nAt the command prompt, type\n\n\ncd /Sites/homecage\n\n\n\n3) Get command help\n\n\nThe commands allow you to start and stop a video stream and video recording. They can also be used to turn the white and IR lights on and off.\n\n\nTo get help, at the command prompt, type \n\n\n./help\n\n\n\nThis returns\n\n\n Status\n    status - check the status\n Video Recording\n    record start\n    record stop\n Video Streaming\n    stream start\n    stream stop\n IR Light\n    light ir on\n    light ir off\n White Light\n    light white on\n    light white off\n\n\n\n4) Position the cages within a good field-of-view\n\n\nStart a video stream and then view the stream in a web browser.\n\n\nstream start\n\n# Returns\nView the stream at:\n   http://10.16.80.162:8080/stream\n\n\n\nIn any browser, go to the address \nhttp://10.16.80.162:8080/stream\n\n\nWhile positioning cages, turn the white and or IR LEDs on and off\n\n\n# Turn the white lights on\nlight white on\n\n# Turn the white lights off\nlight white off\n\n\n\nWhen your happy with position, stop the video stream\n\n\nstream stop\n\n\n\n5) Start continuous video recording\n\n\nrecord start\n\n\n\nThis will save recorded video into individual files, 5 minutes of video per file. This will also control the light cycle, at night (6 PM - 6 AM) the white light is off and the IR light is on. During the day (6 AM - 6 PM), the white light is on and the IR light is off. Both the duration of each video file at the timing of the light cycle can easily be changed.\n\n\n6) Mount the file server to get your video files\n\n\nOn a Mac, use \nFinder -\n Go -\n Connect To Server...\n and log in as follows\n\n\nafp://10.16.80.162\nusername: pi\npassword: [your_password]\n\n\n\nFiles are saved in the \n/video/\n folder. Video files have the .h264 extension. There are also text files (extension .txt) saved, these have a log of temperature and humidity as well as the time the lights were turned on and off.\n\n\n7) Log out of the Pi\n\n\nexit", 
             "title": "Command line interface"
         }, 
         {
@@ -37,7 +37,7 @@
         }, 
         {
             "location": "/command-line/#3-get-command-help", 
-            "text": "The commands allow you to start and stop a video stream and video recording. They can also be used to turn the white and IR lights on and off.  To get help, at the command prompty, type   ./help  This returns   Status\n    status - check the status\n Video Recording\n    record start\n    record stop\n Video Streaming\n    stream start\n    stream stop\n IR Light\n    light ir on\n    light ir off\n White Light\n    light white on\n    light white off", 
+            "text": "The commands allow you to start and stop a video stream and video recording. They can also be used to turn the white and IR lights on and off.  To get help, at the command prompt, type   ./help  This returns   Status\n    status - check the status\n Video Recording\n    record start\n    record stop\n Video Streaming\n    stream start\n    stream stop\n IR Light\n    light ir on\n    light ir off\n White Light\n    light white on\n    light white off", 
             "title": "3) Get command help"
         }, 
         {
@@ -52,7 +52,7 @@
         }, 
         {
             "location": "/command-line/#6-mount-the-file-server-to-get-your-video-files", 
-            "text": "On a Mac, use  Finder -  Go -  Connect To Server...  and log in as follows  afp://10.16.80.162\nusername: pi\npassword: poetry7d  Files are saved in the  /video/  folder. Video files have the .h264 extension. There are also text files (extension .txt) saved, these have a log of temperature and humidity as well as the time the lights were turned on and off.", 
+            "text": "On a Mac, use  Finder -  Go -  Connect To Server...  and log in as follows  afp://10.16.80.162\nusername: pi\npassword: [your_password]  Files are saved in the  /video/  folder. Video files have the .h264 extension. There are also text files (extension .txt) saved, these have a log of temperature and humidity as well as the time the lights were turned on and off.", 
             "title": "6) Mount the file server to get your video files"
         }, 
         {
@@ -87,7 +87,7 @@
         }, 
         {
             "location": "/rest-interface/", 
-            "text": "The homecage server will respond to the following REST calls.\n\n\nServer Status:\n\n\nGet runtime status of server\n\n\n/status\n\n\n\nGet user configured options\n\n\n/params\n\n\n\nRecord\n\n\nStart and stop video recording\n\n\n/record/1 \n/record/0\n\n\n\nStream\n\n\nStart and stop video streaming\n\n\n/stream/1 \n/stream/0\n\n\n\nLights\n\n\nTurn lights on and off\n\n\n/irLED/1 \n/irLED/0 \n/whiteLED/1 \n/whiteLED/0\n\n\n\nImages\n\n\n/lastimage\n\n\n\nSet user options\n\n\n/set/fps/\nlt;int:value\n \n/set/fileDuration/\nlt;int:value", 
+            "text": "The homecage server will respond to the following REST calls.\n\n\nServer Status:\n\n\nGet runtime status of server\n\n\n/status\n\n\n\nGet user configured options\n\n\n/params\n\n\n\nRecord\n\n\nStart and stop video recording\n\n\n/record/1 \n/record/0\n\n\n\nStream\n\n\nStart and stop video streaming\n\n\n/stream/1 \n/stream/0\n\n\n\nLights\n\n\nTurn lights on and off\n\n\n/irLED/1 \n/irLED/0 \n/whiteLED/1 \n/whiteLED/0\n\n\n\nImages\n\n\n/lastimage\n\n\n\nSet user options\n\n\n/set/fps/\nint:value\n \n/set/fileDuration/\nint:value", 
             "title": "REST interface"
         }, 
         {
@@ -117,18 +117,28 @@
         }, 
         {
             "location": "/rest-interface/#set-user-options", 
-            "text": "/set/fps/ lt;int:value  \n/set/fileDuration/ lt;int:value", 
+            "text": "/set/fps/ int:value  \n/set/fileDuration/ int:value", 
             "title": "Set user options"
         }, 
         {
             "location": "/installing-the-software/", 
-            "text": "The command line interface requires:\n\n\n\n\nwiring pi\n - This should be installed by default on the Raspberry Pi.\n\n\n\n\nThe web server requires:\n\n\n\n\nGPIO\n - Python library to control general purpose input/output (GPIO) on the Raspberry Pi. This should be installed by default.\n\n\nflask\n - A python web server.\n\n\nAdafruit_DHT\n - Python library to read from a DHT temperature and humidity sensor.\n\n\n\n\nInstallation\n\n\nClone the repository\n\n\ngit clone https://github.com/cudmore/homecage.git\n\n\n\nMake a virtual environment named \nmyenv\n in \nhomecage/\n\n\ncd homecage\nvirtualenv myenv\n\n\n\nActivate the environment\n\n\nsource myenv/bin/deactivate\n\n\n\nInstall python libraries\n\n\npip install rpi.gpio\npip install flask\n\n\n\nTo return to the normal command prompt\n\n\ndeactivate\n\n\n\nInstall uv4l for live streaming (optional). Follow \nthis tutorial\n.\n\n\nInstall DHT temperature sensor (optional)\n\n\ngit clone https://github.com/adafruit/Adafruit_Python_DHT.git\ncd Adafruit_Python_DHT\nsudo python setup.py install\n\n\n\nRunning the web server\n\n\ncd\npython homecage/homecage_app/homecage_app.py\n\n\n\n\nConfiguring the web server\n\n\nThe server can be configured by editing the \nhomecage/homecage_app/config.json\n file\n\n\n{\n    \nhardware\n:{\n        \nirLightPin\n: 7,\n        \nwhiteLightPin\n: 8,\n        \ntemperatureSensor\n: 9\n    },\n    \nlights\n:{\n        \nsunrise\n: 6,\n        \nsunset\n: 18\n    },\n    \nvideo\n:{\n        \nfps\n: 30,\n        \nresolution\n: [1024,768],\n        \nfileDuration\n: 6,\n        \ncaptureStill\n: true,\n        \nstillInterval\n: 2\n    },\n    \nstream\n: {\n        \nstreamResolution\n: [1024,768]\n    }\n}\n\n\n\n\nConverting h264 files to mp4\n\n\nSee this \nblog post", 
+            "text": "Homecage requires the following libraries:\n\n\n\n\nWiring Pi\n - Library that provides a command line interface to the GPIO pins. This should be installed by default.\n\n\nGPIO\n - Python library to control GPIO pins. This should be installed by default.\n\n\nflask\n - A python web server.\n\n\nuv4l\n - Library for live video streaming to a web browser\n\n\nAdafruit_DHT\n - (optional) Python library to read from a DHT temperature and humidity sensor.\n\n\n\n\nInstallation\n\n\nClone the repository\n\n\ngit clone https://github.com/cudmore/homecage.git\n\n\n\nMake a virtual environment named \nmyenv\n in \nhomecage/\n\n\ncd homecage\nvirtualenv myenv\n\n\n\nActivate the environment\n\n\nsource myenv/bin/deactivate\n\n\n\nInstall python libraries\n\n\npip install rpi.gpio\npip install flask\n\n\n\nTo return to the normal command prompt\n\n\ndeactivate\n\n\n\nuv4l for live video streaming\n\n\nInstall uv4l for live streaming (optional). Follow \nthis tutorial\n.\n\n\nTemperature sensor\n\n\nInstall DHT temperature sensor (optional)\n\n\ngit clone https://github.com/adafruit/Adafruit_Python_DHT.git\ncd Adafruit_Python_DHT\nsudo python setup.py install\n\n\n\nRunning the web server\n\n\ncd\npython homecage/homecage_app/homecage_app.py\n\n\n\n\nConfiguring the web server\n\n\nThe server can be configured by editing the \nhomecage/homecage_app/config.json\n file\n\n\n{\n    \nhardware\n:{\n        \nirLightPin\n: 7,\n        \nwhiteLightPin\n: 8,\n        \ntemperatureSensor\n: 9\n    },\n    \nlights\n:{\n        \nsunrise\n: 6,\n        \nsunset\n: 18\n    },\n    \nvideo\n:{\n        \nfps\n: 30,\n        \nresolution\n: [1024,768],\n        \nfileDuration\n: 6,\n        \ncaptureStill\n: true,\n        \nstillInterval\n: 2\n    },\n    \nstream\n: {\n        \nstreamResolution\n: [1024,768]\n    }\n}\n\n\n\n\nConverting h264 files to mp4\n\n\nThe Raspberry camera saves .h264 video files. This format is very efficient and creates  small files (10 MB per 5 minutes) but does require conversion to mp4 to impose a time.\n\n\nSee this \nblog post", 
             "title": "Installing the software"
         }, 
         {
             "location": "/installing-the-software/#installation", 
-            "text": "Clone the repository  git clone https://github.com/cudmore/homecage.git  Make a virtual environment named  myenv  in  homecage/  cd homecage\nvirtualenv myenv  Activate the environment  source myenv/bin/deactivate  Install python libraries  pip install rpi.gpio\npip install flask  To return to the normal command prompt  deactivate  Install uv4l for live streaming (optional). Follow  this tutorial .  Install DHT temperature sensor (optional)  git clone https://github.com/adafruit/Adafruit_Python_DHT.git\ncd Adafruit_Python_DHT\nsudo python setup.py install", 
+            "text": "Clone the repository  git clone https://github.com/cudmore/homecage.git  Make a virtual environment named  myenv  in  homecage/  cd homecage\nvirtualenv myenv  Activate the environment  source myenv/bin/deactivate  Install python libraries  pip install rpi.gpio\npip install flask  To return to the normal command prompt  deactivate", 
             "title": "Installation"
+        }, 
+        {
+            "location": "/installing-the-software/#uv4l-for-live-video-streaming", 
+            "text": "Install uv4l for live streaming (optional). Follow  this tutorial .", 
+            "title": "uv4l for live video streaming"
+        }, 
+        {
+            "location": "/installing-the-software/#temperature-sensor", 
+            "text": "Install DHT temperature sensor (optional)  git clone https://github.com/adafruit/Adafruit_Python_DHT.git\ncd Adafruit_Python_DHT\nsudo python setup.py install", 
+            "title": "Temperature sensor"
         }, 
         {
             "location": "/installing-the-software/#running-the-web-server", 
@@ -142,7 +152,7 @@
         }, 
         {
             "location": "/installing-the-software/#converting-h264-files-to-mp4", 
-            "text": "See this  blog post", 
+            "text": "The Raspberry camera saves .h264 video files. This format is very efficient and creates  small files (10 MB per 5 minutes) but does require conversion to mp4 to impose a time.  See this  blog post", 
             "title": "Converting h264 files to mp4"
         }, 
         {
@@ -197,13 +207,18 @@
         }, 
         {
             "location": "/dev-notes/", 
-            "text": "mkDocs\n\n\nServe locally\n\n\nmkdocs serve\n\n\n\nPush to github\n\n\ncd homecage/docs\nmkdocs gh-deploy --clean", 
+            "text": "mkDocs\n\n\nServe locally\n\n\nmkdocs serve\n\n\n\nPush to github\n\n\ncd homecage/docs\nmkdocs gh-deploy --clean\n\n\n\nToDo\n\n\n20171111\n- finish index.html interface, mostly adding interface to change self.config\n- split self.config (from config.json) and self.status (runtime variables)\n- add in dht sensor code\n- add in white and ir sensor code", 
             "title": "Development notes"
         }, 
         {
             "location": "/dev-notes/#mkdocs", 
             "text": "Serve locally  mkdocs serve  Push to github  cd homecage/docs\nmkdocs gh-deploy --clean", 
             "title": "mkDocs"
+        }, 
+        {
+            "location": "/dev-notes/#todo", 
+            "text": "20171111\n- finish index.html interface, mostly adding interface to change self.config\n- split self.config (from config.json) and self.status (runtime variables)\n- add in dht sensor code\n- add in white and ir sensor code", 
+            "title": "ToDo"
         }
     ]
 }
