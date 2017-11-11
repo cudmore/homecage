@@ -40,5 +40,5 @@ Turn lights on and off
 
 ## Set user options
 
-    /set/fps/&lt;int:value> 
-    /set/fileDuration/&lt;int:value> 
+    /set/fps/<int:value> 
+    /set/fileDuration/<int:value> 

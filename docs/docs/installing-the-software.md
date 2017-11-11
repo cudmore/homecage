@@ -1,14 +1,10 @@
+Homecage requires the following libraries:
 
-
-The command line interface requires:
-
-- [wiring pi][1] - This should be installed by default on the Raspberry Pi.
-
-The web server requires:
-
-- [GPIO][3] - Python library to control general purpose input/output (GPIO) on the Raspberry Pi. This should be installed by default.
+- [Wiring Pi][1] - Library that provides a command line interface to the GPIO pins. This should be installed by default.
+- [GPIO][3] - Python library to control GPIO pins. This should be installed by default.
 - [flask][2] - A python web server.
-- [Adafruit_DHT][4] - Python library to read from a DHT temperature and humidity sensor.
+- [uv4l][5] - Library for live video streaming to a web browser
+- [Adafruit_DHT][4] - (optional) Python library to read from a DHT temperature and humidity sensor.
 
 ## Installation
 
@@ -34,7 +30,11 @@ To return to the normal command prompt
 
     deactivate
     
+### uv4l for live video streaming
+
 Install uv4l for live streaming (optional). Follow [this tutorial][5].
+
+### Temperature sensor
 
 Install DHT temperature sensor (optional)
 
@@ -78,6 +78,8 @@ The server can be configured by editing the `homecage/homecage_app/config.json` 
 ```
 
 ## Converting h264 files to mp4
+
+The Raspberry camera saves .h264 video files. This format is very efficient and creates  small files (10 MB per 5 minutes) but does require conversion to mp4 to impose a time.
 
 See this [blog post][6]
 

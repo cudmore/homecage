@@ -19,7 +19,7 @@ At the command prompt, type
 
 The commands allow you to start and stop a video stream and video recording. They can also be used to turn the white and IR lights on and off.
 
-To get help, at the command prompty, type 
+To get help, at the command prompt, type 
 
 	./help
 
@@ -76,7 +76,7 @@ On a Mac, use `Finder -> Go -> Connect To Server...` and log in as follows
 
 	afp://10.16.80.162
 	username: pi
-	password: poetry7d
+	password: [your_password]
 
 Files are saved in the `/video/` folder. Video files have the .h264 extension. There are also text files (extension .txt) saved, these have a log of temperature and humidity as well as the time the lights were turned on and off.
 
