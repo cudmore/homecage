@@ -207,7 +207,7 @@
         }, 
         {
             "location": "/dev-notes/", 
-            "text": "mkDocs\n\n\nServe locally\n\n\nmkdocs serve\n\n\n\nPush to github\n\n\ncd homecage/docs\nmkdocs gh-deploy --clean\n\n\n\nToDo\n\n\n20171111\n- finish index.html interface, mostly adding interface to change self.config\n- split self.config (from config.json) and self.status (runtime variables)\n- add in dht sensor code\n- add in white and ir sensor code", 
+            "text": "mkDocs\n\n\nServe locally\n\n\nmkdocs serve\n\n\n\nPush to github\n\n\ncd homecage/docs\nmkdocs gh-deploy --clean\n\n\n\nToDo\n\n\n20171111\n\n\n\n\nfinish index.html interface, mostly adding interface to change self.config\n\n\nsplit self.config (from config.json) and self.status (runtime variables)\n\n\nadd in dht sensor code\n\n\nadd in white and ir sensor code", 
             "title": "Development notes"
         }, 
         {
@@ -217,8 +217,13 @@
         }, 
         {
             "location": "/dev-notes/#todo", 
-            "text": "20171111\n- finish index.html interface, mostly adding interface to change self.config\n- split self.config (from config.json) and self.status (runtime variables)\n- add in dht sensor code\n- add in white and ir sensor code", 
+            "text": "", 
             "title": "ToDo"
+        }, 
+        {
+            "location": "/dev-notes/#20171111", 
+            "text": "finish index.html interface, mostly adding interface to change self.config  split self.config (from config.json) and self.status (runtime variables)  add in dht sensor code  add in white and ir sensor code", 
+            "title": "20171111"
         }
     ]
 }
