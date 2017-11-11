@@ -4,59 +4,73 @@
     
     <url>
      <loc>/</loc>
-     <lastmod>2017-11-10</lastmod>
+     <lastmod>2017-11-11</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
 
     
-        
     <url>
      <loc>/command-line/</loc>
-     <lastmod>2017-11-10</lastmod>
+     <lastmod>2017-11-11</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
-    <url>
-     <loc>/web-interface/</loc>
-     <lastmod>2017-11-10</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
-    <url>
-     <loc>/rest-interface/</loc>
-     <lastmod>2017-11-10</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-        
     
 
     
-        
     <url>
-     <loc>/building/hardware/</loc>
-     <lastmod>2017-11-10</lastmod>
+     <loc>/web-interface/</loc>
+     <lastmod>2017-11-11</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
+    
+
+    
     <url>
-     <loc>/building/software/</loc>
-     <lastmod>2017-11-10</lastmod>
+     <loc>/rest-interface/</loc>
+     <lastmod>2017-11-11</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
+    
+
+    
     <url>
-     <loc>/building/wiring/</loc>
-     <lastmod>2017-11-10</lastmod>
+     <loc>/installing-the-software/</loc>
+     <lastmod>2017-11-11</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
+    
+
+    
     <url>
-     <loc>/building/troubleshooting/</loc>
-     <lastmod>2017-11-10</lastmod>
+     <loc>/wiring-the-system/</loc>
+     <lastmod>2017-11-11</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
+    
+
+    
+    <url>
+     <loc>/parts-list/</loc>
+     <lastmod>2017-11-11</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    
+
+    
+    <url>
+     <loc>/troubleshooting/</loc>
+     <lastmod>2017-11-11</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    
+
+    
+    <url>
+     <loc>/dev-notes/</loc>
+     <lastmod>2017-11-11</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
     
 
 </urlset>

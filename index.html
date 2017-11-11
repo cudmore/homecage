@@ -201,8 +201,6 @@
     
     <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="toc">
     
-      
-    
     
       <label class="md-nav__link md-nav__link--active" for="toc">
         Getting started
@@ -216,22 +214,13 @@
 <nav class="md-nav md-nav--secondary">
   
   
-    
-  
   
     <label class="md-nav__title" for="toc">Table of contents</label>
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#commands" title="Commands" class="md-nav__link">
-    Commands
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#project-layout" title="Project layout" class="md-nav__link">
-    Project layout
+  <a href="#install" title="Install" class="md-nav__link">
+    Install
   </a>
   
 </li>
@@ -250,35 +239,16 @@
       
 
 
-  <li class="md-nav__item md-nav__item--nested">
-    
-      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2">
-    
-    <label class="md-nav__link" for="nav-2">
-      Interfaces
-    </label>
-    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
-      <label class="md-nav__title" for="nav-2">
-        Interfaces
-      </label>
-      <ul class="md-nav__list" data-md-scrollfix>
-        
-        
-          
-          
-          
-
-
   <li class="md-nav__item">
     <a href="command-line/" title="Command line interface" class="md-nav__link">
       Command line interface
     </a>
   </li>
 
-        
-          
-          
-          
+    
+      
+      
+      
 
 
   <li class="md-nav__item">
@@ -287,10 +257,10 @@
     </a>
   </li>
 
-        
-          
-          
-          
+    
+      
+      
+      
 
 
   <li class="md-nav__item">
@@ -299,9 +269,16 @@
     </a>
   </li>
 
-        
-      </ul>
-    </nav>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="installing-the-software/" title="Installing the software" class="md-nav__link">
+      Installing the software
+    </a>
   </li>
 
     
@@ -310,70 +287,46 @@
       
 
 
-  <li class="md-nav__item md-nav__item--nested">
+  <li class="md-nav__item">
+    <a href="wiring-the-system/" title="Wiring the system" class="md-nav__link">
+      Wiring the system
+    </a>
+  </li>
+
     
-      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="parts-list/" title="Parts list" class="md-nav__link">
+      Parts list
+    </a>
+  </li>
+
     
-    <label class="md-nav__link" for="nav-3">
-      Building
-    </label>
-    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
-      <label class="md-nav__title" for="nav-3">
-        Building
-      </label>
-      <ul class="md-nav__list" data-md-scrollfix>
-        
-        
-          
-          
-          
+      
+      
+      
 
 
   <li class="md-nav__item">
-    <a href="building/hardware/" title="Hardware" class="md-nav__link">
-      Hardware
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="building/software/" title="Software" class="md-nav__link">
-      Software
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="building/wiring/" title="Wiring" class="md-nav__link">
-      Wiring
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="building/troubleshooting/" title="Troubleshooting" class="md-nav__link">
+    <a href="troubleshooting/" title="Troubleshooting" class="md-nav__link">
       Troubleshooting
     </a>
   </li>
 
-        
-      </ul>
-    </nav>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="dev-notes/" title="Development notes" class="md-nav__link">
+      Development notes
+    </a>
   </li>
 
     
@@ -391,22 +344,13 @@
 <nav class="md-nav md-nav--secondary">
   
   
-    
-  
   
     <label class="md-nav__title" for="toc">Table of contents</label>
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#commands" title="Commands" class="md-nav__link">
-    Commands
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#project-layout" title="Project layout" class="md-nav__link">
-    Project layout
+  <a href="#install" title="Install" class="md-nav__link">
+    Install
   </a>
   
 </li>
@@ -428,21 +372,18 @@
                   <a href="http://github.com/cudmore/homecage/edit/master/docs/index.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
                 
                 
-                <h1 id="welcome-to-home-cage-monitor">Welcome to Home-cage Monitor</h1>
-<p>For full documentation visit <a href="http://mkdocs.org">mkdocs.org</a>.</p>
-<h2 id="commands">Commands</h2>
+                  <h1>Getting started</h1>
+                
+                <p>Home cage surveillance is a system to record video of your animals in their home cage. It will record video 24/7 while controlling daytime and nighttime lights.</p>
+<p>It is designed to run on a Raspberry Pi computer using a Raspberry Pi NoIR camera.</p>
+<p>Three interfaces are provided</p>
 <ul>
-<li><code>mkdocs new [dir-name]</code> - Create a new project.</li>
-<li><code>mkdocs serve</code> - Start the live-reloading docs server.</li>
-<li><code>mkdocs build</code> - Build the documentation site.</li>
-<li><code>mkdocs help</code> - Print this help message.</li>
+<li><strong><a href="command-line/">command line</a></strong> - A command line interface.</li>
+<li><strong><a href="web-interface/">web</a></strong> - A point and click web browser interface.</li>
+<li><strong><a href="rest-interface/">REST</a></strong> - A rest interface to communicate with a homecage server</li>
 </ul>
-<h2 id="project-layout">Project layout</h2>
-<pre><code>mkdocs.yml    # The configuration file.
-docs/
-    index.md  # The documentation homepage.
-    ...       # Other markdown pages, images and other files.
-</code></pre>
+<h2 id="install">Install</h2>
+<p>This software is in its early stages. In the future we will provide a <strong>stable</strong> release. Please see the <a href="installing-the-software/">installing the software</a> page.</p>
                 
                   
                 
