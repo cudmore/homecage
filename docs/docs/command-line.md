@@ -7,7 +7,7 @@ On a Mac, use the terminal application in /Applications/Utilities/terminal.app
 	ssh pi@10.16.80.162
 
 	# Enter password
-	poetry7
+	[your_password]
 
 ## 2) Change into the homecage directory
 

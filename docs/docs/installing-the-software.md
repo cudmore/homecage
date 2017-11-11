@@ -1,0 +1,81 @@
+
+
+The command line interface requires:
+
+- [wiring pi][1] - This should be installed by default on the Raspberry Pi.
+
+The web server requires:
+
+- [GPIO][3] - Python library to control general purpose input/output (GPIO) on the Raspberry Pi. This should be installed by default.
+- [flask][2] - A python web server.
+- [Adafruit_DHT][4] - Python library to read from a DHT temperature and humidity sensor.
+
+## Installation
+
+Clone the repository
+
+    git clone https://github.com/cudmore/homecage.git
+
+Make a virtual environment named `myenv` in `homecage/`
+
+    cd homecage
+    virtualenv myenv
+       
+Activate the environment
+
+	source myenv/bin/deactivate
+	 
+Install python libraries
+
+	pip install rpi.gpio
+	pip install flask
+	
+To return to the normal command prompt
+
+    deactivate
+    
+Install DHT temperature sensor (optional)
+
+    git clone https://github.com/adafruit/Adafruit_Python_DHT.git
+    cd Adafruit_Python_DHT
+    sudo python setup.py install
+
+## Running the web server
+
+```
+cd
+python homecage/homecage_app/homecage_app.py
+```
+
+## Configuring the web server
+
+The server can be configured by editing the `homecage/homecage_app/config.json` file
+
+```json
+{
+	"hardware":{
+		"irLightPin": 7,
+		"whiteLightPin": 8,
+		"temperatureSensor": 9
+	},
+	"lights":{
+		"sunrise": 6,
+		"sunset": 18
+	},
+	"video":{
+		"fps": 30,
+		"resolution": [1024,768],
+		"fileDuration": 6,
+		"captureStill": true,
+		"stillInterval": 2
+	},
+	"stream": {
+		"streamResolution": [1024,768]
+	}
+}
+```
+
+[1]: http://wiringpi.com/
+[2]: http://flask.pocoo.org/
+[3]: https://sourceforge.net/projects/raspberry-gpio-python/
+[4]: https://github.com/adafruit/Adafruit_Python_DHT

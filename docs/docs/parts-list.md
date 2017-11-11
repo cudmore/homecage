@@ -4,8 +4,9 @@
 ## Computer
 
 - Raspberry Pi 3
-- DC power
-- sd card
+- 5V AC/DC power, 2A
+- SD card, class 10, 16 GB (for system installation)
+- USB key, 64 GB (to save video)
 - ethernet cable
 - case
 
@@ -14,10 +15,12 @@
 - CSI Camera cable
 
 ## Lights
-- IR lights
-- White ligts
+- 12V AC/DC adapter
+- 2-channel relay (to switch lights on/off)
+- IR lights (< 900 nm)
+- White lights
 
 ## Environmental
 - temperature and humidity sensor
-- IR light seonsor
+- IR light sensor
 - White light sensor
