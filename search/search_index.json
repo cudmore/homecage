@@ -1,0 +1,174 @@
+{
+    "docs": [
+        {
+            "location": "/", 
+            "text": "Welcome to Home-cage Monitor\n\n\nFor full documentation visit \nmkdocs.org\n.\n\n\nCommands\n\n\n\n\nmkdocs new [dir-name]\n - Create a new project.\n\n\nmkdocs serve\n - Start the live-reloading docs server.\n\n\nmkdocs build\n - Build the documentation site.\n\n\nmkdocs help\n - Print this help message.\n\n\n\n\nProject layout\n\n\nmkdocs.yml    # The configuration file.\ndocs/\n    index.md  # The documentation homepage.\n    ...       # Other markdown pages, images and other files.", 
+            "title": "Getting started"
+        }, 
+        {
+            "location": "/#welcome-to-home-cage-monitor", 
+            "text": "For full documentation visit  mkdocs.org .", 
+            "title": "Welcome to Home-cage Monitor"
+        }, 
+        {
+            "location": "/#commands", 
+            "text": "mkdocs new [dir-name]  - Create a new project.  mkdocs serve  - Start the live-reloading docs server.  mkdocs build  - Build the documentation site.  mkdocs help  - Print this help message.", 
+            "title": "Commands"
+        }, 
+        {
+            "location": "/#project-layout", 
+            "text": "mkdocs.yml    # The configuration file.\ndocs/\n    index.md  # The documentation homepage.\n    ...       # Other markdown pages, images and other files.", 
+            "title": "Project layout"
+        }, 
+        {
+            "location": "/command-line/", 
+            "text": "1) Log in to the Pi\n\n\nOn a Mac, use the terminal application in /Applications/Utilities/terminal.app\n\n\n# Type\nssh pi@10.16.80.162\n\n# Enter password\npoetry7\n\n\n\n2) Change into the homecage directory\n\n\nAt the command prompt, type\n\n\ncd /Sites/homecage\n\n\n\n3) Get command help\n\n\nThe commands allow you to start and stop a video stream and video recording. They can also be used to turn the white and IR lights on and off.\n\n\nTo get help, at the command prompty, type \n\n\n./help\n\n\n\nThis returns\n\n\n Status\n    status - check the status\n Video Recording\n    record start\n    record stop\n Video Streaming\n    stream start\n    stream stop\n IR Light\n    light ir on\n    light ir off\n White Light\n    light white on\n    light white off\n\n\n\n4) Position the cages within a good field-of-view\n\n\nStart a video stream and then view the stream in a web browser.\n\n\nstream start\n\n# Returns\nView the stream at:\n   http://10.16.80.162:8080/stream\n\n\n\nIn any browser, go to the address \nhttp://10.16.80.162:8080/stream\n\n\nWhile positioning cages, turn the white and or IR LEDs on and off\n\n\n# Turn the white lights on\nlight white on\n\n# Turn the white lights off\nlight white off\n\n\n\nWhen your happy with position, stop the video stream\n\n\nstream stop\n\n\n\n5) Start continuous video recording\n\n\nrecord start\n\n\n\nThis will save recorded video into individual files, 5 minutes of video per file. This will also control the light cycle, at night (6 PM - 6 AM) the white light is off and the IR light is on. During the day (6 AM - 6 PM), the white light is on and the IR light is off. Both the duration of each video file at the timing of the light cycle can easily be changed.\n\n\n6) Mount the file server to get your video files\n\n\nOn a Mac, use \nFinder -\n Go -\n Connect To Server...\n and log in as follows\n\n\nafp://10.16.80.162\nusername: pi\npassword: poetry7d\n\n\n\nFiles are saved in the \n/video/\n folder. Video files have the .h264 extension. There are also text files (extension .txt) saved, these have a log of temperature and humidity as well as the time the lights were turned on and off.\n\n\n7) Log out of the Pi\n\n\nexit", 
+            "title": "Command line interface"
+        }, 
+        {
+            "location": "/command-line/#1-log-in-to-the-pi", 
+            "text": "On a Mac, use the terminal application in /Applications/Utilities/terminal.app  # Type\nssh pi@10.16.80.162\n\n# Enter password\npoetry7", 
+            "title": "1) Log in to the Pi"
+        }, 
+        {
+            "location": "/command-line/#2-change-into-the-homecage-directory", 
+            "text": "At the command prompt, type  cd /Sites/homecage", 
+            "title": "2) Change into the homecage directory"
+        }, 
+        {
+            "location": "/command-line/#3-get-command-help", 
+            "text": "The commands allow you to start and stop a video stream and video recording. They can also be used to turn the white and IR lights on and off.  To get help, at the command prompty, type   ./help  This returns   Status\n    status - check the status\n Video Recording\n    record start\n    record stop\n Video Streaming\n    stream start\n    stream stop\n IR Light\n    light ir on\n    light ir off\n White Light\n    light white on\n    light white off", 
+            "title": "3) Get command help"
+        }, 
+        {
+            "location": "/command-line/#4-position-the-cages-within-a-good-field-of-view", 
+            "text": "Start a video stream and then view the stream in a web browser.  stream start\n\n# Returns\nView the stream at:\n   http://10.16.80.162:8080/stream  In any browser, go to the address  http://10.16.80.162:8080/stream  While positioning cages, turn the white and or IR LEDs on and off  # Turn the white lights on\nlight white on\n\n# Turn the white lights off\nlight white off  When your happy with position, stop the video stream  stream stop", 
+            "title": "4) Position the cages within a good field-of-view"
+        }, 
+        {
+            "location": "/command-line/#5-start-continuous-video-recording", 
+            "text": "record start  This will save recorded video into individual files, 5 minutes of video per file. This will also control the light cycle, at night (6 PM - 6 AM) the white light is off and the IR light is on. During the day (6 AM - 6 PM), the white light is on and the IR light is off. Both the duration of each video file at the timing of the light cycle can easily be changed.", 
+            "title": "5) Start continuous video recording"
+        }, 
+        {
+            "location": "/command-line/#6-mount-the-file-server-to-get-your-video-files", 
+            "text": "On a Mac, use  Finder -  Go -  Connect To Server...  and log in as follows  afp://10.16.80.162\nusername: pi\npassword: poetry7d  Files are saved in the  /video/  folder. Video files have the .h264 extension. There are also text files (extension .txt) saved, these have a log of temperature and humidity as well as the time the lights were turned on and off.", 
+            "title": "6) Mount the file server to get your video files"
+        }, 
+        {
+            "location": "/command-line/#7-log-out-of-the-pi", 
+            "text": "exit", 
+            "title": "7) Log out of the Pi"
+        }, 
+        {
+            "location": "/web-interface/", 
+            "text": "Minimal\n\n\n\n\nVideo recording\n\n\nVideo streaming\n\n\nUser options", 
+            "title": "Web interface"
+        }, 
+        {
+            "location": "/web-interface/#minimal", 
+            "text": "", 
+            "title": "Minimal"
+        }, 
+        {
+            "location": "/web-interface/#video-recording", 
+            "text": "", 
+            "title": "Video recording"
+        }, 
+        {
+            "location": "/web-interface/#video-streaming", 
+            "text": "", 
+            "title": "Video streaming"
+        }, 
+        {
+            "location": "/web-interface/#user-options", 
+            "text": "", 
+            "title": "User options"
+        }, 
+        {
+            "location": "/rest-interface/", 
+            "text": "The homecage server will respond to the following REST calls.\n\n\nServer Status:\n\n\nGet runtime status of server\n\n\n/status\n\n\n\nGet user configured options\n\n\n/params\n\n\n\nRecord\n\n\nStart and stop video recording\n\n\n/record/1 \n/record/0\n\n\n\nStream\n\n\nStart and stop video streaming\n\n\n/stream/1 \n/stream/0\n\n\n\nLights\n\n\nTurn lights on and off\n\n\n/irLED/1 \n/irLED/0 \n/whiteLED/1 \n/whiteLED/0\n\n\n\nImages\n\n\n/lastimage\n\n\n\nSet user options\n\n\n/set/fps/\nlt;int:value\n \n/set/fileDuration/\nlt;int:value", 
+            "title": "REST interface"
+        }, 
+        {
+            "location": "/rest-interface/#server-status", 
+            "text": "Get runtime status of server  /status  Get user configured options  /params", 
+            "title": "Server Status:"
+        }, 
+        {
+            "location": "/rest-interface/#record", 
+            "text": "Start and stop video recording  /record/1 \n/record/0", 
+            "title": "Record"
+        }, 
+        {
+            "location": "/rest-interface/#stream", 
+            "text": "Start and stop video streaming  /stream/1 \n/stream/0", 
+            "title": "Stream"
+        }, 
+        {
+            "location": "/rest-interface/#lights", 
+            "text": "Turn lights on and off  /irLED/1 \n/irLED/0 \n/whiteLED/1 \n/whiteLED/0", 
+            "title": "Lights"
+        }, 
+        {
+            "location": "/rest-interface/#images", 
+            "text": "/lastimage", 
+            "title": "Images"
+        }, 
+        {
+            "location": "/rest-interface/#set-user-options", 
+            "text": "/set/fps/ lt;int:value  \n/set/fileDuration/ lt;int:value", 
+            "title": "Set user options"
+        }, 
+        {
+            "location": "/building/hardware/", 
+            "text": "Build a box to hold cages, lights, and camera\n\n\nStrap the computer to the side, place on top or put inside the box. If placing inside the box, make sure to make an inner box to block LEDs on computer.\n\n\n\n\nComputer\n\n\n\n\nRaspberry Pi 3\n\n\nDC power\n\n\nsd card\n\n\nethernet cable\n\n\ncase\n\n\n\n\nCamera\n\n\n\n\nRaspberry Pi NoIR\n\n\nCSI Camera cable\n\n\n\n\nLights\n\n\n\n\nIR lights\n\n\nWhite ligts\n\n\n\n\nEnvironmental\n\n\n\n\ntemperature and humidity sensor\n\n\nIR light seonsor\n\n\nWhite light sensor", 
+            "title": "Hardware"
+        }, 
+        {
+            "location": "/building/hardware/#computer", 
+            "text": "Raspberry Pi 3  DC power  sd card  ethernet cable  case", 
+            "title": "Computer"
+        }, 
+        {
+            "location": "/building/hardware/#camera", 
+            "text": "Raspberry Pi NoIR  CSI Camera cable", 
+            "title": "Camera"
+        }, 
+        {
+            "location": "/building/hardware/#lights", 
+            "text": "IR lights  White ligts", 
+            "title": "Lights"
+        }, 
+        {
+            "location": "/building/hardware/#environmental", 
+            "text": "temperature and humidity sensor  IR light seonsor  White light sensor", 
+            "title": "Environmental"
+        }, 
+        {
+            "location": "/building/software/", 
+            "text": "Two main interfaces are provided, the command line interface and a web interface.\n\n\nInstall\n\n\nCommand line interface\n\n\n\n\nwiring pi\n\n\n\n\nAdditional packages\n\n\n\n\n\n\nflask\n\n\n\n\n\n\nRPIO \n\n\n\n\n\n\nDHT", 
+            "title": "Software"
+        }, 
+        {
+            "location": "/building/software/#install", 
+            "text": "", 
+            "title": "Install"
+        }, 
+        {
+            "location": "/building/software/#command-line-interface", 
+            "text": "wiring pi   Additional packages    flask    RPIO     DHT", 
+            "title": "Command line interface"
+        }, 
+        {
+            "location": "/building/wiring/", 
+            "text": "", 
+            "title": "Wiring"
+        }, 
+        {
+            "location": "/building/troubleshooting/", 
+            "text": "", 
+            "title": "Troubleshooting"
+        }
+    ]
+}
