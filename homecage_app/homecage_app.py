@@ -107,7 +107,7 @@ def whatismyip():
 
 if __name__ == '__main__':
 	print 'Running Flask server at:', 'http://' + whatismyip() + ':5000'
-	app.run(host=whatismyip(), port=5000, debug=True)
+	app.run(host=whatismyip(), port=5000, debug=False)
 	
 	
 	

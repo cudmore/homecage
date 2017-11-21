@@ -18,7 +18,7 @@ Please see the [documentation](http://cudmore.github.io/homecage).
 
 ## Install
 
-This software is in its early stages. In the future we will provide a **stable** release. Please see the [installing the software][4] page.
+This software is in its early stages. In the future we will provide a **stable** release. Please see the [installing the software][4] page. Do not try and install from this Github repository, it will not work.
 
 [1]: http://blog.cudmore.io/homecage/command-line/
 [2]: http://blog.cudmore.io/homecage/web-interface/

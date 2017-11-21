@@ -7,6 +7,7 @@ theme:
   
 pages:
     - Getting started: index.md
+    - Images: images.md
     - Command line interface: command-line.md
     - Web interface: web-interface.md
     - REST interface: rest-interface.md
