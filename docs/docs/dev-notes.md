@@ -60,7 +60,64 @@ Thanks again for uv4l
 
 p.s. Can you suggest an online forum for such questions?
 ```
+Answer was to kill child processes first. Get child processes of PID with `pstree -p PID'
 
+When browser window is streaming
+
+```
+uv4l(2345)─┬─{HCEC Notify}(2351)
+           ├─{HDispmanx Notif}(2349)
+           ├─{HTV Notify}(2350)
+           ├─{VCHIQ completio}(2348)
+           ├─{uv4l}(2346)
+           ├─{uv4l}(2347)
+           ├─{uv4l}(2360)
+           ├─{uv4l}(2361)
+           ├─{uv4l}(2362)
+           ├─{uv4l}(2385)
+           ├─{uv4l}(2386)
+           ├─{uv4l}(2387)
+           ├─{uv4l}(2389)
+           ├─{uv4l}(2393)
+           ├─{uv4l}(2394)
+           ├─{vc.ril.camera}(2390)
+           ├─{vc.ril.image_en}(2392)
+           └─{vc.ril.video_re}(2391)
+```
+
+When it is not streaming
+
+```
+uv4l(2345)─┬─{HCEC Notify}(2351)
+           ├─{HDispmanx Notif}(2349)
+           ├─{HTV Notify}(2350)
+           ├─{VCHIQ completio}(2348)
+           ├─{uv4l}(2346)
+           ├─{uv4l}(2347)
+           ├─{uv4l}(2360)
+           ├─{uv4l}(2361)
+           ├─{uv4l}(2362)
+           ├─{uv4l}(2385)
+           ├─{uv4l}(2386)
+           └─{uv4l}(2387)
+```
+
+#### Progress on killing while browser window is open
+
+# get uv4l PID
+PID = pgrep uv4l
+# kill all processes in the same group, this includes children
+sudo kill -- -PID
+# kills original and does NOT leave a `<defunct>` uv4l !
+# once we do this we need to use `restart`
+sudo service uv4l_raspicam restart
+# uninstall the raspberry-util and revert to original command line calls
+# use this technique to kill
+
+#### remove uv4l-raspicam-extras
+
+    sudo apt-get remove uv4l-raspicam-extras
+    
 ## ToDo
 
 ### 20171111
