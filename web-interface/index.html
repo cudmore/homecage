@@ -266,29 +266,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#minimal" title="Minimal" class="md-nav__link">
-    Minimal
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#video-recording" title="Video recording" class="md-nav__link">
-    Video recording
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#video-streaming" title="Video streaming" class="md-nav__link">
-    Video streaming
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#user-options" title="User options" class="md-nav__link">
-    User options
+  <a href="#configuring-the-web-server" title="Configuring the web server" class="md-nav__link">
+    Configuring the web server
   </a>
   
 </li>
@@ -400,29 +379,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#minimal" title="Minimal" class="md-nav__link">
-    Minimal
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#video-recording" title="Video recording" class="md-nav__link">
-    Video recording
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#video-streaming" title="Video streaming" class="md-nav__link">
-    Video streaming
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#user-options" title="User options" class="md-nav__link">
-    User options
+  <a href="#configuring-the-web-server" title="Configuring the web server" class="md-nav__link">
+    Configuring the web server
   </a>
   
 </li>
@@ -447,16 +405,46 @@
                   <h1>Web interface</h1>
                 
                 <h2 id="running-the-web-server">Running the web server</h2>
+<p><IMG SRC="../img/web-interface-minimal.png" width=600></p>
 <p>At a command prompt, type:</p>
 <pre><code>cd
-python homecage/homecage_app/homecage_app.py
+cd homecage/homecage_app
+python homecage_app.py
 </code></pre>
-<p>Once the web interface is running it can be accessed from any web browser at the address <code>http://[ip]:5000</code></p>
-<h2 id="minimal">Minimal</h2>
-<p><IMG SRC="../img/web-interface-minimal.png" width=600></p>
-<h2 id="video-recording">Video recording</h2>
-<h2 id="video-streaming">Video streaming</h2>
-<h2 id="user-options">User options</h2>
+
+<p>Once <code>homecage_app.py</code> is running you can access the web server in a browser with the address:</p>
+<pre><code>http:[your_ip]:5000
+</code></pre>
+<p>Where [your_ip] is the IP address of your Pi.</p>
+<p>To stop the homecage web server, use keyboard <code>ctrl+c</code></p>
+<h2 id="configuring-the-web-server">Configuring the web server</h2>
+<p>The server can be configured by editing the <code>homecage/homecage_app/config.json</code> file.</p>
+<pre><code>cd
+pico homecage/homecage_app/config.json
+</code></pre>
+<p>The default file is:</p>
+<pre><code class="json">{
+    &quot;hardware&quot;:{
+        &quot;irLightPin&quot;: 7,
+        &quot;whiteLightPin&quot;: 8,
+        &quot;temperatureSensor&quot;: 9
+    },
+    &quot;lights&quot;:{
+        &quot;sunrise&quot;: 6,
+        &quot;sunset&quot;: 18
+    },
+    &quot;video&quot;:{
+        &quot;fps&quot;: 30,
+        &quot;resolution&quot;: [1024,768],
+        &quot;fileDuration&quot;: 6,
+        &quot;captureStill&quot;: true,
+        &quot;stillInterval&quot;: 2
+    },
+    &quot;stream&quot;: {
+        &quot;streamResolution&quot;: [1024,768]
+    }
+}
+</code></pre>
                 
                   
                 

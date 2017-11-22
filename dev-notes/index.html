@@ -353,15 +353,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#progress-on-killing-while-browser-window-is-open" title="Progress on killing while browser window is open" class="md-nav__link">
-    Progress on killing while browser window is open
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#remove-uv4l-raspicam-extras" title="remove uv4l-raspicam-extras" class="md-nav__link">
-    remove uv4l-raspicam-extras
+  <a href="#remove-uv4l-raspicam-extras" title="Remove uv4l-raspicam-extras" class="md-nav__link">
+    Remove uv4l-raspicam-extras
   </a>
   
 </li>
@@ -441,15 +434,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#progress-on-killing-while-browser-window-is-open" title="Progress on killing while browser window is open" class="md-nav__link">
-    Progress on killing while browser window is open
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#remove-uv4l-raspicam-extras" title="remove uv4l-raspicam-extras" class="md-nav__link">
-    remove uv4l-raspicam-extras
+  <a href="#remove-uv4l-raspicam-extras" title="Remove uv4l-raspicam-extras" class="md-nav__link">
+    Remove uv4l-raspicam-extras
   </a>
   
 </li>
@@ -499,37 +485,26 @@
                   <h1>Development notes</h1>
                 
                 <h2 id="mkdocs">mkDocs</h2>
+<p>We use <a href="http://www.mkdocs.org/">mkdocs</a> to generate the documentation website from markdown files.</p>
+<p>Install</p>
+<pre><code>pip install mkdocs
+
+# we are using the material theme
+pip install mkdocs-material
+</code></pre>
 <p>Serve locally</p>
-<pre><code>mkdocs serve
+<pre><code>cd
+cd homecage/docs
+mkdocs serve
 </code></pre>
 <p>Push to github</p>
-<pre><code>cd homecage/docs
+<pre><code>cd
+cd homecage/docs
 mkdocs gh-deploy --clean
 </code></pre>
 <h2 id="uv4l">uv4l</h2>
+<p>uv4l is what we use to stream live video.</p>
 <p>20171120 - Problem was that if streaming was on and we tried to stop it while there was still an opened browser window we would get an orphaned <code>&lt;defunct&gt;</code> process that can't actually be kill(ed). This was mucking up any future interaciton as <code>stream</code>, <code>record</code>, and <code>status</code> thought there was still a uv4l process.</p>
-<p>Fixing this by using <code>uv4l-raspicam-extras</code></p>
-<pre><code>sudo apt-get install uv4l-raspicam-extras
-</code></pre>
-<p>We now start/stop the stream with</p>
-<pre><code>sudo service uv4l_raspicam start
-sudo service uv4l_raspicam stop
-</code></pre>
-<p>When we start/stop like this we are now using a config file <code>/etc/uv4l/uv4l-raspicam.conf</code></p>
-<pre><code>sudo pico /etc/uv4l/uv4l-raspicam.conf
-</code></pre>
-<p>And need to knock down the default stream resolution so we get the full field-of-view. Do this by uncommenting and specifying width and height in <code>/etc/uv4l/uv4l-raspicam.conf</code>.</p>
-<pre><code>##################################
-# raspicam driver options
-##################################
-
-encoding = mjpeg
-width = 640
-height = 480
-framerate = 30
-#custom-sensor-config = 2
-</code></pre>
-
 <h4 id="sent-this-to-uv4l-people">Sent this to uv4l people</h4>
 <pre><code>Hi there, great product and the best streaming I have ever seen.
 
@@ -549,55 +524,15 @@ p.s. Can you suggest an online forum for such questions?
 </code></pre>
 
 <p>Answer was to kill child processes first. Get child processes of PID with `pstree -p PID'</p>
-<p>When browser window is streaming</p>
-<pre><code>uv4l(2345)─┬─{HCEC Notify}(2351)
-           ├─{HDispmanx Notif}(2349)
-           ├─{HTV Notify}(2350)
-           ├─{VCHIQ completio}(2348)
-           ├─{uv4l}(2346)
-           ├─{uv4l}(2347)
-           ├─{uv4l}(2360)
-           ├─{uv4l}(2361)
-           ├─{uv4l}(2362)
-           ├─{uv4l}(2385)
-           ├─{uv4l}(2386)
-           ├─{uv4l}(2387)
-           ├─{uv4l}(2389)
-           ├─{uv4l}(2393)
-           ├─{uv4l}(2394)
-           ├─{vc.ril.camera}(2390)
-           ├─{vc.ril.image_en}(2392)
-           └─{vc.ril.video_re}(2391)
-</code></pre>
-
-<p>When it is not streaming</p>
-<pre><code>uv4l(2345)─┬─{HCEC Notify}(2351)
-           ├─{HDispmanx Notif}(2349)
-           ├─{HTV Notify}(2350)
-           ├─{VCHIQ completio}(2348)
-           ├─{uv4l}(2346)
-           ├─{uv4l}(2347)
-           ├─{uv4l}(2360)
-           ├─{uv4l}(2361)
-           ├─{uv4l}(2362)
-           ├─{uv4l}(2385)
-           ├─{uv4l}(2386)
-           └─{uv4l}(2387)
-</code></pre>
-
-<h4 id="progress-on-killing-while-browser-window-is-open">Progress on killing while browser window is open</h4>
+<p>Which eventually led to this</p>
 <pre><code># get uv4l PID
 PID = pgrep uv4l
 # kill all processes in the same group, this includes children
-sudo kill -- -PID
 # kills original and does NOT leave a `&lt;defunct&gt;` uv4l !
-# once we do this we need to use `restart`
-sudo service uv4l_raspicam restart
-# uninstall the raspberry-util and revert to original command line calls
-# use this technique to kill
+sudo kill -- -PID
 </code></pre>
 
-<h4 id="remove-uv4l-raspicam-extras">remove uv4l-raspicam-extras</h4>
+<h4 id="remove-uv4l-raspicam-extras">Remove uv4l-raspicam-extras</h4>
 <pre><code>sudo apt-get remove uv4l-raspicam-extras
 </code></pre>
 <h2 id="todo">ToDo</h2>
