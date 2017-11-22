@@ -313,12 +313,89 @@
     
     <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="toc">
     
-      
     
+      <label class="md-nav__link md-nav__link--active" for="toc">
+        Development notes
+      </label>
     
     <a href="./" title="Development notes" class="md-nav__link md-nav__link--active">
       Development notes
     </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#mkdocs" title="mkDocs" class="md-nav__link">
+    mkDocs
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#uv4l" title="uv4l" class="md-nav__link">
+    uv4l
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sent-this-to-uv4l-people" title="Sent this to uv4l people" class="md-nav__link">
+    Sent this to uv4l people
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#progress-on-killing-while-browser-window-is-open" title="Progress on killing while browser window is open" class="md-nav__link">
+    Progress on killing while browser window is open
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remove-uv4l-raspicam-extras" title="remove uv4l-raspicam-extras" class="md-nav__link">
+    remove uv4l-raspicam-extras
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#todo" title="ToDo" class="md-nav__link">
+    ToDo
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#20171111" title="20171111" class="md-nav__link">
+    20171111
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+      
+      
+    </ul>
+  
+</nav>
     
   </li>
 
@@ -337,8 +414,74 @@
 <nav class="md-nav md-nav--secondary">
   
   
-    
   
+    <label class="md-nav__title" for="toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#mkdocs" title="mkDocs" class="md-nav__link">
+    mkDocs
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#uv4l" title="uv4l" class="md-nav__link">
+    uv4l
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sent-this-to-uv4l-people" title="Sent this to uv4l people" class="md-nav__link">
+    Sent this to uv4l people
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#progress-on-killing-while-browser-window-is-open" title="Progress on killing while browser window is open" class="md-nav__link">
+    Progress on killing while browser window is open
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remove-uv4l-raspicam-extras" title="remove uv4l-raspicam-extras" class="md-nav__link">
+    remove uv4l-raspicam-extras
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#todo" title="ToDo" class="md-nav__link">
+    ToDo
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#20171111" title="20171111" class="md-nav__link">
+    20171111
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+      
+      
+    </ul>
   
 </nav>
                   </div>
@@ -352,6 +495,8 @@
                 
                   <a href="http://github.com/cudmore/homecage/edit/master/docs/dev-notes.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
                 
+                
+                  <h1>Development notes</h1>
                 
                 <h2 id="mkdocs">mkDocs</h2>
 <p>Serve locally</p>
@@ -441,15 +586,17 @@ p.s. Can you suggest an online forum for such questions?
 </code></pre>
 
 <h4 id="progress-on-killing-while-browser-window-is-open">Progress on killing while browser window is open</h4>
-<h1 id="get-uv4l-pid">get uv4l PID</h1>
-<p>PID = pgrep uv4l</p>
-<h1 id="kill-all-processes-in-the-same-group-this-includes-children">kill all processes in the same group, this includes children</h1>
-<p>sudo kill -- -PID</p>
-<h1 id="kills-original-and-does-not-leave-a-defunct-uv4l">kills original and does NOT leave a <code>&lt;defunct&gt;</code> uv4l !</h1>
-<h1 id="once-we-do-this-we-need-to-use-restart">once we do this we need to use <code>restart</code></h1>
-<p>sudo service uv4l_raspicam restart</p>
-<h1 id="uninstall-the-raspberry-util-and-revert-to-original-command-line-calls">uninstall the raspberry-util and revert to original command line calls</h1>
-<h1 id="use-this-technique-to-kill">use this technique to kill</h1>
+<pre><code># get uv4l PID
+PID = pgrep uv4l
+# kill all processes in the same group, this includes children
+sudo kill -- -PID
+# kills original and does NOT leave a `&lt;defunct&gt;` uv4l !
+# once we do this we need to use `restart`
+sudo service uv4l_raspicam restart
+# uninstall the raspberry-util and revert to original command line calls
+# use this technique to kill
+</code></pre>
+
 <h4 id="remove-uv4l-raspicam-extras">remove uv4l-raspicam-extras</h4>
 <pre><code>sudo apt-get remove uv4l-raspicam-extras
 </code></pre>
