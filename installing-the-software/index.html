@@ -265,6 +265,8 @@
     
     <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="toc">
     
+      
+    
     
       <label class="md-nav__link md-nav__link--active" for="toc">
         Installing the software
@@ -278,54 +280,29 @@
 <nav class="md-nav md-nav--secondary">
   
   
+    
+  
   
     <label class="md-nav__title" for="toc">Table of contents</label>
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#installation" title="Installation" class="md-nav__link">
-    Installation
+  <a href="#clone-the-repository" title="Clone the repository" class="md-nav__link">
+    Clone the repository
   </a>
   
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#install-python-libraries" title="Install python libraries" class="md-nav__link">
+    Install python libraries
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#uv4l-for-live-video-streaming" title="uv4l for live video streaming" class="md-nav__link">
     uv4l for live video streaming
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#temperature-sensor" title="Temperature sensor" class="md-nav__link">
-    Temperature sensor
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#running-the-web-server" title="Running the web server" class="md-nav__link">
-    Running the web server
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#configuring-the-web-server" title="Configuring the web server" class="md-nav__link">
-    Configuring the web server
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#converting-h264-files-to-mp4" title="Converting h264 files to mp4" class="md-nav__link">
-    Converting h264 files to mp4
   </a>
   
 </li>
@@ -401,54 +378,29 @@
 <nav class="md-nav md-nav--secondary">
   
   
+    
+  
   
     <label class="md-nav__title" for="toc">Table of contents</label>
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#installation" title="Installation" class="md-nav__link">
-    Installation
+  <a href="#clone-the-repository" title="Clone the repository" class="md-nav__link">
+    Clone the repository
   </a>
   
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#install-python-libraries" title="Install python libraries" class="md-nav__link">
+    Install python libraries
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#uv4l-for-live-video-streaming" title="uv4l for live video streaming" class="md-nav__link">
     uv4l for live video streaming
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#temperature-sensor" title="Temperature sensor" class="md-nav__link">
-    Temperature sensor
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#running-the-web-server" title="Running the web server" class="md-nav__link">
-    Running the web server
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#configuring-the-web-server" title="Configuring the web server" class="md-nav__link">
-    Configuring the web server
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#converting-h264-files-to-mp4" title="Converting h264 files to mp4" class="md-nav__link">
-    Converting h264 files to mp4
   </a>
   
 </li>
@@ -470,8 +422,6 @@
                   <a href="http://github.com/cudmore/homecage/edit/master/docs/installing-the-software.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
                 
                 
-                  <h1>Installing the software</h1>
-                
                 <p>Homecage requires the following libraries:</p>
 <ul>
 <li><a href="http://wiringpi.com/">Wiring Pi</a> - Library that provides a command line interface to the GPIO pins. This should be installed by default.</li>
@@ -481,38 +431,87 @@
 <li><a href="https://github.com/adafruit/Adafruit_Python_DHT">Adafruit_DHT</a> - (optional) Python library to read from a DHT temperature and humidity sensor.</li>
 </ul>
 <h2 id="installation">Installation</h2>
-<p>Clone the repository</p>
+<h3 id="clone-the-repository">Clone the repository</h3>
+<p>This will make a folder <code>homecage</code> in your root directory. You can always return to your root directory with <code>cd</code></p>
 <pre><code>git clone https://github.com/cudmore/homecage.git
 </code></pre>
-<p>Make a virtual environment named <code>myenv</code> in <code>homecage/</code></p>
-<pre><code>cd homecage
-virtualenv myenv
-</code></pre>
-<p>Activate the environment</p>
-<pre><code>source myenv/bin/deactivate
-</code></pre>
-<p>Install python libraries</p>
-<pre><code>pip install rpi.gpio
+<h3 id="install-python-libraries">Install python libraries</h3>
+<pre><code># if you don't already have pip installed
+sudo apt-get install python-pip
+
+pip install rpi.gpio
 pip install flask
 </code></pre>
-<p>To return to the normal command prompt</p>
-<pre><code>deactivate
-</code></pre>
-<h3 id="uv4l-for-live-video-streaming">uv4l for live video streaming</h3>
-<p>Install uv4l for live streaming (optional). Follow <a href="https://www.linux-projects.org/uv4l/installation/">this tutorial</a>.</p>
-<h3 id="temperature-sensor">Temperature sensor</h3>
 <p>Install DHT temperature sensor (optional)</p>
-<pre><code>git clone https://github.com/adafruit/Adafruit_Python_DHT.git
+<pre><code># if you don't already have git installed
+sudo apt-get install git
+
+mkdir tmp
+cd tmp
+git clone https://github.com/adafruit/Adafruit_Python_DHT.git
 cd Adafruit_Python_DHT
 sudo python setup.py install
 </code></pre>
-<h2 id="running-the-web-server">Running the web server</h2>
-<pre><code>cd
-python homecage/homecage_app/homecage_app.py
+<h3 id="uv4l-for-live-video-streaming">uv4l for live video streaming</h3>
+<p>Install uv4l for live streaming (optional). Follow <a href="https://www.linux-projects.org/uv4l/installation/">this tutorial</a>.</p>
+<pre><code>curl http://www.linux-projects.org/listing/uv4l_repo/lrkey.asc | sudo apt-key add -
+/etc/apt/sources.list
+
+# add the following line to /etc/apt/sources.list
+# start editor with `sudo /etc/apt/sources.list`
+deb http://www.linux-projects.org/listing/uv4l_repo/raspbian/ jessie main
+
+sudo apt-get update
+sudo apt-get install uv4l uv4l-raspicam
+
+# DO NOT INSTALL `sudo apt-get install uv4l-raspicam-extras`
 </code></pre>
 
+<h1 id="done-installing">Done installing</h1>
+<p>At this point you can interact with the homecage either through the command line or the web interface.</p>
+<h2 id="homecage-command-line">Homecage command line</h2>
+<pre><code>cd
+cd homecage
+./help
+</code></pre>
+
+<p>Will give you this. Start typing away...</p>
+<pre><code>Status
+    status - check the status
+ Video Recording
+    record start
+    record stop
+ Video Streaming
+    stream start
+    stream stop
+ IR Light
+    light ir on
+    light ir off
+ White Light
+    light white on
+    light white off
+ Online Manual
+    http://blog.cudmore.io/homecage
+</code></pre>
+
+<h2 id="homecage-webserver">Homecage webserver</h2>
+<p>Run the homecage web server with</p>
+<pre><code>cd
+cd homecage/homecage_app
+python homecage_app.py
+</code></pre>
+
+<p>Once <code>homecage_app.py</code> is running you can open the web server in a browser with the address:</p>
+<pre><code>http:[your_ip]:5000
+</code></pre>
+<p>Where [your_ip] is the IP address of your Pi.</p>
+<p>To stop the homecage webserver, use keyboard <code>ctrl+c</code></p>
 <h2 id="configuring-the-web-server">Configuring the web server</h2>
-<p>The server can be configured by editing the <code>homecage/homecage_app/config.json</code> file</p>
+<p>The server can be configured by editing the <code>homecage/homecage_app/config.json</code> file.</p>
+<pre><code>cd
+pico homecage/homecage_app/config.json
+</code></pre>
+<p>The default file is:</p>
 <pre><code class="json">{
     &quot;hardware&quot;:{
         &quot;irLightPin&quot;: 7,

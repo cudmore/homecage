@@ -152,32 +152,47 @@
         }, 
         {
             "location": "/installing-the-software/", 
-            "text": "Homecage requires the following libraries:\n\n\n\n\nWiring Pi\n - Library that provides a command line interface to the GPIO pins. This should be installed by default.\n\n\nGPIO\n - Python library to control GPIO pins. This should be installed by default.\n\n\nflask\n - A python web server.\n\n\nuv4l\n - Library for live video streaming to a web browser\n\n\nAdafruit_DHT\n - (optional) Python library to read from a DHT temperature and humidity sensor.\n\n\n\n\nInstallation\n\n\nClone the repository\n\n\ngit clone https://github.com/cudmore/homecage.git\n\n\n\nMake a virtual environment named \nmyenv\n in \nhomecage/\n\n\ncd homecage\nvirtualenv myenv\n\n\n\nActivate the environment\n\n\nsource myenv/bin/deactivate\n\n\n\nInstall python libraries\n\n\npip install rpi.gpio\npip install flask\n\n\n\nTo return to the normal command prompt\n\n\ndeactivate\n\n\n\nuv4l for live video streaming\n\n\nInstall uv4l for live streaming (optional). Follow \nthis tutorial\n.\n\n\nTemperature sensor\n\n\nInstall DHT temperature sensor (optional)\n\n\ngit clone https://github.com/adafruit/Adafruit_Python_DHT.git\ncd Adafruit_Python_DHT\nsudo python setup.py install\n\n\n\nRunning the web server\n\n\ncd\npython homecage/homecage_app/homecage_app.py\n\n\n\n\nConfiguring the web server\n\n\nThe server can be configured by editing the \nhomecage/homecage_app/config.json\n file\n\n\n{\n    \nhardware\n:{\n        \nirLightPin\n: 7,\n        \nwhiteLightPin\n: 8,\n        \ntemperatureSensor\n: 9\n    },\n    \nlights\n:{\n        \nsunrise\n: 6,\n        \nsunset\n: 18\n    },\n    \nvideo\n:{\n        \nfps\n: 30,\n        \nresolution\n: [1024,768],\n        \nfileDuration\n: 6,\n        \ncaptureStill\n: true,\n        \nstillInterval\n: 2\n    },\n    \nstream\n: {\n        \nstreamResolution\n: [1024,768]\n    }\n}\n\n\n\n\nConverting h264 files to mp4\n\n\nThe Raspberry camera saves .h264 video files. This format is very efficient and creates  small files (10 MB per 5 minutes) but does require conversion to mp4 to impose a time.\n\n\nSee this \nblog post", 
+            "text": "Homecage requires the following libraries:\n\n\n\n\nWiring Pi\n - Library that provides a command line interface to the GPIO pins. This should be installed by default.\n\n\nGPIO\n - Python library to control GPIO pins. This should be installed by default.\n\n\nflask\n - A python web server.\n\n\nuv4l\n - Library for live video streaming to a web browser\n\n\nAdafruit_DHT\n - (optional) Python library to read from a DHT temperature and humidity sensor.\n\n\n\n\nInstallation\n\n\nClone the repository\n\n\nThis will make a folder \nhomecage\n in your root directory. You can always return to your root directory with \ncd\n\n\ngit clone https://github.com/cudmore/homecage.git\n\n\n\nInstall python libraries\n\n\n# if you don't already have pip installed\nsudo apt-get install python-pip\n\npip install rpi.gpio\npip install flask\n\n\n\nInstall DHT temperature sensor (optional)\n\n\n# if you don't already have git installed\nsudo apt-get install git\n\nmkdir tmp\ncd tmp\ngit clone https://github.com/adafruit/Adafruit_Python_DHT.git\ncd Adafruit_Python_DHT\nsudo python setup.py install\n\n\n\nuv4l for live video streaming\n\n\nInstall uv4l for live streaming (optional). Follow \nthis tutorial\n.\n\n\ncurl http://www.linux-projects.org/listing/uv4l_repo/lrkey.asc | sudo apt-key add -\n/etc/apt/sources.list\n\n# add the following line to /etc/apt/sources.list\n# start editor with `sudo /etc/apt/sources.list`\ndeb http://www.linux-projects.org/listing/uv4l_repo/raspbian/ jessie main\n\nsudo apt-get update\nsudo apt-get install uv4l uv4l-raspicam\n\n# DO NOT INSTALL `sudo apt-get install uv4l-raspicam-extras`\n\n\n\n\nDone installing\n\n\nAt this point you can interact with the homecage either through the command line or the web interface.\n\n\nHomecage command line\n\n\ncd\ncd homecage\n./help\n\n\n\n\nWill give you this. Start typing away...\n\n\nStatus\n    status - check the status\n Video Recording\n    record start\n    record stop\n Video Streaming\n    stream start\n    stream stop\n IR Light\n    light ir on\n    light ir off\n White Light\n    light white on\n    light white off\n Online Manual\n    http://blog.cudmore.io/homecage\n\n\n\n\nHomecage webserver\n\n\nRun the homecage web server with\n\n\ncd\ncd homecage/homecage_app\npython homecage_app.py\n\n\n\n\nOnce \nhomecage_app.py\n is running you can open the web server in a browser with the address:\n\n\nhttp:[your_ip]:5000\n\n\n\nWhere [your_ip] is the IP address of your Pi.\n\n\nTo stop the homecage webserver, use keyboard \nctrl+c\n\n\nConfiguring the web server\n\n\nThe server can be configured by editing the \nhomecage/homecage_app/config.json\n file.\n\n\ncd\npico homecage/homecage_app/config.json\n\n\n\nThe default file is:\n\n\n{\n    \nhardware\n:{\n        \nirLightPin\n: 7,\n        \nwhiteLightPin\n: 8,\n        \ntemperatureSensor\n: 9\n    },\n    \nlights\n:{\n        \nsunrise\n: 6,\n        \nsunset\n: 18\n    },\n    \nvideo\n:{\n        \nfps\n: 30,\n        \nresolution\n: [1024,768],\n        \nfileDuration\n: 6,\n        \ncaptureStill\n: true,\n        \nstillInterval\n: 2\n    },\n    \nstream\n: {\n        \nstreamResolution\n: [1024,768]\n    }\n}\n\n\n\n\nConverting h264 files to mp4\n\n\nThe Raspberry camera saves .h264 video files. This format is very efficient and creates  small files (10 MB per 5 minutes) but does require conversion to mp4 to impose a time.\n\n\nSee this \nblog post", 
             "title": "Installing the software"
         }, 
         {
             "location": "/installing-the-software/#installation", 
-            "text": "Clone the repository  git clone https://github.com/cudmore/homecage.git  Make a virtual environment named  myenv  in  homecage/  cd homecage\nvirtualenv myenv  Activate the environment  source myenv/bin/deactivate  Install python libraries  pip install rpi.gpio\npip install flask  To return to the normal command prompt  deactivate", 
+            "text": "", 
             "title": "Installation"
         }, 
         {
+            "location": "/installing-the-software/#clone-the-repository", 
+            "text": "This will make a folder  homecage  in your root directory. You can always return to your root directory with  cd  git clone https://github.com/cudmore/homecage.git", 
+            "title": "Clone the repository"
+        }, 
+        {
+            "location": "/installing-the-software/#install-python-libraries", 
+            "text": "# if you don't already have pip installed\nsudo apt-get install python-pip\n\npip install rpi.gpio\npip install flask  Install DHT temperature sensor (optional)  # if you don't already have git installed\nsudo apt-get install git\n\nmkdir tmp\ncd tmp\ngit clone https://github.com/adafruit/Adafruit_Python_DHT.git\ncd Adafruit_Python_DHT\nsudo python setup.py install", 
+            "title": "Install python libraries"
+        }, 
+        {
             "location": "/installing-the-software/#uv4l-for-live-video-streaming", 
-            "text": "Install uv4l for live streaming (optional). Follow  this tutorial .", 
+            "text": "Install uv4l for live streaming (optional). Follow  this tutorial .  curl http://www.linux-projects.org/listing/uv4l_repo/lrkey.asc | sudo apt-key add -\n/etc/apt/sources.list\n\n# add the following line to /etc/apt/sources.list\n# start editor with `sudo /etc/apt/sources.list`\ndeb http://www.linux-projects.org/listing/uv4l_repo/raspbian/ jessie main\n\nsudo apt-get update\nsudo apt-get install uv4l uv4l-raspicam\n\n# DO NOT INSTALL `sudo apt-get install uv4l-raspicam-extras`", 
             "title": "uv4l for live video streaming"
         }, 
         {
-            "location": "/installing-the-software/#temperature-sensor", 
-            "text": "Install DHT temperature sensor (optional)  git clone https://github.com/adafruit/Adafruit_Python_DHT.git\ncd Adafruit_Python_DHT\nsudo python setup.py install", 
-            "title": "Temperature sensor"
+            "location": "/installing-the-software/#done-installing", 
+            "text": "At this point you can interact with the homecage either through the command line or the web interface.", 
+            "title": "Done installing"
         }, 
         {
-            "location": "/installing-the-software/#running-the-web-server", 
-            "text": "cd\npython homecage/homecage_app/homecage_app.py", 
-            "title": "Running the web server"
+            "location": "/installing-the-software/#homecage-command-line", 
+            "text": "cd\ncd homecage\n./help  Will give you this. Start typing away...  Status\n    status - check the status\n Video Recording\n    record start\n    record stop\n Video Streaming\n    stream start\n    stream stop\n IR Light\n    light ir on\n    light ir off\n White Light\n    light white on\n    light white off\n Online Manual\n    http://blog.cudmore.io/homecage", 
+            "title": "Homecage command line"
+        }, 
+        {
+            "location": "/installing-the-software/#homecage-webserver", 
+            "text": "Run the homecage web server with  cd\ncd homecage/homecage_app\npython homecage_app.py  Once  homecage_app.py  is running you can open the web server in a browser with the address:  http:[your_ip]:5000  Where [your_ip] is the IP address of your Pi.  To stop the homecage webserver, use keyboard  ctrl+c", 
+            "title": "Homecage webserver"
         }, 
         {
             "location": "/installing-the-software/#configuring-the-web-server", 
-            "text": "The server can be configured by editing the  homecage/homecage_app/config.json  file  {\n     hardware :{\n         irLightPin : 7,\n         whiteLightPin : 8,\n         temperatureSensor : 9\n    },\n     lights :{\n         sunrise : 6,\n         sunset : 18\n    },\n     video :{\n         fps : 30,\n         resolution : [1024,768],\n         fileDuration : 6,\n         captureStill : true,\n         stillInterval : 2\n    },\n     stream : {\n         streamResolution : [1024,768]\n    }\n}", 
+            "text": "The server can be configured by editing the  homecage/homecage_app/config.json  file.  cd\npico homecage/homecage_app/config.json  The default file is:  {\n     hardware :{\n         irLightPin : 7,\n         whiteLightPin : 8,\n         temperatureSensor : 9\n    },\n     lights :{\n         sunrise : 6,\n         sunset : 18\n    },\n     video :{\n         fps : 30,\n         resolution : [1024,768],\n         fileDuration : 6,\n         captureStill : true,\n         stillInterval : 2\n    },\n     stream : {\n         streamResolution : [1024,768]\n    }\n}", 
             "title": "Configuring the web server"
         }, 
         {
