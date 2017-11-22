@@ -14,6 +14,7 @@ pages:
     - Installing the software: installing-the-software.md
     - Wiring the system: wiring-the-system.md
     - Parts list: parts-list.md
+    - Mounting the file server: mounting-the-file-server.md
     - Troubleshooting: troubleshooting.md
     - Development notes: dev-notes.md
 

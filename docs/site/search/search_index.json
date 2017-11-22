@@ -2,7 +2,7 @@
     "docs": [
         {
             "location": "/", 
-            "text": "Home cage surveillance is a system to record video of your animals in their home cage.\n\n\nIt is designed to run on a Raspberry Pi computer using a Raspberry Pi NoIR camera.\n\n\nFeatures\n\n\n\n\nRecord video 24/7\n\n\nAutomaticall controls day-time and night-time lights.\n\n\nLive video streaming to a web browser\n\n\n\n\nInterface options\n\n\n\n\ncommand line\n - A command line interface.\n\n\nweb\n - A point and click web browser interface.\n\n\nREST\n - A rest interface to communicate with a homecage server\n\n\n\n\nInstall\n\n\nThis software is in its early stages. In the future we will provide a \nstable\n release. Please see the \ninstalling the software\n page.", 
+            "text": "Home cage surveillance is a system to record video of your animals in their home cage.\n\n\nIt is designed to run on a Raspberry Pi computer using a Raspberry Pi NoIR camera.\n\n\nFeatures\n\n\n\n\nRecord video 24/7\n\n\nAutomaticall controls day-time and night-time lights.\n\n\nLive video streaming to a web browser\n\n\n\n\nInstall\n\n\nSee the \ninstalling the software\n page.\n\n\nInterface options\n\n\n\n\ncommand line\n - A command line interface.\n\n\nweb\n - A point and click web browser interface.\n\n\nREST\n - A rest interface to communicate with a homecage server", 
             "title": "Getting started"
         }, 
         {
@@ -11,14 +11,14 @@
             "title": "Features"
         }, 
         {
+            "location": "/#install", 
+            "text": "See the  installing the software  page.", 
+            "title": "Install"
+        }, 
+        {
             "location": "/#interface-options", 
             "text": "command line  - A command line interface.  web  - A point and click web browser interface.  REST  - A rest interface to communicate with a homecage server", 
             "title": "Interface options"
-        }, 
-        {
-            "location": "/#install", 
-            "text": "This software is in its early stages. In the future we will provide a  stable  release. Please see the  installing the software  page.", 
-            "title": "Install"
         }, 
         {
             "location": "/images/", 
@@ -47,7 +47,7 @@
         }, 
         {
             "location": "/command-line/", 
-            "text": "1) Log in to the Pi\n\n\nOn a Mac, use the terminal application in /Applications/Utilities/terminal.app\n\n\n# Type\nssh pi@10.16.80.162\n\n# Enter password\n[your_password]\n\n\n\n2) Change into the homecage directory\n\n\nAt the command prompt, type\n\n\ncd /Sites/homecage\n\n\n\n3) Get command help\n\n\nThe commands allow you to start and stop a video stream and video recording. They can also be used to turn the white and IR lights on and off.\n\n\nTo get help, at the command prompt, type \n\n\n./help\n\n\n\nThis returns\n\n\n Status\n    status - check the status\n Video Recording\n    record start\n    record stop\n Video Streaming\n    stream start\n    stream stop\n IR Light\n    light ir on\n    light ir off\n White Light\n    light white on\n    light white off\n\n\n\n4) Position the cages within a good field-of-view\n\n\nStart a video stream and then view the stream in a web browser.\n\n\nstream start\n\n# Returns\nView the stream at:\n   http://10.16.80.162:8080/stream\n\n\n\nIn any browser, go to the address \nhttp://10.16.80.162:8080/stream\n\n\nWhile positioning cages, turn the white and or IR LEDs on and off\n\n\n# Turn the white lights on\nlight white on\n\n# Turn the white lights off\nlight white off\n\n\n\nWhen your happy with position, stop the video stream\n\n\nstream stop\n\n\n\n5) Start continuous video recording\n\n\nrecord start\n\n\n\nThis will save recorded video into individual files, 5 minutes of video per file. This will also control the light cycle, at night (6 PM - 6 AM) the white light is off and the IR light is on. During the day (6 AM - 6 PM), the white light is on and the IR light is off. Both the duration of each video file at the timing of the light cycle can easily be changed.\n\n\n6) Mount the file server to get your video files\n\n\nOn a Mac, use \nFinder -\n Go -\n Connect To Server...\n and log in as follows\n\n\nafp://10.16.80.162\nusername: pi\npassword: [your_password]\n\n\n\nFiles are saved in the \n/video/\n folder. Video files have the .h264 extension. There are also text files (extension .txt) saved, these have a log of temperature and humidity as well as the time the lights were turned on and off.\n\n\n7) Log out of the Pi\n\n\nexit", 
+            "text": "1) Log in to the Pi\n\n\nOn a Mac, use the terminal application in /Applications/Utilities/terminal.app\n\n\n# Type\nssh pi@10.16.80.162\n\n# Enter password\n[your_password]\n\n\n\n2) Change into the homecage directory\n\n\nAt the command prompt, type\n\n\ncd\ncd homecage\n\n\n\n3) Get command help\n\n\nThe commands allow you to start and stop a video stream and video recording. They can also be used to turn the white and IR lights on and off.\n\n\nTo get help, at the command prompt, type \n\n\n./help\n\n\n\nThis returns\n\n\n Status\n    status - check the status\n Video Recording\n    record start\n    record stop\n Video Streaming\n    stream start\n    stream stop\n IR Light\n    light ir on\n    light ir off\n White Light\n    light white on\n    light white off\n Online Manual\n    http://blog.cudmore.io/homecage\n\n\n\n4) Position the cages within a good field-of-view\n\n\nStart a video stream and then view the stream in a web browser.\n\n\nstream start\n\n# Returns\nView the stream at:\n   http://10.16.80.162:8080/stream\n\n\n\nIn any browser, go to the address \nhttp://10.16.80.162:8080/stream\n\n\nWhile positioning cages, turn the white and or IR LEDs on and off\n\n\n# Turn the white lights on\nlight white on\n\n# Turn the white lights off\nlight white off\n\n\n\nWhen your happy with position, stop the video stream\n\n\nstream stop\n\n\n\n5) Start continuous video recording\n\n\nrecord start\n\n\n\nThis will save recorded video into individual files, 5 minutes of video per file. This will also control the light cycle, at night (6 PM - 6 AM) the white light is off and the IR light is on. During the day (6 AM - 6 PM), the white light is on and the IR light is off. Both the duration of each video file at the timing of the light cycle can easily be changed.\n\n\n6) Mount the file server to get your video files\n\n\nOn a Mac, use \nFinder -\n Go -\n Connect To Server...\n and log in as follows\n\n\nafp://10.16.80.162\nusername: pi\npassword: [your_password]\n\n\n\nFiles are saved in the \n/video/\n folder. Video files have the .h264 extension. There are also text files (extension .txt) saved, these have a log of temperature and humidity as well as the time the lights were turned on and off.\n\n\n7) Log out of the Pi\n\n\nexit", 
             "title": "Command line interface"
         }, 
         {
@@ -57,12 +57,12 @@
         }, 
         {
             "location": "/command-line/#2-change-into-the-homecage-directory", 
-            "text": "At the command prompt, type  cd /Sites/homecage", 
+            "text": "At the command prompt, type  cd\ncd homecage", 
             "title": "2) Change into the homecage directory"
         }, 
         {
             "location": "/command-line/#3-get-command-help", 
-            "text": "The commands allow you to start and stop a video stream and video recording. They can also be used to turn the white and IR lights on and off.  To get help, at the command prompt, type   ./help  This returns   Status\n    status - check the status\n Video Recording\n    record start\n    record stop\n Video Streaming\n    stream start\n    stream stop\n IR Light\n    light ir on\n    light ir off\n White Light\n    light white on\n    light white off", 
+            "text": "The commands allow you to start and stop a video stream and video recording. They can also be used to turn the white and IR lights on and off.  To get help, at the command prompt, type   ./help  This returns   Status\n    status - check the status\n Video Recording\n    record start\n    record stop\n Video Streaming\n    stream start\n    stream stop\n IR Light\n    light ir on\n    light ir off\n White Light\n    light white on\n    light white off\n Online Manual\n    http://blog.cudmore.io/homecage", 
             "title": "3) Get command help"
         }, 
         {
@@ -87,33 +87,18 @@
         }, 
         {
             "location": "/web-interface/", 
-            "text": "Running the web server\n\n\nAt a command prompt, type:\n\n\ncd\npython homecage/homecage_app/homecage_app.py\n\n\n\nOnce the web interface is running it can be accessed from any web browser at the address \nhttp://[ip]:5000\n\n\nMinimal\n\n\n\n\nVideo recording\n\n\nVideo streaming\n\n\nUser options", 
+            "text": "Running the web server\n\n\n\n\nAt a command prompt, type:\n\n\ncd\ncd homecage/homecage_app\npython homecage_app.py\n\n\n\n\nOnce \nhomecage_app.py\n is running you can access the web server in a browser with the address:\n\n\nhttp:[your_ip]:5000\n\n\n\nWhere [your_ip] is the IP address of your Pi.\n\n\nTo stop the homecage web server, use keyboard \nctrl+c\n\n\nConfiguring the web server\n\n\nThe server can be configured by editing the \nhomecage/homecage_app/config.json\n file.\n\n\ncd\npico homecage/homecage_app/config.json\n\n\n\nThe default file is:\n\n\n{\n    \nhardware\n:{\n        \nirLightPin\n: 7,\n        \nwhiteLightPin\n: 8,\n        \ntemperatureSensor\n: 9\n    },\n    \nlights\n:{\n        \nsunrise\n: 6,\n        \nsunset\n: 18\n    },\n    \nvideo\n:{\n        \nfps\n: 30,\n        \nresolution\n: [1024,768],\n        \nfileDuration\n: 6,\n        \ncaptureStill\n: true,\n        \nstillInterval\n: 2\n    },\n    \nstream\n: {\n        \nstreamResolution\n: [1024,768]\n    }\n}", 
             "title": "Web interface"
         }, 
         {
             "location": "/web-interface/#running-the-web-server", 
-            "text": "At a command prompt, type:  cd\npython homecage/homecage_app/homecage_app.py  Once the web interface is running it can be accessed from any web browser at the address  http://[ip]:5000", 
+            "text": "At a command prompt, type:  cd\ncd homecage/homecage_app\npython homecage_app.py  Once  homecage_app.py  is running you can access the web server in a browser with the address:  http:[your_ip]:5000  Where [your_ip] is the IP address of your Pi.  To stop the homecage web server, use keyboard  ctrl+c", 
             "title": "Running the web server"
         }, 
         {
-            "location": "/web-interface/#minimal", 
-            "text": "", 
-            "title": "Minimal"
-        }, 
-        {
-            "location": "/web-interface/#video-recording", 
-            "text": "", 
-            "title": "Video recording"
-        }, 
-        {
-            "location": "/web-interface/#video-streaming", 
-            "text": "", 
-            "title": "Video streaming"
-        }, 
-        {
-            "location": "/web-interface/#user-options", 
-            "text": "", 
-            "title": "User options"
+            "location": "/web-interface/#configuring-the-web-server", 
+            "text": "The server can be configured by editing the  homecage/homecage_app/config.json  file.  cd\npico homecage/homecage_app/config.json  The default file is:  {\n     hardware :{\n         irLightPin : 7,\n         whiteLightPin : 8,\n         temperatureSensor : 9\n    },\n     lights :{\n         sunrise : 6,\n         sunset : 18\n    },\n     video :{\n         fps : 30,\n         resolution : [1024,768],\n         fileDuration : 6,\n         captureStill : true,\n         stillInterval : 2\n    },\n     stream : {\n         streamResolution : [1024,768]\n    }\n}", 
+            "title": "Configuring the web server"
         }, 
         {
             "location": "/rest-interface/", 
@@ -152,57 +137,37 @@
         }, 
         {
             "location": "/installing-the-software/", 
-            "text": "Homecage requires the following libraries:\n\n\n\n\nWiring Pi\n - Library that provides a command line interface to the GPIO pins. This should be installed by default.\n\n\nGPIO\n - Python library to control GPIO pins. This should be installed by default.\n\n\nflask\n - A python web server.\n\n\nuv4l\n - Library for live video streaming to a web browser\n\n\nAdafruit_DHT\n - (optional) Python library to read from a DHT temperature and humidity sensor.\n\n\n\n\nInstallation\n\n\nClone the repository\n\n\nThis will make a folder \nhomecage\n in your root directory. You can always return to your root directory with \ncd\n\n\ngit clone https://github.com/cudmore/homecage.git\n\n\n\nInstall python libraries\n\n\n# if you don't already have pip installed\nsudo apt-get install python-pip\n\npip install rpi.gpio\npip install flask\n\n# if you run into errors then try installing\nsudo apt-get install build-essential python-dev python-openssl\n\n\n\nInstall DHT temperature sensor (optional)\n\n\nIf you run into trouble then go to \nthis tutorial\n.\n\n\n# if you don't already have git installed\nsudo apt-get install git\n\nmkdir tmp\ncd tmp\ngit clone https://github.com/adafruit/Adafruit_Python_DHT.git\ncd Adafruit_Python_DHT\nsudo python setup.py install\n\n\n\nuv4l for live video streaming\n\n\nInstall uv4l for live streaming (optional). If you run into trouble, then follow \nthis tutorial\n.\n\n\ncurl http://www.linux-projects.org/listing/uv4l_repo/lrkey.asc | sudo apt-key add -\n/etc/apt/sources.list\n\n# add the following line to /etc/apt/sources.list\n# start editor with `sudo /etc/apt/sources.list`\ndeb http://www.linux-projects.org/listing/uv4l_repo/raspbian/ jessie main\n\nsudo apt-get update\nsudo apt-get install uv4l uv4l-raspicam\n\n# DO NOT INSTALL `sudo apt-get install uv4l-raspicam-extras`\n\n\n\n\nDone installing\n\n\nAt this point you can interact with the homecage either through the command line or the web interface.\n\n\nHomecage command line\n\n\ncd\ncd homecage\n./help\n\n\n\n\nWill give you this. Start typing away...\n\n\nStatus\n    status - check the status\n Video Recording\n    record start\n    record stop\n Video Streaming\n    stream start\n    stream stop\n IR Light\n    light ir on\n    light ir off\n White Light\n    light white on\n    light white off\n Online Manual\n    http://blog.cudmore.io/homecage\n\n\n\n\nHomecage webserver\n\n\nRun the homecage web server with\n\n\ncd\ncd homecage/homecage_app\npython homecage_app.py\n\n\n\n\nOnce \nhomecage_app.py\n is running you can open the web server in a browser with the address:\n\n\nhttp:[your_ip]:5000\n\n\n\nWhere [your_ip] is the IP address of your Pi.\n\n\nTo stop the homecage webserver, use keyboard \nctrl+c\n\n\nConfiguring the web server\n\n\nThe server can be configured by editing the \nhomecage/homecage_app/config.json\n file.\n\n\ncd\npico homecage/homecage_app/config.json\n\n\n\nThe default file is:\n\n\n{\n    \nhardware\n:{\n        \nirLightPin\n: 7,\n        \nwhiteLightPin\n: 8,\n        \ntemperatureSensor\n: 9\n    },\n    \nlights\n:{\n        \nsunrise\n: 6,\n        \nsunset\n: 18\n    },\n    \nvideo\n:{\n        \nfps\n: 30,\n        \nresolution\n: [1024,768],\n        \nfileDuration\n: 6,\n        \ncaptureStill\n: true,\n        \nstillInterval\n: 2\n    },\n    \nstream\n: {\n        \nstreamResolution\n: [1024,768]\n    }\n}\n\n\n\n\nConverting h264 files to mp4\n\n\nThe Raspberry camera saves .h264 video files. This format is very efficient and creates  small files (10 MB per 5 minutes) but does require conversion to mp4 to impose a time.\n\n\nSee this \nblog post", 
+            "text": "Homecage requires the following libraries:\n\n\n\n\nWiring Pi\n - Library that provides a command line interface to the GPIO pins. This should be installed by default.\n\n\nGPIO\n - Python library to control GPIO pins. This should be installed by default.\n\n\nflask\n - A python web server.\n\n\nuv4l\n - Library for live video streaming to a web browser\n\n\nAdafruit_DHT\n - (optional) Python library to read from a DHT temperature and humidity sensor.\n\n\n\n\n1) Clone the repository\n\n\nThis will make a folder \nhomecage\n in your root directory. You can always return to your root directory with \ncd\n\n\ngit clone https://github.com/cudmore/homecage.git\n\n\n\n2) Install python libraries\n\n\n# if you don't already have pip installed\nsudo apt-get install python-pip\n\npip install rpi.gpio\npip install flask\n\n# if you run into errors then try installing\nsudo apt-get install build-essential python-dev python-openssl\n\n\n\n3) Install DHT temperature sensor (optional)\n\n\nIf you run into trouble then go to \nthis tutorial\n.\n\n\n# if you don't already have git installed\nsudo apt-get install git\n\ncd\nmkdir tmp\ncd tmp\ngit clone https://github.com/adafruit/Adafruit_Python_DHT.git\ncd Adafruit_Python_DHT\nsudo python setup.py install\n\n\n\n4) uv4l for live video streaming (optional)\n\n\nInstall uv4l for live streaming (optional). If you run into trouble, then follow \nthis tutorial\n.\n\n\ncurl http://www.linux-projects.org/listing/uv4l_repo/lrkey.asc | sudo apt-key add -\n/etc/apt/sources.list\n\n# add the following line to /etc/apt/sources.list\n# start editor with `sudo /etc/apt/sources.list`\ndeb http://www.linux-projects.org/listing/uv4l_repo/raspbian/ jessie main\n\nsudo apt-get update\nsudo apt-get install uv4l uv4l-raspicam\n\n# DO NOT INSTALL `sudo apt-get install uv4l-raspicam-extras`\n\n\n\n\nDone installing !!!\n\n\nAt this point you can interact with the homecage either through the \nweb\n or from the \ncommand line\n.\n\n\nConverting h264 files to mp4\n\n\nThe Raspberry camera saves .h264 video files. This format is very efficient and creates small files (10 MB per 5 minutes) but does require conversion to mp4 to impose a time.\n\n\nSee \nthis blog post", 
             "title": "Installing the software"
         }, 
         {
-            "location": "/installing-the-software/#installation", 
-            "text": "", 
-            "title": "Installation"
-        }, 
-        {
-            "location": "/installing-the-software/#clone-the-repository", 
+            "location": "/installing-the-software/#1-clone-the-repository", 
             "text": "This will make a folder  homecage  in your root directory. You can always return to your root directory with  cd  git clone https://github.com/cudmore/homecage.git", 
-            "title": "Clone the repository"
+            "title": "1) Clone the repository"
         }, 
         {
-            "location": "/installing-the-software/#install-python-libraries", 
+            "location": "/installing-the-software/#2-install-python-libraries", 
             "text": "# if you don't already have pip installed\nsudo apt-get install python-pip\n\npip install rpi.gpio\npip install flask\n\n# if you run into errors then try installing\nsudo apt-get install build-essential python-dev python-openssl", 
-            "title": "Install python libraries"
+            "title": "2) Install python libraries"
         }, 
         {
-            "location": "/installing-the-software/#install-dht-temperature-sensor-optional", 
-            "text": "If you run into trouble then go to  this tutorial .  # if you don't already have git installed\nsudo apt-get install git\n\nmkdir tmp\ncd tmp\ngit clone https://github.com/adafruit/Adafruit_Python_DHT.git\ncd Adafruit_Python_DHT\nsudo python setup.py install", 
-            "title": "Install DHT temperature sensor (optional)"
+            "location": "/installing-the-software/#3-install-dht-temperature-sensor-optional", 
+            "text": "If you run into trouble then go to  this tutorial .  # if you don't already have git installed\nsudo apt-get install git\n\ncd\nmkdir tmp\ncd tmp\ngit clone https://github.com/adafruit/Adafruit_Python_DHT.git\ncd Adafruit_Python_DHT\nsudo python setup.py install", 
+            "title": "3) Install DHT temperature sensor (optional)"
         }, 
         {
-            "location": "/installing-the-software/#uv4l-for-live-video-streaming", 
+            "location": "/installing-the-software/#4-uv4l-for-live-video-streaming-optional", 
             "text": "Install uv4l for live streaming (optional). If you run into trouble, then follow  this tutorial .  curl http://www.linux-projects.org/listing/uv4l_repo/lrkey.asc | sudo apt-key add -\n/etc/apt/sources.list\n\n# add the following line to /etc/apt/sources.list\n# start editor with `sudo /etc/apt/sources.list`\ndeb http://www.linux-projects.org/listing/uv4l_repo/raspbian/ jessie main\n\nsudo apt-get update\nsudo apt-get install uv4l uv4l-raspicam\n\n# DO NOT INSTALL `sudo apt-get install uv4l-raspicam-extras`", 
-            "title": "uv4l for live video streaming"
+            "title": "4) uv4l for live video streaming (optional)"
         }, 
         {
             "location": "/installing-the-software/#done-installing", 
-            "text": "At this point you can interact with the homecage either through the command line or the web interface.", 
-            "title": "Done installing"
-        }, 
-        {
-            "location": "/installing-the-software/#homecage-command-line", 
-            "text": "cd\ncd homecage\n./help  Will give you this. Start typing away...  Status\n    status - check the status\n Video Recording\n    record start\n    record stop\n Video Streaming\n    stream start\n    stream stop\n IR Light\n    light ir on\n    light ir off\n White Light\n    light white on\n    light white off\n Online Manual\n    http://blog.cudmore.io/homecage", 
-            "title": "Homecage command line"
-        }, 
-        {
-            "location": "/installing-the-software/#homecage-webserver", 
-            "text": "Run the homecage web server with  cd\ncd homecage/homecage_app\npython homecage_app.py  Once  homecage_app.py  is running you can open the web server in a browser with the address:  http:[your_ip]:5000  Where [your_ip] is the IP address of your Pi.  To stop the homecage webserver, use keyboard  ctrl+c", 
-            "title": "Homecage webserver"
-        }, 
-        {
-            "location": "/installing-the-software/#configuring-the-web-server", 
-            "text": "The server can be configured by editing the  homecage/homecage_app/config.json  file.  cd\npico homecage/homecage_app/config.json  The default file is:  {\n     hardware :{\n         irLightPin : 7,\n         whiteLightPin : 8,\n         temperatureSensor : 9\n    },\n     lights :{\n         sunrise : 6,\n         sunset : 18\n    },\n     video :{\n         fps : 30,\n         resolution : [1024,768],\n         fileDuration : 6,\n         captureStill : true,\n         stillInterval : 2\n    },\n     stream : {\n         streamResolution : [1024,768]\n    }\n}", 
-            "title": "Configuring the web server"
+            "text": "At this point you can interact with the homecage either through the  web  or from the  command line .", 
+            "title": "Done installing !!!"
         }, 
         {
             "location": "/installing-the-software/#converting-h264-files-to-mp4", 
-            "text": "The Raspberry camera saves .h264 video files. This format is very efficient and creates  small files (10 MB per 5 minutes) but does require conversion to mp4 to impose a time.  See this  blog post", 
+            "text": "The Raspberry camera saves .h264 video files. This format is very efficient and creates small files (10 MB per 5 minutes) but does require conversion to mp4 to impose a time.  See  this blog post", 
             "title": "Converting h264 files to mp4"
         }, 
         {
@@ -251,39 +216,49 @@
             "title": "Environmental"
         }, 
         {
+            "location": "/mounting-the-file-server/", 
+            "text": "MacOS\n\n\nThis assumes that AFP is installed an running on the Pi\n\n\nafp:\\\\[IP]\n\n\n\nWindows\n\n\nThis assumes SMB is running and installed on the Pi\n\n\nsmb:\\\\[IP]", 
+            "title": "Mounting the file server"
+        }, 
+        {
+            "location": "/mounting-the-file-server/#macos", 
+            "text": "This assumes that AFP is installed an running on the Pi  afp:\\\\[IP]", 
+            "title": "MacOS"
+        }, 
+        {
+            "location": "/mounting-the-file-server/#windows", 
+            "text": "This assumes SMB is running and installed on the Pi  smb:\\\\[IP]", 
+            "title": "Windows"
+        }, 
+        {
             "location": "/troubleshooting/", 
             "text": "No trouble yet", 
             "title": "Troubleshooting"
         }, 
         {
             "location": "/dev-notes/", 
-            "text": "mkDocs\n\n\nServe locally\n\n\nmkdocs serve\n\n\n\nPush to github\n\n\ncd homecage/docs\nmkdocs gh-deploy --clean\n\n\n\nuv4l\n\n\n20171120 - Problem was that if streaming was on and we tried to stop it while there was still an opened browser window we would get an orphaned \ndefunct\n process that can't actually be kill(ed). This was mucking up any future interaciton as \nstream\n, \nrecord\n, and \nstatus\n thought there was still a uv4l process.\n\n\nFixing this by using \nuv4l-raspicam-extras\n\n\nsudo apt-get install uv4l-raspicam-extras\n\n\n\nWe now start/stop the stream with\n\n\nsudo service uv4l_raspicam start\nsudo service uv4l_raspicam stop\n\n\n\nWhen we start/stop like this we are now using a config file \n/etc/uv4l/uv4l-raspicam.conf\n\n\nsudo pico /etc/uv4l/uv4l-raspicam.conf\n\n\n\nAnd need to knock down the default stream resolution so we get the full field-of-view. Do this by uncommenting and specifying width and height in \n/etc/uv4l/uv4l-raspicam.conf\n.\n\n\n##################################\n# raspicam driver options\n##################################\n\nencoding = mjpeg\nwidth = 640\nheight = 480\nframerate = 30\n#custom-sensor-config = 2\n\n\n\n\nSent this to uv4l people\n\n\nHi there, great product and the best streaming I have ever seen.\n\nI am running uv4l on a Raspberry Pi (Jessie) and it is working very well.\nOne problem is if I kill the stream with `sudo pkill uv4l` while there is\na browser window open (that is viewing the stream) I end up with a \ndefunct\n\nuv4l process that I can't seem to kill?\n\nCan you suggest a server option I could use to stop this behavior?\nI want to `sudo pkill uv4l` from the pi while some remote user still\nhas a stream window open in the browser? I've looked through the server\noptions and don't really know what I am looking for?\n\nThanks again for uv4l\n\np.s. Can you suggest an online forum for such questions?\n\n\n\n\nAnswer was to kill child processes first. Get child processes of PID with `pstree -p PID'\n\n\nWhen browser window is streaming\n\n\nuv4l(2345)\u2500\u252c\u2500{HCEC Notify}(2351)\n           \u251c\u2500{HDispmanx Notif}(2349)\n           \u251c\u2500{HTV Notify}(2350)\n           \u251c\u2500{VCHIQ completio}(2348)\n           \u251c\u2500{uv4l}(2346)\n           \u251c\u2500{uv4l}(2347)\n           \u251c\u2500{uv4l}(2360)\n           \u251c\u2500{uv4l}(2361)\n           \u251c\u2500{uv4l}(2362)\n           \u251c\u2500{uv4l}(2385)\n           \u251c\u2500{uv4l}(2386)\n           \u251c\u2500{uv4l}(2387)\n           \u251c\u2500{uv4l}(2389)\n           \u251c\u2500{uv4l}(2393)\n           \u251c\u2500{uv4l}(2394)\n           \u251c\u2500{vc.ril.camera}(2390)\n           \u251c\u2500{vc.ril.image_en}(2392)\n           \u2514\u2500{vc.ril.video_re}(2391)\n\n\n\n\nWhen it is not streaming\n\n\nuv4l(2345)\u2500\u252c\u2500{HCEC Notify}(2351)\n           \u251c\u2500{HDispmanx Notif}(2349)\n           \u251c\u2500{HTV Notify}(2350)\n           \u251c\u2500{VCHIQ completio}(2348)\n           \u251c\u2500{uv4l}(2346)\n           \u251c\u2500{uv4l}(2347)\n           \u251c\u2500{uv4l}(2360)\n           \u251c\u2500{uv4l}(2361)\n           \u251c\u2500{uv4l}(2362)\n           \u251c\u2500{uv4l}(2385)\n           \u251c\u2500{uv4l}(2386)\n           \u2514\u2500{uv4l}(2387)\n\n\n\n\nProgress on killing while browser window is open\n\n\n# get uv4l PID\nPID = pgrep uv4l\n# kill all processes in the same group, this includes children\nsudo kill -- -PID\n# kills original and does NOT leave a `\ndefunct\n` uv4l !\n# once we do this we need to use `restart`\nsudo service uv4l_raspicam restart\n# uninstall the raspberry-util and revert to original command line calls\n# use this technique to kill\n\n\n\n\nremove uv4l-raspicam-extras\n\n\nsudo apt-get remove uv4l-raspicam-extras\n\n\n\nToDo\n\n\n20171111\n\n\n\n\nfinish index.html interface, mostly adding interface to change self.config\n\n\nsplit self.config (from config.json) and self.status (runtime variables)\n\n\nadd in dht sensor code\n\n\nadd in white and ir sensor code", 
+            "text": "mkDocs\n\n\nWe use \nmkdocs\n to generate the documentation website from markdown files.\n\n\nInstall\n\n\npip install mkdocs\n\n# we are using the material theme\npip install mkdocs-material\n\n\n\nServe locally\n\n\ncd\ncd homecage/docs\nmkdocs serve\n\n\n\nPush to github\n\n\ncd\ncd homecage/docs\nmkdocs gh-deploy --clean\n\n\n\nuv4l\n\n\nuv4l is what we use to stream live video.\n\n\n20171120 - Problem was that if streaming was on and we tried to stop it while there was still an opened browser window we would get an orphaned \ndefunct\n process that can't actually be kill(ed). This was mucking up any future interaciton as \nstream\n, \nrecord\n, and \nstatus\n thought there was still a uv4l process.\n\n\nSent this to uv4l people\n\n\nHi there, great product and the best streaming I have ever seen.\n\nI am running uv4l on a Raspberry Pi (Jessie) and it is working very well.\nOne problem is if I kill the stream with `sudo pkill uv4l` while there is\na browser window open (that is viewing the stream) I end up with a \ndefunct\n\nuv4l process that I can't seem to kill?\n\nCan you suggest a server option I could use to stop this behavior?\nI want to `sudo pkill uv4l` from the pi while some remote user still\nhas a stream window open in the browser? I've looked through the server\noptions and don't really know what I am looking for?\n\nThanks again for uv4l\n\np.s. Can you suggest an online forum for such questions?\n\n\n\n\nAnswer was to kill child processes first. Get child processes of PID with `pstree -p PID'\n\n\nWhich eventually led to this\n\n\n# get uv4l PID\nPID = pgrep uv4l\n# kill all processes in the same group, this includes children\n# kills original and does NOT leave a `\ndefunct\n` uv4l !\nsudo kill -- -PID\n\n\n\n\nRemove uv4l-raspicam-extras\n\n\nsudo apt-get remove uv4l-raspicam-extras\n\n\n\nToDo\n\n\n20171111\n\n\n\n\nfinish index.html interface, mostly adding interface to change self.config\n\n\nsplit self.config (from config.json) and self.status (runtime variables)\n\n\nadd in dht sensor code\n\n\nadd in white and ir sensor code", 
             "title": "Development notes"
         }, 
         {
             "location": "/dev-notes/#mkdocs", 
-            "text": "Serve locally  mkdocs serve  Push to github  cd homecage/docs\nmkdocs gh-deploy --clean", 
+            "text": "We use  mkdocs  to generate the documentation website from markdown files.  Install  pip install mkdocs\n\n# we are using the material theme\npip install mkdocs-material  Serve locally  cd\ncd homecage/docs\nmkdocs serve  Push to github  cd\ncd homecage/docs\nmkdocs gh-deploy --clean", 
             "title": "mkDocs"
         }, 
         {
             "location": "/dev-notes/#uv4l", 
-            "text": "20171120 - Problem was that if streaming was on and we tried to stop it while there was still an opened browser window we would get an orphaned  defunct  process that can't actually be kill(ed). This was mucking up any future interaciton as  stream ,  record , and  status  thought there was still a uv4l process.  Fixing this by using  uv4l-raspicam-extras  sudo apt-get install uv4l-raspicam-extras  We now start/stop the stream with  sudo service uv4l_raspicam start\nsudo service uv4l_raspicam stop  When we start/stop like this we are now using a config file  /etc/uv4l/uv4l-raspicam.conf  sudo pico /etc/uv4l/uv4l-raspicam.conf  And need to knock down the default stream resolution so we get the full field-of-view. Do this by uncommenting and specifying width and height in  /etc/uv4l/uv4l-raspicam.conf .  ##################################\n# raspicam driver options\n##################################\n\nencoding = mjpeg\nwidth = 640\nheight = 480\nframerate = 30\n#custom-sensor-config = 2", 
+            "text": "uv4l is what we use to stream live video.  20171120 - Problem was that if streaming was on and we tried to stop it while there was still an opened browser window we would get an orphaned  defunct  process that can't actually be kill(ed). This was mucking up any future interaciton as  stream ,  record , and  status  thought there was still a uv4l process.", 
             "title": "uv4l"
         }, 
         {
             "location": "/dev-notes/#sent-this-to-uv4l-people", 
-            "text": "Hi there, great product and the best streaming I have ever seen.\n\nI am running uv4l on a Raspberry Pi (Jessie) and it is working very well.\nOne problem is if I kill the stream with `sudo pkill uv4l` while there is\na browser window open (that is viewing the stream) I end up with a  defunct \nuv4l process that I can't seem to kill?\n\nCan you suggest a server option I could use to stop this behavior?\nI want to `sudo pkill uv4l` from the pi while some remote user still\nhas a stream window open in the browser? I've looked through the server\noptions and don't really know what I am looking for?\n\nThanks again for uv4l\n\np.s. Can you suggest an online forum for such questions?  Answer was to kill child processes first. Get child processes of PID with `pstree -p PID'  When browser window is streaming  uv4l(2345)\u2500\u252c\u2500{HCEC Notify}(2351)\n           \u251c\u2500{HDispmanx Notif}(2349)\n           \u251c\u2500{HTV Notify}(2350)\n           \u251c\u2500{VCHIQ completio}(2348)\n           \u251c\u2500{uv4l}(2346)\n           \u251c\u2500{uv4l}(2347)\n           \u251c\u2500{uv4l}(2360)\n           \u251c\u2500{uv4l}(2361)\n           \u251c\u2500{uv4l}(2362)\n           \u251c\u2500{uv4l}(2385)\n           \u251c\u2500{uv4l}(2386)\n           \u251c\u2500{uv4l}(2387)\n           \u251c\u2500{uv4l}(2389)\n           \u251c\u2500{uv4l}(2393)\n           \u251c\u2500{uv4l}(2394)\n           \u251c\u2500{vc.ril.camera}(2390)\n           \u251c\u2500{vc.ril.image_en}(2392)\n           \u2514\u2500{vc.ril.video_re}(2391)  When it is not streaming  uv4l(2345)\u2500\u252c\u2500{HCEC Notify}(2351)\n           \u251c\u2500{HDispmanx Notif}(2349)\n           \u251c\u2500{HTV Notify}(2350)\n           \u251c\u2500{VCHIQ completio}(2348)\n           \u251c\u2500{uv4l}(2346)\n           \u251c\u2500{uv4l}(2347)\n           \u251c\u2500{uv4l}(2360)\n           \u251c\u2500{uv4l}(2361)\n           \u251c\u2500{uv4l}(2362)\n           \u251c\u2500{uv4l}(2385)\n           \u251c\u2500{uv4l}(2386)\n           \u2514\u2500{uv4l}(2387)", 
+            "text": "Hi there, great product and the best streaming I have ever seen.\n\nI am running uv4l on a Raspberry Pi (Jessie) and it is working very well.\nOne problem is if I kill the stream with `sudo pkill uv4l` while there is\na browser window open (that is viewing the stream) I end up with a  defunct \nuv4l process that I can't seem to kill?\n\nCan you suggest a server option I could use to stop this behavior?\nI want to `sudo pkill uv4l` from the pi while some remote user still\nhas a stream window open in the browser? I've looked through the server\noptions and don't really know what I am looking for?\n\nThanks again for uv4l\n\np.s. Can you suggest an online forum for such questions?  Answer was to kill child processes first. Get child processes of PID with `pstree -p PID'  Which eventually led to this  # get uv4l PID\nPID = pgrep uv4l\n# kill all processes in the same group, this includes children\n# kills original and does NOT leave a ` defunct ` uv4l !\nsudo kill -- -PID", 
             "title": "Sent this to uv4l people"
-        }, 
-        {
-            "location": "/dev-notes/#progress-on-killing-while-browser-window-is-open", 
-            "text": "# get uv4l PID\nPID = pgrep uv4l\n# kill all processes in the same group, this includes children\nsudo kill -- -PID\n# kills original and does NOT leave a ` defunct ` uv4l !\n# once we do this we need to use `restart`\nsudo service uv4l_raspicam restart\n# uninstall the raspberry-util and revert to original command line calls\n# use this technique to kill", 
-            "title": "Progress on killing while browser window is open"
         }, 
         {
             "location": "/dev-notes/#remove-uv4l-raspicam-extras", 
             "text": "sudo apt-get remove uv4l-raspicam-extras", 
-            "title": "remove uv4l-raspicam-extras"
+            "title": "Remove uv4l-raspicam-extras"
         }, 
         {
             "location": "/dev-notes/#todo", 
