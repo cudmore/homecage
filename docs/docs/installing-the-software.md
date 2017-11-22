@@ -21,8 +21,13 @@ This will make a folder `homecage` in your root directory. You can always return
 	
 	pip install rpi.gpio
 	pip install flask
-	
-Install DHT temperature sensor (optional)
+
+	# if you run into errors then try installing
+	sudo apt-get install build-essential python-dev python-openssl
+		
+### Install DHT temperature sensor (optional)
+
+If you run into trouble then go to [this tutorial][7].
 
     # if you don't already have git installed
     sudo apt-get install git
@@ -35,7 +40,7 @@ Install DHT temperature sensor (optional)
 
 ### uv4l for live video streaming
 
-Install uv4l for live streaming (optional). Follow [this tutorial][5].
+Install uv4l for live streaming (optional). If you run into trouble, then follow [this tutorial][5].
 
 ```
 curl http://www.linux-projects.org/listing/uv4l_repo/lrkey.asc | sudo apt-key add -
@@ -147,3 +152,4 @@ See this [blog post][6]
 [4]: https://github.com/adafruit/Adafruit_Python_DHT
 [5]: https://www.linux-projects.org/uv4l/installation/
 [6]: http://blog.cudmore.io/post/2017/11/01/libav-for-ffmpeg/
+[7]: https://learn.adafruit.com/dht-humidity-sensing-on-raspberry-pi-with-gdocs-logging/software-install-updated
