@@ -8,50 +8,108 @@ Homecage requires the following libraries:
 
 ## Installation
 
-Clone the repository
+### Clone the repository
+
+This will make a folder `homecage` in your root directory. You can always return to your root directory with `cd`
 
     git clone https://github.com/cudmore/homecage.git
 
-Make a virtual environment named `myenv` in `homecage/`
+### Install python libraries
 
-    cd homecage
-    virtualenv myenv
-       
-Activate the environment
-
-	source myenv/bin/deactivate
-	 
-Install python libraries
-
+	# if you don't already have pip installed
+	sudo apt-get install python-pip
+	
 	pip install rpi.gpio
 	pip install flask
 	
-To return to the normal command prompt
-
-    deactivate
-    
-### uv4l for live video streaming
-
-Install uv4l for live streaming (optional). Follow [this tutorial][5].
-
-### Temperature sensor
-
 Install DHT temperature sensor (optional)
 
+    # if you don't already have git installed
+    sudo apt-get install git
+    
+    mkdir tmp
+    cd tmp
     git clone https://github.com/adafruit/Adafruit_Python_DHT.git
     cd Adafruit_Python_DHT
     sudo python setup.py install
 
-## Running the web server
+### uv4l for live video streaming
+
+Install uv4l for live streaming (optional). Follow [this tutorial][5].
+
+```
+curl http://www.linux-projects.org/listing/uv4l_repo/lrkey.asc | sudo apt-key add -
+/etc/apt/sources.list
+
+# add the following line to /etc/apt/sources.list
+# start editor with `sudo /etc/apt/sources.list`
+deb http://www.linux-projects.org/listing/uv4l_repo/raspbian/ jessie main
+
+sudo apt-get update
+sudo apt-get install uv4l uv4l-raspicam
+
+# DO NOT INSTALL `sudo apt-get install uv4l-raspicam-extras`
+```
+
+# Done installing
+
+At this point you can interact with the homecage either through the command line or the web interface.
+
+## Homecage command line
 
 ```
 cd
-python homecage/homecage_app/homecage_app.py
+cd homecage
+./help
 ```
+
+Will give you this. Start typing away...
+
+```
+Status
+    status - check the status
+ Video Recording
+    record start
+    record stop
+ Video Streaming
+    stream start
+    stream stop
+ IR Light
+    light ir on
+    light ir off
+ White Light
+    light white on
+    light white off
+ Online Manual
+    http://blog.cudmore.io/homecage
+```
+
+## Homecage webserver
+
+Run the homecage web server with
+
+```
+cd
+cd homecage/homecage_app
+python homecage_app.py
+```
+
+Once `homecage_app.py` is running you can open the web server in a browser with the address:
+
+    http:[your_ip]:5000
+    
+Where [your_ip] is the IP address of your Pi.
+
+To stop the homecage webserver, use keyboard `ctrl+c`
 
 ## Configuring the web server
 
-The server can be configured by editing the `homecage/homecage_app/config.json` file
+The server can be configured by editing the `homecage/homecage_app/config.json` file.
+
+    cd
+    pico homecage/homecage_app/config.json 
+
+The default file is:
 
 ```json
 {
