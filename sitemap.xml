@@ -67,6 +67,14 @@
 
     
     <url>
+     <loc>/mounting-the-file-server/</loc>
+     <lastmod>2017-11-22</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    
+
+    
+    <url>
      <loc>/troubleshooting/</loc>
      <lastmod>2017-11-22</lastmod>
      <changefreq>daily</changefreq>

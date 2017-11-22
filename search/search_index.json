@@ -216,6 +216,21 @@
             "title": "Environmental"
         }, 
         {
+            "location": "/mounting-the-file-server/", 
+            "text": "MacOS\n\n\nThis assumes that AFP is installed an running on the Pi\n\n\nafp:\\\\[IP]\n\n\n\nWindows\n\n\nThis assumes SMB is running and installed on the Pi\n\n\nsmb:\\\\[IP]", 
+            "title": "Mounting the file server"
+        }, 
+        {
+            "location": "/mounting-the-file-server/#macos", 
+            "text": "This assumes that AFP is installed an running on the Pi  afp:\\\\[IP]", 
+            "title": "MacOS"
+        }, 
+        {
+            "location": "/mounting-the-file-server/#windows", 
+            "text": "This assumes SMB is running and installed on the Pi  smb:\\\\[IP]", 
+            "title": "Windows"
+        }, 
+        {
             "location": "/troubleshooting/", 
             "text": "No trouble yet", 
             "title": "Troubleshooting"
