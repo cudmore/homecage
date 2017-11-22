@@ -104,6 +104,7 @@ uv4l(2345)─┬─{HCEC Notify}(2351)
 
 #### Progress on killing while browser window is open
 
+```
 # get uv4l PID
 PID = pgrep uv4l
 # kill all processes in the same group, this includes children
@@ -113,6 +114,7 @@ sudo kill -- -PID
 sudo service uv4l_raspicam restart
 # uninstall the raspberry-util and revert to original command line calls
 # use this technique to kill
+```
 
 #### remove uv4l-raspicam-extras
 

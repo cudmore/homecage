@@ -21,6 +21,31 @@
             "title": "Install"
         }, 
         {
+            "location": "/images/", 
+            "text": "These are images of the homecage at various developmental stages\n\n\nv0.0\n\n\nOverview\n\n\n\n\n\n\nLights and camera\n\n\n\n\n\n\nRats nest", 
+            "title": "Images"
+        }, 
+        {
+            "location": "/images/#v00", 
+            "text": "", 
+            "title": "v0.0"
+        }, 
+        {
+            "location": "/images/#overview", 
+            "text": "", 
+            "title": "Overview"
+        }, 
+        {
+            "location": "/images/#lights-and-camera", 
+            "text": "", 
+            "title": "Lights and camera"
+        }, 
+        {
+            "location": "/images/#rats-nest", 
+            "text": "", 
+            "title": "Rats nest"
+        }, 
+        {
             "location": "/command-line/", 
             "text": "1) Log in to the Pi\n\n\nOn a Mac, use the terminal application in /Applications/Utilities/terminal.app\n\n\n# Type\nssh pi@10.16.80.162\n\n# Enter password\n[your_password]\n\n\n\n2) Change into the homecage directory\n\n\nAt the command prompt, type\n\n\ncd /Sites/homecage\n\n\n\n3) Get command help\n\n\nThe commands allow you to start and stop a video stream and video recording. They can also be used to turn the white and IR lights on and off.\n\n\nTo get help, at the command prompt, type \n\n\n./help\n\n\n\nThis returns\n\n\n Status\n    status - check the status\n Video Recording\n    record start\n    record stop\n Video Streaming\n    stream start\n    stream stop\n IR Light\n    light ir on\n    light ir off\n White Light\n    light white on\n    light white off\n\n\n\n4) Position the cages within a good field-of-view\n\n\nStart a video stream and then view the stream in a web browser.\n\n\nstream start\n\n# Returns\nView the stream at:\n   http://10.16.80.162:8080/stream\n\n\n\nIn any browser, go to the address \nhttp://10.16.80.162:8080/stream\n\n\nWhile positioning cages, turn the white and or IR LEDs on and off\n\n\n# Turn the white lights on\nlight white on\n\n# Turn the white lights off\nlight white off\n\n\n\nWhen your happy with position, stop the video stream\n\n\nstream stop\n\n\n\n5) Start continuous video recording\n\n\nrecord start\n\n\n\nThis will save recorded video into individual files, 5 minutes of video per file. This will also control the light cycle, at night (6 PM - 6 AM) the white light is off and the IR light is on. During the day (6 AM - 6 PM), the white light is on and the IR light is off. Both the duration of each video file at the timing of the light cycle can easily be changed.\n\n\n6) Mount the file server to get your video files\n\n\nOn a Mac, use \nFinder -\n Go -\n Connect To Server...\n and log in as follows\n\n\nafp://10.16.80.162\nusername: pi\npassword: [your_password]\n\n\n\nFiles are saved in the \n/video/\n folder. Video files have the .h264 extension. There are also text files (extension .txt) saved, these have a log of temperature and humidity as well as the time the lights were turned on and off.\n\n\n7) Log out of the Pi\n\n\nexit", 
             "title": "Command line interface"
@@ -62,8 +87,13 @@
         }, 
         {
             "location": "/web-interface/", 
-            "text": "Minimal\n\n\n\n\nVideo recording\n\n\nVideo streaming\n\n\nUser options", 
+            "text": "Running the web server\n\n\nAt a command prompt, type:\n\n\ncd\npython homecage/homecage_app/homecage_app.py\n\n\n\nOnce the web interface is running it can be accessed from any web browser at the address \nhttp://[ip]:5000\n\n\nMinimal\n\n\n\n\nVideo recording\n\n\nVideo streaming\n\n\nUser options", 
             "title": "Web interface"
+        }, 
+        {
+            "location": "/web-interface/#running-the-web-server", 
+            "text": "At a command prompt, type:  cd\npython homecage/homecage_app/homecage_app.py  Once the web interface is running it can be accessed from any web browser at the address  http://[ip]:5000", 
+            "title": "Running the web server"
         }, 
         {
             "location": "/web-interface/#minimal", 
@@ -207,13 +237,33 @@
         }, 
         {
             "location": "/dev-notes/", 
-            "text": "mkDocs\n\n\nServe locally\n\n\nmkdocs serve\n\n\n\nPush to github\n\n\ncd homecage/docs\nmkdocs gh-deploy --clean\n\n\n\nToDo\n\n\n20171111\n\n\n\n\nfinish index.html interface, mostly adding interface to change self.config\n\n\nsplit self.config (from config.json) and self.status (runtime variables)\n\n\nadd in dht sensor code\n\n\nadd in white and ir sensor code", 
+            "text": "mkDocs\n\n\nServe locally\n\n\nmkdocs serve\n\n\n\nPush to github\n\n\ncd homecage/docs\nmkdocs gh-deploy --clean\n\n\n\nuv4l\n\n\n20171120 - Problem was that if streaming was on and we tried to stop it while there was still an opened browser window we would get an orphaned \ndefunct\n process that can't actually be kill(ed). This was mucking up any future interaciton as \nstream\n, \nrecord\n, and \nstatus\n thought there was still a uv4l process.\n\n\nFixing this by using \nuv4l-raspicam-extras\n\n\nsudo apt-get install uv4l-raspicam-extras\n\n\n\nWe now start/stop the stream with\n\n\nsudo service uv4l_raspicam start\nsudo service uv4l_raspicam stop\n\n\n\nWhen we start/stop like this we are now using a config file \n/etc/uv4l/uv4l-raspicam.conf\n\n\nsudo pico /etc/uv4l/uv4l-raspicam.conf\n\n\n\nAnd need to knock down the default stream resolution so we get the full field-of-view. Do this by uncommenting and specifying width and height in \n/etc/uv4l/uv4l-raspicam.conf\n.\n\n\n##################################\n# raspicam driver options\n##################################\n\nencoding = mjpeg\nwidth = 640\nheight = 480\nframerate = 30\n#custom-sensor-config = 2\n\n\n\n\nSent this to uv4l people\n\n\nHi there, great product and the best streaming I have ever seen.\n\nI am running uv4l on a Raspberry Pi (Jessie) and it is working very well.\nOne problem is if I kill the stream with `sudo pkill uv4l` while there is\na browser window open (that is viewing the stream) I end up with a \ndefunct\n\nuv4l process that I can't seem to kill?\n\nCan you suggest a server option I could use to stop this behavior?\nI want to `sudo pkill uv4l` from the pi while some remote user still\nhas a stream window open in the browser? I've looked through the server\noptions and don't really know what I am looking for?\n\nThanks again for uv4l\n\np.s. Can you suggest an online forum for such questions?\n\n\n\n\nAnswer was to kill child processes first. Get child processes of PID with `pstree -p PID'\n\n\nWhen browser window is streaming\n\n\nuv4l(2345)\u2500\u252c\u2500{HCEC Notify}(2351)\n           \u251c\u2500{HDispmanx Notif}(2349)\n           \u251c\u2500{HTV Notify}(2350)\n           \u251c\u2500{VCHIQ completio}(2348)\n           \u251c\u2500{uv4l}(2346)\n           \u251c\u2500{uv4l}(2347)\n           \u251c\u2500{uv4l}(2360)\n           \u251c\u2500{uv4l}(2361)\n           \u251c\u2500{uv4l}(2362)\n           \u251c\u2500{uv4l}(2385)\n           \u251c\u2500{uv4l}(2386)\n           \u251c\u2500{uv4l}(2387)\n           \u251c\u2500{uv4l}(2389)\n           \u251c\u2500{uv4l}(2393)\n           \u251c\u2500{uv4l}(2394)\n           \u251c\u2500{vc.ril.camera}(2390)\n           \u251c\u2500{vc.ril.image_en}(2392)\n           \u2514\u2500{vc.ril.video_re}(2391)\n\n\n\n\nWhen it is not streaming\n\n\nuv4l(2345)\u2500\u252c\u2500{HCEC Notify}(2351)\n           \u251c\u2500{HDispmanx Notif}(2349)\n           \u251c\u2500{HTV Notify}(2350)\n           \u251c\u2500{VCHIQ completio}(2348)\n           \u251c\u2500{uv4l}(2346)\n           \u251c\u2500{uv4l}(2347)\n           \u251c\u2500{uv4l}(2360)\n           \u251c\u2500{uv4l}(2361)\n           \u251c\u2500{uv4l}(2362)\n           \u251c\u2500{uv4l}(2385)\n           \u251c\u2500{uv4l}(2386)\n           \u2514\u2500{uv4l}(2387)\n\n\n\n\nProgress on killing while browser window is open\n\n\n# get uv4l PID\nPID = pgrep uv4l\n# kill all processes in the same group, this includes children\nsudo kill -- -PID\n# kills original and does NOT leave a `\ndefunct\n` uv4l !\n# once we do this we need to use `restart`\nsudo service uv4l_raspicam restart\n# uninstall the raspberry-util and revert to original command line calls\n# use this technique to kill\n\n\n\n\nremove uv4l-raspicam-extras\n\n\nsudo apt-get remove uv4l-raspicam-extras\n\n\n\nToDo\n\n\n20171111\n\n\n\n\nfinish index.html interface, mostly adding interface to change self.config\n\n\nsplit self.config (from config.json) and self.status (runtime variables)\n\n\nadd in dht sensor code\n\n\nadd in white and ir sensor code", 
             "title": "Development notes"
         }, 
         {
             "location": "/dev-notes/#mkdocs", 
             "text": "Serve locally  mkdocs serve  Push to github  cd homecage/docs\nmkdocs gh-deploy --clean", 
             "title": "mkDocs"
+        }, 
+        {
+            "location": "/dev-notes/#uv4l", 
+            "text": "20171120 - Problem was that if streaming was on and we tried to stop it while there was still an opened browser window we would get an orphaned  defunct  process that can't actually be kill(ed). This was mucking up any future interaciton as  stream ,  record , and  status  thought there was still a uv4l process.  Fixing this by using  uv4l-raspicam-extras  sudo apt-get install uv4l-raspicam-extras  We now start/stop the stream with  sudo service uv4l_raspicam start\nsudo service uv4l_raspicam stop  When we start/stop like this we are now using a config file  /etc/uv4l/uv4l-raspicam.conf  sudo pico /etc/uv4l/uv4l-raspicam.conf  And need to knock down the default stream resolution so we get the full field-of-view. Do this by uncommenting and specifying width and height in  /etc/uv4l/uv4l-raspicam.conf .  ##################################\n# raspicam driver options\n##################################\n\nencoding = mjpeg\nwidth = 640\nheight = 480\nframerate = 30\n#custom-sensor-config = 2", 
+            "title": "uv4l"
+        }, 
+        {
+            "location": "/dev-notes/#sent-this-to-uv4l-people", 
+            "text": "Hi there, great product and the best streaming I have ever seen.\n\nI am running uv4l on a Raspberry Pi (Jessie) and it is working very well.\nOne problem is if I kill the stream with `sudo pkill uv4l` while there is\na browser window open (that is viewing the stream) I end up with a  defunct \nuv4l process that I can't seem to kill?\n\nCan you suggest a server option I could use to stop this behavior?\nI want to `sudo pkill uv4l` from the pi while some remote user still\nhas a stream window open in the browser? I've looked through the server\noptions and don't really know what I am looking for?\n\nThanks again for uv4l\n\np.s. Can you suggest an online forum for such questions?  Answer was to kill child processes first. Get child processes of PID with `pstree -p PID'  When browser window is streaming  uv4l(2345)\u2500\u252c\u2500{HCEC Notify}(2351)\n           \u251c\u2500{HDispmanx Notif}(2349)\n           \u251c\u2500{HTV Notify}(2350)\n           \u251c\u2500{VCHIQ completio}(2348)\n           \u251c\u2500{uv4l}(2346)\n           \u251c\u2500{uv4l}(2347)\n           \u251c\u2500{uv4l}(2360)\n           \u251c\u2500{uv4l}(2361)\n           \u251c\u2500{uv4l}(2362)\n           \u251c\u2500{uv4l}(2385)\n           \u251c\u2500{uv4l}(2386)\n           \u251c\u2500{uv4l}(2387)\n           \u251c\u2500{uv4l}(2389)\n           \u251c\u2500{uv4l}(2393)\n           \u251c\u2500{uv4l}(2394)\n           \u251c\u2500{vc.ril.camera}(2390)\n           \u251c\u2500{vc.ril.image_en}(2392)\n           \u2514\u2500{vc.ril.video_re}(2391)  When it is not streaming  uv4l(2345)\u2500\u252c\u2500{HCEC Notify}(2351)\n           \u251c\u2500{HDispmanx Notif}(2349)\n           \u251c\u2500{HTV Notify}(2350)\n           \u251c\u2500{VCHIQ completio}(2348)\n           \u251c\u2500{uv4l}(2346)\n           \u251c\u2500{uv4l}(2347)\n           \u251c\u2500{uv4l}(2360)\n           \u251c\u2500{uv4l}(2361)\n           \u251c\u2500{uv4l}(2362)\n           \u251c\u2500{uv4l}(2385)\n           \u251c\u2500{uv4l}(2386)\n           \u2514\u2500{uv4l}(2387)", 
+            "title": "Sent this to uv4l people"
+        }, 
+        {
+            "location": "/dev-notes/#progress-on-killing-while-browser-window-is-open", 
+            "text": "# get uv4l PID\nPID = pgrep uv4l\n# kill all processes in the same group, this includes children\nsudo kill -- -PID\n# kills original and does NOT leave a ` defunct ` uv4l !\n# once we do this we need to use `restart`\nsudo service uv4l_raspicam restart\n# uninstall the raspberry-util and revert to original command line calls\n# use this technique to kill", 
+            "title": "Progress on killing while browser window is open"
+        }, 
+        {
+            "location": "/dev-notes/#remove-uv4l-raspicam-extras", 
+            "text": "sudo apt-get remove uv4l-raspicam-extras", 
+            "title": "remove uv4l-raspicam-extras"
         }, 
         {
             "location": "/dev-notes/#todo", 

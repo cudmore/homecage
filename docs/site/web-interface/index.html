@@ -28,7 +28,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-0.17.1, mkdocs-material-2.0.4">
+      <meta name="generator" content="mkdocs-0.17.2, mkdocs-material-2.1.1">
     
     
       
@@ -36,11 +36,11 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/application-709eec9410.css">
+      <link rel="stylesheet" href="../assets/stylesheets/application.1411ec6b.css">
       
     
     
-      <script src="../assets/javascripts/modernizr-e826f8942a.js"></script>
+      <script src="../assets/javascripts/modernizr.f383bccf.js"></script>
     
     
       
@@ -81,14 +81,18 @@
         <label class="md-icon md-icon--menu md-header-nav__button" for="drawer"></label>
       </div>
       <div class="md-flex__cell md-flex__cell--stretch">
-        <span class="md-flex__ellipsis md-header-nav__title">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
           
             
-              
+              <span class="md-header-nav__topic">
+                Home cage surveillance
+              </span>
+              <span class="md-header-nav__topic">
+                Web interface
+              </span>
             
-            Web interface
           
-        </span>
+        </div>
       </div>
       <div class="md-flex__cell md-flex__cell--shrink">
         
@@ -208,6 +212,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../images/" title="Images" class="md-nav__link">
+      Images
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
     <a href="../command-line/" title="Command line interface" class="md-nav__link">
       Command line interface
     </a>
@@ -241,6 +257,13 @@
   
     <label class="md-nav__title" for="toc">Table of contents</label>
     <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#running-the-web-server" title="Running the web server" class="md-nav__link">
+    Running the web server
+  </a>
+  
+</li>
       
         <li class="md-nav__item">
   <a href="#minimal" title="Minimal" class="md-nav__link">
@@ -370,6 +393,13 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#running-the-web-server" title="Running the web server" class="md-nav__link">
+    Running the web server
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#minimal" title="Minimal" class="md-nav__link">
     Minimal
   </a>
@@ -416,7 +446,13 @@
                 
                   <h1>Web interface</h1>
                 
-                <h2 id="minimal">Minimal</h2>
+                <h2 id="running-the-web-server">Running the web server</h2>
+<p>At a command prompt, type:</p>
+<pre><code>cd
+python homecage/homecage_app/homecage_app.py
+</code></pre>
+<p>Once the web interface is running it can be accessed from any web browser at the address <code>http://[ip]:5000</code></p>
+<h2 id="minimal">Minimal</h2>
 <p><IMG SRC="../img/web-interface-minimal.png" width=600></p>
 <h2 id="video-recording">Video recording</h2>
 <h2 id="video-streaming">Video streaming</h2>
@@ -480,9 +516,9 @@
           </div>
         
         powered by
-        <a href="http://www.mkdocs.org" title="MkDocs">MkDocs</a>
+        <a href="http://www.mkdocs.org">MkDocs</a>
         and
-        <a href="http://squidfunk.github.io/mkdocs-material/" title="Material for MkDocs">
+        <a href="https://squidfunk.github.io/mkdocs-material/">
           Material for MkDocs</a>
       </div>
       
@@ -494,9 +530,9 @@
       
     </div>
     
-      <script src="../assets/javascripts/application-8e4952e681.js"></script>
+      <script src="../assets/javascripts/application.9a4a50d4.js"></script>
       
-      <script>app.initialize({version:"0.17.1",url:{base:".."}})</script>
+      <script>app.initialize({version:"0.17.2",url:{base:".."}})</script>
       
     
     

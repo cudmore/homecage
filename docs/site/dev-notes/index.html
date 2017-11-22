@@ -28,7 +28,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-0.17.1, mkdocs-material-2.0.4">
+      <meta name="generator" content="mkdocs-0.17.2, mkdocs-material-2.1.1">
     
     
       
@@ -36,11 +36,11 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/application-709eec9410.css">
+      <link rel="stylesheet" href="../assets/stylesheets/application.1411ec6b.css">
       
     
     
-      <script src="../assets/javascripts/modernizr-e826f8942a.js"></script>
+      <script src="../assets/javascripts/modernizr.f383bccf.js"></script>
     
     
       
@@ -81,14 +81,18 @@
         <label class="md-icon md-icon--menu md-header-nav__button" for="drawer"></label>
       </div>
       <div class="md-flex__cell md-flex__cell--stretch">
-        <span class="md-flex__ellipsis md-header-nav__title">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
           
             
-              
+              <span class="md-header-nav__topic">
+                Home cage surveillance
+              </span>
+              <span class="md-header-nav__topic">
+                Development notes
+              </span>
             
-            Development notes
           
-        </span>
+        </div>
       </div>
       <div class="md-flex__cell md-flex__cell--shrink">
         
@@ -198,6 +202,18 @@
   <li class="md-nav__item">
     <a href=".." title="Getting started" class="md-nav__link">
       Getting started
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../images/" title="Images" class="md-nav__link">
+      Images
     </a>
   </li>
 
@@ -322,6 +338,40 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#uv4l" title="uv4l" class="md-nav__link">
+    uv4l
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sent-this-to-uv4l-people" title="Sent this to uv4l people" class="md-nav__link">
+    Sent this to uv4l people
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#progress-on-killing-while-browser-window-is-open" title="Progress on killing while browser window is open" class="md-nav__link">
+    Progress on killing while browser window is open
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remove-uv4l-raspicam-extras" title="remove uv4l-raspicam-extras" class="md-nav__link">
+    remove uv4l-raspicam-extras
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#todo" title="ToDo" class="md-nav__link">
     ToDo
   </a>
@@ -376,6 +426,40 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#uv4l" title="uv4l" class="md-nav__link">
+    uv4l
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sent-this-to-uv4l-people" title="Sent this to uv4l people" class="md-nav__link">
+    Sent this to uv4l people
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#progress-on-killing-while-browser-window-is-open" title="Progress on killing while browser window is open" class="md-nav__link">
+    Progress on killing while browser window is open
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remove-uv4l-raspicam-extras" title="remove uv4l-raspicam-extras" class="md-nav__link">
+    remove uv4l-raspicam-extras
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#todo" title="ToDo" class="md-nav__link">
     ToDo
   </a>
@@ -421,6 +505,100 @@
 <p>Push to github</p>
 <pre><code>cd homecage/docs
 mkdocs gh-deploy --clean
+</code></pre>
+<h2 id="uv4l">uv4l</h2>
+<p>20171120 - Problem was that if streaming was on and we tried to stop it while there was still an opened browser window we would get an orphaned <code>&lt;defunct&gt;</code> process that can't actually be kill(ed). This was mucking up any future interaciton as <code>stream</code>, <code>record</code>, and <code>status</code> thought there was still a uv4l process.</p>
+<p>Fixing this by using <code>uv4l-raspicam-extras</code></p>
+<pre><code>sudo apt-get install uv4l-raspicam-extras
+</code></pre>
+<p>We now start/stop the stream with</p>
+<pre><code>sudo service uv4l_raspicam start
+sudo service uv4l_raspicam stop
+</code></pre>
+<p>When we start/stop like this we are now using a config file <code>/etc/uv4l/uv4l-raspicam.conf</code></p>
+<pre><code>sudo pico /etc/uv4l/uv4l-raspicam.conf
+</code></pre>
+<p>And need to knock down the default stream resolution so we get the full field-of-view. Do this by uncommenting and specifying width and height in <code>/etc/uv4l/uv4l-raspicam.conf</code>.</p>
+<pre><code>##################################
+# raspicam driver options
+##################################
+
+encoding = mjpeg
+width = 640
+height = 480
+framerate = 30
+#custom-sensor-config = 2
+</code></pre>
+
+<h4 id="sent-this-to-uv4l-people">Sent this to uv4l people</h4>
+<pre><code>Hi there, great product and the best streaming I have ever seen.
+
+I am running uv4l on a Raspberry Pi (Jessie) and it is working very well.
+One problem is if I kill the stream with `sudo pkill uv4l` while there is
+a browser window open (that is viewing the stream) I end up with a &lt;defunct&gt;
+uv4l process that I can't seem to kill?
+
+Can you suggest a server option I could use to stop this behavior?
+I want to `sudo pkill uv4l` from the pi while some remote user still
+has a stream window open in the browser? I've looked through the server
+options and don't really know what I am looking for?
+
+Thanks again for uv4l
+
+p.s. Can you suggest an online forum for such questions?
+</code></pre>
+
+<p>Answer was to kill child processes first. Get child processes of PID with `pstree -p PID'</p>
+<p>When browser window is streaming</p>
+<pre><code>uv4l(2345)─┬─{HCEC Notify}(2351)
+           ├─{HDispmanx Notif}(2349)
+           ├─{HTV Notify}(2350)
+           ├─{VCHIQ completio}(2348)
+           ├─{uv4l}(2346)
+           ├─{uv4l}(2347)
+           ├─{uv4l}(2360)
+           ├─{uv4l}(2361)
+           ├─{uv4l}(2362)
+           ├─{uv4l}(2385)
+           ├─{uv4l}(2386)
+           ├─{uv4l}(2387)
+           ├─{uv4l}(2389)
+           ├─{uv4l}(2393)
+           ├─{uv4l}(2394)
+           ├─{vc.ril.camera}(2390)
+           ├─{vc.ril.image_en}(2392)
+           └─{vc.ril.video_re}(2391)
+</code></pre>
+
+<p>When it is not streaming</p>
+<pre><code>uv4l(2345)─┬─{HCEC Notify}(2351)
+           ├─{HDispmanx Notif}(2349)
+           ├─{HTV Notify}(2350)
+           ├─{VCHIQ completio}(2348)
+           ├─{uv4l}(2346)
+           ├─{uv4l}(2347)
+           ├─{uv4l}(2360)
+           ├─{uv4l}(2361)
+           ├─{uv4l}(2362)
+           ├─{uv4l}(2385)
+           ├─{uv4l}(2386)
+           └─{uv4l}(2387)
+</code></pre>
+
+<h4 id="progress-on-killing-while-browser-window-is-open">Progress on killing while browser window is open</h4>
+<pre><code># get uv4l PID
+PID = pgrep uv4l
+# kill all processes in the same group, this includes children
+sudo kill -- -PID
+# kills original and does NOT leave a `&lt;defunct&gt;` uv4l !
+# once we do this we need to use `restart`
+sudo service uv4l_raspicam restart
+# uninstall the raspberry-util and revert to original command line calls
+# use this technique to kill
+</code></pre>
+
+<h4 id="remove-uv4l-raspicam-extras">remove uv4l-raspicam-extras</h4>
+<pre><code>sudo apt-get remove uv4l-raspicam-extras
 </code></pre>
 <h2 id="todo">ToDo</h2>
 <h3 id="20171111">20171111</h3>
@@ -475,9 +653,9 @@ mkdocs gh-deploy --clean
           </div>
         
         powered by
-        <a href="http://www.mkdocs.org" title="MkDocs">MkDocs</a>
+        <a href="http://www.mkdocs.org">MkDocs</a>
         and
-        <a href="http://squidfunk.github.io/mkdocs-material/" title="Material for MkDocs">
+        <a href="https://squidfunk.github.io/mkdocs-material/">
           Material for MkDocs</a>
       </div>
       
@@ -489,9 +667,9 @@ mkdocs gh-deploy --clean
       
     </div>
     
-      <script src="../assets/javascripts/application-8e4952e681.js"></script>
+      <script src="../assets/javascripts/application.9a4a50d4.js"></script>
       
-      <script>app.initialize({version:"0.17.1",url:{base:".."}})</script>
+      <script>app.initialize({version:"0.17.2",url:{base:".."}})</script>
       
     
     
