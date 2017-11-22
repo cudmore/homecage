@@ -33,3 +33,7 @@ span.mysmall {
 
 .myTable-small{  font-size: 12px;
 }
+
+.indent {
+    margin-left: 40px;
+}

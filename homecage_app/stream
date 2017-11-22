@@ -21,8 +21,8 @@ function streamStart(){
 	fi
 
 	#h264
+	#sudo service uv4l_raspicam start
 	uv4l --driver raspicam --auto-video_nr --encoding h264 --width $streamWidth --height $streamHeight --enable-server on
-	#uv4l --verbosity=-1 --driver raspicam --auto-video_nr --encoding h264 --width $streamWidth --height $streamHeight --enable-server on
 	#uv4l --verbosity=-1 --driver raspicam --auto-video_nr --encoding h264 --width 1280 --height 720 --enable-server on
 	
 	ip=`ifconfig eth0 | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
@@ -35,8 +35,11 @@ function streamStart(){
 function streamStop(){
 	uv4lPID=`pgrep -f uv4l`
 	if [ -n "$uv4lPID" ]; then
-		echo "stopping video stream"
-		sudo pkill uv4l
+		echo "stopping video stream ..."
+		sudo kill -- -$uv4lPID
+		#sudo service uv4l_raspicam stop
+		#sudo pkill uv4l
+		echo "done"
 	else
 		echo "video stream is not running, use 'stream start' to start."
 		exit 1

@@ -1,7 +1,7 @@
 <!doctype html>
 <html ng-app="demo">
 	<head>
-		<title>Hello AngularJS</title>
+		<title>Home Cage Surveillance</title>
 
 		<link rel="stylesheet" href="static/hello.css">
 		<link rel="stylesheet" href="static/bootstrap/css/bootstrap.min.css">
@@ -22,9 +22,31 @@
 {% raw %}
 	<div ng-controller="Hello">
 
-	{{status.date}}, {{status.time}}
-	<BR>
+	<table class="myTable">
+	<tr>
+	<TD>
+	{{status.hostname}}
+	</TD>
+	<TD>
+	{{status.ip}}
+	</TD>
+	<TD>
+	{{status.date}}
+	</TD>
+	<TD>
+	{{status.time}}
+	</TD>
+	</tr>
+	</table>
+		
+	<table class="myTable">
+	<tr>
+	<TD>
 	Status: {{status.lastResponse}}
+	</TD>
+	</tr>
+	</table>
+	
 	
 	<table class="myTable">
 	<tr>
@@ -45,24 +67,6 @@
 
 		</span>
 		</td>
-	</tr>
-
-	<tr>
-	<td colspan=4 ng-show="status.isRecording">
-			<span class="mysmall">Recording file: {{status.currentFile}}</span>
-			<span class="mysmall">Time Remaining (sec): {{status.timeRemaining}}</span>
-			<BR>
-			<span ng-if="showStill==0">
-				<button ng-click="toggleStill()" class="btn btn-default btn-sm"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
-			</span>
-			<span ng-if="showStill==1">
-				<button ng-click="toggleStill()" class="btn btn-default btn-sm"><i class="fa fa-chevron-down" aria-hidden="true"></i></button>
-			</span>
-			Still Image<BR>
-			<span ng-show="showStill">	
-				<IMG SRC="{{lastImage2}}" width=640 height=480>	
-			</span>
-	</td>
 	</tr>
 
 	<tr>
@@ -95,16 +99,39 @@
 		<switch id="enabled" name="enabled" ng-model="status.whiteLED" ng-change="whiteChange" disabled="status.isRecording" on="On" off="Off" class="green"></switch>
 		</td>
 	</tr>
+	</table>
 
+
+	<!-- table for recording still -->
+	<table>
 	<tr>
-	<td colspan=4 ng-show="status.isStreaming">
-	<span class="mysmall">View stream at <A HREF="{{myStreamUrl0}}" target="_blank">{{myStreamUrl0}}</a></span>
-	<!-- <iframe src="http://192.168.1.3:8080/stream" width=640 height=480></iframe> -->
-	+ 0.03 to fit
-	<iframe ng-src="{{myStreamUrl}}" width="{{status.config.stream.streamResolution[0]}}" height="{{status.config.stream.streamResolution[1]}}"></iframe>
+	<td colspan=4 ng-show="status.isRecording">
+			<span class="mysmall">Recording file: {{status.currentFile}}</span>
+			<span class="mysmall">Time Remaining (sec): {{status.timeRemaining}}</span>
+			<BR>
+			<span ng-if="showStill==0">
+				<button ng-click="toggleStill()" class="btn btn-default btn-sm"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+			</span>
+			<span ng-if="showStill==1">
+				<button ng-click="toggleStill()" class="btn btn-default btn-sm"><i class="fa fa-chevron-down" aria-hidden="true"></i></button>
+			</span>
+			Time-lapse Image<BR>
+			<span ng-show="showStill">	
+				<IMG SRC="{{lastImage2}}" width=640 height=480>	
+			</span>
 	</td>
 	</tr>
-
+	</table>
+	
+	<!-- table for stream -->
+	<table>
+	<tr>
+	<td colspan=4 ng-show="!hardCloseStream && status.isStreaming">
+	<span class="mysmall">View stream at <A HREF="{{myStreamUrl0}}" target="_blank">{{myStreamUrl0}}</a></span>
+	<BR>
+	<iframe ng-src="{{myStreamUrl}}" width="{{streamWidth}}" height="{{streamHeight}}"></iframe>
+	</td>
+	</tr>
 	</table>
 
 	<span ng-if="showOptions==0">
@@ -116,8 +143,7 @@
 	<span>Options</span>
 
 	<span ng-show="showOptions">	
-		<br>
-		<form ng-submit="mySubmit('fps',params.video.fps)">
+		<form class="indent" ng-submit="mySubmit('fps',params.video.fps)">
 		   <label>FPS:
 		   <input type="number" ng-model="params.video.fps" ng-disabled="status.isRecording"/>
 		</form>
@@ -131,42 +157,43 @@
 		   Still interval (sec): <input type="number" ng-model="params.video.stillInterval" ng-disabled="status.isRecording"/>
 		</form>
 
-Video Size  <select name="">
-  <option value="640 x 480">640 x 480</option>
-  <option value="1024 x 768">1024 x 768</option>
-</select>
+		Video Size  <select name="">
+		  <option value="640 x 480">640 x 480</option>
+		  <option value="1024 x 768">1024 x 768</option>
+		</select>
+		<BR>
+		<BR>
+		Stream Size  <select name="">
+		  <option value="640 x 480">640 x 480</option>
+		  <option value="1024 x 768">1024 x 768</option>
+		</select>
+	
+	</span> <!-- ng-show="showOptions" -->
+
 <BR>
-<BR>
-Stream Size  <select name="">
-  <option value="640 x 480">640 x 480</option>
-  <option value="1024 x 768">1024 x 768</option>
-</select>
-<BR>
-<BR>
-		<b>Status</b>
+	<span ng-if="showStatus==0">
+		<button ng-click="toggleStatus()" class="btn btn-default btn-sm"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+	</span>
+	<span ng-if="showStatus==1">
+		<button ng-click="toggleStatus()" class="btn btn-default btn-sm"><i class="fa fa-chevron-down" aria-hidden="true"></i></button>
+	</span>
+	<span>Status</span>
+
+	<span ng-show="showStatus">	
+		<div class="indent">
+		
+		<b>Status (experimental)</b>
 		<table class="myTable-small">
 		  <tr ng-repeat="(x,y) in status">
-			<div *ngIf="{{x}} == 'config'; then thenBlock else elseBlock"></div>
-			<ng-template #thenBlock>IN THEN BLOCK {{ x }}</ng-template>
-			<ng-template #elseBlock>
 				<td>{{ x }}</td>
 				<td>{{ y }}</td>
-			</ng-template>
-			
 		  </tr>
 		</table>
-
-		Second Table
-		<table class="myTable-small">
-		  <tr ng-repeat="(x,y) in status">
-			<td>{{ x }}</td>
-			<td>{{ y }}</td>
-		  </tr>
-		</table>
-	</span>
-
-
- <!-- <img data-ng-src="data:image/png;base64,{{lastImage}}"> -->
+{{ videofilelist }}
+		</div>
+		
+	</span> <!-- ng-show="showStatus" -->
+	
 	</div>
 {% endraw %}
 </body>

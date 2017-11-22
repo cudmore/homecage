@@ -14,10 +14,17 @@ angular.module('demo', ['uiSwitch'])
     $scope.myStreamUrl0 = myStreamUrl;
     $scope.myStreamUrl = $sce.trustAsResourceUrl(myStreamUrl);
 	
+	//todo: rewrite these to just be inline with logic in button html
 	$scope.showOptions = false;
 	$scope.toggleOptions = function() {
 		console.log('toggleOptions()')
 		$scope.showOptions = $scope.showOptions === false ? true: false;
+	};
+
+	$scope.showStatus = false;
+	$scope.toggleStatus = function() {
+		console.log('toggleStatus()')
+		$scope.showStatus = $scope.showStatus === false ? true: false;
 	};
 
 	$scope.showStill = false;
@@ -31,7 +38,20 @@ angular.module('demo', ['uiSwitch'])
 		$http.get($scope.myUrl + 'status').
         	then(function(response) {
         	    $scope.status = response.data;
-        	    console.log($scope.status['config'])
+        	    //
+        	    // remove video file list from $scope.status
+        	    $scope.videofilelist = $scope.status.videofilelist
+        	    $scope.status.videofilelist = ''
+        	    //console.log('$scope.videofilelist:', $scope.videofilelist)
+        	    //console.log($scope.status['config'])
+        	    
+        	    //calculate web page iframe for stream
+        	    var tmpWidth = $scope.status.config.stream.streamResolution[0]
+        	    var tmpHeight = $scope.status.config.stream.streamResolution[1]
+        	    $scope.streamWidth = tmpWidth + (tmpWidth * 0.03)
+        	    $scope.streamHeight = tmpHeight + (tmpWidth * 0.03) 
+        	    //console.log($scope.streamWidth)
+        	    //console.log($scope.streamHeight)
         	});
 	};
 
@@ -62,19 +82,44 @@ angular.module('demo', ['uiSwitch'])
 	};
 
 	$scope.startstopstream = function (startstop) {
-		console.log("startstopstream");
+		console.log("startstopstream(), startstop:", startstop);
+		// if we are stopping, we need to force close the live stream
+		if (startstop==1) {
+			$scope.hardCloseStream = 0
+		} else {
+			//startstop == 0
+			$scope.hardCloseStream = 1
+			callAtTimeout()
+		}
+		
 		$http.get($scope.myUrl + 'stream/' + startstop).
         	then(function(response) {
         	    //$scope.status = response.data;
         	});
         //refresh stream
-		$timeout(callAtTimeout, 2000);
+		if (startstop==1) {
+			//callAtTimeout()
+			$timeout(callAtTimeout, 3000);
+		}
 	};
 
 function callAtTimeout() {
-    console.log("Timeout occurred");
-    myStreamUrl = 'http://' + $location.host() + ':8080/stream' + '?' + new Date().getTime()
-    $scope.myStreamUrl = $sce.trustAsResourceUrl(myStreamUrl);
+    console.log("callAtTimeout()");
+    if ($scope.hardCloseStream) {
+    	console.log('hardCloseStream')
+    	$scope.myStreamUrl = ''
+    } else {
+    	myStreamUrl = 'http://' + $location.host() + ':8080/stream' //+ '?' + new Date().getTime()
+    	$scope.myStreamUrl = $sce.trustAsResourceUrl(myStreamUrl);
+    }
+//    } else if ($scope.isStreaming) {
+//    	console.log('2 hardCloseStream')
+//    	myStreamUrl = 'http://' + $location.host() + ':8080/stream' + '?' + new Date().getTime()
+//    	$scope.myStreamUrl = $sce.trustAsResourceUrl(myStreamUrl);
+//    } else {
+//    	console.log('3 hardCloseStream')
+//    	$scope.myStreamUrl = ''
+//    }
 }
 
 	$scope.iron = function (isOn) {
@@ -175,7 +220,7 @@ function callAtTimeout() {
 	//	//$scope.getState();
 	//	//$scope.localFPS = $scope.status.fps
 	//});
-	
+
 	$scope.getStatus(); //state of homecage server
 	$scope.getParams(); // params user can set
 	$interval($scope.getStatus, 900);      	
@@ -183,4 +228,6 @@ function callAtTimeout() {
 	$interval($scope.getLastImage2, 900);      	
 	//$scope.getLastImage()
 
+	$scope.hardCloseStream = 0
+	
 }); //controller

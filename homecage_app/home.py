@@ -7,6 +7,7 @@ import threading
 from datetime import datetime
 import collections
 import json
+import socket # to get hostname
 
 import RPi.GPIO as GPIO
 import picamera
@@ -59,12 +60,12 @@ class home:
 		
 	def loadConfigFile(self):
 		with open('config.json') as configFile:
-		    config = json.load(configFile)
+			config = json.load(configFile)
 		return config
 	
 	def saveConfigFile(self):
 		with open('config.json', 'w') as outfile:
-		    json.dump(self.config, outfile)
+			json.dump(self.config, outfile)
 	
 	def getStatus(self):
 		# return the status of the server, all params
@@ -79,6 +80,7 @@ class home:
 		status['date'] = now.strftime('%Y-%m-%d')
 		status['time'] = now.strftime('%H:%M:%S.') + microsecondStr
 		status['ip'] = self.ip
+		status['hostname'] = socket.gethostname()
 
 		status['isRecording'] = self.isRecording
 		status['isStreaming'] = self.isStreaming
@@ -89,7 +91,7 @@ class home:
 		#status['resolution'] = (self.config['video']['resolution'][0],self.config['video']['resolution'][1])
 		#status['fileDuration'] = self.fileDuration
 		status['currentFile'] = self.currentFile
-		if self.isRecording:
+		if self.isRecording and self.currentStartSeconds>0:
 			status['timeRemaining'] = math.trunc(self.config['video']['fileDuration'] - (time.time() - self.currentStartSeconds))
 		else:
 			status['timeRemaining'] = 'n/a'
@@ -99,6 +101,11 @@ class home:
 
 		#status['streamWidth'] = self.streamWidth
 		#status['streamHeight'] = self.streamHeight
+		
+		filelist = self.make_tree('/home/pi/video')
+		status['videofilelist'] = json.dumps(filelist)
+		
+		#print "status['videofilelist']:", status['videofilelist']
 		
 		return status
 
@@ -210,7 +217,7 @@ class home:
 				while self.isRecording and (time.time() < (startNow + self.config['video']['fileDuration'])):
 					self.controlLights()
 					camera.wait_recording(0.5)
-					self.lastResponse = 'Recording: ' + self.currentFile
+					self.lastResponse = 'Recording file: ' + self.currentFile
 					if self.config['video']['captureStill'] and time.time() > (lastStill + self.config['video']['stillInterval']):
 						print 'capturing still:'
 						camera.capture(stillPath, use_video_port=True)
@@ -230,5 +237,12 @@ class home:
 		ipaddr = split_data[split_data.index('src')+1]
 		return ipaddr
 
+	def make_tree(self, path):
+		filelist = []
+		for root, dirs, files in os.walk(path):
+			for file in files:
+				if file.endswith('.h264'):
+					filelist.append({'name': file})
+		return filelist
 
 

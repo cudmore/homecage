@@ -11,7 +11,7 @@ function recordOn(){
 	uv4lPID=`pgrep -f uv4l`
 	if [ -n "$uv4lPID" ]; then
 		echo "stream is already running, use 'stream stop' to stop."
-		exit 1
+		#exit 1
 	fi
 
 	videoPID=`pgrep -f video.py`
@@ -29,6 +29,9 @@ function recordOn(){
 		echo "Starting lights cycle"
 		python /home/pi/Sites/homecage/lights.py &
 	fi
+	
+	# 20171120
+	
 }
 
 function recordOff(){
