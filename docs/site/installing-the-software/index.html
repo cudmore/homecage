@@ -301,6 +301,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#install-dht-temperature-sensor-optional" title="Install DHT temperature sensor (optional)" class="md-nav__link">
+    Install DHT temperature sensor (optional)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#uv4l-for-live-video-streaming" title="uv4l for live video streaming" class="md-nav__link">
     uv4l for live video streaming
   </a>
@@ -399,6 +406,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#install-dht-temperature-sensor-optional" title="Install DHT temperature sensor (optional)" class="md-nav__link">
+    Install DHT temperature sensor (optional)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#uv4l-for-live-video-streaming" title="uv4l for live video streaming" class="md-nav__link">
     uv4l for live video streaming
   </a>
@@ -441,8 +455,12 @@ sudo apt-get install python-pip
 
 pip install rpi.gpio
 pip install flask
+
+# if you run into errors then try installing
+sudo apt-get install build-essential python-dev python-openssl
 </code></pre>
-<p>Install DHT temperature sensor (optional)</p>
+<h3 id="install-dht-temperature-sensor-optional">Install DHT temperature sensor (optional)</h3>
+<p>If you run into trouble then go to <a href="https://learn.adafruit.com/dht-humidity-sensing-on-raspberry-pi-with-gdocs-logging/software-install-updated">this tutorial</a>.</p>
 <pre><code># if you don't already have git installed
 sudo apt-get install git
 
@@ -453,7 +471,7 @@ cd Adafruit_Python_DHT
 sudo python setup.py install
 </code></pre>
 <h3 id="uv4l-for-live-video-streaming">uv4l for live video streaming</h3>
-<p>Install uv4l for live streaming (optional). Follow <a href="https://www.linux-projects.org/uv4l/installation/">this tutorial</a>.</p>
+<p>Install uv4l for live streaming (optional). If you run into trouble, then follow <a href="https://www.linux-projects.org/uv4l/installation/">this tutorial</a>.</p>
 <pre><code>curl http://www.linux-projects.org/listing/uv4l_repo/lrkey.asc | sudo apt-key add -
 /etc/apt/sources.list
 
