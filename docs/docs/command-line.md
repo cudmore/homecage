@@ -13,7 +13,8 @@ On a Mac, use the terminal application in /Applications/Utilities/terminal.app
 
 At the command prompt, type
 
-	cd /Sites/homecage
+	cd
+	cd homecage
 
 ## 3) Get command help
 
@@ -39,6 +40,8 @@ This returns
 	 White Light
 		light white on
 		light white off
+	 Online Manual
+		http://blog.cudmore.io/homecage
 
 ## 4) Position the cages within a good field-of-view
 
