@@ -87,12 +87,12 @@
         }, 
         {
             "location": "/web-interface/", 
-            "text": "Running the web server\n\n\nAt a command prompt, type:\n    cd\n    python homecage/homecage_app/homecage_app.py\n\n\nOnce the web interface is running it can be accessed from any web browser at the address \nhttp://[ip]:5000\n\n\nMinimal\n\n\n\n\nVideo recording\n\n\nVideo streaming\n\n\nUser options", 
+            "text": "Running the web server\n\n\nAt a command prompt, type:\n\n\ncd\npython homecage/homecage_app/homecage_app.py\n\n\n\nOnce the web interface is running it can be accessed from any web browser at the address \nhttp://[ip]:5000\n\n\nMinimal\n\n\n\n\nVideo recording\n\n\nVideo streaming\n\n\nUser options", 
             "title": "Web interface"
         }, 
         {
             "location": "/web-interface/#running-the-web-server", 
-            "text": "At a command prompt, type:\n    cd\n    python homecage/homecage_app/homecage_app.py  Once the web interface is running it can be accessed from any web browser at the address  http://[ip]:5000", 
+            "text": "At a command prompt, type:  cd\npython homecage/homecage_app/homecage_app.py  Once the web interface is running it can be accessed from any web browser at the address  http://[ip]:5000", 
             "title": "Running the web server"
         }, 
         {
