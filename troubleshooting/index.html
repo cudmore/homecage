@@ -28,7 +28,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-0.17.2, mkdocs-material-2.1.1">
+      <meta name="generator" content="mkdocs-0.17.1, mkdocs-material-2.0.4">
     
     
       
@@ -36,11 +36,11 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/application.1411ec6b.css">
+      <link rel="stylesheet" href="../assets/stylesheets/application-709eec9410.css">
       
     
     
-      <script src="../assets/javascripts/modernizr.f383bccf.js"></script>
+      <script src="../assets/javascripts/modernizr-e826f8942a.js"></script>
     
     
       
@@ -81,18 +81,14 @@
         <label class="md-icon md-icon--menu md-header-nav__button" for="drawer"></label>
       </div>
       <div class="md-flex__cell md-flex__cell--stretch">
-        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+        <span class="md-flex__ellipsis md-header-nav__title">
           
             
-              <span class="md-header-nav__topic">
-                Home cage surveillance
-              </span>
-              <span class="md-header-nav__topic">
-                Troubleshooting
-              </span>
+              
             
+            Troubleshooting
           
-        </div>
+        </span>
       </div>
       <div class="md-flex__cell md-flex__cell--shrink">
         
@@ -224,8 +220,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../command-line/" title="Command line interface" class="md-nav__link">
-      Command line interface
+    <a href="../installing-the-software/" title="Install" class="md-nav__link">
+      Install
     </a>
   </li>
 
@@ -260,8 +256,20 @@
 
 
   <li class="md-nav__item">
-    <a href="../installing-the-software/" title="Installing the software" class="md-nav__link">
-      Installing the software
+    <a href="../command-line/" title="Command line interface" class="md-nav__link">
+      Command line interface
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../mounting-the-file-server/" title="Mounting the file server" class="md-nav__link">
+      Mounting the file server
     </a>
   </li>
 
@@ -294,18 +302,6 @@
       
       
 
-
-  <li class="md-nav__item">
-    <a href="../mounting-the-file-server/" title="Mounting the file server" class="md-nav__link">
-      Mounting the file server
-    </a>
-  </li>
-
-    
-      
-      
-      
-
   
 
 
@@ -314,9 +310,48 @@
     <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="toc">
     
     
+      <label class="md-nav__link md-nav__link--active" for="toc">
+        Troubleshooting
+      </label>
+    
     <a href="./" title="Troubleshooting" class="md-nav__link md-nav__link--active">
       Troubleshooting
     </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#converting-h264-files-to-mp4" title="Converting h264 files to mp4" class="md-nav__link">
+    Converting h264 files to mp4
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshoot-video-recording" title="Troubleshoot video recording" class="md-nav__link">
+    Troubleshoot video recording
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshoot-video-streaming" title="Troubleshoot video streaming" class="md-nav__link">
+    Troubleshoot video streaming
+  </a>
+  
+</li>
+      
+      
+      
+    </ul>
+  
+</nav>
     
   </li>
 
@@ -340,6 +375,47 @@
               </div>
             
             
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#converting-h264-files-to-mp4" title="Converting h264 files to mp4" class="md-nav__link">
+    Converting h264 files to mp4
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshoot-video-recording" title="Troubleshoot video recording" class="md-nav__link">
+    Troubleshoot video recording
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshoot-video-streaming" title="Troubleshoot video streaming" class="md-nav__link">
+    Troubleshoot video streaming
+  </a>
+  
+</li>
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           <div class="md-content">
             <article class="md-content__inner md-typeset">
@@ -350,7 +426,26 @@
                 
                   <h1>Troubleshooting</h1>
                 
-                <p>No trouble yet</p>
+                <h2 id="converting-h264-files-to-mp4">Converting h264 files to mp4</h2>
+<p>The Raspberry camera saves .h264 video files. This format is very efficient and creates small files (10 MB per 5 minutes) but does require conversion to mp4 to impose a time.</p>
+<p>See <a href="http://blog.cudmore.io/post/2017/11/01/libav-for-ffmpeg/">this blog post</a></p>
+<h2 id="troubleshoot-video-recording">Troubleshoot video recording</h2>
+<p>Capture a single image</p>
+<pre><code>raspistill -o test.jpg
+</code></pre>
+
+<h2 id="troubleshoot-video-streaming">Troubleshoot video streaming</h2>
+<p>Run uv4l by hand</p>
+<pre><code>uv4l --driver raspicam --auto-video_nr --encoding h264 --width 640 --height 480 --enable-server on
+</code></pre>
+
+<p>Browse the live stream at</p>
+<pre><code>http://[IP]:8080
+</code></pre>
+
+<p>Stop uv4l (make sure all browser windows are closed)</p>
+<pre><code>sudo pkill uv4l
+</code></pre>
                 
                   
                 
@@ -369,7 +464,7 @@
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
         
-          <a href="../mounting-the-file-server/" title="Mounting the file server" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../parts-list/" title="Parts list" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-flex__cell md-flex__cell--shrink">
               <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
             </div>
@@ -378,7 +473,7 @@
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                Mounting the file server
+                Parts list
               </span>
             </div>
           </a>
@@ -410,9 +505,9 @@
           </div>
         
         powered by
-        <a href="http://www.mkdocs.org">MkDocs</a>
+        <a href="http://www.mkdocs.org" title="MkDocs">MkDocs</a>
         and
-        <a href="https://squidfunk.github.io/mkdocs-material/">
+        <a href="http://squidfunk.github.io/mkdocs-material/" title="Material for MkDocs">
           Material for MkDocs</a>
       </div>
       
@@ -424,9 +519,9 @@
       
     </div>
     
-      <script src="../assets/javascripts/application.9a4a50d4.js"></script>
+      <script src="../assets/javascripts/application-8e4952e681.js"></script>
       
-      <script>app.initialize({version:"0.17.2",url:{base:".."}})</script>
+      <script>app.initialize({version:"0.17.1",url:{base:".."}})</script>
       
     
     
