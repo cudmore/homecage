@@ -28,19 +28,19 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-0.17.2, mkdocs-material-2.1.1">
+      <meta name="generator" content="mkdocs-0.17.1, mkdocs-material-2.0.4">
     
     
       
-        <title>Installing the software - Home cage surveillance</title>
+        <title>Install - Home cage surveillance</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/application.1411ec6b.css">
+      <link rel="stylesheet" href="../assets/stylesheets/application-709eec9410.css">
       
     
     
-      <script src="../assets/javascripts/modernizr.f383bccf.js"></script>
+      <script src="../assets/javascripts/modernizr-e826f8942a.js"></script>
     
     
       
@@ -81,18 +81,14 @@
         <label class="md-icon md-icon--menu md-header-nav__button" for="drawer"></label>
       </div>
       <div class="md-flex__cell md-flex__cell--stretch">
-        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+        <span class="md-flex__ellipsis md-header-nav__title">
           
             
-              <span class="md-header-nav__topic">
-                Home cage surveillance
-              </span>
-              <span class="md-header-nav__topic">
-                Installing the software
-              </span>
+              
             
+            Install
           
-        </div>
+        </span>
       </div>
       <div class="md-flex__cell md-flex__cell--shrink">
         
@@ -222,11 +218,20 @@
       
       
 
+  
 
-  <li class="md-nav__item">
-    <a href="../command-line/" title="Command line interface" class="md-nav__link">
-      Command line interface
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="toc">
+    
+      
+    
+    
+    <a href="./" title="Install" class="md-nav__link md-nav__link--active">
+      Install
     </a>
+    
   </li>
 
     
@@ -258,20 +263,23 @@
       
       
 
-  
 
+  <li class="md-nav__item">
+    <a href="../command-line/" title="Command line interface" class="md-nav__link">
+      Command line interface
+    </a>
+  </li>
 
-  <li class="md-nav__item md-nav__item--active">
-    
-    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="toc">
     
       
-    
-    
-    <a href="./" title="Installing the software" class="md-nav__link md-nav__link--active">
-      Installing the software
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../mounting-the-file-server/" title="Mounting the file server" class="md-nav__link">
+      Mounting the file server
     </a>
-    
   </li>
 
     
@@ -295,18 +303,6 @@
   <li class="md-nav__item">
     <a href="../parts-list/" title="Parts list" class="md-nav__link">
       Parts list
-    </a>
-  </li>
-
-    
-      
-      
-      
-
-
-  <li class="md-nav__item">
-    <a href="../mounting-the-file-server/" title="Mounting the file server" class="md-nav__link">
-      Mounting the file server
     </a>
   </li>
 
@@ -368,16 +364,21 @@
                 <p>Homecage requires the following libraries:</p>
 <ul>
 <li><a href="http://wiringpi.com/">Wiring Pi</a> - Library that provides a command line interface to the GPIO pins. This should be installed by default.</li>
-<li><a href="https://sourceforge.net/projects/raspberry-gpio-python/">GPIO</a> - Python library to control GPIO pins. This should be installed by default.</li>
+<li><a href="https://sourceforge.net/projects/raspberry-gpio-python/">GPIO</a> - Python library to control GPIO pins.</li>
 <li><a href="http://flask.pocoo.org/">flask</a> - A python web server.</li>
 <li><a href="https://www.linux-projects.org/uv4l/installation/">uv4l</a> - Library for live video streaming to a web browser</li>
 <li><a href="https://github.com/adafruit/Adafruit_Python_DHT">Adafruit_DHT</a> - (optional) Python library to read from a DHT temperature and humidity sensor.</li>
 </ul>
-<h2 id="1-clone-the-repository">1) Clone the repository</h2>
+<h2 id="1-get-a-functioning-raspberry-pi">1) Get a functioning Raspberry Pi</h2>
+<p>These instructions assume you have a functioning Raspberry Pi. To get started setting up a Pi from scratch, see our <a href="http://blog.cudmore.io/post/2017/11/22/raspian-stretch/">setup intructions</a>.</p>
+<h2 id="2-clone-the-repository">2) Clone the repository</h2>
 <p>This will make a folder <code>homecage</code> in your root directory. You can always return to your root directory with <code>cd</code></p>
-<pre><code>git clone https://github.com/cudmore/homecage.git
+<pre><code># if you don't already have git installed
+sudo apt-get install git
+
+git clone https://github.com/cudmore/homecage.git
 </code></pre>
-<h2 id="2-install-python-libraries">2) Install python libraries</h2>
+<h2 id="3-install-python-libraries">3) Install python libraries</h2>
 <pre><code># if you don't already have pip installed
 sudo apt-get install python-pip
 
@@ -387,38 +388,42 @@ pip install flask
 # if you run into errors then try installing
 sudo apt-get install build-essential python-dev python-openssl
 </code></pre>
-<h2 id="3-install-dht-temperature-sensor-optional">3) Install DHT temperature sensor (optional)</h2>
+<h2 id="4-install-dht-temperature-sensor-optional">4) Install DHT temperature sensor (optional)</h2>
 <p>If you run into trouble then go to <a href="https://learn.adafruit.com/dht-humidity-sensing-on-raspberry-pi-with-gdocs-logging/software-install-updated">this tutorial</a>.</p>
-<pre><code># if you don't already have git installed
-sudo apt-get install git
-
-cd
+<pre><code>cd
 mkdir tmp
 cd tmp
 git clone https://github.com/adafruit/Adafruit_Python_DHT.git
 cd Adafruit_Python_DHT
 sudo python setup.py install
 </code></pre>
-<h2 id="4-uv4l-for-live-video-streaming-optional">4) uv4l for live video streaming (optional)</h2>
-<p>Install uv4l for live streaming (optional). If you run into trouble, then follow <a href="https://www.linux-projects.org/uv4l/installation/">this tutorial</a>.</p>
+<h2 id="5-install-uv4l-for-live-video-streaming-optional">5) Install uv4l for live video streaming (optional)</h2>
+<p>If you run into trouble, then follow <a href="https://www.linux-projects.org/uv4l/installation/">this tutorial</a>.</p>
 <pre><code>curl http://www.linux-projects.org/listing/uv4l_repo/lrkey.asc | sudo apt-key add -
-/etc/apt/sources.list
 
 # add the following line to /etc/apt/sources.list
-# start editor with `sudo /etc/apt/sources.list`
-deb http://www.linux-projects.org/listing/uv4l_repo/raspbian/ jessie main
+# start editor with `sudo pico /etc/apt/sources.list`
+deb http://www.linux-projects.org/listing/uv4l_repo/raspbian/stretch stretch main
 
 sudo apt-get update
-sudo apt-get install uv4l uv4l-raspicam
+sudo apt-get install uv4l uv4l-raspicam uv4l-server
+</code></pre>
 
-# DO NOT INSTALL `sudo apt-get install uv4l-raspicam-extras`
+<h2 id="6-create-the-folder-to-save-video-files">6) Create the folder to save video files</h2>
+<pre><code>cd
+mkdir video
+</code></pre>
+<p>Video files will be saved to <code>/home/pi/video</code>. This can be changed in the web server configuration file <code>homecage/homecage_app/config.json</code>. If your going to save a lot of video, please <a href="http://blog.cudmore.io/post/2015/05/05/mounting-a-usb-drive-at-boot/">mount a usb key</a> and save videos there.</p>
+<h2 id="7-start-the-web-server-at-boot-optional">7) Start the web server at boot (optional)</h2>
+<p>Edit crontab</p>
+<pre><code>crontab -e
+</code></pre>
+<p>Add the following line to the end of the file (make sure it is one line)</p>
+<pre><code>@reboot (sleep 10; cd /home/pi/homecage/homecage_app &amp;&amp; /usr/bin/python /home/pi/homecage/homecage_app/homecage_app.py)
 </code></pre>
 
 <h1 id="done-installing">Done installing !!!</h1>
 <p>At this point you can interact with the homecage either through the <a href="../web-interface/">web</a> or from the <a href="../command-line/">command line</a>.</p>
-<h2 id="converting-h264-files-to-mp4">Converting h264 files to mp4</h2>
-<p>The Raspberry camera saves .h264 video files. This format is very efficient and creates small files (10 MB per 5 minutes) but does require conversion to mp4 to impose a time.</p>
-<p>See <a href="http://blog.cudmore.io/post/2017/11/01/libav-for-ffmpeg/">this blog post</a></p>
                 
                   
                 
@@ -437,7 +442,7 @@ sudo apt-get install uv4l uv4l-raspicam
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
         
-          <a href="../rest-interface/" title="REST interface" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../images/" title="Images" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-flex__cell md-flex__cell--shrink">
               <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
             </div>
@@ -446,19 +451,19 @@ sudo apt-get install uv4l uv4l-raspicam
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                REST interface
+                Images
               </span>
             </div>
           </a>
         
         
-          <a href="../wiring-the-system/" title="Wiring the system" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../web-interface/" title="Web interface" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                Wiring the system
+                Web interface
               </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink">
@@ -478,9 +483,9 @@ sudo apt-get install uv4l uv4l-raspicam
           </div>
         
         powered by
-        <a href="http://www.mkdocs.org">MkDocs</a>
+        <a href="http://www.mkdocs.org" title="MkDocs">MkDocs</a>
         and
-        <a href="https://squidfunk.github.io/mkdocs-material/">
+        <a href="http://squidfunk.github.io/mkdocs-material/" title="Material for MkDocs">
           Material for MkDocs</a>
       </div>
       
@@ -492,9 +497,9 @@ sudo apt-get install uv4l uv4l-raspicam
       
     </div>
     
-      <script src="../assets/javascripts/application.9a4a50d4.js"></script>
+      <script src="../assets/javascripts/application-8e4952e681.js"></script>
       
-      <script>app.initialize({version:"0.17.2",url:{base:".."}})</script>
+      <script>app.initialize({version:"0.17.1",url:{base:".."}})</script>
       
     
     
