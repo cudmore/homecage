@@ -8,13 +8,13 @@ theme:
 pages:
     - Getting started: index.md
     - Images: images.md
-    - Command line interface: command-line.md
+    - Install: installing-the-software.md
     - Web interface: web-interface.md
     - REST interface: rest-interface.md
-    - Installing the software: installing-the-software.md
+    - Command line interface: command-line.md
+    - Mounting the file server: mounting-the-file-server.md
     - Wiring the system: wiring-the-system.md
     - Parts list: parts-list.md
-    - Mounting the file server: mounting-the-file-server.md
     - Troubleshooting: troubleshooting.md
     - Development notes: dev-notes.md
 

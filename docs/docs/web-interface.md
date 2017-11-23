@@ -1,6 +1,7 @@
-## Running the web server
 
 <IMG SRC="../img/web-interface-minimal.png" width=600>
+
+## Running the web server
 
 At a command prompt, type:
 

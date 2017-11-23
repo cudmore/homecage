@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from flask import Flask, render_template, send_file, jsonify
 import subprocess
 from datetime import datetime
