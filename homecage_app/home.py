@@ -12,6 +12,15 @@ import socket # to get hostname
 import RPi.GPIO as GPIO
 import picamera
 
+# load dht temperature/humidity sensor library
+g_dhtLoaded = 0
+try:
+	import Adafruit_DHT 
+	g_dhtLoaded = 1
+except:
+	g_dhtLoaded = 0
+	print 'error loading Adafruit_DHT, temperature and humidity will not work' 
+
 class home:
 	def __init__(self):
 		self.init()
@@ -33,11 +42,14 @@ class home:
 		GPIO.output(self.config['hardware']['whiteLightPin'], 0)
 		GPIO.output(self.config['hardware']['irLightPin'], 0)
 
+		#if self.config['hardware']['temperatureSensor'] > 0:
+		#	GPIO.setup(self.config['hardware']['temperatureSensor'], GPIO.IN)
+		
 		self.whiteIsOn = 0
 		self.irIsOn = 0
 
-		self.isRecording = 0
-		self.isStreaming = 0
+		self.isRecording = False
+		self.isStreaming = False
 		
 		#self.fps = 30
 		#self.resolution = (self.config['video']['resolution'][0], self.config['video']['resolution'][1])
@@ -50,6 +62,7 @@ class home:
 		self.currentFile = 'None'
 		self.currentStartSeconds = float('nan')
 		self.videoPath = '/home/pi/video/'
+		self.saveVideoPath = '' # set when we start video recording
 		
 		self.ip = self.whatismyip()
 		self.lastResponse = ''
@@ -57,15 +70,63 @@ class home:
 		self.streamWidth = 1024
 		self.streamHeight = 768
 
+		# temperature and humidity
+		self.lastTemperatureTime = 0
+		self.lastTemperature = None
+		self.lastHumidity = None
 		
+		if g_dhtLoaded and self.config['hardware']['temperatureSensor'] > 0:
+			myThread = threading.Thread(target = self.tempThread)
+			myThread.daemon = True
+			myThread.start()
+
+		if not os.path.isdir('/home/pi/video'):
+			os.makedirs('/home/pi/video')
+		#if not os.path.isdir('/home/pi/video/mp4'):
+		#	os.makedirs('/home/pi/video/mp4')
+			
+	# thread to run temperature/humidity in backfround
+	# dht is blocking, long delay cause delays in web interface
+	def tempThread(self):
+		temperatureInterval = self.config['hardware']['temperatureInterval']
+		pin = self.config['hardware']['temperatureSensor']
+		while True:
+			if g_dhtLoaded:
+				if time.time() > self.lastTemperatureTime + temperatureInterval:
+					try:
+						humidity, temperature = Adafruit_DHT.read(Adafruit_DHT.DHT22, pin)
+						if humidity is not None and temperature is not None:
+							self.lastTemperature = math.floor(temperature * 100) / 100
+							self.lastHumidity = math.floor(humidity * 100) / 100
+							#print 'tempThread()', self.lastTemperature, self.lastHumidity
+						# set even on fail, this way we do not immediately hit it again
+						self.lastTemperatureTime = time.time()
+					except:
+						print 'readTemperature() exception reading temperature/humidity'
+			time.sleep(0.5)
+	
+	def setParam(self, param, value):
+		print 'setParam()', param, value
+		one, two = param.split('.')
+		print 'was:', self.config[one][two]
+		self.config[one][two] = value
+		
+	def loadConfigDefaultsFile(self):
+		print 'home.py loadConfigDefaultsFile()'
+		with open('config_defaults.json') as configFile:
+			self.config = json.load(configFile)
+		self.lastResponse = 'Loaded default config file'
+	
 	def loadConfigFile(self):
 		with open('config.json') as configFile:
 			config = json.load(configFile)
 		return config
 	
 	def saveConfigFile(self):
+		print 'home.py saveConfigFile()'
 		with open('config.json', 'w') as outfile:
-			json.dump(self.config, outfile)
+			json.dump(self.config, outfile, indent=4)
+		self.lastResponse = 'Saved config file'
 	
 	def getStatus(self):
 		# return the status of the server, all params
@@ -105,6 +166,12 @@ class home:
 		filelist = self.make_tree('/home/pi/video')
 		status['videofilelist'] = json.dumps(filelist)
 		
+		# temperature and humidity
+		status['temperature'] = self.lastTemperature
+		status['humidity'] = self.lastHumidity
+			
+		status['controlLights'] = self.config['lights']['controlLights']
+		
 		#print "status['videofilelist']:", status['videofilelist']
 		
 		return status
@@ -119,12 +186,23 @@ class home:
 		else:
 			self.isRecording = onoff
 			if self.isRecording:
+				# set output path
+				startTime = datetime.now()
+				startTimeStr = startTime.strftime('%Y%m%d')
+				self.saveVideoPath = self.videoPath + startTimeStr + '/'
+				print 'home.record() is making output directory:', self.saveVideoPath
+				if not os.path.isdir(self.saveVideoPath):
+					os.makedirs(self.saveVideoPath)
+				#mp4Path = self.saveVideoPath + 'mp4'
+				#if not os.path.isdir(mp4Path):
+				#	os.makedirs(mp4Path)
+								
 				#self.currentStartSeconds = time.time()
 				#self.currentFile = datetime.now().strftime('%Y%m%d_%H%M%S')
 				# start a background thread
 				thread = threading.Thread(target=self.recordVideoThread, args=())
 				thread.daemon = True							# Daemonize thread
-				thread.start()								  # Start the execution
+				thread.start()									# Start the execution
 			else:
 				self.currentStartSeconds = float('nan')
 				self.currentFile = 'None'
@@ -133,6 +211,14 @@ class home:
 				self.irLED(0)
 
 			self.lastResponse = 'Recording is ' + ('on' if onoff else 'off')
+	
+	def convertVideo(self, videoFilePath, fps):
+		print 'convertVideo()', videoFilePath, fps
+		cmd = './convert_video.sh ' + videoFilePath + ' ' + str(fps)
+		child = subprocess.Popen(cmd, shell=True)
+		out, err = child.communicate()
+		#print 'out:', out
+		#print 'err:', err
 		
 	def stream(self,onoff):
 		print 'stream()'
@@ -159,9 +245,9 @@ class home:
 				#print 'err:', err
 			self.lastResponse = 'Streaming is ' + ('on' if self.isStreaming else 'off')
 
-	def irLED(self,onoff, allow=False):
+	def irLED(self, onoff, allow=False):
 		# pass allow=true to control light during recording
-		if not allow and self.isRecording:
+		if self.config['lights']['controlLights'] and not allow and self.isRecording:
 			self.lastResponse = 'Not allowed during recording'
 		else:
 			GPIO.output(self.config['hardware']['irLightPin'], onoff)
@@ -181,14 +267,15 @@ class home:
 
 	def controlLights(self):
 		# control lights during recording
-		now = datetime.now()
-		isDaytime = now.hour > self.config['lights']['sunrise'] and now.hour < self.config['lights']['sunset']
-		if isDaytime:
-			self.whiteLED(1, allow=True)
-			self.irLED(0, allow=True)
-		else:
-			self.whiteLED(0, allow=True)
-			self.irLED(1, allow=True)
+		if self.config['lights']['controlLights']:
+			now = datetime.now()
+			isDaytime = now.hour > self.config['lights']['sunrise'] and now.hour < self.config['lights']['sunset']
+			if isDaytime:
+				self.whiteLED(1, allow=True)
+				self.irLED(0, allow=True)
+			else:
+				self.whiteLED(0, allow=True)
+				self.irLED(1, allow=True)
 			
 	def recordVideoThread(self):
 		# record individual video files in background thread
@@ -208,9 +295,9 @@ class home:
 				#the file we are about to record/save
 				self.currentFile = startTimeStr + '.h264'
 				self.currentStartSeconds = time.time()
-				thisVideoFile = self.videoPath + self.currentFile
+				thisVideoFile = self.saveVideoPath + self.currentFile
 	
-				print '   Start video file:', self.currentFile
+				print '	 Start video file:', self.currentFile
 	
 				camera.start_recording(thisVideoFile)
 				#camera.wait_recording(self.config['video']['fileDuration'])
@@ -219,13 +306,41 @@ class home:
 					camera.wait_recording(0.5)
 					self.lastResponse = 'Recording file: ' + self.currentFile
 					if self.config['video']['captureStill'] and time.time() > (lastStill + self.config['video']['stillInterval']):
-						print 'capturing still:'
+						print '      capturing still:', stillPath
 						camera.capture(stillPath, use_video_port=True)
 						lastStill = time.time()
 				camera.stop_recording()
-				print '	  Stop video file:', thisVideoFile
-			print 'recordVideoThread() out of while'
+				print '		Stop video file:', thisVideoFile
 
+				# convert to mp4
+				if self.config['video']['converttomp4']:
+					print 'converting to .mp4', thisVideoFile
+					self.convertVideo(thisVideoFile, self.config['video']['fps'])
+			print 'recordVideoThread() out of while'
+			
+	'''
+	def readTemperature(self):
+		humidity = None
+		temperature = None
+		if g_dhtLoaded:
+			if time.time() > self.lastTemperatureTime + self.temperatureInterval:
+				pin = self.config['hardware']['temperatureSensor']
+				#print 'pin:', pin
+				try:
+					humidity, temperature = Adafruit_DHT.read(Adafruit_DHT.DHT22, pin)
+					if humidity is not None and temperature is not None:
+						humidity = math.floor(humidity * 100) / 100
+						temperature = math.floor(temperature * 100) / 100
+						#print humidity, temperature
+						# convert to farenheight
+						# temperature = temperature * 9/5.0 + 32
+					# set even on fail,
+					self.lastTemperatureTime = time.time()
+				except:
+					print 'readTemperature() exception reading temperature/humidity'
+		return humidity, temperature
+	'''
+	
 	#
 	# Utility
 	#
@@ -237,12 +352,13 @@ class home:
 		ipaddr = split_data[split_data.index('src')+1]
 		return ipaddr
 
+	# generate a file list of video files
 	def make_tree(self, path):
 		filelist = []
 		for root, dirs, files in os.walk(path):
 			for file in files:
 				if file.endswith('.h264'):
-					filelist.append({'name': file})
+					filelist.append(file)
 		return filelist
 
 

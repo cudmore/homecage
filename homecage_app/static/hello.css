@@ -13,8 +13,18 @@ span.mysmall {
     font-size: .8em;
 }
 
+.myTable0 {
+    border-collapse: collapse;
+    width: 75%;
+    //table-layout: fixed;
+}
+
+.myTable0 td {
+    border: 0px solid #ddd;
+    padding: 6px;
+}
+
 .myTable {
-    //font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
     border-collapse: collapse;
     width: 75%;
     //table-layout: fixed;
@@ -22,8 +32,7 @@ span.mysmall {
 
 .myTable td {
     border: 0px solid #ddd;
-    padding: 12px;
-    //width: 30%;
+    padding: 6px;
 }
 
 .myTable td:nth-child(1){ width:100px; }
@@ -31,9 +40,21 @@ span.mysmall {
 //.myTable td:nth-child(3){ width:100px; }
 //.myTable td:nth-child(4){ width:100px; }
 
-.myTable-small{  font-size: 12px;
+.myTable-small{
+	font-size: 12px;
 }
 
 .indent {
     margin-left: 40px;
 }
+
+.my_hr { 
+    display: block;
+    margin-top: 0em; //0.5em;
+    margin-bottom: 0em; //0.5em;
+    margin-left: auto;
+    margin-right: auto;
+    border-style: inset;
+    border-width: 1px;
+}
+Try it Yourself »

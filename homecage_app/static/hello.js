@@ -1,17 +1,14 @@
 
 angular.module('demo', ['uiSwitch'])
-.controller('Hello', function($scope, $http, $location, $interval, $sce, $timeout) {
-
-
+.controller('Hello', function($scope, $window, $http, $location, $interval, $sce, $timeout) {
+	
+	console.log('angular.version:', angular.version)
+	
 	//url of page we loaded
 	$scope.myUrl = $location.absUrl(); //with port :5000
-	console.log($scope.myUrl)
 	
-	//add function to add rand to this each time stream is started
-	myStreamUrl = 'http://' + $location.host() + ':8080/stream';
-	console.log('myStreamUrl:' + myStreamUrl)
-	//https://stackoverflow.com/questions/20045150/how-to-set-an-iframe-src-attribute-from-a-variable-in-angularjs
-    $scope.myStreamUrl0 = myStreamUrl;
+    myStreamUrl = 'http://' + $location.host() + ':8080/stream';
+    $scope.myStreamUrl0 = myStreamUrl
     $scope.myStreamUrl = $sce.trustAsResourceUrl(myStreamUrl);
 	
 	//todo: rewrite these to just be inline with logic in button html
@@ -42,16 +39,12 @@ angular.module('demo', ['uiSwitch'])
         	    // remove video file list from $scope.status
         	    $scope.videofilelist = $scope.status.videofilelist
         	    $scope.status.videofilelist = ''
-        	    //console.log('$scope.videofilelist:', $scope.videofilelist)
-        	    //console.log($scope.status['config'])
         	    
         	    //calculate web page iframe for stream
         	    var tmpWidth = $scope.status.config.stream.streamResolution[0]
         	    var tmpHeight = $scope.status.config.stream.streamResolution[1]
         	    $scope.streamWidth = tmpWidth + (tmpWidth * 0.03)
         	    $scope.streamHeight = tmpHeight + (tmpWidth * 0.03) 
-        	    //console.log($scope.streamWidth)
-        	    //console.log($scope.streamHeight)
         	});
 	};
 
@@ -63,6 +56,11 @@ angular.module('demo', ['uiSwitch'])
         	});
 	};
 
+	$scope.getLastImage2 = function () {
+		$scope.lastImage2 = $scope.myUrl + 'lastimage' + '?' + new Date().getTime()
+	}
+	
+	
 	//
 	//button callbacks
 	//
@@ -74,11 +72,17 @@ angular.module('demo', ['uiSwitch'])
 	};
 
 	$scope.startstoprecord = function (startstop) {
-		console.log("startstoprecord");
-		$http.get($scope.myUrl + 'record/' + startstop).
-        	then(function(response) {
-        	    //$scope.status = response.data;
-        	});
+		console.log("startstoprecord");		
+		stopOK = 1;
+		if (startstop == 0) {
+			stopOK = $window.confirm('Are you sure you want to stop the recording?');
+		}
+		if (stopOK) {
+			$http.get($scope.myUrl + 'record/' + startstop).
+        		then(function(response) {
+        		    //$scope.status = response.data;
+        		});
+        }
 	};
 
 	$scope.startstopstream = function (startstop) {
@@ -99,28 +103,20 @@ angular.module('demo', ['uiSwitch'])
         //refresh stream
 		if (startstop==1) {
 			//callAtTimeout()
-			$timeout(callAtTimeout, 3000);
+			$timeout(callAtTimeout, 2000);
 		}
 	};
 
-function callAtTimeout() {
-    console.log("callAtTimeout()");
-    if ($scope.hardCloseStream) {
-    	console.log('hardCloseStream')
-    	$scope.myStreamUrl = ''
-    } else {
-    	myStreamUrl = 'http://' + $location.host() + ':8080/stream' //+ '?' + new Date().getTime()
-    	$scope.myStreamUrl = $sce.trustAsResourceUrl(myStreamUrl);
-    }
-//    } else if ($scope.isStreaming) {
-//    	console.log('2 hardCloseStream')
-//    	myStreamUrl = 'http://' + $location.host() + ':8080/stream' + '?' + new Date().getTime()
-//    	$scope.myStreamUrl = $sce.trustAsResourceUrl(myStreamUrl);
-//    } else {
-//    	console.log('3 hardCloseStream')
-//    	$scope.myStreamUrl = ''
-//    }
-}
+	function callAtTimeout() {
+		console.log("callAtTimeout()");
+		if ($scope.hardCloseStream) {
+			console.log('hardCloseStream')
+			$scope.myStreamUrl = ''
+		} else {
+			myStreamUrl = 'http://' + $location.host() + ':8080/stream' + '?' + new Date().getTime()
+			$scope.myStreamUrl = $sce.trustAsResourceUrl(myStreamUrl);
+		}
+	}
 
 	$scope.iron = function (isOn) {
 		console.log("iron");
@@ -166,54 +162,28 @@ function callAtTimeout() {
 	}
 
 	$scope.mySubmit = function (param,val) {
-		console.log("mySubmit " + param + " " + val);
+		console.log("mySubmit() " + param + " " + val);
 		$http.get($scope.myUrl + 'set/' + param + '/' + val).
         	then(function(response) {
         	    //$scope.status = response.data;
         	});
 	}
 
-	$scope.getLastImage2 = function () {
-		$scope.lastImage2 = $scope.myUrl + 'lastimage' + '?' + new Date().getTime()
+	$scope.saveoptions = function () {
+		console.log('saveoptions()')
+		$http.get($scope.myUrl + 'saveconfig').
+        	then(function(response) {
+        	    //
+        	});
 	}
 	
-	//not used
-	// see: https://stackoverflow.com/questions/29780147/how-to-return-image-from-http-get-in-angularjs
-	// display image with
-	// <img data-ng-src="data:image/png;base64,{{lastImage}}">
-	$scope.getLastImage = function () {
-	  $http({
-		method: 'GET',
-		url: $scope.myUrl + 'lastimage',
-		responseType: 'arraybuffer'
-	  }).then(function(response) {
-		console.log(response);
-		var str = _arrayBufferToBase64(response.data);
-		//console.log(str);
-		// str is base64 encoded.
-		$scope.lastImage = str
-		//console.log('$scope.lastImage:', $scope.lastImage)
-	  }, function(response) {
-		console.error('error in getting static img.');
-	  });
+	$scope.loaddefaultoptions = function () {
+		$http.get($scope.myUrl + 'loadconfigdefaults').
+        	then(function(response) {
+        	    //
+        	});
 	}
-
-	//not used
-	function _arrayBufferToBase64(buffer) {
-	  var binary = '';
-	  var bytes = new Uint8Array(buffer);
-	  var len = bytes.byteLength;
-	  for (var i = 0; i < len; i++) {
-		binary += String.fromCharCode(bytes[i]);
-	  }
-	  return window.btoa(binary);
-	}	
-  
-	//$scope.getState = function () {
-	//	console.log($scope.status)
-	//	$scope.localFPS = $scope.status.fps
-	//}
-
+	
 	//called once page is loaded
 	//angular.element(function () {
 	//	console.log('page loading completed');
@@ -226,7 +196,6 @@ function callAtTimeout() {
 	$interval($scope.getStatus, 900);      	
 	
 	$interval($scope.getLastImage2, 900);      	
-	//$scope.getLastImage()
 
 	$scope.hardCloseStream = 0
 	

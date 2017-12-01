@@ -28,7 +28,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-0.17.1, mkdocs-material-2.0.4">
+      <meta name="generator" content="mkdocs-0.17.2, mkdocs-material-2.1.1">
     
     
       
@@ -36,11 +36,11 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/application-709eec9410.css">
+      <link rel="stylesheet" href="../assets/stylesheets/application.1411ec6b.css">
       
     
     
-      <script src="../assets/javascripts/modernizr-e826f8942a.js"></script>
+      <script src="../assets/javascripts/modernizr.f383bccf.js"></script>
     
     
       
@@ -81,14 +81,18 @@
         <label class="md-icon md-icon--menu md-header-nav__button" for="drawer"></label>
       </div>
       <div class="md-flex__cell md-flex__cell--stretch">
-        <span class="md-flex__ellipsis md-header-nav__title">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
           
             
-              
+              <span class="md-header-nav__topic">
+                Home cage surveillance
+              </span>
+              <span class="md-header-nav__topic">
+                Development notes
+              </span>
             
-            Development notes
           
-        </span>
+        </div>
       </div>
       <div class="md-flex__cell md-flex__cell--shrink">
         
@@ -373,8 +377,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#todo" title="ToDo" class="md-nav__link">
-    ToDo
+  <a href="#change-log" title="Change Log" class="md-nav__link">
+    Change Log
   </a>
   
     <nav class="md-nav">
@@ -383,6 +387,13 @@
           <li class="md-nav__item">
   <a href="#20171111" title="20171111" class="md-nav__link">
     20171111
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#20171201" title="20171201" class="md-nav__link">
+    20171201
   </a>
   
 </li>
@@ -454,8 +465,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#todo" title="ToDo" class="md-nav__link">
-    ToDo
+  <a href="#change-log" title="Change Log" class="md-nav__link">
+    Change Log
   </a>
   
     <nav class="md-nav">
@@ -464,6 +475,13 @@
           <li class="md-nav__item">
   <a href="#20171111" title="20171111" class="md-nav__link">
     20171111
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#20171201" title="20171201" class="md-nav__link">
+    20171201
   </a>
   
 </li>
@@ -543,13 +561,26 @@ sudo kill -- -PID
 <h4 id="remove-uv4l-raspicam-extras">Remove uv4l-raspicam-extras</h4>
 <pre><code>sudo apt-get remove uv4l-raspicam-extras
 </code></pre>
-<h2 id="todo">ToDo</h2>
-<h3 id="20171111">20171111</h3>
+<h2 id="change-log">Change Log</h2>
+<h4 id="20171111">20171111</h4>
 <ul>
 <li>finish index.html interface, mostly adding interface to change self.config</li>
 <li>split self.config (from config.json) and self.status (runtime variables)</li>
 <li>add in dht sensor code</li>
 <li>add in white and ir sensor code</li>
+</ul>
+<h4 id="20171201">20171201</h4>
+<ul>
+<li>Added dialog when stopping video</li>
+<li>added 'videolist.html' page to display list of video and play on click !</li>
+<li>now converting .h264 to .mp4<ul>
+<li>added to config.json</li>
+<li>added bash script convert_video.sh</li>
+<li>call bash script when video is done (in thread)</li>
+<li>added documentation to install avconv</li>
+</ul>
+</li>
+<li>now saving into date folder</li>
 </ul>
                 
                   
@@ -596,9 +627,9 @@ sudo kill -- -PID
           </div>
         
         powered by
-        <a href="http://www.mkdocs.org" title="MkDocs">MkDocs</a>
+        <a href="http://www.mkdocs.org">MkDocs</a>
         and
-        <a href="http://squidfunk.github.io/mkdocs-material/" title="Material for MkDocs">
+        <a href="https://squidfunk.github.io/mkdocs-material/">
           Material for MkDocs</a>
       </div>
       
@@ -610,9 +641,9 @@ sudo kill -- -PID
       
     </div>
     
-      <script src="../assets/javascripts/application-8e4952e681.js"></script>
+      <script src="../assets/javascripts/application.9a4a50d4.js"></script>
       
-      <script>app.initialize({version:"0.17.1",url:{base:".."}})</script>
+      <script>app.initialize({version:"0.17.2",url:{base:".."}})</script>
       
     
     

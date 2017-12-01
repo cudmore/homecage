@@ -1,7 +1,5 @@
-#!/usr/bin/env python
-
-from flask import Flask, render_template, send_file, jsonify
-import subprocess
+from flask import Flask, render_template, send_file, jsonify, redirect, abort
+import os, subprocess
 from datetime import datetime
 
 # turn off printing to console
@@ -90,15 +88,78 @@ def whiteLED(onoff):
 @app.route('/set/<paramName>/<int:value>')
 def setParam(paramName, value):
 	print '\n\tsetParam():', paramName, value, '\n'
-	if paramName == 'fps':
-		home.fps = value
-	if paramName == 'fileDuration':
-		home.fileDuration = value
-
+	home.setParam(paramName, value)
+	
 	status = getStatus()
 	#return jsonify(status=list(status.items()))
 	return jsonify(status)
 
+@app.route('/saveconfig')
+def saveConfig():
+	home.saveConfigFile()
+	status = getStatus()
+	return jsonify(status)
+	
+@app.route('/loadconfigdefaults')
+def loadConfig():
+	home.loadConfigDefaultsFile()
+	status = getStatus()
+	return jsonify(status)
+	
+#see: https://stackoverflow.com/questions/23718236/python-flask-browsing-through-directory-with-files
+@app.route('/videolist')
+@app.route('/videolist/<path:req_path>')
+def videolist(req_path=''):
+	print 'videolist() req_path:', req_path
+	BASE_DIR = '/home/pi/video'
+	
+	req_path = req_path.replace('home/pi/video/', '')
+	print '   xxx videolist() req_path:', req_path
+	
+	abs_path = os.path.join(BASE_DIR, req_path)
+
+	# Return 404 if path doesn't exist
+	if not os.path.exists(abs_path):
+		return abort(404)
+	
+	# Check if path is a file and serve
+	if os.path.isfile(abs_path):
+		return send_file(abs_path)
+
+	# Show directory contents
+	#files = os.listdir(abs_path)
+	#files = [os.path.join(abs_path, f) for f in os.listdir(abs_path) if f.endswith('.mp4') or not os.path.isfile(f)]
+	files = []
+	for f in os.listdir(abs_path):
+		if f == '.AppleDouble':
+			continue
+		f2 = f
+		f = os.path.join(abs_path, f)
+		fd = {'path':f, 'file':f2}
+		if not os.path.isfile(f):
+			files.append(fd)
+		elif f.endswith('.mp4'):
+			print fd
+			files.append(fd)
+	#print files
+	# sort the list
+	files = sorted(files, key=lambda k: k['file']) 
+	return render_template('videolist.html', files=files, abs_path=abs_path)
+
+	#files = os.listdir('/home/pi/video')
+	#return render_template('videolist.html', files=files)
+	
+'''
+@app.route('/servevideo/<path:req_path>')
+def servevideo(req_path):
+	BASE_DIR = '/home/pi/video/mp4'
+	abs_path = os.path.join(BASE_DIR, req_path)
+	#return send_file(abs_path)
+	print 'servevideo(): req_path:', req_path, 'abs_path:', abs_path
+	#return redirect(abs_path)
+	return send_file(abs_path)
+'''
+	
 def whatismyip():
 	arg='ip route list'
 	p=subprocess.Popen(arg,shell=True,stdout=subprocess.PIPE)
@@ -109,7 +170,7 @@ def whatismyip():
 
 if __name__ == '__main__':
 	print 'Running Flask server at:', 'http://' + whatismyip() + ':5000'
-	app.run(host=whatismyip(), port=5000, debug=False)
+	app.run(host=whatismyip(), port=5000, debug=True, threaded=True)
 	
 	
 	

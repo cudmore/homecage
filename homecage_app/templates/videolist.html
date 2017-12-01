@@ -1,0 +1,22 @@
+<!doctype html>
+<html ng-app="demo">
+	<head>
+
+	</head>
+	
+<body>
+
+	<!--
+	<video src="http://192.168.1.15:5000/videolist/20171201_091431.mp4" controls>
+	</video>
+	-->
+	
+	{{ abs_path }}
+	
+	<ul>
+		{% for file in files %}
+		<li><a href="/videolist{{ file.path }}">{{ file.file }}</a></li>
+		{% endfor %}
+	</ul>
+
+</body>

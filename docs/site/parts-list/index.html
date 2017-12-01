@@ -28,7 +28,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-0.17.1, mkdocs-material-2.0.4">
+      <meta name="generator" content="mkdocs-0.17.2, mkdocs-material-2.1.1">
     
     
       
@@ -36,11 +36,11 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/application-709eec9410.css">
+      <link rel="stylesheet" href="../assets/stylesheets/application.1411ec6b.css">
       
     
     
-      <script src="../assets/javascripts/modernizr-e826f8942a.js"></script>
+      <script src="../assets/javascripts/modernizr.f383bccf.js"></script>
     
     
       
@@ -81,14 +81,18 @@
         <label class="md-icon md-icon--menu md-header-nav__button" for="drawer"></label>
       </div>
       <div class="md-flex__cell md-flex__cell--stretch">
-        <span class="md-flex__ellipsis md-header-nav__title">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
           
             
-              
+              <span class="md-header-nav__topic">
+                Home cage surveillance
+              </span>
+              <span class="md-header-nav__topic">
+                Parts list
+              </span>
             
-            Parts list
           
-        </span>
+        </div>
       </div>
       <div class="md-flex__cell md-flex__cell--shrink">
         
@@ -446,30 +450,31 @@
 </ul>
 <h2 id="computer">Computer</h2>
 <ul>
-<li>Raspberry Pi 3</li>
+<li>Raspberry Pi 3 <a href="https://www.amazon.com/CanaKit-Raspberry-Complete-Starter-Kit/dp/B01C6Q2GSY/ref=sr_1_2_sspa?s=electronics&amp;ie=UTF8&amp;qid=1512090648&amp;sr=1-2-spons&amp;keywords=canakit+raspberry+pi+3&amp;psc=1">Canakit at Amazon</a><ul>
 <li>5V AC/DC power, 2A</li>
-<li>SD card, class 10, 16 GB (for system installation)</li>
+<li>SD card, class 10, 32 GB (for system installation, 16 GB is fine, class 10 is important)</li>
+<li>Case</li>
+</ul>
+</li>
 <li>USB key, 64 GB (to save video)</li>
-<li>ethernet cable</li>
-<li>case</li>
+<li>Ethernet cable</li>
 </ul>
 <h2 id="camera">Camera</h2>
 <ul>
-<li>Raspberry Pi NoIR</li>
+<li><a href="https://www.adafruit.com/product/1567">Raspberry Pi NoIR, 8 MP, Version 2</a>.</li>
 <li>CSI Camera cable</li>
 </ul>
 <h2 id="lights">Lights</h2>
 <ul>
-<li>12V AC/DC adapter</li>
-<li>2-channel relay (to switch lights on/off)</li>
-<li>IR lights (&lt; 900 nm)</li>
-<li>White lights</li>
+<li>12V AC/DC adapter, 1 Amp</li>
+<li><a href="https://www.sainsmart.com/products/2-channel-5v-relay-module">2-channel relay</a> (to switch lights on/off)</li>
+<li><a href="https://www.sparkfun.com/products/9469">850 nm IR LEDs</a>. Don't use IR LEDs &gt;900nm as the camera is not very sensitive in this range and images will be grainy.</li>
+<li>White LEDs</li>
 </ul>
 <h2 id="environmental">Environmental</h2>
 <ul>
-<li>temperature and humidity sensor</li>
-<li>IR light sensor</li>
-<li>White light sensor</li>
+<li><a href="https://www.adafruit.com/product/385?gclid=CjwKCAiA9f7QBRBpEiwApLGUip6TE2XPQx_9hVrRY83GHtGapdZq6H4t1ZHUJfuRXRTZdBMLvbmCJhoCWC4QAvD_BwE">DHT 22 temperature and humidity sensor</a></li>
+<li><a href="https://www.adafruit.com/product/1777">SI1145 Digital UV Index / IR / Visible Light Sensor</a></li>
 </ul>
                 
                   
@@ -530,9 +535,9 @@
           </div>
         
         powered by
-        <a href="http://www.mkdocs.org" title="MkDocs">MkDocs</a>
+        <a href="http://www.mkdocs.org">MkDocs</a>
         and
-        <a href="http://squidfunk.github.io/mkdocs-material/" title="Material for MkDocs">
+        <a href="https://squidfunk.github.io/mkdocs-material/">
           Material for MkDocs</a>
       </div>
       
@@ -544,9 +549,9 @@
       
     </div>
     
-      <script src="../assets/javascripts/application-8e4952e681.js"></script>
+      <script src="../assets/javascripts/application.9a4a50d4.js"></script>
       
-      <script>app.initialize({version:"0.17.1",url:{base:".."}})</script>
+      <script>app.initialize({version:"0.17.2",url:{base:".."}})</script>
       
     
     
