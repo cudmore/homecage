@@ -63,13 +63,25 @@ sudo kill -- -PID
 
     sudo apt-get remove uv4l-raspicam-extras
     
-## ToDo
+## Change Log
 
-### 20171111
+#### 20171111
 
  - finish index.html interface, mostly adding interface to change self.config
  - split self.config (from config.json) and self.status (runtime variables)
  - add in dht sensor code
  - add in white and ir sensor code
 
+#### 20171201
+
+ - Added dialog when stopping video
+ - added 'videolist.html' page to display list of video and play on click !
+ - now converting .h264 to .mp4
+    - added to config.json
+    - added bash script convert_video.sh
+    - call bash script when video is done (in thread)
+    - added documentation to install avconv
+ - now saving into date folder
+ 
 [mkdocs]: http://www.mkdocs.org/
+

@@ -57,10 +57,12 @@ sudo apt-get update
 sudo apt-get install uv4l uv4l-raspicam uv4l-server
 ```
 
-## 6) Create the folder to save video files
+## 6) Install avconv to convert videos from .h264 to .mp4
 
-	cd
-	mkdir video
+See [this blog post][13] for more information.
+
+	sudo apt-get update
+	sudo apt-get install libav-tools
 
 Video files will be saved to `/home/pi/video`. This can be changed in the web server configuration file `homecage/homecage_app/config.json`. If your going to save a lot of video, please [mount a usb key][12] and save videos there.
 
@@ -93,3 +95,4 @@ At this point you can interact with the homecage either through the [web][9] or 
 [10]: rest-interface.md
 [11]: http://blog.cudmore.io/post/2017/11/01/libav-for-ffmpeg/
 [12]: http://blog.cudmore.io/post/2015/05/05/mounting-a-usb-drive-at-boot/
+[13]: http://blog.cudmore.io/post/2017/11/01/libav-for-ffmpeg/
