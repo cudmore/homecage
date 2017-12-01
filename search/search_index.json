@@ -2,7 +2,7 @@
     "docs": [
         {
             "location": "/", 
-            "text": "Home cage surveillance is a system to record video of your animals in their home cage.\n\n\nIt is designed to run on a Raspberry Pi computer using a Raspberry Pi NoIR camera.\n\n\nFeatures\n\n\n\n\nRecord video 24/7\n\n\nAutomaticall controls day-time and night-time lights.\n\n\nLive video streaming to a web browser\n\n\n\n\nInstall\n\n\nSee the \ninstalling the software\n page.\n\n\nInterface options\n\n\n\n\ncommand line\n - A command line interface.\n\n\nweb\n - A point and click web browser interface.\n\n\nREST\n - A rest interface to communicate with a homecage server", 
+            "text": "Home cage surveillance is a system to record video of your animals in their home cage.\n\n\nIt is designed to run on a Raspberry Pi computer using a Raspberry Pi NoIR camera.\n\n\nFeatures\n\n\n\n\nRecord video 24/7\n\n\nAutomaticall controls day-time and night-time lights.\n\n\nLive video streaming to a web browser\n\n\n\n\nInterface options\n\n\n\n\nWeb\n - A point and click web browser interface.\n\n\nREST\n - A rest interface to communicate with a homecage server\n\n\nCommand line\n - A command line interface.", 
             "title": "Getting started"
         }, 
         {
@@ -11,13 +11,8 @@
             "title": "Features"
         }, 
         {
-            "location": "/#install", 
-            "text": "See the  installing the software  page.", 
-            "title": "Install"
-        }, 
-        {
             "location": "/#interface-options", 
-            "text": "command line  - A command line interface.  web  - A point and click web browser interface.  REST  - A rest interface to communicate with a homecage server", 
+            "text": "Web  - A point and click web browser interface.  REST  - A rest interface to communicate with a homecage server  Command line  - A command line interface.", 
             "title": "Interface options"
         }, 
         {
@@ -47,7 +42,7 @@
         }, 
         {
             "location": "/installing-the-software/", 
-            "text": "Homecage requires the following libraries:\n\n\n\n\nWiring Pi\n - Library that provides a command line interface to the GPIO pins. This should be installed by default.\n\n\nGPIO\n - Python library to control GPIO pins.\n\n\nflask\n - A python web server.\n\n\nuv4l\n - Library for live video streaming to a web browser\n\n\nAdafruit_DHT\n - (optional) Python library to read from a DHT temperature and humidity sensor.\n\n\n\n\n1) Get a functioning Raspberry Pi\n\n\nThese instructions assume you have a functioning Raspberry Pi. To get started setting up a Pi from scratch, see our \nsetup intructions\n.\n\n\n2) Clone the repository\n\n\nThis will make a folder \nhomecage\n in your root directory. You can always return to your root directory with \ncd\n\n\n# if you don't already have git installed\nsudo apt-get install git\n\ngit clone https://github.com/cudmore/homecage.git\n\n\n\n3) Install python libraries\n\n\n# if you don't already have pip installed\nsudo apt-get install python-pip\n\npip install rpi.gpio\npip install flask\n\n# if you run into errors then try installing\nsudo apt-get install build-essential python-dev python-openssl\n\n\n\n4) Install DHT temperature sensor (optional)\n\n\nIf you run into trouble then go to \nthis tutorial\n.\n\n\ncd\nmkdir tmp\ncd tmp\ngit clone https://github.com/adafruit/Adafruit_Python_DHT.git\ncd Adafruit_Python_DHT\nsudo python setup.py install\n\n\n\n5) Install uv4l for live video streaming (optional)\n\n\nIf you run into trouble, then follow \nthis tutorial\n.\n\n\ncurl http://www.linux-projects.org/listing/uv4l_repo/lrkey.asc | sudo apt-key add -\n\n# add the following line to /etc/apt/sources.list\n# start editor with `sudo pico /etc/apt/sources.list`\ndeb http://www.linux-projects.org/listing/uv4l_repo/raspbian/stretch stretch main\n\nsudo apt-get update\nsudo apt-get install uv4l uv4l-raspicam uv4l-server\n\n\n\n\n6) Create the folder to save video files\n\n\ncd\nmkdir video\n\n\n\nVideo files will be saved to \n/home/pi/video\n. This can be changed in the web server configuration file \nhomecage/homecage_app/config.json\n. If your going to save a lot of video, please \nmount a usb key\n and save videos there.\n\n\n7) Start the web server at boot (optional)\n\n\nEdit crontab\n\n\ncrontab -e\n\n\n\nAdd the following line to the end of the file (make sure it is one line)\n\n\n@reboot (sleep 10; cd /home/pi/homecage/homecage_app \n /usr/bin/python /home/pi/homecage/homecage_app/homecage_app.py)\n\n\n\n\nDone installing !!!\n\n\nAt this point you can interact with the homecage either through the \nweb\n or from the \ncommand line\n.", 
+            "text": "Homecage requires the following libraries:\n\n\n\n\nWiring Pi\n - Library that provides a command line interface to the GPIO pins. This should be installed by default.\n\n\nGPIO\n - Python library to control GPIO pins.\n\n\nflask\n - A python web server.\n\n\nuv4l\n - Library for live video streaming to a web browser\n\n\nAdafruit_DHT\n - (optional) Python library to read from a DHT temperature and humidity sensor.\n\n\n\n\n1) Get a functioning Raspberry Pi\n\n\nThese instructions assume you have a functioning Raspberry Pi. To get started setting up a Pi from scratch, see our \nsetup intructions\n.\n\n\n2) Clone the repository\n\n\nThis will make a folder \nhomecage\n in your root directory. You can always return to your root directory with \ncd\n\n\n# if you don't already have git installed\nsudo apt-get install git\n\ngit clone https://github.com/cudmore/homecage.git\n\n\n\n3) Install python libraries\n\n\n# if you don't already have pip installed\nsudo apt-get install python-pip\n\npip install rpi.gpio\npip install flask\n\n# if you run into errors then try installing\nsudo apt-get install build-essential python-dev python-openssl\n\n\n\n4) Install DHT temperature sensor (optional)\n\n\nIf you run into trouble then go to \nthis tutorial\n.\n\n\ncd\nmkdir tmp\ncd tmp\ngit clone https://github.com/adafruit/Adafruit_Python_DHT.git\ncd Adafruit_Python_DHT\nsudo python setup.py install\n\n\n\n5) Install uv4l for live video streaming (optional)\n\n\nIf you run into trouble, then follow \nthis tutorial\n.\n\n\ncurl http://www.linux-projects.org/listing/uv4l_repo/lrkey.asc | sudo apt-key add -\n\n# add the following line to /etc/apt/sources.list\n# start editor with `sudo pico /etc/apt/sources.list`\ndeb http://www.linux-projects.org/listing/uv4l_repo/raspbian/stretch stretch main\n\nsudo apt-get update\nsudo apt-get install uv4l uv4l-raspicam uv4l-server\n\n\n\n\n6) Install avconv to convert videos from .h264 to .mp4\n\n\nSee \nthis blog post\n for more information.\n\n\nsudo apt-get update\nsudo apt-get install libav-tools\n\n\n\nVideo files will be saved to \n/home/pi/video\n. This can be changed in the web server configuration file \nhomecage/homecage_app/config.json\n. If your going to save a lot of video, please \nmount a usb key\n and save videos there.\n\n\n7) Start the web server at boot (optional)\n\n\nEdit crontab\n\n\ncrontab -e\n\n\n\nAdd the following line to the end of the file (make sure it is one line)\n\n\n@reboot (sleep 10; cd /home/pi/homecage/homecage_app \n /usr/bin/python /home/pi/homecage/homecage_app/homecage_app.py)\n\n\n\n\nDone installing !!!\n\n\nAt this point you can interact with the homecage either through the \nweb\n or from the \ncommand line\n.", 
             "title": "Install"
         }, 
         {
@@ -76,9 +71,9 @@
             "title": "5) Install uv4l for live video streaming (optional)"
         }, 
         {
-            "location": "/installing-the-software/#6-create-the-folder-to-save-video-files", 
-            "text": "cd\nmkdir video  Video files will be saved to  /home/pi/video . This can be changed in the web server configuration file  homecage/homecage_app/config.json . If your going to save a lot of video, please  mount a usb key  and save videos there.", 
-            "title": "6) Create the folder to save video files"
+            "location": "/installing-the-software/#6-install-avconv-to-convert-videos-from-h264-to-mp4", 
+            "text": "See  this blog post  for more information.  sudo apt-get update\nsudo apt-get install libav-tools  Video files will be saved to  /home/pi/video . This can be changed in the web server configuration file  homecage/homecage_app/config.json . If your going to save a lot of video, please  mount a usb key  and save videos there.", 
+            "title": "6) Install avconv to convert videos from .h264 to .mp4"
         }, 
         {
             "location": "/installing-the-software/#7-start-the-web-server-at-boot-optional", 
@@ -197,47 +192,77 @@
         }, 
         {
             "location": "/wiring-the-system/", 
-            "text": "Camera\n\n\nAttach the camera to the Pi with a flat ribbon cable. The cable should have blue tabs on one side of each end.\n\n\nThe blue tab goes towards the ethernet port on the Pi and towards the back of the camera (away from the lens).\n\n\nLights\n\n\nYou want to use an external 12V AC/DC power supply. Never connect this directly to the Pi, instead use a relay switch.\n\n\n\n\nWire 2x GPIO pins to a two-channel relay\n\n\nConnect the lights to the two-channel relay\n\n\n\n\nOptional\n\n\n\n\nWire the DHT temperature sensor (optional)\n\n\nWire a IR light sensor\n\n\nWire a visible light sensor", 
+            "text": "Camera\n\n\nIt is worth while checking out the \nspecs\n as they are impressive.\n\n\nAttach the camera to the Pi with a flat ribbon cable. The cable should have blue tabs on one side of each end. The blue tab goes towards the ethernet port on the Pi and towards the back of the camera (away from the lens).\n\n\n\n\nRaspberry Pi B+/2/3 pinout\n\n\nDigital input/output pins\n\n\nEach of the yellow numbered pins are digital input/output (DIO) pins. Your free to attach each component to the pin numbers of your choice. Just be sure that the pin numbers specified in the code match the way you wired the system.\n\n\n5V and ground pins\n\n\nThere are multiple power and ground pins, use these to connect to the relay switch, the temperature sensor, and the light sensor. Conceptually, all the ground pins are the same, you can use a \nbread-board\n if you run out of ground pins.\n\n\n\n\nLights\n\n\nYou want to use an external 12V AC/DC power supply for all the LEDs. Don't power the lights directly from the 5V pins on the Pi, it will not have anough current. A 1 Amp 12V adapter should be fine, don't worry, if it is under-powered your lights will be a little dim.\n\n\nNever connect the 12V adapter directly to the Pi, instead use a relay switch.\n\n\nOnly work with DC current coming out of the AC/DC adapter, \nDO NOT\n work with AC power coming from the wall as it can kill you.\n\n\nUse IR LEDs \n900 nm as these are within the sensitivity range of the Pi NoIR camera. A lot of IR lights are 940nm, these are not well suited for use with the Pi NoIR camera but are designed for simple IR sensors you would use for a TV remote.\n\n\nHere we will wire the system with the white LED on channel 1 and the IR LED on channel 2 of the relay switch.\n\n\n\n\nConnect a 12V AC/DC adapter, IR, and white lights to the two-channel relay switch.\n\n\n\n\n\n\nUsing an old 12V AC/DC adapter, cut the wire and stick the positive 'hot' wire into the center 'common' pin' of channel 1 on the relay switch. The 'hot' end wire usually has a white line down the length of the wire. You can also determine the 'hot' end using a multi-meter, it is the one that gives a positive (not negative) voltage when attached to the positive (normally red) end of the multi-meter.\n\n\n\n\n\n\nCut a bit of wire and connect the center 'common pin' of channel 1 to the center 'common pin' of channel 2. This is the 'hot' end.\n\n\n\n\n\n\nStick the positive end of the white LED into the 'normally closed' port of channel 1. Attach the negative end of the white LED to the 'ground' wire of the 12V AC/DC adapter.\n\n\n\n\n\n\nDo the same for the IR LED. Stick the positive end into the 'normally closed' port of channel 2 on the relay switch. Attach the negative end of the IR LED to the 'ground' wire of the 12V AC/DC adapter.\n\n\n\n\n\n\nOne important concept is that 'all grounds are the same'. This includes the ground on the 12V AC/DC adapter, the ground of the LEDs, the ground of theRaspberry Pi, etc.\n\n\nConnect the Pi to the relay switch switch\n\n\n\n\n\n\nConnect a DIO pin from the Pi to the 'In1=Digital Input' pin on the relay switch.\n\n\n\n\n\n\nConnect a second DIO pin from the Pi to the 'In2=Digital Input' pin on the relay switch.\n\n\n\n\n\n\nConnect a 5V pin from the Pi to the 'Vcc' pin on the relay switch.\n\n\n\n\n\n\nConnect a ground pin from the Pi to the 'ground' pin on the relay switch.\n\n\n\n\n\n\nDHT 22 temperature sensor\n\n\nThis is powered by the Raspberry Pi. Connect 3 wires from the Pi to the sensor.\n\n\n\n\n\n\nConnect a 5V pin from the pi to the 'VCC' pin on the sensor.\n\n\n\n\n\n\nConnect a ground pin from the Pi to the 'GND' pin on the sensor.\n\n\n\n\n\n\nConnect a DIO pin from the Pi to the 'DATA' pin on the sensor.\n\n\n\n\n\n\n\n\nCombined visible and IR light sensor\n\n\nThis is powered by the Raspberry Pi. One example is a \nSI1145 Digital UV Index / IR / Visible Light Sensor\n. Your on your own to wire this.", 
             "title": "Wiring the system"
         }, 
         {
             "location": "/wiring-the-system/#camera", 
-            "text": "Attach the camera to the Pi with a flat ribbon cable. The cable should have blue tabs on one side of each end.  The blue tab goes towards the ethernet port on the Pi and towards the back of the camera (away from the lens).", 
+            "text": "It is worth while checking out the  specs  as they are impressive.  Attach the camera to the Pi with a flat ribbon cable. The cable should have blue tabs on one side of each end. The blue tab goes towards the ethernet port on the Pi and towards the back of the camera (away from the lens).", 
             "title": "Camera"
         }, 
         {
+            "location": "/wiring-the-system/#raspberry-pi-b23-pinout", 
+            "text": "", 
+            "title": "Raspberry Pi B+/2/3 pinout"
+        }, 
+        {
+            "location": "/wiring-the-system/#digital-inputoutput-pins", 
+            "text": "Each of the yellow numbered pins are digital input/output (DIO) pins. Your free to attach each component to the pin numbers of your choice. Just be sure that the pin numbers specified in the code match the way you wired the system.", 
+            "title": "Digital input/output pins"
+        }, 
+        {
+            "location": "/wiring-the-system/#5v-and-ground-pins", 
+            "text": "There are multiple power and ground pins, use these to connect to the relay switch, the temperature sensor, and the light sensor. Conceptually, all the ground pins are the same, you can use a  bread-board  if you run out of ground pins.", 
+            "title": "5V and ground pins"
+        }, 
+        {
             "location": "/wiring-the-system/#lights", 
-            "text": "You want to use an external 12V AC/DC power supply. Never connect this directly to the Pi, instead use a relay switch.   Wire 2x GPIO pins to a two-channel relay  Connect the lights to the two-channel relay", 
+            "text": "You want to use an external 12V AC/DC power supply for all the LEDs. Don't power the lights directly from the 5V pins on the Pi, it will not have anough current. A 1 Amp 12V adapter should be fine, don't worry, if it is under-powered your lights will be a little dim.  Never connect the 12V adapter directly to the Pi, instead use a relay switch.  Only work with DC current coming out of the AC/DC adapter,  DO NOT  work with AC power coming from the wall as it can kill you.  Use IR LEDs  900 nm as these are within the sensitivity range of the Pi NoIR camera. A lot of IR lights are 940nm, these are not well suited for use with the Pi NoIR camera but are designed for simple IR sensors you would use for a TV remote.  Here we will wire the system with the white LED on channel 1 and the IR LED on channel 2 of the relay switch.", 
             "title": "Lights"
         }, 
         {
-            "location": "/wiring-the-system/#optional", 
-            "text": "Wire the DHT temperature sensor (optional)  Wire a IR light sensor  Wire a visible light sensor", 
-            "title": "Optional"
+            "location": "/wiring-the-system/#connect-a-12v-acdc-adapter-ir-and-white-lights-to-the-two-channel-relay-switch", 
+            "text": "Using an old 12V AC/DC adapter, cut the wire and stick the positive 'hot' wire into the center 'common' pin' of channel 1 on the relay switch. The 'hot' end wire usually has a white line down the length of the wire. You can also determine the 'hot' end using a multi-meter, it is the one that gives a positive (not negative) voltage when attached to the positive (normally red) end of the multi-meter.    Cut a bit of wire and connect the center 'common pin' of channel 1 to the center 'common pin' of channel 2. This is the 'hot' end.    Stick the positive end of the white LED into the 'normally closed' port of channel 1. Attach the negative end of the white LED to the 'ground' wire of the 12V AC/DC adapter.    Do the same for the IR LED. Stick the positive end into the 'normally closed' port of channel 2 on the relay switch. Attach the negative end of the IR LED to the 'ground' wire of the 12V AC/DC adapter.    One important concept is that 'all grounds are the same'. This includes the ground on the 12V AC/DC adapter, the ground of the LEDs, the ground of theRaspberry Pi, etc.", 
+            "title": "Connect a 12V AC/DC adapter, IR, and white lights to the two-channel relay switch."
+        }, 
+        {
+            "location": "/wiring-the-system/#connect-the-pi-to-the-relay-switch-switch", 
+            "text": "Connect a DIO pin from the Pi to the 'In1=Digital Input' pin on the relay switch.    Connect a second DIO pin from the Pi to the 'In2=Digital Input' pin on the relay switch.    Connect a 5V pin from the Pi to the 'Vcc' pin on the relay switch.    Connect a ground pin from the Pi to the 'ground' pin on the relay switch.", 
+            "title": "Connect the Pi to the relay switch switch"
+        }, 
+        {
+            "location": "/wiring-the-system/#dht-22-temperature-sensor", 
+            "text": "This is powered by the Raspberry Pi. Connect 3 wires from the Pi to the sensor.    Connect a 5V pin from the pi to the 'VCC' pin on the sensor.    Connect a ground pin from the Pi to the 'GND' pin on the sensor.    Connect a DIO pin from the Pi to the 'DATA' pin on the sensor.", 
+            "title": "DHT 22 temperature sensor"
+        }, 
+        {
+            "location": "/wiring-the-system/#combined-visible-and-ir-light-sensor", 
+            "text": "This is powered by the Raspberry Pi. One example is a  SI1145 Digital UV Index / IR / Visible Light Sensor . Your on your own to wire this.", 
+            "title": "Combined visible and IR light sensor"
         }, 
         {
             "location": "/parts-list/", 
-            "text": "Build a box to hold cages, lights, and camera\n\n\nStrap the computer to the side, place on top or put inside the box. If placing inside the box, make sure to make an inner box to block LEDs on computer.\n\n\n\n\nComputer\n\n\n\n\nRaspberry Pi 3\n\n\n5V AC/DC power, 2A\n\n\nSD card, class 10, 16 GB (for system installation)\n\n\nUSB key, 64 GB (to save video)\n\n\nethernet cable\n\n\ncase\n\n\n\n\nCamera\n\n\n\n\nRaspberry Pi NoIR\n\n\nCSI Camera cable\n\n\n\n\nLights\n\n\n\n\n12V AC/DC adapter\n\n\n2-channel relay (to switch lights on/off)\n\n\nIR lights (\n 900 nm)\n\n\nWhite lights\n\n\n\n\nEnvironmental\n\n\n\n\ntemperature and humidity sensor\n\n\nIR light sensor\n\n\nWhite light sensor", 
+            "text": "Build a box to hold cages, lights, and camera\n\n\nStrap the computer to the side, place on top or put inside the box. If placing inside the box, make sure to make an inner box to block LEDs on computer.\n\n\n\n\nComputer\n\n\n\n\nRaspberry Pi 3 \nCanakit at Amazon\n\n\n5V AC/DC power, 2A\n\n\nSD card, class 10, 32 GB (for system installation, 16 GB is fine, class 10 is important)\n\n\nCase\n\n\n\n\n\n\nUSB key, 64 GB (to save video)\n\n\nEthernet cable\n\n\n\n\nCamera\n\n\n\n\nRaspberry Pi NoIR, 8 MP, Version 2\n.\n\n\nCSI Camera cable\n\n\n\n\nLights\n\n\n\n\n12V AC/DC adapter, 1 Amp\n\n\n2-channel relay\n (to switch lights on/off)\n\n\n850 nm IR LEDs\n. Don't use IR LEDs \n900nm as the camera is not very sensitive in this range and images will be grainy.\n\n\nWhite LEDs\n\n\n\n\nEnvironmental\n\n\n\n\nDHT 22 temperature and humidity sensor\n\n\nSI1145 Digital UV Index / IR / Visible Light Sensor", 
             "title": "Parts list"
         }, 
         {
             "location": "/parts-list/#computer", 
-            "text": "Raspberry Pi 3  5V AC/DC power, 2A  SD card, class 10, 16 GB (for system installation)  USB key, 64 GB (to save video)  ethernet cable  case", 
+            "text": "Raspberry Pi 3  Canakit at Amazon  5V AC/DC power, 2A  SD card, class 10, 32 GB (for system installation, 16 GB is fine, class 10 is important)  Case    USB key, 64 GB (to save video)  Ethernet cable", 
             "title": "Computer"
         }, 
         {
             "location": "/parts-list/#camera", 
-            "text": "Raspberry Pi NoIR  CSI Camera cable", 
+            "text": "Raspberry Pi NoIR, 8 MP, Version 2 .  CSI Camera cable", 
             "title": "Camera"
         }, 
         {
             "location": "/parts-list/#lights", 
-            "text": "12V AC/DC adapter  2-channel relay (to switch lights on/off)  IR lights (  900 nm)  White lights", 
+            "text": "12V AC/DC adapter, 1 Amp  2-channel relay  (to switch lights on/off)  850 nm IR LEDs . Don't use IR LEDs  900nm as the camera is not very sensitive in this range and images will be grainy.  White LEDs", 
             "title": "Lights"
         }, 
         {
             "location": "/parts-list/#environmental", 
-            "text": "temperature and humidity sensor  IR light sensor  White light sensor", 
+            "text": "DHT 22 temperature and humidity sensor  SI1145 Digital UV Index / IR / Visible Light Sensor", 
             "title": "Environmental"
         }, 
         {
@@ -262,7 +287,7 @@
         }, 
         {
             "location": "/dev-notes/", 
-            "text": "mkDocs\n\n\nWe use \nmkdocs\n to generate the documentation website from markdown files.\n\n\nInstall\n\n\npip install mkdocs\n\n# we are using the material theme\npip install mkdocs-material\n\n\n\nServe locally\n\n\ncd\ncd homecage/docs\nmkdocs serve\n\n\n\nPush to github\n\n\ncd\ncd homecage/docs\nmkdocs gh-deploy --clean\n\n\n\nuv4l\n\n\nuv4l is what we use to stream live video.\n\n\n20171120 - Problem was that if streaming was on and we tried to stop it while there was still an opened browser window we would get an orphaned \ndefunct\n process that can't actually be kill(ed). This was mucking up any future interaciton as \nstream\n, \nrecord\n, and \nstatus\n thought there was still a uv4l process.\n\n\nSent this to uv4l people\n\n\nHi there, great product and the best streaming I have ever seen.\n\nI am running uv4l on a Raspberry Pi (Jessie) and it is working very well.\nOne problem is if I kill the stream with `sudo pkill uv4l` while there is\na browser window open (that is viewing the stream) I end up with a \ndefunct\n\nuv4l process that I can't seem to kill?\n\nCan you suggest a server option I could use to stop this behavior?\nI want to `sudo pkill uv4l` from the pi while some remote user still\nhas a stream window open in the browser? I've looked through the server\noptions and don't really know what I am looking for?\n\nThanks again for uv4l\n\np.s. Can you suggest an online forum for such questions?\n\n\n\n\nAnswer was to kill child processes first. Get child processes of PID with `pstree -p PID'\n\n\nWhich eventually led to this\n\n\n# get uv4l PID\nPID = pgrep uv4l\n# kill all processes in the same group, this includes children\n# kills original and does NOT leave a `\ndefunct\n` uv4l !\nsudo kill -- -PID\n\n\n\n\nRemove uv4l-raspicam-extras\n\n\nsudo apt-get remove uv4l-raspicam-extras\n\n\n\nToDo\n\n\n20171111\n\n\n\n\nfinish index.html interface, mostly adding interface to change self.config\n\n\nsplit self.config (from config.json) and self.status (runtime variables)\n\n\nadd in dht sensor code\n\n\nadd in white and ir sensor code", 
+            "text": "mkDocs\n\n\nWe use \nmkdocs\n to generate the documentation website from markdown files.\n\n\nInstall\n\n\npip install mkdocs\n\n# we are using the material theme\npip install mkdocs-material\n\n\n\nServe locally\n\n\ncd\ncd homecage/docs\nmkdocs serve\n\n\n\nPush to github\n\n\ncd\ncd homecage/docs\nmkdocs gh-deploy --clean\n\n\n\nuv4l\n\n\nuv4l is what we use to stream live video.\n\n\n20171120 - Problem was that if streaming was on and we tried to stop it while there was still an opened browser window we would get an orphaned \ndefunct\n process that can't actually be kill(ed). This was mucking up any future interaciton as \nstream\n, \nrecord\n, and \nstatus\n thought there was still a uv4l process.\n\n\nSent this to uv4l people\n\n\nHi there, great product and the best streaming I have ever seen.\n\nI am running uv4l on a Raspberry Pi (Jessie) and it is working very well.\nOne problem is if I kill the stream with `sudo pkill uv4l` while there is\na browser window open (that is viewing the stream) I end up with a \ndefunct\n\nuv4l process that I can't seem to kill?\n\nCan you suggest a server option I could use to stop this behavior?\nI want to `sudo pkill uv4l` from the pi while some remote user still\nhas a stream window open in the browser? I've looked through the server\noptions and don't really know what I am looking for?\n\nThanks again for uv4l\n\np.s. Can you suggest an online forum for such questions?\n\n\n\n\nAnswer was to kill child processes first. Get child processes of PID with `pstree -p PID'\n\n\nWhich eventually led to this\n\n\n# get uv4l PID\nPID = pgrep uv4l\n# kill all processes in the same group, this includes children\n# kills original and does NOT leave a `\ndefunct\n` uv4l !\nsudo kill -- -PID\n\n\n\n\nRemove uv4l-raspicam-extras\n\n\nsudo apt-get remove uv4l-raspicam-extras\n\n\n\nChange Log\n\n\n20171111\n\n\n\n\nfinish index.html interface, mostly adding interface to change self.config\n\n\nsplit self.config (from config.json) and self.status (runtime variables)\n\n\nadd in dht sensor code\n\n\nadd in white and ir sensor code\n\n\n\n\n20171201\n\n\n\n\nAdded dialog when stopping video\n\n\nadded 'videolist.html' page to display list of video and play on click !\n\n\nnow converting .h264 to .mp4\n\n\nadded to config.json\n\n\nadded bash script convert_video.sh\n\n\ncall bash script when video is done (in thread)\n\n\nadded documentation to install avconv\n\n\n\n\n\n\nnow saving into date folder", 
             "title": "Development notes"
         }, 
         {
@@ -286,14 +311,19 @@
             "title": "Remove uv4l-raspicam-extras"
         }, 
         {
-            "location": "/dev-notes/#todo", 
+            "location": "/dev-notes/#change-log", 
             "text": "", 
-            "title": "ToDo"
+            "title": "Change Log"
         }, 
         {
             "location": "/dev-notes/#20171111", 
             "text": "finish index.html interface, mostly adding interface to change self.config  split self.config (from config.json) and self.status (runtime variables)  add in dht sensor code  add in white and ir sensor code", 
             "title": "20171111"
+        }, 
+        {
+            "location": "/dev-notes/#20171201", 
+            "text": "Added dialog when stopping video  added 'videolist.html' page to display list of video and play on click !  now converting .h264 to .mp4  added to config.json  added bash script convert_video.sh  call bash script when video is done (in thread)  added documentation to install avconv    now saving into date folder", 
+            "title": "20171201"
         }
     ]
 }
