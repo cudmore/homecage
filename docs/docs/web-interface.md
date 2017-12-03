@@ -21,7 +21,7 @@ To stop the homecage web server, use keyboard `ctrl+c`
     
 ## Configuring the web server
 
-The server can be configured by editing the `homecage/homecage_app/config.json` file.
+The server can be configured by editing the [homecage/homecage_app/config.json][1] file.
 
     cd
     pico homecage/homecage_app/config.json 
@@ -30,24 +30,35 @@ The default file is:
 
 ```json
 {
-	"hardware":{
-		"irLightPin": 7,
-		"whiteLightPin": 8,
-		"temperatureSensor": 9
-	},
-	"lights":{
-		"sunrise": 6,
-		"sunset": 18
-	},
-	"video":{
-		"fps": 30,
-		"resolution": [1024,768],
-		"fileDuration": 6,
-		"captureStill": true,
-		"stillInterval": 2
-	},
-	"stream": {
-		"streamResolution": [1024,768]
-	}
+    "hardware": {
+        "irLightPin": 7, 
+        "whiteLightPin": 8,
+        "temperatureSensor": 9, 
+        "temperatureInterval": 20 
+    }, 
+    "lights": {
+        "controlLights": true, 
+        "sunset": 18, 
+        "sunrise": 6
+    }, 
+    "video": {
+        "fileDuration": 10, 
+        "converttomp4": true, 
+        "fps": 30, 
+        "resolution": [
+            1024, 
+            768
+        ],
+        "captureStill": true, 
+        "stillInterval": 2 
+    }, 
+    "stream": {
+        "streamResolution": [
+            1024, 
+            768
+        ]
+    }
 }
-```
+``` 
+
+[1]: https://github.com/cudmore/homecage/blob/master/homecage_app/config.json

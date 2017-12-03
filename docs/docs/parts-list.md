@@ -19,6 +19,7 @@
 - [2-channel relay][6] (to switch lights on/off)
 - [850 nm IR LEDs][7]. Don't use IR LEDs >900nm as the camera is not very sensitive in this range and images will be grainy.
 - White LEDs
+- Resistors to go inline with all LEDs. All LEDs need resistors!
 
 ## Environmental
 - [DHT 22 temperature and humidity sensor][3]

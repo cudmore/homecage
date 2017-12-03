@@ -16,6 +16,7 @@ pages:
     - Wiring the system: wiring-the-system.md
     - Parts list: parts-list.md
     - Troubleshooting: troubleshooting.md
+    - Implementation details: implementation-details.md
     - Development notes: dev-notes.md
 
 repo_url: http://github.com/cudmore/homecage
