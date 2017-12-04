@@ -366,6 +366,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../implementation-details/" title="Implementation details" class="md-nav__link">
+      Implementation details
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
     <a href="../dev-notes/" title="Development notes" class="md-nav__link">
       Development notes
     </a>
@@ -432,6 +444,15 @@
                 
                 <h2 id="converting-h264-files-to-mp4">Converting h264 files to mp4</h2>
 <p>The Raspberry camera saves .h264 video files. This format is very efficient and creates small files (10 MB per 5 minutes) but does require conversion to mp4 to impose a time.</p>
+<pre><code class="bash">#!/bin/bash
+for file in *.h264 ; do
+   filename=&quot;${file%.*}&quot;
+   echo $filename
+   ffmpeg -r 15 -i &quot;$file&quot; -vcodec copy &quot;mp4/$file.mp4&quot;
+   sleep 3
+done
+</code></pre>
+
 <p>See <a href="http://blog.cudmore.io/post/2017/11/01/libav-for-ffmpeg/">this blog post</a></p>
 <h2 id="troubleshoot-video-recording">Troubleshoot video recording</h2>
 <p>Capture a single image</p>
@@ -483,13 +504,13 @@
           </a>
         
         
-          <a href="../dev-notes/" title="Development notes" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../implementation-details/" title="Implementation details" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                Development notes
+                Implementation details
               </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink">

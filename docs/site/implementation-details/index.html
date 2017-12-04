@@ -32,7 +32,7 @@
     
     
       
-        <title>Development notes - Home cage surveillance</title>
+        <title>Implementation details - Home cage surveillance</title>
       
     
     
@@ -88,7 +88,7 @@
                 Home cage surveillance
               </span>
               <span class="md-header-nav__topic">
-                Development notes
+                Implementation details
               </span>
             
           
@@ -318,18 +318,6 @@
       
       
 
-
-  <li class="md-nav__item">
-    <a href="../implementation-details/" title="Implementation details" class="md-nav__link">
-      Implementation details
-    </a>
-  </li>
-
-    
-      
-      
-      
-
   
 
 
@@ -339,11 +327,11 @@
     
     
       <label class="md-nav__link md-nav__link--active" for="toc">
-        Development notes
+        Implementation details
       </label>
     
-    <a href="./" title="Development notes" class="md-nav__link md-nav__link--active">
-      Development notes
+    <a href="./" title="Implementation details" class="md-nav__link md-nav__link--active">
+      Implementation details
     </a>
     
       
@@ -355,8 +343,29 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#mkdocs" title="mkDocs" class="md-nav__link">
-    mkDocs
+  <a href="#raspberry-pi-system" title="Raspberry Pi system" class="md-nav__link">
+    Raspberry Pi system
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentation" title="Documentation" class="md-nav__link">
+    Documentation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#front-end" title="Front end" class="md-nav__link">
+    Front end
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#back-end" title="Back end" class="md-nav__link">
+    Back end
   </a>
   
 </li>
@@ -366,52 +375,12 @@
     uv4l
   </a>
   
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#sent-this-to-uv4l-people" title="Sent this to uv4l people" class="md-nav__link">
-    Sent this to uv4l people
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#remove-uv4l-raspicam-extras" title="Remove uv4l-raspicam-extras" class="md-nav__link">
-    Remove uv4l-raspicam-extras
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
-  <a href="#change-log" title="Change Log" class="md-nav__link">
-    Change Log
+  <a href="#avconv" title="avconv" class="md-nav__link">
+    avconv
   </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#20171111" title="20171111" class="md-nav__link">
-    20171111
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#20171201" title="20171201" class="md-nav__link">
-    20171201
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -421,6 +390,18 @@
   
 </nav>
     
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../dev-notes/" title="Development notes" class="md-nav__link">
+      Development notes
+    </a>
   </li>
 
     
@@ -443,8 +424,29 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#mkdocs" title="mkDocs" class="md-nav__link">
-    mkDocs
+  <a href="#raspberry-pi-system" title="Raspberry Pi system" class="md-nav__link">
+    Raspberry Pi system
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentation" title="Documentation" class="md-nav__link">
+    Documentation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#front-end" title="Front end" class="md-nav__link">
+    Front end
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#back-end" title="Back end" class="md-nav__link">
+    Back end
   </a>
   
 </li>
@@ -454,52 +456,12 @@
     uv4l
   </a>
   
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#sent-this-to-uv4l-people" title="Sent this to uv4l people" class="md-nav__link">
-    Sent this to uv4l people
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#remove-uv4l-raspicam-extras" title="Remove uv4l-raspicam-extras" class="md-nav__link">
-    Remove uv4l-raspicam-extras
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
-  <a href="#change-log" title="Change Log" class="md-nav__link">
-    Change Log
+  <a href="#avconv" title="avconv" class="md-nav__link">
+    avconv
   </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#20171111" title="20171111" class="md-nav__link">
-    20171111
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#20171201" title="20171201" class="md-nav__link">
-    20171201
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -517,82 +479,51 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="http://github.com/cudmore/homecage/edit/master/docs/dev-notes.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                  <a href="http://github.com/cudmore/homecage/edit/master/docs/implementation-details.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
                 
                 
-                  <h1>Development notes</h1>
+                  <h1>Implementation details</h1>
                 
-                <h2 id="mkdocs">mkDocs</h2>
-<p>We use <a href="http://www.mkdocs.org/">mkdocs</a> to generate the documentation website from markdown files.</p>
-<p>Install</p>
-<pre><code>pip install mkdocs
-
-# we are using the material theme
-pip install mkdocs-material
-</code></pre>
-<p>Serve locally</p>
-<pre><code>cd
-cd homecage/docs
-mkdocs serve
-</code></pre>
-<p>Push to github</p>
-<pre><code>cd
-cd homecage/docs
-mkdocs gh-deploy --clean
-</code></pre>
-<h2 id="uv4l">uv4l</h2>
-<p>uv4l is what we use to stream live video.</p>
-<p>20171120 - Problem was that if streaming was on and we tried to stop it while there was still an opened browser window we would get an orphaned <code>&lt;defunct&gt;</code> process that can't actually be kill(ed). This was mucking up any future interaciton as <code>stream</code>, <code>record</code>, and <code>status</code> thought there was still a uv4l process.</p>
-<h4 id="sent-this-to-uv4l-people">Sent this to uv4l people</h4>
-<pre><code>Hi there, great product and the best streaming I have ever seen.
-
-I am running uv4l on a Raspberry Pi (Jessie) and it is working very well.
-One problem is if I kill the stream with `sudo pkill uv4l` while there is
-a browser window open (that is viewing the stream) I end up with a &lt;defunct&gt;
-uv4l process that I can't seem to kill?
-
-Can you suggest a server option I could use to stop this behavior?
-I want to `sudo pkill uv4l` from the pi while some remote user still
-has a stream window open in the browser? I've looked through the server
-options and don't really know what I am looking for?
-
-Thanks again for uv4l
-
-p.s. Can you suggest an online forum for such questions?
-</code></pre>
-
-<p>Answer was to kill child processes first. Get child processes of PID with `pstree -p PID'</p>
-<p>Which eventually led to this</p>
-<pre><code># get uv4l PID
-PID = pgrep uv4l
-# kill all processes in the same group, this includes children
-# kills original and does NOT leave a `&lt;defunct&gt;` uv4l !
-sudo kill -- -PID
-</code></pre>
-
-<h4 id="remove-uv4l-raspicam-extras">Remove uv4l-raspicam-extras</h4>
-<pre><code>sudo apt-get remove uv4l-raspicam-extras
-</code></pre>
-<h2 id="change-log">Change Log</h2>
-<h4 id="20171111">20171111</h4>
+                <p>Once running, the homecage system should be simple to use. Yet, for this simple system to work, a number of independent components must each work and must communicate with each other. As is often the case, the implementation details to create a simple system is complex. Two cliches to describe this is 'you can't fly with half a wing' and 'the devil is in the details'.</p>
+<p>We have about 15 components in use! Each component is developed independently and all are open source. It is amazing that this system works? What follows is a description of the different pieces of the homecage system with links to the source code and the components that are used.</p>
+<h2 id="raspberry-pi-system">Raspberry Pi system</h2>
+<p>Don't forget the Raspberry Pi! It is open-source hardware made by the <a href="https://www.raspberrypi.org/">Raspberry Pi Foundation</a>. It is running a variant of the <a href="https://www.debian.org/">Debian</a> operating system called <a href="https://www.raspberrypi.org/downloads/raspbian/">Raspbian</a>.</p>
+<h2 id="documentation">Documentation</h2>
+<p>This website is written in <a href="https://en.wikipedia.org/wiki/Markdown">markdown</a>. The markdown and a description of the contents using <a href="http://yaml.org/">yaml</a> are brought together, compiled, and a static site is generated by <a href="http://www.mkdocs.org/">mkdocs</a>. The final layout is controlled by an mkdocs theme called <a href="https://github.com/squidfunk/mkdocs-material">material</a>.</p>
+<h2 id="front-end">Front end</h2>
 <ul>
-<li>finish index.html interface, mostly adding interface to change self.config</li>
-<li>split self.config (from config.json) and self.status (runtime variables)</li>
-<li>add in dht sensor code</li>
-<li>add in white and ir sensor code</li>
-</ul>
-<h4 id="20171201">20171201</h4>
-<ul>
-<li>Added dialog when stopping video</li>
-<li>added 'videolist.html' page to display list of video and play on click !</li>
-<li>now converting .h264 to .mp4<ul>
-<li>added to config.json</li>
-<li>added bash script convert_video.sh</li>
-<li>call bash script when video is done (in thread)</li>
-<li>added documentation to install avconv</li>
-</ul>
+<li>
+<p><a href="https://github.com/cudmore/homecage/blob/master/homecage_app/templates/index.html">index.html</a> - Main web interface written in <a href="https://en.wikipedia.org/wiki/HTML">html</a>, uses <a href="https://www.javascript.com/">Javascript</a> and the Javascript <a href="https://angularjs.org/">Angular</a> library to provide dynamic and real-time content.</p>
 </li>
-<li>now saving into date folder</li>
+<li>
+<p><a href="https://github.com/cudmore/homecage/blob/master/homecage_app/templates/videolist.html">videolist.html</a> - Again, an html web page but this time using <a href="http://jinja.pocoo.org/">Jinja</a> as a template engine. Jinja is default template engine used by Flask.</p>
+</li>
+<li>
+<p><a href="https://github.com/cudmore/homecage/blob/master/homecage_app/static/hello.js">hello.js</a> - <a href="https://www.javascript.com/">Javascript</a> code that implementes the logic of the web interface. Has functions that get called when user is clicking. Also has function to talk to <a href="https://github.com/cudmore/homecage/blob/master/homecage_app/homecage_app.py">homecage_app.py</a> web server via a <a href="https://en.wikipedia.org/wiki/Representational_state_transfer">REST</a> interface. This is not standard Javascript but is using the <a href="https://angularjs.org/">Angular</a> library.</p>
+</li>
+<li>
+<p><a href="https://github.com/cudmore/homecage/blob/master/homecage_app/static/hello.css">hello.css</a> - A <a href="https://www.w3schools.com/css/css_intro.asp">Cascading Style Sheet (css)</a> text file that describes the precise layout of the web pages.</p>
+</li>
+</ul>
+<h2 id="back-end">Back end</h2>
+<ul>
+<li>
+<p><a href="https://github.com/cudmore/homecage/blob/master/homecage_app/home.py">home.py</a> - The <a href="https://www.python.org/">python</a> back-end that runs everything. This includes controlling DIO pins to turn lights on/off, running <a href="https://www.gnu.org/software/bash/">bash</a> scripts to start/stop the video and to convert .h264 video files to .mp4. This code provides a clearly defined application programming interface (API) to all these components such that the web server in <code>homecage_app.py</code> has an easier job.</p>
+</li>
+<li>
+<p><a href="https://github.com/cudmore/homecage/blob/master/homecage_app/homecage_app.py">homecage_app.py</a> - Python code that uses the <a href="http://flask.pocoo.org/">Flask</a> library to run the web-server and provide bi-directional control of the <code>home.py</code> back-end. In one direction, it accepts web url requests and sends them to the backend, in the other direction, it accesses the back-end and send information back out to the web clients. This  primarily implements a <a href="https://en.wikipedia.org/wiki/Representational_state_transfer">REST</a> interface so a client-side browser can get and set server values without explicitly logging in to the server.</p>
+</li>
+<li>
+<p><a href="https://github.com/cudmore/homecage/blob/master/homecage_app/config.json">config.json</a> - A text file written in <a href="https://www.json.org/">json</a> that provides human editable configuration options for the server.</p>
+</li>
+</ul>
+<h2 id="uv4l">uv4l</h2>
+<ul>
+<li><a href="https://github.com/cudmore/homecage/blob/master/homecage_app/stream">stream</a> - <a href="https://www.gnu.org/software/bash/">Bash shell</a> script to start stop streaming with the <a href="https://www.linux-projects.org/uv4l/">uv4l</a> library.</li>
+</ul>
+<h2 id="avconv">avconv</h2>
+<ul>
+<li><a href="https://github.com/cudmore/homecage/blob/master/homecage_app/convert_video.sh">convert_video.sh</a> - Bash shell script to convert a .h264 video file into .mp4. Uses avconv function which is part of <a href="https://libav.org/avconv.html">libav</a> library.</li>
 </ul>
                 
                   
@@ -612,7 +543,7 @@ sudo kill -- -PID
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
         
-          <a href="../implementation-details/" title="Implementation details" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../troubleshooting/" title="Troubleshooting" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-flex__cell md-flex__cell--shrink">
               <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
             </div>
@@ -621,11 +552,25 @@ sudo kill -- -PID
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                Implementation details
+                Troubleshooting
               </span>
             </div>
           </a>
         
+        
+          <a href="../dev-notes/" title="Development notes" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Development notes
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
         
       </nav>
     </div>

@@ -322,13 +322,6 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#digital-inputoutput-pins" title="Digital input/output pins" class="md-nav__link">
-    Digital input/output pins
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#5v-and-ground-pins" title="5V and ground pins" class="md-nav__link">
     5V and ground pins
   </a>
@@ -420,6 +413,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../implementation-details/" title="Implementation details" class="md-nav__link">
+      Implementation details
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
     <a href="../dev-notes/" title="Development notes" class="md-nav__link">
       Development notes
     </a>
@@ -458,13 +463,6 @@
   
     <nav class="md-nav">
       <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#digital-inputoutput-pins" title="Digital input/output pins" class="md-nav__link">
-    Digital input/output pins
-  </a>
-  
-</li>
         
           <li class="md-nav__item">
   <a href="#5v-and-ground-pins" title="5V and ground pins" class="md-nav__link">
@@ -540,25 +538,72 @@
                 
                 <h2 id="camera">Camera</h2>
 <p>It is worth while checking out the <a href="https://www.raspberrypi.org/documentation/hardware/camera/">specs</a> as they are impressive.</p>
-<p>Attach the camera to the Pi with a flat ribbon cable. The cable should have blue tabs on one side of each end. The blue tab goes towards the ethernet port on the Pi and towards the back of the camera (away from the lens).</p>
+<p>Attach the camera to the Pi with a flat ribbon cable. The cable should have blue tabs on one side of each end. The blue tab goes towards the ethernet port on the Pi and towards the back of the camera (away from the lens). In the picture below, you can't see the blue side of the ribbon as it is toward the ethenret port and towards the back of the camera.</p>
 <p><IMG SRC="../img/pi-noir-camera.png" width=400></p>
 <h2 id="raspberry-pi-b23-pinout">Raspberry Pi B+/2/3 pinout</h2>
-<h3 id="digital-inputoutput-pins">Digital input/output pins</h3>
-<p>Each of the yellow numbered pins are digital input/output (DIO) pins. Your free to attach each component to the pin numbers of your choice. Just be sure that the pin numbers specified in the code match the way you wired the system.</p>
+<p><IMG SRC="../img/raspberry-pin-out.png" width=600></p>
+<p>The image above is a schematic of the layout of the pins on the Raspberry Pi. Each of the yellow numbered pins are digital input/output (DIO) pins. Your free to attach each component to the pin numbers of your choice. Just be sure that the pin numbers specified in the <a href="https://github.com/cudmore/homecage/blob/master/homecage_app/config.json">config.json</a> file match the way you wired the system.</p>
+<p>Here are all the connections you want to make to set up the homecage system</p>
+<table>
+<thead>
+<tr>
+<th>Pin from Raspberry</th>
+<th align="center">To</th>
+<th align="right">Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>8</td>
+<td align="center">In1 on relay</td>
+<td align="right">White LED</td>
+</tr>
+<tr>
+<td>7</td>
+<td align="center">In2 on relay</td>
+<td align="right">IR LED</td>
+</tr>
+<tr>
+<td>5 V</td>
+<td align="center">Vcc on relay</td>
+<td align="right">Power 5V end of relay switch</td>
+</tr>
+<tr>
+<td>Ground</td>
+<td align="center">GND Relay</td>
+<td align="right">Power 5V end of relay switch</td>
+</tr>
+<tr>
+<td>9</td>
+<td align="center">DATA pin on DHT sensor</td>
+<td align="right">Read temperature/humidity from DHT sensor</td>
+</tr>
+<tr>
+<td>5 V</td>
+<td align="center">VCC pin on DHT sensor</td>
+<td align="right">Power DHT sensor</td>
+</tr>
+<tr>
+<td>Ground</td>
+<td align="center">GND pin on DHT sensor</td>
+<td align="right">Power DHT sensor</td>
+</tr>
+</tbody>
+</table>
 <h3 id="5v-and-ground-pins">5V and ground pins</h3>
 <p>There are multiple power and ground pins, use these to connect to the relay switch, the temperature sensor, and the light sensor. Conceptually, all the ground pins are the same, you can use a <a href="https://www.adafruit.com/product/64?gclid=CjwKCAiA9f7QBRBpEiwApLGUijY03SkJ-mU-7PzpacD5HT3Y4dMM7gbnNP1328raTCGwOq8OPo4NjxoC67YQAvD_BwE">bread-board</a> if you run out of ground pins.</p>
-<p><IMG SRC="../img/raspberry-pin-out.png" width=600></p>
 <h2 id="lights">Lights</h2>
-<p>You want to use an external 12V AC/DC power supply for all the LEDs. Don't power the lights directly from the 5V pins on the Pi, it will not have anough current. A 1 Amp 12V adapter should be fine, don't worry, if it is under-powered your lights will be a little dim.</p>
-<p>Never connect the 12V adapter directly to the Pi, instead use a relay switch.</p>
-<p>Only work with DC current coming out of the AC/DC adapter, <strong>DO NOT</strong> work with AC power coming from the wall as it can kill you.</p>
-<p>Use IR LEDs &lt;900 nm as these are within the sensitivity range of the Pi NoIR camera. A lot of IR lights are 940nm, these are not well suited for use with the Pi NoIR camera but are designed for simple IR sensors you would use for a TV remote.</p>
-<p>Here we will wire the system with the white LED on channel 1 and the IR LED on channel 2 of the relay switch.</p>
+<p><strong>Use an external 12V AC/DC power supply.</strong> - Don't power the lights directly from the 5V pins on the Pi, the Pi does not have anough current. A 1 Amp 12V adapter should be fine, don't worry, if it is under-powered your lights will be a little dim.</p>
+<p><strong>Use a relay switch.</strong> - Never connect the 12V adapter directly to the Pi, instead use a relay switch. Only work with DC current coming out of the AC/DC adapter, <strong>DO NOT</strong> work with AC power coming from the wall as it can kill you.</p>
+<p>The relay switch effectively separates the 5V, Ground, and DIO on the Pi (left half of the relay) from the 12V power of the AC/DC adapter and the lights (right half of the relay). Here we will wire the system with the white LED on channel 1 and the IR LED on channel 2 of the relay switch. </p>
+<p><strong>All LEDs need resistors.</strong> - All LEDs need resistors. If your directly connect an LED to power and ground without a resistor you will burn the LED. All LEDs need a resistor wired in parallel, these are called 'current limiting resistor'.</p>
+<p><strong>Use IR LEDs &lt;900 nm.</strong> - These are within the sensitivity range of the Pi NoIR camera. A lot of IR LEDs are 940nm, these are not well suited for use with the Pi NoIR camera but are designed for IR sensors as is used in a TV remote.</p>
 <p><IMG SRC="../img/two-channel-relay.png" width=600></p>
 <h3 id="connect-a-12v-acdc-adapter-ir-and-white-lights-to-the-two-channel-relay-switch">Connect a 12V AC/DC adapter, IR, and white lights to the two-channel relay switch.</h3>
+<p>All LEDs need resistors!</p>
 <ul>
 <li>
-<p>Using an old 12V AC/DC adapter, cut the wire and stick the positive 'hot' wire into the center 'common' pin' of channel 1 on the relay switch. The 'hot' end wire usually has a white line down the length of the wire. You can also determine the 'hot' end using a multi-meter, it is the one that gives a positive (not negative) voltage when attached to the positive (normally red) end of the multi-meter.</p>
+<p>Using a 12V AC/DC adapter (1 Amp), cut the wire and stick the positive 'hot' wire into the center 'common' pin' of channel 1 on the relay switch. The 'hot' end wire usually has a white line down the length of the wire. You can also determine the 'hot' end using a multi-meter, it is the one that gives a positive (not negative) voltage when attached to the positive (normally red) end of the multi-meter.</p>
 </li>
 <li>
 <p>Cut a bit of wire and connect the center 'common pin' of channel 1 to the center 'common pin' of channel 2. This is the 'hot' end.</p>
@@ -572,6 +617,7 @@
 </ul>
 <p>One important concept is that 'all grounds are the same'. This includes the ground on the 12V AC/DC adapter, the ground of the LEDs, the ground of theRaspberry Pi, etc.</p>
 <h3 id="connect-the-pi-to-the-relay-switch-switch">Connect the Pi to the relay switch switch</h3>
+<p>Connect 4 wires from the Pi to the relay switch.</p>
 <ul>
 <li>
 <p>Connect a DIO pin from the Pi to the 'In1=Digital Input' pin on the relay switch.</p>
@@ -583,7 +629,7 @@
 <p>Connect a 5V pin from the Pi to the 'Vcc' pin on the relay switch.</p>
 </li>
 <li>
-<p>Connect a ground pin from the Pi to the 'ground' pin on the relay switch.</p>
+<p>Connect a ground pin from the Pi to the 'GND' pin on the relay switch.</p>
 </li>
 </ul>
 <h2 id="dht-22-temperature-sensor">DHT 22 temperature sensor</h2>
