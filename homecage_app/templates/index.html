@@ -199,25 +199,29 @@
 		</form>
 
 		<BR>
-		Video Size  <select name="">
+		Video Size  <select name="" ng-disabled="1 || status.isRecording">
 		  <option value="640 x 480">640 x 480</option>
 		  <option value="1024 x 768">1024 x 768</option>
 		</select>
 
-		<form ng-submit="mySubmit('video.converttomp4',params.video.converttomp4)">
-		   Convert video to .mp4: <input type="checkbox" ng-model="params.video.converttomp4" ng-disabled="status.isRecording"/>
-		</form>
+		<!-- <form ng-submit="mySubmit('video.converttomp4',params.video.converttomp4)"> -->
+		   <BR>
+		   Convert video to .mp4: <input type="checkbox" ng-model="params.video.converttomp4" ng-change="mySubmit('video.converttomp4',params.video.converttomp4)" ng-disabled="status.isRecording"/>
+		<!-- </form> -->
 
-		<form ng-submit="mySubmit('video.captureStill',params.video.captureStill)">
-		   Capture still: <input type="checkbox" ng-model="params.video.captureStill" ng-disabled="status.isRecording"/>
-		</form>
+		<!-- <form ng-submit="mySubmit('video.captureStill',params.video.captureStill)"> -->
+		   <BR>
+		   Capture still: <input type="checkbox" ng-model="params.video.captureStill" ng-change="mySubmit('video.captureStill',params.video.captureStill)" ng-disabled="status.isRecording"/>
+		<!-- </form> -->
+
 		<form ng-submit="mySubmit('video.stillInterval',params.video.stillInterval)">
 		   Still interval (sec): <input type="number" ng-model="params.video.stillInterval" ng-disabled="status.isRecording"/>
 		</form>
 
-		<form ng-submit="mySubmit('lights.controlLights',params.lights.controlLights)">
-		   Control lights (During recording): <input type="checkbox" ng-model="params.lights.controlLights" ng-disabled="status.isRecording"/>
-		</form>
+		<!-- <form ng-submit="mySubmit('lights.controlLights',params.lights.controlLights)"> -->
+		   <BR>
+		   Control lights (During recording): <input type="checkbox" ng-model="params.lights.controlLights" ng-change="mySubmit('lights.controlLights',params.lights.controlLights)" ng-disabled="status.isRecording"/>
+		<!-- </form> -->
 
 		<form ng-submit="mySubmit('lights.sunrise',params.lights.sunrise)">
 		   Sunrise (24h): <input type="number" ng-model="params.lights.sunrise" ng-disabled="status.isRecording"/>
@@ -227,7 +231,7 @@
 		</form>
 
 		<BR>
-		Stream Size  <select name="">
+		Stream Size  <select name="" ng-disabled="1 || status.isRecording">
 		  <option value="640 x 480">640 x 480</option>
 		  <option value="1024 x 768">1024 x 768</option>
 		</select>

@@ -2,6 +2,16 @@
 
 The Raspberry camera saves .h264 video files. This format is very efficient and creates small files (10 MB per 5 minutes) but does require conversion to mp4 to impose a time.
 
+```bash
+#!/bin/bash
+for file in *.h264 ; do
+   filename="${file%.*}"
+   echo $filename
+   ffmpeg -r 15 -i "$file" -vcodec copy "mp4/$file.mp4"
+   sleep 3
+done
+```
+
 See [this blog post][6]
 
 ## Troubleshoot video recording

@@ -13,7 +13,7 @@ This website is written in [markdown][markdown]. The markdown and a description 
  
 ## Front end
 
- - [index.html][index.html] - Main web interface written in [html][html], uses [Angular][angular] to provide dynamic and real-time content.
+ - [index.html][index.html] - Main web interface written in [html][html], uses [Javascript][javascript] and the Javascript [Angular][angular] library to provide dynamic and real-time content.
  
  - [videolist.html][videolist.html] - Again, an html web page but this time using [Jinja][jinja] as a template engine. Jinja is default template engine used by Flask.
 
@@ -23,9 +23,9 @@ This website is written in [markdown][markdown]. The markdown and a description 
     
 ## Back end
  
- - [home.py][home.py] - The [python][python] engine that runs everything. This includes controlling DIO pins to turn lights on/off, running bash scripts to start/stop the video and to convert .h264 video files to .mp4. This code also provides an interface to all these components such that the web server in `homecage_app.py` has an easier job.
+ - [home.py][home.py] - The [python][python] back-end that runs everything. This includes controlling DIO pins to turn lights on/off, running [bash][bash] scripts to start/stop the video and to convert .h264 video files to .mp4. This code provides a clearly defined application programming interface (API) to all these components such that the web server in `homecage_app.py` has an easier job.
  
- - [homecage_app.py][homecage_app.py] - Python code that uses the [Flask][flask] library to run the web-server and dispatch user clicks and web addresses.
+ - [homecage_app.py][homecage_app.py] - Python code that uses the [Flask][flask] library to run the web-server and provide bi-directional control of the `home.py` back-end. In one direction, it accepts web url requests and sends them to the backend, in the other direction, it accesses the back-end and send information back out to the web clients. This  primarily implements a [REST][rest] interface so a client-side browser can get and set server values without explicitly logging in to the server.
  
  - [config.json][config.json] - A text file written in [json][json] that provides human editable configuration options for the server.
 

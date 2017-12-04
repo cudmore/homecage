@@ -1,6 +1,8 @@
-from flask import Flask, render_template, send_file, jsonify, redirect, abort
 import os, subprocess
 from datetime import datetime
+
+from flask import Flask, render_template, send_file, jsonify, redirect, abort
+from flask_cors import CORS
 
 # turn off printing to console
 if 1:
@@ -13,6 +15,7 @@ from home import home
 home = home()
 
 app = Flask(__name__)
+CORS(app)
 
 def getStatus():
 	# Get struct of status from the backend

@@ -162,6 +162,8 @@ angular.module('demo', ['uiSwitch'])
 	}
 
 	$scope.mySubmit = function (param,val) {
+		//when checkbox is submitted, val is boolean, convert all value to int
+		val = Number(val)
 		console.log("mySubmit() " + param + " " + val);
 		$http.get($scope.myUrl + 'set/' + param + '/' + val).
         	then(function(response) {
@@ -180,7 +182,8 @@ angular.module('demo', ['uiSwitch'])
 	$scope.loaddefaultoptions = function () {
 		$http.get($scope.myUrl + 'loadconfigdefaults').
         	then(function(response) {
-        	    //
+        	    //reload user configurable params
+        	    $scope.getParams();
         	});
 	}
 	

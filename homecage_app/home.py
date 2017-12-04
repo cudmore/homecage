@@ -207,8 +207,9 @@ class home:
 				self.currentStartSeconds = float('nan')
 				self.currentFile = 'None'
 				# turn off lights
-				self.whiteLED(0)
-				self.irLED(0)
+				if self.config['lights']['controlLights']:
+					self.whiteLED(0)
+					self.irLED(0)
 
 			self.lastResponse = 'Recording is ' + ('on' if onoff else 'off')
 	
