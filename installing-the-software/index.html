@@ -329,6 +329,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../implementation-details/" title="Implementation details" class="md-nav__link">
+      Implementation details
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
     <a href="../dev-notes/" title="Development notes" class="md-nav__link">
       Development notes
     </a>
@@ -369,9 +381,11 @@
 <ul>
 <li><a href="http://wiringpi.com/">Wiring Pi</a> - Library that provides a command line interface to the GPIO pins. This should be installed by default.</li>
 <li><a href="https://sourceforge.net/projects/raspberry-gpio-python/">GPIO</a> - Python library to control GPIO pins.</li>
+<li><a href="https://picamera.readthedocs.io/en/release-1.13/">picamera</a> - Python library to control the camera.</li>
 <li><a href="http://flask.pocoo.org/">flask</a> - A python web server.</li>
-<li><a href="https://www.linux-projects.org/uv4l/installation/">uv4l</a> - Library for live video streaming to a web browser</li>
 <li><a href="https://github.com/adafruit/Adafruit_Python_DHT">Adafruit_DHT</a> - (optional) Python library to read from a DHT temperature and humidity sensor.</li>
+<li><a href="https://www.linux-projects.org/uv4l/installation/">uv4l</a> - Command line tool for live video streaming to a web browser.</li>
+<li><a href="https://libav.org/avconv.html">avconv</a> - Command line tool to convert video files.</li>
 </ul>
 <h2 id="1-get-a-functioning-raspberry-pi">1) Get a functioning Raspberry Pi</h2>
 <p>These instructions assume you have a functioning Raspberry Pi. To get started setting up a Pi from scratch, see our <a href="http://blog.cudmore.io/post/2017/11/22/raspian-stretch/">setup intructions</a>.</p>
@@ -392,16 +406,7 @@ pip install flask
 # if you run into errors then try installing
 sudo apt-get install build-essential python-dev python-openssl
 </code></pre>
-<h2 id="4-install-dht-temperature-sensor-optional">4) Install DHT temperature sensor (optional)</h2>
-<p>If you run into trouble then go to <a href="https://learn.adafruit.com/dht-humidity-sensing-on-raspberry-pi-with-gdocs-logging/software-install-updated">this tutorial</a>.</p>
-<pre><code>cd
-mkdir tmp
-cd tmp
-git clone https://github.com/adafruit/Adafruit_Python_DHT.git
-cd Adafruit_Python_DHT
-sudo python setup.py install
-</code></pre>
-<h2 id="5-install-uv4l-for-live-video-streaming-optional">5) Install uv4l for live video streaming (optional)</h2>
+<h2 id="4-install-uv4l-for-live-video-streaming-optional">4) Install uv4l for live video streaming (optional)</h2>
 <p>If you run into trouble, then follow <a href="https://www.linux-projects.org/uv4l/installation/">this tutorial</a>.</p>
 <pre><code>curl http://www.linux-projects.org/listing/uv4l_repo/lrkey.asc | sudo apt-key add -
 
@@ -413,12 +418,21 @@ sudo apt-get update
 sudo apt-get install uv4l uv4l-raspicam uv4l-server
 </code></pre>
 
-<h2 id="6-install-avconv-to-convert-videos-from-h264-to-mp4">6) Install avconv to convert videos from .h264 to .mp4</h2>
-<p>See <a href="http://blog.cudmore.io/post/2017/11/01/libav-for-ffmpeg/">this blog post</a> for more information.</p>
+<h2 id="5-install-avconv-to-convert-videos-from-h264-to-mp4">5) Install avconv to convert videos from .h264 to .mp4</h2>
+<p>If you run into trouble, then see <a href="http://blog.cudmore.io/post/2017/11/01/libav-for-ffmpeg/">this blog post</a>.</p>
 <pre><code>sudo apt-get update
 sudo apt-get install libav-tools
 </code></pre>
 <p>Video files will be saved to <code>/home/pi/video</code>. This can be changed in the web server configuration file <code>homecage/homecage_app/config.json</code>. If your going to save a lot of video, please <a href="http://blog.cudmore.io/post/2015/05/05/mounting-a-usb-drive-at-boot/">mount a usb key</a> and save videos there.</p>
+<h2 id="6-install-dht-temperature-sensor-optional">6) Install DHT temperature sensor (optional)</h2>
+<p>If you run into trouble then go to <a href="https://learn.adafruit.com/dht-humidity-sensing-on-raspberry-pi-with-gdocs-logging/software-install-updated">this tutorial</a>.</p>
+<pre><code>cd
+mkdir tmp
+cd tmp
+git clone https://github.com/adafruit/Adafruit_Python_DHT.git
+cd Adafruit_Python_DHT
+sudo python setup.py install
+</code></pre>
 <h2 id="7-start-the-web-server-at-boot-optional">7) Start the web server at boot (optional)</h2>
 <p>Edit crontab</p>
 <pre><code>crontab -e
