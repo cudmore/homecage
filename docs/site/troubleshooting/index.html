@@ -212,18 +212,6 @@
 
 
   <li class="md-nav__item">
-    <a href="../images/" title="Images" class="md-nav__link">
-      Images
-    </a>
-  </li>
-
-    
-      
-      
-      
-
-
-  <li class="md-nav__item">
     <a href="../installing-the-software/" title="Install" class="md-nav__link">
       Install
     </a>
@@ -331,23 +319,50 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#converting-h264-files-to-mp4" title="Converting h264 files to mp4" class="md-nav__link">
-    Converting h264 files to mp4
+  <a href="#video-recording" title="Video recording" class="md-nav__link">
+    Video recording
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#troubleshoot-video-recording" title="Troubleshoot video recording" class="md-nav__link">
-    Troubleshoot video recording
+  <a href="#video-streaming" title="Video streaming" class="md-nav__link">
+    Video streaming
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#troubleshoot-video-streaming" title="Troubleshoot video streaming" class="md-nav__link">
-    Troubleshoot video streaming
+  <a href="#converting-h264-to-mp4" title="Converting h264 to mp4" class="md-nav__link">
+    Converting h264 to mp4
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#manually-converting-h264-files-to-mp4" title="Manually converting h264 files to mp4" class="md-nav__link">
+    Manually converting h264 files to mp4
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-avconv" title="Using avconv" class="md-nav__link">
+    Using avconv
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-ffmpeg" title="Using ffmpeg" class="md-nav__link">
+    Using ffmpeg
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -357,6 +372,18 @@
   
 </nav>
     
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../images/" title="Images" class="md-nav__link">
+      Images
+    </a>
   </li>
 
     
@@ -403,23 +430,50 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#converting-h264-files-to-mp4" title="Converting h264 files to mp4" class="md-nav__link">
-    Converting h264 files to mp4
+  <a href="#video-recording" title="Video recording" class="md-nav__link">
+    Video recording
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#troubleshoot-video-recording" title="Troubleshoot video recording" class="md-nav__link">
-    Troubleshoot video recording
+  <a href="#video-streaming" title="Video streaming" class="md-nav__link">
+    Video streaming
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#troubleshoot-video-streaming" title="Troubleshoot video streaming" class="md-nav__link">
-    Troubleshoot video streaming
+  <a href="#converting-h264-to-mp4" title="Converting h264 to mp4" class="md-nav__link">
+    Converting h264 to mp4
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#manually-converting-h264-files-to-mp4" title="Manually converting h264 files to mp4" class="md-nav__link">
+    Manually converting h264 files to mp4
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-avconv" title="Using avconv" class="md-nav__link">
+    Using avconv
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-ffmpeg" title="Using ffmpeg" class="md-nav__link">
+    Using ffmpeg
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -442,24 +496,21 @@
                 
                   <h1>Troubleshooting</h1>
                 
-                <h2 id="converting-h264-files-to-mp4">Converting h264 files to mp4</h2>
-<p>The Raspberry camera saves .h264 video files. This format is very efficient and creates small files (10 MB per 5 minutes) but does require conversion to mp4 to impose a time.</p>
-<pre><code class="bash">#!/bin/bash
-for file in *.h264 ; do
-   filename=&quot;${file%.*}&quot;
-   echo $filename
-   ffmpeg -r 15 -i &quot;$file&quot; -vcodec copy &quot;mp4/$file.mp4&quot;
-   sleep 3
-done
-</code></pre>
-
-<p>See <a href="http://blog.cudmore.io/post/2017/11/01/libav-for-ffmpeg/">this blog post</a></p>
-<h2 id="troubleshoot-video-recording">Troubleshoot video recording</h2>
-<p>Capture a single image</p>
+                <h2 id="video-recording">Video recording</h2>
+<p>Manually capture a single image</p>
 <pre><code>raspistill -o test.jpg
 </code></pre>
 
-<h2 id="troubleshoot-video-streaming">Troubleshoot video streaming</h2>
+<h2 id="video-streaming">Video streaming</h2>
+<p>Check version of uv4l</p>
+<pre><code># type
+uv4l -i
+
+# returns
+Userspace Video4Linux
+Copyright (C) Luca Risolia &lt;luca.risolia@linux-projects.org&gt;
+Version 1.9.12 built on Aug 15 2017
+</code></pre>
 <p>Run uv4l by hand</p>
 <pre><code>uv4l --driver raspicam --auto-video_nr --encoding h264 --width 640 --height 480 --enable-server on
 </code></pre>
@@ -471,6 +522,63 @@ done
 <p>Stop uv4l (make sure all browser windows are closed)</p>
 <pre><code>sudo pkill uv4l
 </code></pre>
+
+<h2 id="converting-h264-to-mp4">Converting h264 to mp4</h2>
+<p>Check the version of avconv</p>
+<pre><code># type
+avconv -version
+
+# returns
+ffmpeg version 3.2.9-1~deb9u1 Copyright (c) 2000-2017 the FFmpeg developers
+built with gcc 6.3.0 (Raspbian 6.3.0-18+rpi1) 20170516
+configuration: --prefix=/usr --extra-version='1~deb9u1' --toolchain=hardened --libdir=/usr/lib/arm-linux-gnueabihf --incdir=/usr/include/arm-linux-gnueabihf --enable-gpl --disable-stripping --enable-avresample --enable-avisynth --enable-gnutls --enable-ladspa --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libebur128 --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libmp3lame --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwavpack --enable-libwebp --enable-libx265 --enable-libxvid --enable-libzmq --enable-libzvbi --enable-omx --enable-openal --enable-opengl --enable-sdl2 --enable-libdc1394 --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libopencv --enable-libx264 --enable-shared
+libavutil      55. 34.101 / 55. 34.101
+libavcodec     57. 64.101 / 57. 64.101
+libavformat    57. 56.101 / 57. 56.101
+libavdevice    57.  1.100 / 57.  1.100
+libavfilter     6. 65.100 /  6. 65.100
+libavresample   3.  1.  0 /  3.  1.  0
+libswscale      4.  2.100 /  4.  2.100
+libswresample   2.  3.100 /  2.  3.100
+libpostproc    54.  1.100 / 54.  1.100
+</code></pre>
+<h2 id="manually-converting-h264-files-to-mp4">Manually converting h264 files to mp4</h2>
+<p>The Raspberry camera saves .h264 video files. This format is very efficient and creates small files (10 MB per 5 minutes) but does require conversion to mp4 to impose a time.</p>
+<h3 id="using-avconv">Using avconv</h3>
+<p>This will convert all .h264 files in <strong>a folder</strong> into .mp4 files with 15 fps.</p>
+<pre><code class="bash">#!/bin/bash
+fps=15
+for file in *.h264 ; do
+   filename=&quot;${file%.*}&quot;
+   echo $filename
+   avconv -i &quot;$file&quot; -r $fps -vcodec copy &quot;$file.mp4&quot;
+   sleep 3
+done
+</code></pre>
+
+<h3 id="using-ffmpeg">Using ffmpeg</h3>
+<p>This will convert all .h264 files in <strong>a folder</strong> into .mp4 files with 15 fps.</p>
+<pre><code class="bash">#!/bin/bash
+fps=15
+for file in *.h264 ; do
+   filename=&quot;${file%.*}&quot;
+   echo $filename
+   ffmpeg -r $fps -i &quot;$file&quot; -vcodec copy &quot;$file.mp4&quot;
+   sleep 3
+done
+</code></pre>
+
+<p>This will recursively convert all .h264 files in a folder and <strong>all of its subfolders</strong> into .mp4 files.</p>
+<pre><code class="bash">#!/bin/bash
+fps=15
+IFS=$'\n'
+for file in $(find . -iname '*.h264') ; do
+    #printf '%s\n' &quot;$file&quot;
+    ffmpeg -r $fps -i &quot;$file&quot; -vcodec copy &quot;$file.mp4&quot;
+done
+</code></pre>
+
+<p>See <a href="http://blog.cudmore.io/post/2017/11/01/libav-for-ffmpeg/">this blog post</a></p>
                 
                   
                 
@@ -504,13 +612,13 @@ done
           </a>
         
         
-          <a href="../implementation-details/" title="Implementation details" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../images/" title="Images" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                Implementation details
+                Images
               </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink">

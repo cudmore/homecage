@@ -7,7 +7,6 @@ theme:
   
 pages:
     - Getting started: index.md
-    - Images: images.md
     - Install: installing-the-software.md
     - Web interface: web-interface.md
     - REST interface: rest-interface.md
@@ -16,6 +15,7 @@ pages:
     - Wiring the system: wiring-the-system.md
     - Parts list: parts-list.md
     - Troubleshooting: troubleshooting.md
+    - Images: images.md
     - Implementation details: implementation-details.md
     - Development notes: dev-notes.md
 

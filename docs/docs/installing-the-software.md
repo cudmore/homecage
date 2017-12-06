@@ -1,4 +1,4 @@
-Homecage requires the following libraries:
+## Overview: Required libraries
 
 - [Wiring Pi][1] - Library that provides a command line interface to the GPIO pins. This should be installed by default.
 - [GPIO][3] - Python library to control GPIO pins.
@@ -80,7 +80,7 @@ Add the following line to the end of the file (make sure it is one line)
 @reboot (sleep 10; cd /home/pi/homecage/homecage_app && /usr/bin/python /home/pi/homecage/homecage_app/homecage_app.py)
 ```
 
-# Done installing !!!
+## Done installing !!!
 
 At this point you can interact with the homecage either through the [web][9] or from the [command line][8].
 
