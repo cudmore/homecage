@@ -16,34 +16,14 @@
             "title": "Interface options"
         }, 
         {
-            "location": "/images/", 
-            "text": "These are images of the homecage at various developmental stages\n\n\nv0.0\n\n\nOverview\n\n\n\n\n\n\nLights and camera\n\n\n\n\n\n\nRats nest", 
-            "title": "Images"
-        }, 
-        {
-            "location": "/images/#v00", 
-            "text": "", 
-            "title": "v0.0"
-        }, 
-        {
-            "location": "/images/#overview", 
-            "text": "", 
-            "title": "Overview"
-        }, 
-        {
-            "location": "/images/#lights-and-camera", 
-            "text": "", 
-            "title": "Lights and camera"
-        }, 
-        {
-            "location": "/images/#rats-nest", 
-            "text": "", 
-            "title": "Rats nest"
-        }, 
-        {
             "location": "/installing-the-software/", 
-            "text": "Homecage requires the following libraries:\n\n\n\n\nWiring Pi\n - Library that provides a command line interface to the GPIO pins. This should be installed by default.\n\n\nGPIO\n - Python library to control GPIO pins.\n\n\npicamera\n - Python library to control the camera.\n\n\nflask\n - A python web server.\n\n\nAdafruit_DHT\n - (optional) Python library to read from a DHT temperature and humidity sensor.\n\n\nuv4l\n - Command line tool for live video streaming to a web browser.\n\n\navconv\n - Command line tool to convert video files.\n\n\n\n\n1) Get a functioning Raspberry Pi\n\n\nThese instructions assume you have a functioning Raspberry Pi. To get started setting up a Pi from scratch, see our \nsetup intructions\n.\n\n\n2) Clone the repository\n\n\nThis will make a folder \nhomecage\n in your root directory. You can always return to your root directory with \ncd\n\n\n# if you don't already have git installed\nsudo apt-get install git\n\ngit clone https://github.com/cudmore/homecage.git\n\n\n\n3) Install python libraries\n\n\n# if you don't already have pip installed\nsudo apt-get install python-pip\n\npip install rpi.gpio\npip install flask\n\n# if you run into errors then try installing\nsudo apt-get install build-essential python-dev python-openssl\n\n\n\n4) Install uv4l for live video streaming (optional)\n\n\nIf you run into trouble, then follow \nthis tutorial\n.\n\n\ncurl http://www.linux-projects.org/listing/uv4l_repo/lrkey.asc | sudo apt-key add -\n\n# add the following line to /etc/apt/sources.list\n# start editor with `sudo pico /etc/apt/sources.list`\ndeb http://www.linux-projects.org/listing/uv4l_repo/raspbian/stretch stretch main\n\nsudo apt-get update\nsudo apt-get install uv4l uv4l-raspicam uv4l-server\n\n\n\n\n5) Install avconv to convert videos from .h264 to .mp4\n\n\nIf you run into trouble, then see \nthis blog post\n.\n\n\nsudo apt-get update\nsudo apt-get install libav-tools\n\n\n\nVideo files will be saved to \n/home/pi/video\n. This can be changed in the web server configuration file \nhomecage/homecage_app/config.json\n. If your going to save a lot of video, please \nmount a usb key\n and save videos there.\n\n\n6) Install DHT temperature sensor (optional)\n\n\nIf you run into trouble then go to \nthis tutorial\n.\n\n\ncd\nmkdir tmp\ncd tmp\ngit clone https://github.com/adafruit/Adafruit_Python_DHT.git\ncd Adafruit_Python_DHT\nsudo python setup.py install\n\n\n\n7) Start the web server at boot (optional)\n\n\nEdit crontab\n\n\ncrontab -e\n\n\n\nAdd the following line to the end of the file (make sure it is one line)\n\n\n@reboot (sleep 10; cd /home/pi/homecage/homecage_app \n /usr/bin/python /home/pi/homecage/homecage_app/homecage_app.py)\n\n\n\n\nDone installing !!!\n\n\nAt this point you can interact with the homecage either through the \nweb\n or from the \ncommand line\n.", 
+            "text": "Overview: Required libraries\n\n\n\n\nWiring Pi\n - Library that provides a command line interface to the GPIO pins. This should be installed by default.\n\n\nGPIO\n - Python library to control GPIO pins.\n\n\npicamera\n - Python library to control the camera.\n\n\nflask\n - A python web server.\n\n\nAdafruit_DHT\n - (optional) Python library to read from a DHT temperature and humidity sensor.\n\n\nuv4l\n - Command line tool for live video streaming to a web browser.\n\n\navconv\n - Command line tool to convert video files.\n\n\n\n\n1) Get a functioning Raspberry Pi\n\n\nThese instructions assume you have a functioning Raspberry Pi. To get started setting up a Pi from scratch, see our \nsetup intructions\n.\n\n\n2) Clone the repository\n\n\nThis will make a folder \nhomecage\n in your root directory. You can always return to your root directory with \ncd\n\n\n# if you don't already have git installed\nsudo apt-get install git\n\ngit clone https://github.com/cudmore/homecage.git\n\n\n\n3) Install python libraries\n\n\n# if you don't already have pip installed\nsudo apt-get install python-pip\n\npip install rpi.gpio\npip install flask\n\n# if you run into errors then try installing\nsudo apt-get install build-essential python-dev python-openssl\n\n\n\n4) Install uv4l for live video streaming (optional)\n\n\nIf you run into trouble, then follow \nthis tutorial\n.\n\n\ncurl http://www.linux-projects.org/listing/uv4l_repo/lrkey.asc | sudo apt-key add -\n\n# add the following line to /etc/apt/sources.list\n# start editor with `sudo pico /etc/apt/sources.list`\ndeb http://www.linux-projects.org/listing/uv4l_repo/raspbian/stretch stretch main\n\nsudo apt-get update\nsudo apt-get install uv4l uv4l-raspicam uv4l-server\n\n\n\n\n5) Install avconv to convert videos from .h264 to .mp4\n\n\nIf you run into trouble, then see \nthis blog post\n.\n\n\nsudo apt-get update\nsudo apt-get install libav-tools\n\n\n\nVideo files will be saved to \n/home/pi/video\n. This can be changed in the web server configuration file \nhomecage/homecage_app/config.json\n. If your going to save a lot of video, please \nmount a usb key\n and save videos there.\n\n\n6) Install DHT temperature sensor (optional)\n\n\nIf you run into trouble then go to \nthis tutorial\n.\n\n\ncd\nmkdir tmp\ncd tmp\ngit clone https://github.com/adafruit/Adafruit_Python_DHT.git\ncd Adafruit_Python_DHT\nsudo python setup.py install\n\n\n\n7) Start the web server at boot (optional)\n\n\nEdit crontab\n\n\ncrontab -e\n\n\n\nAdd the following line to the end of the file (make sure it is one line)\n\n\n@reboot (sleep 10; cd /home/pi/homecage/homecage_app \n /usr/bin/python /home/pi/homecage/homecage_app/homecage_app.py)\n\n\n\n\nDone installing !!!\n\n\nAt this point you can interact with the homecage either through the \nweb\n or from the \ncommand line\n.", 
             "title": "Install"
+        }, 
+        {
+            "location": "/installing-the-software/#overview-required-libraries", 
+            "text": "Wiring Pi  - Library that provides a command line interface to the GPIO pins. This should be installed by default.  GPIO  - Python library to control GPIO pins.  picamera  - Python library to control the camera.  flask  - A python web server.  Adafruit_DHT  - (optional) Python library to read from a DHT temperature and humidity sensor.  uv4l  - Command line tool for live video streaming to a web browser.  avconv  - Command line tool to convert video files.", 
+            "title": "Overview: Required libraries"
         }, 
         {
             "location": "/installing-the-software/#1-get-a-functioning-raspberry-pi", 
@@ -87,18 +67,33 @@
         }, 
         {
             "location": "/web-interface/", 
-            "text": "Running the web server\n\n\nAt a command prompt, type:\n\n\ncd\ncd homecage/homecage_app\npython homecage_app.py\n\n\n\n\nOnce \nhomecage_app.py\n is running you can access the web server in a browser with the address:\n\n\nhttp:[your_ip]:5000\n\n\n\nWhere [your_ip] is the IP address of your Pi.\n\n\nTo stop the homecage web server, use keyboard \nctrl+c\n\n\nConfiguring the web server\n\n\nThe server can be configured by editing the \nhomecage/homecage_app/config.json\n file.\n\n\ncd\npico homecage/homecage_app/config.json\n\n\n\nThe default file is:\n\n\n{\n    \nhardware\n: {\n        \nirLightPin\n: 7, \n        \nwhiteLightPin\n: 8,\n        \ntemperatureSensor\n: 9, \n        \ntemperatureInterval\n: 20 \n    }, \n    \nlights\n: {\n        \ncontrolLights\n: true, \n        \nsunset\n: 18, \n        \nsunrise\n: 6\n    }, \n    \nvideo\n: {\n        \nfileDuration\n: 10, \n        \nconverttomp4\n: true, \n        \nfps\n: 30, \n        \nresolution\n: [\n            1024, \n            768\n        ],\n        \ncaptureStill\n: true, \n        \nstillInterval\n: 2 \n    }, \n    \nstream\n: {\n        \nstreamResolution\n: [\n            1024, \n            768\n        ]\n    }\n}", 
+            "text": "Running the web server\n\n\nLogin to the Pi\n\n\nssh pi@[your_ip]\n\n\n\nWhere [your_ip] is the IP address of your Pi.\n\n\nAt a command prompt, type:\n\n\ncd\ncd homecage/homecage_app\npython homecage_app.py\n\n\n\n\nOnce \nhomecage_app.py\n is running you can access the web server in a browser with the address:\n\n\nhttp:[your_ip]:5000\n\n\n\nWhere [your_ip] is the IP address of your Pi.\n\n\nTo stop the homecage web server, in the command prompt use keyboard \nctrl+c\n\n\nViewing saved videos\n\n\nClick the hard-drive icon to view saved video files.\n\n\nSetting options\n\n\nIn the web interface\n\n\nExpand the \noptions\n tab to set parameters of homecage. Each option will apply to the current session. Use \nsave options\n to permanaently save the options. Load the default options again with 'Load Default Options'.\n\n\n\n\nOn the Pi\n\n\nThe homecage options can be configured by editing the \nhomecage/homecage_app/config.json\n file.\n\n\ncd\npico homecage/homecage_app/config.json\n\n\n\nThe default file is:\n\n\n{\n    \nhardware\n: {\n        \nirLightPin\n: 7, \n        \nwhiteLightPin\n: 8,\n        \ntemperatureSensor\n: 9, \n        \ntemperatureInterval\n: 20 \n    }, \n    \nlights\n: {\n        \ncontrolLights\n: true, \n        \nsunset\n: 18, \n        \nsunrise\n: 6\n    }, \n    \nvideo\n: {\n        \nfileDuration\n: 10, \n        \nconverttomp4\n: true, \n        \nfps\n: 30, \n        \nresolution\n: [\n            1024, \n            768\n        ],\n        \ncaptureStill\n: true, \n        \nstillInterval\n: 2 \n    }, \n    \nstream\n: {\n        \nstreamResolution\n: [\n            1024, \n            768\n        ]\n    }\n}", 
             "title": "Web interface"
         }, 
         {
             "location": "/web-interface/#running-the-web-server", 
-            "text": "At a command prompt, type:  cd\ncd homecage/homecage_app\npython homecage_app.py  Once  homecage_app.py  is running you can access the web server in a browser with the address:  http:[your_ip]:5000  Where [your_ip] is the IP address of your Pi.  To stop the homecage web server, use keyboard  ctrl+c", 
+            "text": "Login to the Pi  ssh pi@[your_ip]  Where [your_ip] is the IP address of your Pi.  At a command prompt, type:  cd\ncd homecage/homecage_app\npython homecage_app.py  Once  homecage_app.py  is running you can access the web server in a browser with the address:  http:[your_ip]:5000  Where [your_ip] is the IP address of your Pi.  To stop the homecage web server, in the command prompt use keyboard  ctrl+c", 
             "title": "Running the web server"
         }, 
         {
-            "location": "/web-interface/#configuring-the-web-server", 
-            "text": "The server can be configured by editing the  homecage/homecage_app/config.json  file.  cd\npico homecage/homecage_app/config.json  The default file is:  {\n     hardware : {\n         irLightPin : 7, \n         whiteLightPin : 8,\n         temperatureSensor : 9, \n         temperatureInterval : 20 \n    }, \n     lights : {\n         controlLights : true, \n         sunset : 18, \n         sunrise : 6\n    }, \n     video : {\n         fileDuration : 10, \n         converttomp4 : true, \n         fps : 30, \n         resolution : [\n            1024, \n            768\n        ],\n         captureStill : true, \n         stillInterval : 2 \n    }, \n     stream : {\n         streamResolution : [\n            1024, \n            768\n        ]\n    }\n}", 
-            "title": "Configuring the web server"
+            "location": "/web-interface/#viewing-saved-videos", 
+            "text": "Click the hard-drive icon to view saved video files.", 
+            "title": "Viewing saved videos"
+        }, 
+        {
+            "location": "/web-interface/#setting-options", 
+            "text": "", 
+            "title": "Setting options"
+        }, 
+        {
+            "location": "/web-interface/#in-the-web-interface", 
+            "text": "Expand the  options  tab to set parameters of homecage. Each option will apply to the current session. Use  save options  to permanaently save the options. Load the default options again with 'Load Default Options'.", 
+            "title": "In the web interface"
+        }, 
+        {
+            "location": "/web-interface/#on-the-pi", 
+            "text": "The homecage options can be configured by editing the  homecage/homecage_app/config.json  file.  cd\npico homecage/homecage_app/config.json  The default file is:  {\n     hardware : {\n         irLightPin : 7, \n         whiteLightPin : 8,\n         temperatureSensor : 9, \n         temperatureInterval : 20 \n    }, \n     lights : {\n         controlLights : true, \n         sunset : 18, \n         sunrise : 6\n    }, \n     video : {\n         fileDuration : 10, \n         converttomp4 : true, \n         fps : 30, \n         resolution : [\n            1024, \n            768\n        ],\n         captureStill : true, \n         stillInterval : 2 \n    }, \n     stream : {\n         streamResolution : [\n            1024, \n            768\n        ]\n    }\n}", 
+            "title": "On the Pi"
         }, 
         {
             "location": "/rest-interface/", 
@@ -262,23 +257,63 @@
         }, 
         {
             "location": "/troubleshooting/", 
-            "text": "Converting h264 files to mp4\n\n\nThe Raspberry camera saves .h264 video files. This format is very efficient and creates small files (10 MB per 5 minutes) but does require conversion to mp4 to impose a time.\n\n\n#!/bin/bash\nfor file in *.h264 ; do\n   filename=\n${file%.*}\n\n   echo $filename\n   ffmpeg -r 15 -i \n$file\n -vcodec copy \nmp4/$file.mp4\n\n   sleep 3\ndone\n\n\n\n\nSee \nthis blog post\n\n\nTroubleshoot video recording\n\n\nCapture a single image\n\n\nraspistill -o test.jpg\n\n\n\n\nTroubleshoot video streaming\n\n\nRun uv4l by hand\n\n\nuv4l --driver raspicam --auto-video_nr --encoding h264 --width 640 --height 480 --enable-server on\n\n\n\n\nBrowse the live stream at\n\n\nhttp://[IP]:8080\n\n\n\n\nStop uv4l (make sure all browser windows are closed)\n\n\nsudo pkill uv4l", 
+            "text": "Video recording\n\n\nManually capture a single image\n\n\nraspistill -o test.jpg\n\n\n\n\nVideo streaming\n\n\nCheck version of uv4l\n\n\n# type\nuv4l -i\n\n# returns\nUserspace Video4Linux\nCopyright (C) Luca Risolia \nluca.risolia@linux-projects.org\n\nVersion 1.9.12 built on Aug 15 2017\n\n\n\nRun uv4l by hand\n\n\nuv4l --driver raspicam --auto-video_nr --encoding h264 --width 640 --height 480 --enable-server on\n\n\n\n\nBrowse the live stream at\n\n\nhttp://[IP]:8080\n\n\n\n\nStop uv4l (make sure all browser windows are closed)\n\n\nsudo pkill uv4l\n\n\n\n\nConverting h264 to mp4\n\n\nCheck the version of avconv\n\n\n# type\navconv -version\n\n# returns\nffmpeg version 3.2.9-1~deb9u1 Copyright (c) 2000-2017 the FFmpeg developers\nbuilt with gcc 6.3.0 (Raspbian 6.3.0-18+rpi1) 20170516\nconfiguration: --prefix=/usr --extra-version='1~deb9u1' --toolchain=hardened --libdir=/usr/lib/arm-linux-gnueabihf --incdir=/usr/include/arm-linux-gnueabihf --enable-gpl --disable-stripping --enable-avresample --enable-avisynth --enable-gnutls --enable-ladspa --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libebur128 --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libmp3lame --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwavpack --enable-libwebp --enable-libx265 --enable-libxvid --enable-libzmq --enable-libzvbi --enable-omx --enable-openal --enable-opengl --enable-sdl2 --enable-libdc1394 --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libopencv --enable-libx264 --enable-shared\nlibavutil      55. 34.101 / 55. 34.101\nlibavcodec     57. 64.101 / 57. 64.101\nlibavformat    57. 56.101 / 57. 56.101\nlibavdevice    57.  1.100 / 57.  1.100\nlibavfilter     6. 65.100 /  6. 65.100\nlibavresample   3.  1.  0 /  3.  1.  0\nlibswscale      4.  2.100 /  4.  2.100\nlibswresample   2.  3.100 /  2.  3.100\nlibpostproc    54.  1.100 / 54.  1.100\n\n\n\nManually converting h264 files to mp4\n\n\nThe Raspberry camera saves .h264 video files. This format is very efficient and creates small files (10 MB per 5 minutes) but does require conversion to mp4 to impose a time.\n\n\nUsing avconv\n\n\nThis will convert all .h264 files in \na folder\n into .mp4 files with 15 fps.\n\n\n#!/bin/bash\nfps=15\nfor file in *.h264 ; do\n   filename=\n${file%.*}\n\n   echo $filename\n   avconv -i \n$file\n -r $fps -vcodec copy \n$file.mp4\n\n   sleep 3\ndone\n\n\n\n\nUsing ffmpeg\n\n\nThis will convert all .h264 files in \na folder\n into .mp4 files with 15 fps.\n\n\n#!/bin/bash\nfps=15\nfor file in *.h264 ; do\n   filename=\n${file%.*}\n\n   echo $filename\n   ffmpeg -r $fps -i \n$file\n -vcodec copy \n$file.mp4\n\n   sleep 3\ndone\n\n\n\n\nThis will recursively convert all .h264 files in a folder and \nall of its subfolders\n into .mp4 files.\n\n\n#!/bin/bash\nfps=15\nIFS=$'\\n'\nfor file in $(find . -iname '*.h264') ; do\n    #printf '%s\\n' \n$file\n\n    ffmpeg -r $fps -i \n$file\n -vcodec copy \n$file.mp4\n\ndone\n\n\n\n\nSee \nthis blog post", 
             "title": "Troubleshooting"
         }, 
         {
-            "location": "/troubleshooting/#converting-h264-files-to-mp4", 
-            "text": "The Raspberry camera saves .h264 video files. This format is very efficient and creates small files (10 MB per 5 minutes) but does require conversion to mp4 to impose a time.  #!/bin/bash\nfor file in *.h264 ; do\n   filename= ${file%.*} \n   echo $filename\n   ffmpeg -r 15 -i  $file  -vcodec copy  mp4/$file.mp4 \n   sleep 3\ndone  See  this blog post", 
-            "title": "Converting h264 files to mp4"
+            "location": "/troubleshooting/#video-recording", 
+            "text": "Manually capture a single image  raspistill -o test.jpg", 
+            "title": "Video recording"
         }, 
         {
-            "location": "/troubleshooting/#troubleshoot-video-recording", 
-            "text": "Capture a single image  raspistill -o test.jpg", 
-            "title": "Troubleshoot video recording"
+            "location": "/troubleshooting/#video-streaming", 
+            "text": "Check version of uv4l  # type\nuv4l -i\n\n# returns\nUserspace Video4Linux\nCopyright (C) Luca Risolia  luca.risolia@linux-projects.org \nVersion 1.9.12 built on Aug 15 2017  Run uv4l by hand  uv4l --driver raspicam --auto-video_nr --encoding h264 --width 640 --height 480 --enable-server on  Browse the live stream at  http://[IP]:8080  Stop uv4l (make sure all browser windows are closed)  sudo pkill uv4l", 
+            "title": "Video streaming"
         }, 
         {
-            "location": "/troubleshooting/#troubleshoot-video-streaming", 
-            "text": "Run uv4l by hand  uv4l --driver raspicam --auto-video_nr --encoding h264 --width 640 --height 480 --enable-server on  Browse the live stream at  http://[IP]:8080  Stop uv4l (make sure all browser windows are closed)  sudo pkill uv4l", 
-            "title": "Troubleshoot video streaming"
+            "location": "/troubleshooting/#converting-h264-to-mp4", 
+            "text": "Check the version of avconv  # type\navconv -version\n\n# returns\nffmpeg version 3.2.9-1~deb9u1 Copyright (c) 2000-2017 the FFmpeg developers\nbuilt with gcc 6.3.0 (Raspbian 6.3.0-18+rpi1) 20170516\nconfiguration: --prefix=/usr --extra-version='1~deb9u1' --toolchain=hardened --libdir=/usr/lib/arm-linux-gnueabihf --incdir=/usr/include/arm-linux-gnueabihf --enable-gpl --disable-stripping --enable-avresample --enable-avisynth --enable-gnutls --enable-ladspa --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libebur128 --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libmp3lame --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwavpack --enable-libwebp --enable-libx265 --enable-libxvid --enable-libzmq --enable-libzvbi --enable-omx --enable-openal --enable-opengl --enable-sdl2 --enable-libdc1394 --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libopencv --enable-libx264 --enable-shared\nlibavutil      55. 34.101 / 55. 34.101\nlibavcodec     57. 64.101 / 57. 64.101\nlibavformat    57. 56.101 / 57. 56.101\nlibavdevice    57.  1.100 / 57.  1.100\nlibavfilter     6. 65.100 /  6. 65.100\nlibavresample   3.  1.  0 /  3.  1.  0\nlibswscale      4.  2.100 /  4.  2.100\nlibswresample   2.  3.100 /  2.  3.100\nlibpostproc    54.  1.100 / 54.  1.100", 
+            "title": "Converting h264 to mp4"
+        }, 
+        {
+            "location": "/troubleshooting/#manually-converting-h264-files-to-mp4", 
+            "text": "The Raspberry camera saves .h264 video files. This format is very efficient and creates small files (10 MB per 5 minutes) but does require conversion to mp4 to impose a time.", 
+            "title": "Manually converting h264 files to mp4"
+        }, 
+        {
+            "location": "/troubleshooting/#using-avconv", 
+            "text": "This will convert all .h264 files in  a folder  into .mp4 files with 15 fps.  #!/bin/bash\nfps=15\nfor file in *.h264 ; do\n   filename= ${file%.*} \n   echo $filename\n   avconv -i  $file  -r $fps -vcodec copy  $file.mp4 \n   sleep 3\ndone", 
+            "title": "Using avconv"
+        }, 
+        {
+            "location": "/troubleshooting/#using-ffmpeg", 
+            "text": "This will convert all .h264 files in  a folder  into .mp4 files with 15 fps.  #!/bin/bash\nfps=15\nfor file in *.h264 ; do\n   filename= ${file%.*} \n   echo $filename\n   ffmpeg -r $fps -i  $file  -vcodec copy  $file.mp4 \n   sleep 3\ndone  This will recursively convert all .h264 files in a folder and  all of its subfolders  into .mp4 files.  #!/bin/bash\nfps=15\nIFS=$'\\n'\nfor file in $(find . -iname '*.h264') ; do\n    #printf '%s\\n'  $file \n    ffmpeg -r $fps -i  $file  -vcodec copy  $file.mp4 \ndone  See  this blog post", 
+            "title": "Using ffmpeg"
+        }, 
+        {
+            "location": "/images/", 
+            "text": "These are images of the homecage at various developmental stages\n\n\nv0.0\n\n\nOverview\n\n\n\n\n\n\nLights and camera\n\n\n\n\n\n\nRats nest", 
+            "title": "Images"
+        }, 
+        {
+            "location": "/images/#v00", 
+            "text": "", 
+            "title": "v0.0"
+        }, 
+        {
+            "location": "/images/#overview", 
+            "text": "", 
+            "title": "Overview"
+        }, 
+        {
+            "location": "/images/#lights-and-camera", 
+            "text": "", 
+            "title": "Lights and camera"
+        }, 
+        {
+            "location": "/images/#rats-nest", 
+            "text": "", 
+            "title": "Rats nest"
         }, 
         {
             "location": "/implementation-details/", 

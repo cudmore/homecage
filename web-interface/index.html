@@ -212,18 +212,6 @@
 
 
   <li class="md-nav__item">
-    <a href="../images/" title="Images" class="md-nav__link">
-      Images
-    </a>
-  </li>
-
-    
-      
-      
-      
-
-
-  <li class="md-nav__item">
     <a href="../installing-the-software/" title="Install" class="md-nav__link">
       Install
     </a>
@@ -266,9 +254,36 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#configuring-the-web-server" title="Configuring the web server" class="md-nav__link">
-    Configuring the web server
+  <a href="#viewing-saved-videos" title="Viewing saved videos" class="md-nav__link">
+    Viewing saved videos
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setting-options" title="Setting options" class="md-nav__link">
+    Setting options
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#in-the-web-interface" title="In the web interface" class="md-nav__link">
+    In the web interface
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#on-the-pi" title="On the Pi" class="md-nav__link">
+    On the Pi
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -359,6 +374,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../images/" title="Images" class="md-nav__link">
+      Images
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
     <a href="../implementation-details/" title="Implementation details" class="md-nav__link">
       Implementation details
     </a>
@@ -403,9 +430,36 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#configuring-the-web-server" title="Configuring the web server" class="md-nav__link">
-    Configuring the web server
+  <a href="#viewing-saved-videos" title="Viewing saved videos" class="md-nav__link">
+    Viewing saved videos
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setting-options" title="Setting options" class="md-nav__link">
+    Setting options
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#in-the-web-interface" title="In the web interface" class="md-nav__link">
+    In the web interface
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#on-the-pi" title="On the Pi" class="md-nav__link">
+    On the Pi
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -428,8 +482,12 @@
                 
                   <h1>Web interface</h1>
                 
-                <p><IMG SRC="../img/web-interface-minimal.png" width=600></p>
+                <p><IMG SRC="../img/web-interface-minimal.png" width=600 style="border:1px solid black"></p>
 <h2 id="running-the-web-server">Running the web server</h2>
+<p>Login to the Pi</p>
+<pre><code>ssh pi@[your_ip]
+</code></pre>
+<p>Where [your_ip] is the IP address of your Pi.</p>
 <p>At a command prompt, type:</p>
 <pre><code>cd
 cd homecage/homecage_app
@@ -440,9 +498,15 @@ python homecage_app.py
 <pre><code>http:[your_ip]:5000
 </code></pre>
 <p>Where [your_ip] is the IP address of your Pi.</p>
-<p>To stop the homecage web server, use keyboard <code>ctrl+c</code></p>
-<h2 id="configuring-the-web-server">Configuring the web server</h2>
-<p>The server can be configured by editing the <a href="https://github.com/cudmore/homecage/blob/master/homecage_app/config.json">homecage/homecage_app/config.json</a> file.</p>
+<p>To stop the homecage web server, in the command prompt use keyboard <code>ctrl+c</code></p>
+<h2 id="viewing-saved-videos">Viewing saved videos</h2>
+<p>Click the hard-drive icon to view saved video files.</p>
+<h2 id="setting-options">Setting options</h2>
+<h3 id="in-the-web-interface">In the web interface</h3>
+<p>Expand the <code>options</code> tab to set parameters of homecage. Each option will apply to the current session. Use <code>save options</code> to permanaently save the options. Load the default options again with 'Load Default Options'.</p>
+<p><IMG SRC="../img/web-options.png" width=325 style="border:1px solid black"></p>
+<h3 id="on-the-pi">On the Pi</h3>
+<p>The homecage options can be configured by editing the <a href="https://github.com/cudmore/homecage/blob/master/homecage_app/config.json">homecage/homecage_app/config.json</a> file.</p>
 <pre><code>cd
 pico homecage/homecage_app/config.json
 </code></pre>
