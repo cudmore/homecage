@@ -39,6 +39,15 @@ sudo pkill uv4l
 
 ## Converting h264 to mp4
 
+Install ffmpeg on a mac
+
+- install xcode
+- activate xcode command line tools
+- install homebrew
+- run at command prompt
+
+    brew install ffmpeg --with-libvpx
+    
 Check the version of avconv
 
 	# type
