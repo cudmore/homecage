@@ -117,7 +117,11 @@ done
 
 See [this blog post][6]
 
+### Rotate videos in ffmpeg
 
+First get desired angle by importing into keynote and manually rotating.
+
+    ffmpeg -i in.mp4 -vf "rotate=-3*PI/180" out.mp4
 
 
 [6]: http://blog.cudmore.io/post/2017/11/01/libav-for-ffmpeg/
