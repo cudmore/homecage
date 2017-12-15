@@ -29,7 +29,8 @@ This will make a folder `homecage` in your root directory. You can always return
 	
 	pip install rpi.gpio
 	pip install flask
-
+	sudo pip install flask-cors # not sure why sudo is needed?
+	
 	# if you run into errors then try installing
 	sudo apt-get install build-essential python-dev python-openssl
 		
