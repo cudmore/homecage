@@ -2,7 +2,7 @@
     "docs": [
         {
             "location": "/", 
-            "text": "Home cage surveillance is a system to record video of your animals in their home cage.\n\n\nIt is designed to run on a Raspberry Pi computer using a Raspberry Pi NoIR camera.\n\n\nFeatures\n\n\n\n\nRecord video 24/7\n\n\nAutomaticall controls day-time and night-time lights.\n\n\nLive video streaming to a web browser\n\n\n\n\nInterface options\n\n\n\n\nWeb\n - A point and click web browser interface.\n\n\nREST\n - A rest interface to communicate with a homecage server\n\n\nCommand line\n - A command line interface.", 
+            "text": "Home cage surveillance is a system to record video of your animals in their home cage.\n\n\nIt is designed to run on a Raspberry Pi computer using a Raspberry Pi NoIR camera.\n\n\nFeatures\n\n\n\n\nRecord video 24/7\n\n\nAutomaticall controls day-time and night-time lights.\n\n\nLive video streaming to a web browser\n\n\n\n\nInterface options\n\n\n\n\nWeb\n - A point and click web browser interface.\n\n\nREST\n - A rest interface to communicate with a homecage server\n\n\nCommand line\n - A command line interface.\n\n\n\n\n\n  \n\nYour browser does not support the video tag.", 
             "title": "Getting started"
         }, 
         {
@@ -12,7 +12,7 @@
         }, 
         {
             "location": "/#interface-options", 
-            "text": "Web  - A point and click web browser interface.  REST  - A rest interface to communicate with a homecage server  Command line  - A command line interface.", 
+            "text": "Web  - A point and click web browser interface.  REST  - A rest interface to communicate with a homecage server  Command line  - A command line interface.   \n   \nYour browser does not support the video tag.", 
             "title": "Interface options"
         }, 
         {
