@@ -5,7 +5,7 @@ It is designed to run on a Raspberry Pi computer using a Raspberry Pi NoIR camer
 ## Features
 
 - Record video 24/7.
-- Automaticall controls day-time and night-time lights.
+- Automatically controls day-time and night-time lights.
 - Easy to use web interface to control all aspects of the experiment.
 - Live video streaming to a web browser.
 
