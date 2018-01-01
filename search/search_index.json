@@ -2,12 +2,12 @@
     "docs": [
         {
             "location": "/", 
-            "text": "Home cage surveillance is a system to record video of your animals in their home cage.\n\n\nIt is designed to run on a Raspberry Pi computer using a Raspberry Pi NoIR camera.\n\n\nFeatures\n\n\n\n\nRecord video 24/7.\n\n\nAutomaticall controls day-time and night-time lights.\n\n\nEasy to use web interface to control all aspects of the experiment.\n\n\nLive video streaming to a web browser.\n\n\n\n\nInterface options\n\n\n\n\nWeb\n - A point and click web browser interface.\n\n\nREST\n - A rest interface to communicate with a homecage server\n\n\nCommand line\n - A command line interface.\n\n\n\n\n\n  \n\nYour browser does not support the video tag.\n\n\n\n\nHome-cage video recording during the dark cycle using IR lights of two mouse cages with one mouse in each with running wheel.", 
+            "text": "Home cage surveillance is a system to record video of your animals in their home cage.\n\n\nIt is designed to run on a Raspberry Pi computer using a Raspberry Pi NoIR camera.\n\n\nFeatures\n\n\n\n\nRecord video 24/7.\n\n\nAutomatically controls day-time and night-time lights.\n\n\nEasy to use web interface to control all aspects of the experiment.\n\n\nLive video streaming to a web browser.\n\n\n\n\nInterface options\n\n\n\n\nWeb\n - A point and click web browser interface.\n\n\nREST\n - A rest interface to communicate with a homecage server\n\n\nCommand line\n - A command line interface.\n\n\n\n\n\n  \n\nYour browser does not support the video tag.\n\n\n\n\nHome-cage video recording during the dark cycle using IR lights of two mouse cages with one mouse in each with running wheel.", 
             "title": "Getting started"
         }, 
         {
             "location": "/#features", 
-            "text": "Record video 24/7.  Automaticall controls day-time and night-time lights.  Easy to use web interface to control all aspects of the experiment.  Live video streaming to a web browser.", 
+            "text": "Record video 24/7.  Automatically controls day-time and night-time lights.  Easy to use web interface to control all aspects of the experiment.  Live video streaming to a web browser.", 
             "title": "Features"
         }, 
         {
