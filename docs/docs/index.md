@@ -4,9 +4,10 @@ It is designed to run on a Raspberry Pi computer using a Raspberry Pi NoIR camer
 
 ## Features
 
-- Record video 24/7
+- Record video 24/7.
 - Automaticall controls day-time and night-time lights.
-- Live video streaming to a web browser
+- Easy to use web interface to control all aspects of the experiment.
+- Live video streaming to a web browser.
 
 
 ## Interface options
@@ -16,9 +17,7 @@ It is designed to run on a Raspberry Pi computer using a Raspberry Pi NoIR camer
 * **[Command line](command-line.md)** - A command line interface.
 
 
-
-
 <video width="640" height="480" controls>
-  <source src="../img/home-cage-movie.mp4" type="video/mp4">
+  <source src="home-cage-movie.mp4" type="video/mp4">
 Your browser does not support the video tag.
 </video>
