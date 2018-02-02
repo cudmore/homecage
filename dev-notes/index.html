@@ -28,7 +28,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-0.17.2, mkdocs-material-2.2.2">
+      <meta name="generator" content="mkdocs-0.17.2, mkdocs-material-2.2.6">
     
     
       
@@ -36,7 +36,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/application.7a4cdee3.css">
+      <link rel="stylesheet" href="../assets/stylesheets/application.6525f7f6.css">
       
     
     
@@ -340,89 +340,12 @@
     
     <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="toc">
     
+      
     
-      <label class="md-nav__link md-nav__link--active" for="toc">
-        Development notes
-      </label>
     
     <a href="./" title="Development notes" class="md-nav__link md-nav__link--active">
       Development notes
     </a>
-    
-      
-<nav class="md-nav md-nav--secondary">
-  
-  
-  
-    <label class="md-nav__title" for="toc">Table of contents</label>
-    <ul class="md-nav__list" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#mkdocs" title="mkDocs" class="md-nav__link">
-    mkDocs
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#uv4l" title="uv4l" class="md-nav__link">
-    uv4l
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#sent-this-to-uv4l-people" title="Sent this to uv4l people" class="md-nav__link">
-    Sent this to uv4l people
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#remove-uv4l-raspicam-extras" title="Remove uv4l-raspicam-extras" class="md-nav__link">
-    Remove uv4l-raspicam-extras
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#change-log" title="Change Log" class="md-nav__link">
-    Change Log
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#20171111" title="20171111" class="md-nav__link">
-    20171111
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#20171201" title="20171201" class="md-nav__link">
-    20171201
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-      
-      
-    </ul>
-  
-</nav>
     
   </li>
 
@@ -441,74 +364,8 @@
 <nav class="md-nav md-nav--secondary">
   
   
+    
   
-    <label class="md-nav__title" for="toc">Table of contents</label>
-    <ul class="md-nav__list" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#mkdocs" title="mkDocs" class="md-nav__link">
-    mkDocs
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#uv4l" title="uv4l" class="md-nav__link">
-    uv4l
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#sent-this-to-uv4l-people" title="Sent this to uv4l people" class="md-nav__link">
-    Sent this to uv4l people
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#remove-uv4l-raspicam-extras" title="Remove uv4l-raspicam-extras" class="md-nav__link">
-    Remove uv4l-raspicam-extras
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#change-log" title="Change Log" class="md-nav__link">
-    Change Log
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#20171111" title="20171111" class="md-nav__link">
-    20171111
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#20171201" title="20171201" class="md-nav__link">
-    20171201
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-      
-      
-    </ul>
   
 </nav>
                   </div>
@@ -523,60 +380,91 @@
                   <a href="http://github.com/cudmore/homecage/edit/master/docs/dev-notes.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
                 
                 
-                  <h1>Development notes</h1>
-                
-                <h2 id="mkdocs">mkDocs</h2>
-<p>We use <a href="http://www.mkdocs.org/">mkdocs</a> to generate the documentation website from markdown files.</p>
-<p>Install</p>
-<pre><code>pip install mkdocs
+                <h2 id="change-log">Change log</h2>
+<p>20180202, added code to convert .h264 to .mp4 at end of video recorindg. Be careful as avconv uses <code>-framerate</code> and not <code>-r</code> as is with ffmpeg.</p>
+<p>See <code>video.py</code></p>
+<p>```print '    Converting from .h264 to .mp4 with convert_video.sh (avconv)'
+cmd = './convert_video.sh ' + thisVideoFile + ' ' + str(fps)
+child = subprocess.Popen(cmd, shell=True)
+out, err = child.communicate()</p>
+<pre><code>
+And see `convert_video.sh`
 
-# we are using the material theme
-pip install mkdocs-material
 </code></pre>
-<p>Serve locally</p>
-<pre><code>cd
-cd homecage/docs
-mkdocs serve
-</code></pre>
-<p>Push to github</p>
-<pre><code>cd
-cd homecage/docs
-mkdocs gh-deploy --clean
-</code></pre>
-<h2 id="uv4l">uv4l</h2>
-<p>uv4l is what we use to stream live video.</p>
-<p>20171120 - Problem was that if streaming was on and we tried to stop it while there was still an opened browser window we would get an orphaned <code>&lt;defunct&gt;</code> process that can't actually be kill(ed). This was mucking up any future interaciton as <code>stream</code>, <code>record</code>, and <code>status</code> thought there was still a uv4l process.</p>
-<h4 id="sent-this-to-uv4l-people">Sent this to uv4l people</h4>
-<pre><code>Hi there, great product and the best streaming I have ever seen.
 
-I am running uv4l on a Raspberry Pi (Jessie) and it is working very well.
-One problem is if I kill the stream with `sudo pkill uv4l` while there is
-a browser window open (that is viewing the stream) I end up with a &lt;defunct&gt;
-uv4l process that I can't seem to kill?
+<h1 id="get-file-name-without-extension">get file name without extension</h1>
+<p>filename=$(basename "$1")
+filename="${filename%.*}"</p>
+<h1 id="get-the-source-directory-from-full-path-to-file">get the source directory from full path to file</h1>
+<p>mydir=$(dirname $1)</p>
+<h1 id="make-full-path-to-output-file">make full path to output file</h1>
+<h1 id="this-is-really-bad-form-hard-to-read-my-fault">this is really bad form, hard to read (my fault)</h1>
+<h1 id="dstfilemydirmp4filenamemp4">dstfile=$mydir'/mp4/'$filename'.mp4'</h1>
+<p>dstfile=$mydir'/'$filename'.mp4'</p>
+<p>cmd="avconv -framerate $2 -i $1 -vcodec copy -r $2 $dstfile"
+echo "    "$cmd
+$cmd</p>
+<pre><code>
+## mkDocs
 
-Can you suggest a server option I could use to stop this behavior?
-I want to `sudo pkill uv4l` from the pi while some remote user still
+## We use [mkdocs][mkdocs] to generate the documentation website from markdown files.
+
+Install
+
+    pip install mkdocs
+
+    # we are using the material theme
+    pip install mkdocs-material
+
+Serve locally
+
+    cd
+    cd homecage/docs
+    mkdocs serve
+
+Push to github
+
+    cd
+    cd homecage/docs
+    mkdocs gh-deploy --clean 
+
+## uv4l
+
+uv4l is what we use to stream live video.
+
+20171120 - Problem was that if streaming was on and we tried to stop it while there was still an opened browser window we would get an orphaned `&lt;defunct&gt;` process that can't actually be kill(ed). This was mucking up any future interaciton as `stream`, `record`, and `status` thought there was still a uv4l process.
+
+#### Sent this to uv4l people
+
+</code></pre>
+
+<p>Hi there, great product and the best streaming I have ever seen.</p>
+<p>I am running uv4l on a Raspberry Pi (Jessie) and it is working very well.
+One problem is if I kill the stream with <code>sudo pkill uv4l</code> while there is
+a browser window open (that is viewing the stream) I end up with a <defunct>
+uv4l process that I can't seem to kill?</p>
+<p>Can you suggest a server option I could use to stop this behavior?
+I want to <code>sudo pkill uv4l</code> from the pi while some remote user still
 has a stream window open in the browser? I've looked through the server
-options and don't really know what I am looking for?
+options and don't really know what I am looking for?</p>
+<p>Thanks again for uv4l</p>
+<p>p.s. Can you suggest an online forum for such questions?</p>
+<pre><code>Answer was to kill child processes first. Get child processes of PID with `pstree -p PID'
 
-Thanks again for uv4l
+Which eventually led to this
 
-p.s. Can you suggest an online forum for such questions?
 </code></pre>
 
-<p>Answer was to kill child processes first. Get child processes of PID with `pstree -p PID'</p>
-<p>Which eventually led to this</p>
-<pre><code># get uv4l PID
-PID = pgrep uv4l
-# kill all processes in the same group, this includes children
-# kills original and does NOT leave a `&lt;defunct&gt;` uv4l !
-sudo kill -- -PID
-</code></pre>
-
+<h1 id="get-uv4l-pid">get uv4l PID</h1>
+<p>PID = pgrep uv4l</p>
+<h1 id="kill-all-processes-in-the-same-group-this-includes-children">kill all processes in the same group, this includes children</h1>
+<h1 id="kills-original-and-does-not-leave-a-defunct-uv4l">kills original and does NOT leave a <code>&lt;defunct&gt;</code> uv4l !</h1>
+<p>sudo kill -- -PID
+```</p>
 <h4 id="remove-uv4l-raspicam-extras">Remove uv4l-raspicam-extras</h4>
 <pre><code>sudo apt-get remove uv4l-raspicam-extras
 </code></pre>
-<h2 id="change-log">Change Log</h2>
+<h2 id="change-log_1">Change Log</h2>
 <h4 id="20171111">20171111</h4>
 <ul>
 <li>finish index.html interface, mostly adding interface to change self.config</li>
@@ -656,7 +544,7 @@ sudo kill -- -PID
       
     </div>
     
-      <script src="../assets/javascripts/application.6cdc17f0.js"></script>
+      <script src="../assets/javascripts/application.cae2244d.js"></script>
       
       <script>app.initialize({version:"0.17.2",url:{base:".."}})</script>
       
