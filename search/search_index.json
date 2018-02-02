@@ -357,63 +357,23 @@
         }, 
         {
             "location": "/dev-notes/", 
-            "text": "Change log\n\n\n20180202, added code to convert .h264 to .mp4 at end of video recorindg. Be careful as avconv uses \n-framerate\n and not \n-r\n as is with ffmpeg.\n\n\nSee \nvideo.py\n\n\n```print '    Converting from .h264 to .mp4 with convert_video.sh (avconv)'\ncmd = './convert_video.sh ' + thisVideoFile + ' ' + str(fps)\nchild = subprocess.Popen(cmd, shell=True)\nout, err = child.communicate()\n\n\n\nAnd see `convert_video.sh`\n\n\n\n\n\nget file name without extension\n\n\nfilename=$(basename \"$1\")\nfilename=\"${filename%.*}\"\n\n\nget the source directory from full path to file\n\n\nmydir=$(dirname $1)\n\n\nmake full path to output file\n\n\nthis is really bad form, hard to read (my fault)\n\n\ndstfile=$mydir'/mp4/'$filename'.mp4'\n\n\ndstfile=$mydir'/'$filename'.mp4'\n\n\ncmd=\"avconv -framerate $2 -i $1 -vcodec copy -r $2 $dstfile\"\necho \"    \"$cmd\n$cmd\n\n\n\n## mkDocs\n\n## We use [mkdocs][mkdocs] to generate the documentation website from markdown files.\n\nInstall\n\n    pip install mkdocs\n\n    # we are using the material theme\n    pip install mkdocs-material\n\nServe locally\n\n    cd\n    cd homecage/docs\n    mkdocs serve\n\nPush to github\n\n    cd\n    cd homecage/docs\n    mkdocs gh-deploy --clean \n\n## uv4l\n\nuv4l is what we use to stream live video.\n\n20171120 - Problem was that if streaming was on and we tried to stop it while there was still an opened browser window we would get an orphaned `\ndefunct\n` process that can't actually be kill(ed). This was mucking up any future interaciton as `stream`, `record`, and `status` thought there was still a uv4l process.\n\n#### Sent this to uv4l people\n\n\n\n\n\nHi there, great product and the best streaming I have ever seen.\n\n\nI am running uv4l on a Raspberry Pi (Jessie) and it is working very well.\nOne problem is if I kill the stream with \nsudo pkill uv4l\n while there is\na browser window open (that is viewing the stream) I end up with a \n\nuv4l process that I can't seem to kill?\n\n\nCan you suggest a server option I could use to stop this behavior?\nI want to \nsudo pkill uv4l\n from the pi while some remote user still\nhas a stream window open in the browser? I've looked through the server\noptions and don't really know what I am looking for?\n\n\nThanks again for uv4l\n\n\np.s. Can you suggest an online forum for such questions?\n\n\nAnswer was to kill child processes first. Get child processes of PID with `pstree -p PID'\n\nWhich eventually led to this\n\n\n\n\n\nget uv4l PID\n\n\nPID = pgrep uv4l\n\n\nkill all processes in the same group, this includes children\n\n\nkills original and does NOT leave a \ndefunct\n uv4l !\n\n\nsudo kill -- -PID\n```\n\n\nRemove uv4l-raspicam-extras\n\n\nsudo apt-get remove uv4l-raspicam-extras\n\n\n\nChange Log\n\n\n20171111\n\n\n\n\nfinish index.html interface, mostly adding interface to change self.config\n\n\nsplit self.config (from config.json) and self.status (runtime variables)\n\n\nadd in dht sensor code\n\n\nadd in white and ir sensor code\n\n\n\n\n20171201\n\n\n\n\nAdded dialog when stopping video\n\n\nadded 'videolist.html' page to display list of video and play on click !\n\n\nnow converting .h264 to .mp4\n\n\nadded to config.json\n\n\nadded bash script convert_video.sh\n\n\ncall bash script when video is done (in thread)\n\n\nadded documentation to install avconv\n\n\n\n\n\n\nnow saving into date folder", 
+            "text": "Change Log\n\n\n20180202\n\n\nAdded code to command line to convert .h264 to .mp4 at end of video recorindg.\n\n\nSee \nvideo.py\n:\n\n\nprint '    Converting from .h264 to .mp4 with convert_video.sh (avconv)'\ncmd = './convert_video.sh ' + thisVideoFile + ' ' + str(fps)\nchild = subprocess.Popen(cmd, shell=True)\nout, err = child.communicate()\n\n\n\n\nBe careful as avconv uses \n-framerate\n and not \n-r\n as is with ffmpeg. See \nconvert_video.sh\n:\n\n\ncmd=\navconv -loglevel error -framerate $2 -i $1 -vcodec copy -r $2 $dstfile\n\necho \n    \n$cmd\n\n\n\n\n20171201\n\n\n\n\nAdded dialog when stopping video\n\n\nadded 'videolist.html' page to display list of video and play on click !\n\n\nnow converting .h264 to .mp4\n\n\nadded to config.json as 'config.video.converttomp4: true'\n\n\nadded bash script convert_video.sh, to do conversion\n\n\ncall bash script when video is done (in thread)\n\n\nadded documentation to install avconv\n\n\n\n\n\n\nnow saving into date folder\n\n\n\n\n20171111\n\n\n\n\nfinish index.html interface, mostly adding interface to change self.config\n\n\nsplit self.config (from config.json) and self.status (runtime variables)\n\n\nadd in dht sensor code\n\n\nadd in white and ir sensor code\n\n\n\n\n20171101\n\n\n\n\nStarted rewriting homecage to include (i) command line control, (ii) web interface. Previous version required manually running both lights and video as separate processes using \nsreen\n.\n\n\n\n\nmkDocs\n\n\nWe use \nmkdocs\n to generate the documentation website from markdown files.\n\n\nInstall\n\n\npip install mkdocs\n\n# we are using the material theme\npip install mkdocs-material\n\n\n\nServe locally\n\n\ncd\ncd homecage/docs\nmkdocs serve\n\n\n\nPush to github\n\n\ncd\ncd homecage/docs\nmkdocs gh-deploy --clean\n\n\n\nuv4l\n\n\nuv4l is what we use to stream live video.\n\n\n20171120 - Problem was that if streaming was on and we tried to stop it while there was still an opened browser window we would get an orphaned \ndefunct\n process that can't actually be kill(ed). This was mucking up any future interaciton as \nstream\n, \nrecord\n, and \nstatus\n thought there was still a uv4l process.\n\n\nSent this to uv4l people\n\n\nHi there, great product and the best streaming I have ever seen.\n\nI am running uv4l on a Raspberry Pi (Jessie) and it is working very well.\nOne problem is if I kill the stream with `sudo pkill uv4l` while there is\na browser window open (that is viewing the stream) I end up with a \ndefunct\n\nuv4l process that I can't seem to kill?\n\nCan you suggest a server option I could use to stop this behavior?\nI want to `sudo pkill uv4l` from the pi while some remote user still\nhas a stream window open in the browser? I've looked through the server\noptions and don't really know what I am looking for?\n\nThanks again for uv4l\n\np.s. Can you suggest an online forum for such questions?\n\n\n\n\nAnswer was to kill child processes first. Get child processes of PID with `pstree -p PID'\n\n\nWhich eventually led to this\n\n\n# get uv4l PID\nPID = pgrep uv4l\n# kill all processes in the same group, this includes children\n# kills original and does NOT leave a `\ndefunct\n` uv4l !\nsudo kill -- -PID\n\n\n\n\nRemove uv4l-raspicam-extras\n\n\nsudo apt-get remove uv4l-raspicam-extras", 
             "title": "Development notes"
         }, 
         {
             "location": "/dev-notes/#change-log", 
-            "text": "20180202, added code to convert .h264 to .mp4 at end of video recorindg. Be careful as avconv uses  -framerate  and not  -r  as is with ffmpeg.  See  video.py  ```print '    Converting from .h264 to .mp4 with convert_video.sh (avconv)'\ncmd = './convert_video.sh ' + thisVideoFile + ' ' + str(fps)\nchild = subprocess.Popen(cmd, shell=True)\nout, err = child.communicate()  \nAnd see `convert_video.sh`", 
-            "title": "Change log"
-        }, 
-        {
-            "location": "/dev-notes/#get-file-name-without-extension", 
-            "text": "filename=$(basename \"$1\")\nfilename=\"${filename%.*}\"", 
-            "title": "get file name without extension"
-        }, 
-        {
-            "location": "/dev-notes/#get-the-source-directory-from-full-path-to-file", 
-            "text": "mydir=$(dirname $1)", 
-            "title": "get the source directory from full path to file"
-        }, 
-        {
-            "location": "/dev-notes/#make-full-path-to-output-file", 
-            "text": "", 
-            "title": "make full path to output file"
-        }, 
-        {
-            "location": "/dev-notes/#this-is-really-bad-form-hard-to-read-my-fault", 
-            "text": "", 
-            "title": "this is really bad form, hard to read (my fault)"
-        }, 
-        {
-            "location": "/dev-notes/#dstfilemydirmp4filenamemp4", 
-            "text": "dstfile=$mydir'/'$filename'.mp4'  cmd=\"avconv -framerate $2 -i $1 -vcodec copy -r $2 $dstfile\"\necho \"    \"$cmd\n$cmd  \n## mkDocs\n\n## We use [mkdocs][mkdocs] to generate the documentation website from markdown files.\n\nInstall\n\n    pip install mkdocs\n\n    # we are using the material theme\n    pip install mkdocs-material\n\nServe locally\n\n    cd\n    cd homecage/docs\n    mkdocs serve\n\nPush to github\n\n    cd\n    cd homecage/docs\n    mkdocs gh-deploy --clean \n\n## uv4l\n\nuv4l is what we use to stream live video.\n\n20171120 - Problem was that if streaming was on and we tried to stop it while there was still an opened browser window we would get an orphaned ` defunct ` process that can't actually be kill(ed). This was mucking up any future interaciton as `stream`, `record`, and `status` thought there was still a uv4l process.\n\n#### Sent this to uv4l people  Hi there, great product and the best streaming I have ever seen.  I am running uv4l on a Raspberry Pi (Jessie) and it is working very well.\nOne problem is if I kill the stream with  sudo pkill uv4l  while there is\na browser window open (that is viewing the stream) I end up with a  \nuv4l process that I can't seem to kill?  Can you suggest a server option I could use to stop this behavior?\nI want to  sudo pkill uv4l  from the pi while some remote user still\nhas a stream window open in the browser? I've looked through the server\noptions and don't really know what I am looking for?  Thanks again for uv4l  p.s. Can you suggest an online forum for such questions?  Answer was to kill child processes first. Get child processes of PID with `pstree -p PID'\n\nWhich eventually led to this", 
-            "title": "dstfile=$mydir'/mp4/'$filename'.mp4'"
-        }, 
-        {
-            "location": "/dev-notes/#get-uv4l-pid", 
-            "text": "PID = pgrep uv4l", 
-            "title": "get uv4l PID"
-        }, 
-        {
-            "location": "/dev-notes/#kill-all-processes-in-the-same-group-this-includes-children", 
-            "text": "", 
-            "title": "kill all processes in the same group, this includes children"
-        }, 
-        {
-            "location": "/dev-notes/#kills-original-and-does-not-leave-a-defunct-uv4l", 
-            "text": "sudo kill -- -PID\n```", 
-            "title": "kills original and does NOT leave a &lt;defunct&gt; uv4l !"
-        }, 
-        {
-            "location": "/dev-notes/#remove-uv4l-raspicam-extras", 
-            "text": "sudo apt-get remove uv4l-raspicam-extras", 
-            "title": "Remove uv4l-raspicam-extras"
-        }, 
-        {
-            "location": "/dev-notes/#change-log_1", 
             "text": "", 
             "title": "Change Log"
+        }, 
+        {
+            "location": "/dev-notes/#20180202", 
+            "text": "Added code to command line to convert .h264 to .mp4 at end of video recorindg.  See  video.py :  print '    Converting from .h264 to .mp4 with convert_video.sh (avconv)'\ncmd = './convert_video.sh ' + thisVideoFile + ' ' + str(fps)\nchild = subprocess.Popen(cmd, shell=True)\nout, err = child.communicate()  Be careful as avconv uses  -framerate  and not  -r  as is with ffmpeg. See  convert_video.sh :  cmd= avconv -loglevel error -framerate $2 -i $1 -vcodec copy -r $2 $dstfile \necho       $cmd", 
+            "title": "20180202"
+        }, 
+        {
+            "location": "/dev-notes/#20171201", 
+            "text": "Added dialog when stopping video  added 'videolist.html' page to display list of video and play on click !  now converting .h264 to .mp4  added to config.json as 'config.video.converttomp4: true'  added bash script convert_video.sh, to do conversion  call bash script when video is done (in thread)  added documentation to install avconv    now saving into date folder", 
+            "title": "20171201"
         }, 
         {
             "location": "/dev-notes/#20171111", 
@@ -421,9 +381,29 @@
             "title": "20171111"
         }, 
         {
-            "location": "/dev-notes/#20171201", 
-            "text": "Added dialog when stopping video  added 'videolist.html' page to display list of video and play on click !  now converting .h264 to .mp4  added to config.json  added bash script convert_video.sh  call bash script when video is done (in thread)  added documentation to install avconv    now saving into date folder", 
-            "title": "20171201"
+            "location": "/dev-notes/#20171101", 
+            "text": "Started rewriting homecage to include (i) command line control, (ii) web interface. Previous version required manually running both lights and video as separate processes using  sreen .", 
+            "title": "20171101"
+        }, 
+        {
+            "location": "/dev-notes/#mkdocs", 
+            "text": "We use  mkdocs  to generate the documentation website from markdown files.  Install  pip install mkdocs\n\n# we are using the material theme\npip install mkdocs-material  Serve locally  cd\ncd homecage/docs\nmkdocs serve  Push to github  cd\ncd homecage/docs\nmkdocs gh-deploy --clean", 
+            "title": "mkDocs"
+        }, 
+        {
+            "location": "/dev-notes/#uv4l", 
+            "text": "uv4l is what we use to stream live video.  20171120 - Problem was that if streaming was on and we tried to stop it while there was still an opened browser window we would get an orphaned  defunct  process that can't actually be kill(ed). This was mucking up any future interaciton as  stream ,  record , and  status  thought there was still a uv4l process.", 
+            "title": "uv4l"
+        }, 
+        {
+            "location": "/dev-notes/#sent-this-to-uv4l-people", 
+            "text": "Hi there, great product and the best streaming I have ever seen.\n\nI am running uv4l on a Raspberry Pi (Jessie) and it is working very well.\nOne problem is if I kill the stream with `sudo pkill uv4l` while there is\na browser window open (that is viewing the stream) I end up with a  defunct \nuv4l process that I can't seem to kill?\n\nCan you suggest a server option I could use to stop this behavior?\nI want to `sudo pkill uv4l` from the pi while some remote user still\nhas a stream window open in the browser? I've looked through the server\noptions and don't really know what I am looking for?\n\nThanks again for uv4l\n\np.s. Can you suggest an online forum for such questions?  Answer was to kill child processes first. Get child processes of PID with `pstree -p PID'  Which eventually led to this  # get uv4l PID\nPID = pgrep uv4l\n# kill all processes in the same group, this includes children\n# kills original and does NOT leave a ` defunct ` uv4l !\nsudo kill -- -PID", 
+            "title": "Sent this to uv4l people"
+        }, 
+        {
+            "location": "/dev-notes/#remove-uv4l-raspicam-extras", 
+            "text": "sudo apt-get remove uv4l-raspicam-extras", 
+            "title": "Remove uv4l-raspicam-extras"
         }
     ]
 }
