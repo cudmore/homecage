@@ -75,6 +75,8 @@ The Raspberry camera saves .h264 video files. This format is very efficient and 
 
 ### Using avconv
 
+Be careful as the `-r` versus `-framerate` for avconv are not documented.
+
 This will convert all .h264 files in **a folder** into .mp4 files with 15 fps.
 
 ```bash
@@ -83,7 +85,10 @@ fps=15
 for file in *.h264 ; do
    filename="${file%.*}"
    echo $filename
+   # 20180202, does not work
    avconv -i "$file" -r $fps -vcodec copy "$file.mp4"
+   # this works
+   avconv -framerate $fps -i "$file" -vcodec copy "$file.mp4"
    sleep 3
 done
 ```

@@ -28,7 +28,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-0.17.2, mkdocs-material-2.2.2">
+      <meta name="generator" content="mkdocs-0.17.2, mkdocs-material-2.2.6">
     
     
       
@@ -36,7 +36,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/application.7a4cdee3.css">
+      <link rel="stylesheet" href="../assets/stylesheets/application.6525f7f6.css">
       
     
     
@@ -358,6 +358,47 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#change-log" title="Change Log" class="md-nav__link">
+    Change Log
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#20180202" title="20180202" class="md-nav__link">
+    20180202
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#20171201" title="20171201" class="md-nav__link">
+    20171201
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#20171111" title="20171111" class="md-nav__link">
+    20171111
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#20171101" title="20171101" class="md-nav__link">
+    20171101
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#mkdocs" title="mkDocs" class="md-nav__link">
     mkDocs
   </a>
@@ -382,33 +423,6 @@
           <li class="md-nav__item">
   <a href="#remove-uv4l-raspicam-extras" title="Remove uv4l-raspicam-extras" class="md-nav__link">
     Remove uv4l-raspicam-extras
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#change-log" title="Change Log" class="md-nav__link">
-    Change Log
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#20171111" title="20171111" class="md-nav__link">
-    20171111
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#20171201" title="20171201" class="md-nav__link">
-    20171201
   </a>
   
 </li>
@@ -446,6 +460,47 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#change-log" title="Change Log" class="md-nav__link">
+    Change Log
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#20180202" title="20180202" class="md-nav__link">
+    20180202
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#20171201" title="20171201" class="md-nav__link">
+    20171201
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#20171111" title="20171111" class="md-nav__link">
+    20171111
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#20171101" title="20171101" class="md-nav__link">
+    20171101
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#mkdocs" title="mkDocs" class="md-nav__link">
     mkDocs
   </a>
@@ -479,33 +534,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#change-log" title="Change Log" class="md-nav__link">
-    Change Log
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#20171111" title="20171111" class="md-nav__link">
-    20171111
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#20171201" title="20171201" class="md-nav__link">
-    20171201
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
       
       
     </ul>
@@ -525,7 +553,46 @@
                 
                   <h1>Development notes</h1>
                 
-                <h2 id="mkdocs">mkDocs</h2>
+                <h2 id="change-log">Change Log</h2>
+<h4 id="20180202">20180202</h4>
+<p>Added code to command line to convert .h264 to .mp4 at end of video recorindg.</p>
+<p>See <code>video.py</code>:</p>
+<pre><code>print '    Converting from .h264 to .mp4 with convert_video.sh (avconv)'
+cmd = './convert_video.sh ' + thisVideoFile + ' ' + str(fps)
+child = subprocess.Popen(cmd, shell=True)
+out, err = child.communicate()
+</code></pre>
+
+<p>Be careful as avconv uses <code>-framerate</code> and not <code>-r</code> as is with ffmpeg. See <code>convert_video.sh</code>:</p>
+<pre><code>cmd=&quot;avconv -loglevel error -framerate $2 -i $1 -vcodec copy -r $2 $dstfile&quot;
+echo &quot;    &quot;$cmd
+</code></pre>
+
+<h4 id="20171201">20171201</h4>
+<ul>
+<li>Added dialog when stopping video</li>
+<li>added 'videolist.html' page to display list of video and play on click !</li>
+<li>now converting .h264 to .mp4<ul>
+<li>added to config.json as 'config.video.converttomp4: true'</li>
+<li>added bash script convert_video.sh, to do conversion</li>
+<li>call bash script when video is done (in thread)</li>
+<li>added documentation to install avconv</li>
+</ul>
+</li>
+<li>now saving into date folder</li>
+</ul>
+<h4 id="20171111">20171111</h4>
+<ul>
+<li>finish index.html interface, mostly adding interface to change self.config</li>
+<li>split self.config (from config.json) and self.status (runtime variables)</li>
+<li>add in dht sensor code</li>
+<li>add in white and ir sensor code</li>
+</ul>
+<h4 id="20171101">20171101</h4>
+<ul>
+<li>Started rewriting homecage to include (i) command line control, (ii) web interface. Previous version required manually running both lights and video as separate processes using <code>sreen</code>.</li>
+</ul>
+<h2 id="mkdocs">mkDocs</h2>
 <p>We use <a href="http://www.mkdocs.org/">mkdocs</a> to generate the documentation website from markdown files.</p>
 <p>Install</p>
 <pre><code>pip install mkdocs
@@ -576,27 +643,6 @@ sudo kill -- -PID
 <h4 id="remove-uv4l-raspicam-extras">Remove uv4l-raspicam-extras</h4>
 <pre><code>sudo apt-get remove uv4l-raspicam-extras
 </code></pre>
-<h2 id="change-log">Change Log</h2>
-<h4 id="20171111">20171111</h4>
-<ul>
-<li>finish index.html interface, mostly adding interface to change self.config</li>
-<li>split self.config (from config.json) and self.status (runtime variables)</li>
-<li>add in dht sensor code</li>
-<li>add in white and ir sensor code</li>
-</ul>
-<h4 id="20171201">20171201</h4>
-<ul>
-<li>Added dialog when stopping video</li>
-<li>added 'videolist.html' page to display list of video and play on click !</li>
-<li>now converting .h264 to .mp4<ul>
-<li>added to config.json</li>
-<li>added bash script convert_video.sh</li>
-<li>call bash script when video is done (in thread)</li>
-<li>added documentation to install avconv</li>
-</ul>
-</li>
-<li>now saving into date folder</li>
-</ul>
                 
                   
                 
@@ -656,7 +702,7 @@ sudo kill -- -PID
       
     </div>
     
-      <script src="../assets/javascripts/application.6cdc17f0.js"></script>
+      <script src="../assets/javascripts/application.cae2244d.js"></script>
       
       <script>app.initialize({version:"0.17.2",url:{base:".."}})</script>
       
