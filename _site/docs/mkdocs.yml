@@ -1,0 +1,27 @@
+site_name: Home cage surveillance
+
+theme:
+  name: 'material'
+  #name: 'readthedocs'
+  #name: 'mkdocs'
+  
+pages:
+    - Getting started: index.md
+    - Install: installing-the-software.md
+    - Web interface: web-interface.md
+    - REST interface: rest-interface.md
+    - Command line interface: command-line.md
+    - Mounting the file server: mounting-the-file-server.md
+    - Wiring the system: wiring-the-system.md
+    - Parts list: parts-list.md
+    - Troubleshooting: troubleshooting.md
+    - Images: images.md
+    - Implementation details: implementation-details.md
+    - Development notes: dev-notes.md
+
+repo_url: http://github.com/cudmore/homecage
+
+copyright: "Homecage was created by Robert H Cudmore and is licensed under the <a href='https://github.com/cudmore/treadmill/blob/master/LICENSE'>MIT license</a>"
+
+extra:
+  collapse_toc: true

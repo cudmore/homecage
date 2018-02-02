@@ -9,6 +9,14 @@ On a Mac, use the terminal application in /Applications/Utilities/terminal.app
 	# Enter password
 	[your_password]
 
+The first time you login with ssh you will see the following and should answer 'yes'.
+
+```
+The authenticity of host '10.16.81.215 (10.16.81.215)' can't be established.
+ECDSA key fingerprint is SHA256:2UPJc4irRdWsaMfpNcPy/EY4vOKPVNa/2gsN7INYBRw.
+Are you sure you want to continue connecting (yes/no)?
+```
+
 ## 2) Change into the homecage directory
 
 At the command prompt, type

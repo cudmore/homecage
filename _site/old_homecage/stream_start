@@ -1,0 +1,14 @@
+echo "`date +%y/%m/%d_%H:%M:%S`: stream_start" 1>>/home/pi/stream.log
+
+sudo raspistill -w 640 -h 480 -q 5 -o /home/pi/stream/pic.jpg -tl 100 -t 9999999 -th 0:0:0 -n >>/home/pi/stream.log 2>>/dev/null &
+
+export LD_LIBRARY_PATH=/home/pi/mjpg-streamer/
+
+mjpg-streamer/mjpg_streamer -i "input_file.so -f /home/pi/stream -n pic.jpg" -o "output_http.so -p 9000 -w /home/pi/mjpg-streamer/www" 0>>/home/pi/stream.log 1>>/home/pi/stream.log 2>>/home/pi/stream.log &
+
+myip=$(hostname -I)
+
+myip=$(echo -n $myip)
+
+echo "View the stream in VLC with"
+echo "   http://$myip:9000/?action=stream"

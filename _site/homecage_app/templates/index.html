@@ -1,0 +1,282 @@
+<!doctype html>
+<html ng-app="demo">
+	<head>
+		<title>Home Cage Surveillance</title>
+
+		<link rel="stylesheet" href="static/hello.css">
+		<link rel="stylesheet" href="static/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" href="static/font-awesome-4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="static/angular-ui-switch.min.css">
+
+		<script src="static/angular/angular.min.js"></script>
+		<script src="static/bootstrap/js/bootstrap.min.js"></script>
+		<script src="static/angular-ui-switch.min.js"></script>
+
+    	<script src="static/hello.js"></script>
+
+	    <!-- <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.6.6/angular-material.min.js"></script> -->
+	    <!-- <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.5.0.js"></script> -->
+
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	</head>
+
+<body>
+{% raw %}
+	<div ng-controller="Hello">
+
+	<table class="myTable0">
+	<tr>
+	<TD>
+	{{status.hostname}}
+	</TD>
+	<TD>
+	{{status.ip}}
+	</TD>
+	<TD>
+	{{status.date}}
+	</TD>
+	<TD>
+	{{status.time}}
+	</TD>
+	<td>
+		<A HREF="{{myUrl}}videolist" target="_blank" style="color: #000000;"><i class="fa fa-hdd-o" aria-hidden="true"></i></a>
+	</td>
+	<td>
+		<A HREF="http://blog.cudmore.io/homecage" target="_blank" style="color: #000000;"><i class="fa fa-question" aria-hidden="true"></i></A>
+	</td>
+	</tr>
+	</table>
+		
+	
+	<HR class="my_hr">
+
+	<table class="myTable">
+	<tr>
+		<td>Recording</td>
+		<td>
+		<span ng-bind="status.isRecording ? 'On' : 'Off'"></span>
+		</td>
+		<td>
+		<span ng-if="status.isRecording==0">
+			<button type="button" class="btn btn-success btn-sm" ng-click="startstoprecord(1)" ng-disabled="status.isStreaming">
+			<i class="fa fa-play fa-1x" aria-hidden="true"></i> Start
+			</button>
+		</span>
+		<span ng-if="status.isRecording==1">
+			<button type="button" class="btn btn-danger btn-sm" ng-click="startstoprecord(0)">
+			<i class="fa fa-stop fa-1x" aria-hidden="true"></i> Stop
+			</button>
+
+		</span>
+		</td>
+	</tr>
+
+<!-- http://fdietz.github.io/recipes-with-angular-js/common-user-interface-patterns/displaying-a-modal-dialog.html -->
+<!--
+  <div modal="showModal" close="cancel()">
+    <div class="modal-header">
+        <h4>Modal Dialog</h4>
+    </div>
+    <div class="modal-body">
+        <p>Example paragraph with some text.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-success" ng-click="ok()">Okay</button>
+      <button class="btn" ng-click="cancel()">Cancel</button>
+    </div>
+  </div>
+
+-->
+
+
+	<tr>
+		<td>Streaming</td>
+		<td>
+		<span ng-bind="status.isStreaming ? 'On' : 'Off'"></span>
+		</td>
+		<td>
+		<span ng-if="status.isStreaming==0">
+
+			<button type="button" class="btn btn-success btn-sm" ng-click="startstopstream(1)" ng-disabled="status.isRecording">
+			<!-- "{'icon-resize-small': isCollapsed, 'icon-fullscreen': !isCollapsed}" -->
+			<i class="fa fa-play fa-1x" aria-hidden="true"></i> Start
+			</button>
+		</span>
+		<span ng-if="status.isStreaming==1">
+			<button type="button" class="btn btn-danger btn-sm" ng-click="startstopstream(0)">
+			<i class="fa fa-stop fa-1x" aria-hidden="true"></i> Stop
+			</button>
+		</span>
+		</td>
+
+		<td>
+		IR
+		<!-- <i class="fa fa-lightbulb-o fa-2x" aria-hidden="true"></i> -->
+		<switch id="enabled" name="enabled" ng-model="status.irLED" ng-change="irChange" disabled="status.controlLights && status.isRecording" on="On" off="Off" class="green"></switch>
+		</td>
+		<td>
+		White
+		<!-- <i class="fa fa-lightbulb-o fa-2x" aria-hidden="true"></i> -->
+		<switch id="enabled" name="enabled" ng-model="status.whiteLED" ng-change="whiteChange" disabled="status.controlLights && status.isRecording" on="On" off="Off" class="green"></switch>
+		</td>
+	</tr>
+	</table>
+
+
+	<table class="myTable">
+	<tr>
+	<TD>
+	Status: {{status.lastResponse}}
+	</TD>
+	</tr>
+	<tr ng-show="status.isRecording">
+	<td>
+		<span class="mysmall" ng-show="status.isRecording">Time Remaining (sec): {{status.timeRemaining}}</span>
+	</td>
+	</tr>
+	</table>
+	
+
+	<!-- table for recording still -->
+	<table>
+	<tr>
+	<td colspan=4 ng-show="status.isRecording">
+			<!--
+			<span class="mysmall">Recording file: {{status.currentFile}}</span>
+			<span class="mysmall">Time Remaining (sec): {{status.timeRemaining}}</span>
+			-->
+			<BR>
+			<span ng-if="showStill==0">
+				<button ng-click="toggleStill()" class="btn btn-default btn-sm"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+			</span>
+			<span ng-if="showStill==1">
+				<button ng-click="toggleStill()" class="btn btn-default btn-sm"><i class="fa fa-chevron-down" aria-hidden="true"></i></button>
+			</span>
+			Time-lapse Image<BR>
+			<span ng-show="showStill">	
+				<IMG SRC="{{lastImage2}}" width=640 height=480>	
+			</span>
+	</td>
+	</tr>
+	</table>
+	
+	<!-- table for stream -->
+	<table>
+	<tr>
+	<td colspan=4 ng-show="!hardCloseStream && status.isStreaming">
+	<span class="mysmall">View stream at <A HREF="{{myStreamUrl0}}" target="_blank">{{myStreamUrl0}}</a></span>
+	<BR>
+	<iframe ng-src="{{myStreamUrl}}" width="{{streamWidth}}" height="{{streamHeight}}"></iframe>
+	</td>
+	</tr>
+	</table>
+
+
+	<!-- OPTIONS -->
+	<span ng-if="showOptions==0">
+		<button ng-click="toggleOptions()" class="btn btn-default btn-sm"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+	</span>
+	<span ng-if="showOptions==1">
+		<button ng-click="toggleOptions()" class="btn btn-default btn-sm"><i class="fa fa-chevron-down" aria-hidden="true"></i></button>
+	</span>
+
+<!-- <i class="fa fa-cog fa-2x" aria-hidden="true"></i> -->
+	<span>Options</span>
+
+	<span ng-show="showOptions">	
+		<BR>
+		<button type="button" class="indent btn btn-info btn-sm" ng-click="saveoptions()" ng-disabled="status.isRecording">Save Options</button>
+	
+		<form class="indent" ng-submit="mySubmit('video.fileDuration',params.video.fileDuration)">
+		   Recording Duration (sec): <input type="number" ng-model="params.video.fileDuration" ng-disabled="status.isRecording"/>
+		</form>
+
+		<form class="indent" ng-submit="mySubmit('video.fps',params.video.fps)">
+		   <label>FPS:
+		   <input type="number" ng-model="params.video.fps" ng-disabled="status.isRecording"/>
+		</form>
+
+		<BR>
+		Video Size  <select name="" ng-disabled="1 || status.isRecording">
+		  <option value="640 x 480">640 x 480</option>
+		  <option value="1024 x 768">1024 x 768</option>
+		</select>
+
+		<!-- <form ng-submit="mySubmit('video.converttomp4',params.video.converttomp4)"> -->
+		   <BR>
+		   Convert video to .mp4: <input type="checkbox" ng-model="params.video.converttomp4" ng-change="mySubmit('video.converttomp4',params.video.converttomp4)" ng-disabled="status.isRecording"/>
+		<!-- </form> -->
+
+		<!-- <form ng-submit="mySubmit('video.captureStill',params.video.captureStill)"> -->
+		   <BR>
+		   Capture still: <input type="checkbox" ng-model="params.video.captureStill" ng-change="mySubmit('video.captureStill',params.video.captureStill)" ng-disabled="status.isRecording"/>
+		<!-- </form> -->
+
+		<form ng-submit="mySubmit('video.stillInterval',params.video.stillInterval)">
+		   Still interval (sec): <input type="number" ng-model="params.video.stillInterval" ng-disabled="status.isRecording"/>
+		</form>
+
+		<!-- <form ng-submit="mySubmit('lights.controlLights',params.lights.controlLights)"> -->
+		   <BR>
+		   Control lights (During recording): <input type="checkbox" ng-model="params.lights.controlLights" ng-change="mySubmit('lights.controlLights',params.lights.controlLights)" ng-disabled="status.isRecording"/>
+		<!-- </form> -->
+
+		<form ng-submit="mySubmit('lights.sunrise',params.lights.sunrise)">
+		   Sunrise (24h): <input type="number" ng-model="params.lights.sunrise" ng-disabled="status.isRecording"/>
+		</form>
+		<form ng-submit="mySubmit('lights.sunset',params.lights.sunset)">
+		   Sunset (24h): <input type="number" ng-model="params.lights.sunset" ng-disabled="status.isRecording"/>
+		</form>
+
+		<BR>
+		Stream Size  <select name="" ng-disabled="1 || status.isRecording">
+		  <option value="640 x 480">640 x 480</option>
+		  <option value="1024 x 768">1024 x 768</option>
+		</select>
+
+		<BR>
+		<button type="button" class="btn btn-info btn-sm" ng-click="loaddefaultoptions()" ng-disabled="status.isRecording">Load Default Options</button>
+	
+	</span> <!-- ng-show="showOptions" -->
+
+	
+	<!-- Server Status -->
+	<BR>
+	<span ng-if="showStatus==0">
+		<button ng-click="toggleStatus()" class="btn btn-default btn-sm"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+	</span>
+	<span ng-if="showStatus==1">
+		<button ng-click="toggleStatus()" class="btn btn-default btn-sm"><i class="fa fa-chevron-down" aria-hidden="true"></i></button>
+	</span>
+
+
+	<span>Server status</span>
+	<span ng-show="showStatus">	
+		<div class="indent">
+				{{status.temperature}}<sup>o</sup>C/{{status.humidity}}% <BR>
+		<table class="myTable-small">
+		  <tr ng-repeat="(x,y) in status">
+				<td>{{ x }}</td>
+				<td>{{ y }}</td>
+		  </tr>
+		</table>
+
+		<!-- 
+		file table:
+		<ul>
+		  <li ng-repeat="file in videofilelist track by $index">{{ file }}</li>
+		</ul>
+		-->
+		
+file list:
+{{ videofilelist }}
+		</div>
+		
+	</span> <!-- ng-show="showStatus" -->
+	
+	</div>
+{% endraw %}
+</body>
+</html>

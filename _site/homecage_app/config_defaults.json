@@ -1,0 +1,24 @@
+{
+    "hardware":{
+        "irLightPin": 7,
+        "whiteLightPin": 8,
+        "temperatureSensor": 9,
+        "temperatureInterval": 20
+    },
+    "lights":{
+        "controlLights": true, 
+    	"sunrise": 6,
+    	"sunset": 18
+    },
+    "video":{
+        "converttomp4": true, 
+        "fps": 30,
+        "resolution": [1024,768],
+        "fileDuration": 6,
+        "captureStill": true,
+        "stillInterval": 2
+    },
+    "stream": {
+        "streamResolution": [1024,768]
+    }
+}
