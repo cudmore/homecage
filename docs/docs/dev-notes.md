@@ -1,6 +1,11 @@
 
 ## Change Log
 
+#### 20180307
+
+Added script to convert all .h264 to .mp4 (without replacement), uses avconv. See homecage/convert for script and dev notes for a copy of the script.
+
+
 #### 20180202
 
 Added code to command line to convert .h264 to .mp4 at end of video recorindg.

@@ -129,4 +129,76 @@ First get desired angle by importing into keynote and manually rotating.
     ffmpeg -i in.mp4 -vf "rotate=-3*PI/180" out.mp4
 
 
+### Convert all .h264 files in a folder
+
+Usage:
+
+    ./convert /path/to/folder/with/h264/files
+    
+Script:
+```
+#!/bin/bash
+
+# 20180307
+# Robert Cudmore
+# http://robertcudmore.org, robert.cudmore@gmail.com
+#
+# This script will convert all .h264 files in given directory to .mp4 files using avconv
+# this will not overwrite if a matching .mp4 file already exists
+# Be sure to set fps to match the desired frames-per-second in your source .h264 files
+
+
+# set frames per second (fps) by hand
+fps=15
+
+function usage(){
+    echo "convert - Illegal parameters, expecting a valid folder path"
+    echo "Usage:"
+    echo "   ./convert /full/path/to/folder/with/h264/files"
+}
+
+#
+# main
+
+# check that we get one input parameter (e.g. the folder path to convert)
+if [ "$#" -ne 1 ]; then
+    usage
+    exit 1
+fi
+
+
+path="$1"
+
+# check that path exists
+if [ ! -d "$path" ]; then
+  # Control will enter here if $DIRECTORY doesn't exist.
+  echo 'path not found: '$path
+  exit 1
+fi
+
+echo 'converting all .h264 file in: ' $path
+
+for file in *.h264;
+do
+   filename="${file%.*}"
+   echo 'file:'$file
+   
+   dstFile=$file.mp4
+   #echo 'dstFile:'$dstFile
+   
+   # check if dstFile exists
+	if [ ! -f $dstFile ]; then
+	    #echo "File not found!"
+	    echo '   Converting ' $file ' to ' $dstFile
+        avconv -loglevel 'error' -framerate $fps -i "$file" -vcodec copy "$file.mp4"
+        sleep 3
+	else
+		echo '   Not converting ' $file 'destination file already exists:' $dstFile
+	fi
+   
+done
+
+exit 0
+```
+
 [6]: http://blog.cudmore.io/post/2017/11/01/libav-for-ffmpeg/

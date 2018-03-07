@@ -371,6 +371,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#convert-all-h264-files-in-a-folder" title="Convert all .h264 files in a folder" class="md-nav__link">
+    Convert all .h264 files in a folder
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -485,6 +492,13 @@
           <li class="md-nav__item">
   <a href="#rotate-videos-in-ffmpeg" title="Rotate videos in ffmpeg" class="md-nav__link">
     Rotate videos in ffmpeg
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#convert-all-h264-files-in-a-folder" title="Convert all .h264 files in a folder" class="md-nav__link">
+    Convert all .h264 files in a folder
   </a>
   
 </li>
@@ -613,6 +627,74 @@ done
 <h3 id="rotate-videos-in-ffmpeg">Rotate videos in ffmpeg</h3>
 <p>First get desired angle by importing into keynote and manually rotating.</p>
 <pre><code>ffmpeg -i in.mp4 -vf "rotate=-3*PI/180" out.mp4
+</code></pre>
+<h3 id="convert-all-h264-files-in-a-folder">Convert all .h264 files in a folder</h3>
+<p>Usage:</p>
+<pre><code>./convert /path/to/folder/with/h264/files
+</code></pre>
+<p>Script:</p>
+<pre><code>#!/bin/bash
+
+# 20180307
+# Robert Cudmore
+# http://robertcudmore.org, robert.cudmore@gmail.com
+#
+# This script will convert all .h264 files in given directory to .mp4 files using avconv
+# this will not overwrite if a matching .mp4 file already exists
+# Be sure to set fps to match the desired frames-per-second in your source .h264 files
+
+
+# set frames per second (fps) by hand
+fps=15
+
+function usage(){
+    echo &quot;convert - Illegal parameters, expecting a valid folder path&quot;
+    echo &quot;Usage:&quot;
+    echo &quot;   ./convert /full/path/to/folder/with/h264/files&quot;
+}
+
+#
+# main
+
+# check that we get one input parameter (e.g. the folder path to convert)
+if [ &quot;$#&quot; -ne 1 ]; then
+    usage
+    exit 1
+fi
+
+
+path=&quot;$1&quot;
+
+# check that path exists
+if [ ! -d &quot;$path&quot; ]; then
+  # Control will enter here if $DIRECTORY doesn't exist.
+  echo 'path not found: '$path
+  exit 1
+fi
+
+echo 'converting all .h264 file in: ' $path
+
+for file in *.h264;
+do
+   filename=&quot;${file%.*}&quot;
+   echo 'file:'$file
+
+   dstFile=$file.mp4
+   #echo 'dstFile:'$dstFile
+
+   # check if dstFile exists
+    if [ ! -f $dstFile ]; then
+        #echo &quot;File not found!&quot;
+        echo '   Converting ' $file ' to ' $dstFile
+        avconv -loglevel 'error' -framerate $fps -i &quot;$file&quot; -vcodec copy &quot;$file.mp4&quot;
+        sleep 3
+    else
+        echo '   Not converting ' $file 'destination file already exists:' $dstFile
+    fi
+
+done
+
+exit 0
 </code></pre>
                 
                   
