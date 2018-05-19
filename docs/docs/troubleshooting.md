@@ -39,15 +39,8 @@ sudo pkill uv4l
 
 ## Converting h264 to mp4
 
-Install ffmpeg on a mac
+We use avconv to convert h264 to mp4 and then avprobe to check the parameters of the output mp4 file.
 
-- install xcode
-- activate xcode command line tools
-- install homebrew
-- run at command prompt
-
-    brew install ffmpeg --with-libvpx
-    
 Check the version of avconv
 
 	# type
@@ -68,14 +61,25 @@ Check the version of avconv
 	libpostproc    54.  1.100 / 54.  1.100
 
 
+Check the version of avprobe which is used to read converted .mp4 files to make sure we get the correct parameters. It seems the Jessie version has frames-per-second in avg_frame_rate and the Stretch version has it in r_frame_rate (or maybe the other way around). Thus, we are hard coding fps based on user options. There is a fear that the call to convert h264 to mp4 could change in the future and we might get fps wrong.  Please verify your frames-per-second are as expected.
+
+	avprobe -v
+
+Raspian Jessie gives
+
+avprobe version 11.12-6:11.12-1~deb8u1+rpi1, Copyright (c) 2007-2018 the Libav developers
+  built on Feb 21 2018 04:51:45 with gcc 4.9.2 (Raspbian 4.9.2-10+deb8u1)
+
+Raspian Stetch gives
+
+ffprobe version 3.2.9-1~deb9u1 Copyright (c) 2007-2017 the FFmpeg developers
+  built with gcc 6.3.0 (Raspbian 6.3.0-18+rpi1) 20170516
 
 ## Manually converting h264 files to mp4
 
 The Raspberry camera saves .h264 video files. This format is very efficient and creates small files (10 MB per 5 minutes) but does require conversion to mp4 to impose a time.
 
 ### Using avconv
-
-Be careful as the `-r` versus `-framerate` for avconv are not documented.
 
 This will convert all .h264 files in **a folder** into .mp4 files with 15 fps.
 
@@ -85,10 +89,7 @@ fps=15
 for file in *.h264 ; do
    filename="${file%.*}"
    echo $filename
-   # 20180202, does not work
-   avconv -i "$file" -r $fps -vcodec copy "$file.mp4"
-   # this works
-   avconv -framerate $fps -i "$file" -vcodec copy "$file.mp4"
+   avconv -framerate $fps -i "$file" -r -vcodec copy "$file.mp4"
    sleep 3
 done
 ```
@@ -122,83 +123,7 @@ done
 
 See [this blog post][6]
 
-### Rotate videos in ffmpeg
-
-First get desired angle by importing into keynote and manually rotating.
-
-    ffmpeg -i in.mp4 -vf "rotate=-3*PI/180" out.mp4
 
 
-### Convert all .h264 files in a folder
-
-Usage:
-
-    ./convert /path/to/folder/with/h264/files
-    
-Script:
-```
-#!/bin/bash
-
-# 20180307
-# Robert Cudmore
-# http://robertcudmore.org, robert.cudmore@gmail.com
-#
-# This script will convert all .h264 files in given directory to .mp4 files using avconv
-# this will not overwrite if a matching .mp4 file already exists
-# Be sure to set fps to match the desired frames-per-second in your source .h264 files
-
-
-# set frames per second (fps) by hand
-fps=15
-
-function usage(){
-    echo "convert - Illegal parameters, expecting a valid folder path"
-    echo "Usage:"
-    echo "   ./convert /full/path/to/folder/with/h264/files"
-}
-
-#
-# main
-
-# check that we get one input parameter (e.g. the folder path to convert)
-if [ "$#" -ne 1 ]; then
-    usage
-    exit 1
-fi
-
-
-path="$1"
-
-# check that path exists
-if [ ! -d "$path" ]; then
-  # Control will enter here if $DIRECTORY doesn't exist.
-  echo 'path not found: '$path
-  exit 1
-fi
-
-echo 'converting all .h264 file in: ' $path
-
-for file in *.h264;
-do
-   filename="${file%.*}"
-   echo 'file:'$file
-   
-   dstFile=$file.mp4
-   #echo 'dstFile:'$dstFile
-   
-   # check if dstFile exists
-	if [ ! -f $dstFile ]; then
-	    #echo "File not found!"
-	    echo '   Converting ' $file ' to ' $dstFile
-        avconv -loglevel 'error' -framerate $fps -i "$file" -vcodec copy "$file.mp4"
-        sleep 3
-	else
-		echo '   Not converting ' $file 'destination file already exists:' $dstFile
-	fi
-   
-done
-
-exit 0
-```
 
 [6]: http://blog.cudmore.io/post/2017/11/01/libav-for-ffmpeg/

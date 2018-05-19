@@ -1,6 +1,6 @@
 
 angular.module('demo', ['uiSwitch'])
-.controller('Hello', function($scope, $window, $http, $location, $interval, $sce, $timeout) {
+.controller('Hello', function($scope, $window, $http, $location, $interval, $sce, $timeout, $document) {
 	
 	console.log('angular.version:', angular.version)
 	
@@ -11,11 +11,14 @@ angular.module('demo', ['uiSwitch'])
     $scope.myStreamUrl0 = myStreamUrl
     $scope.myStreamUrl = $sce.trustAsResourceUrl(myStreamUrl);
 	
+	// title in browser tab
+	$document[0].title = "Homecage " + $location.host()
+	
 	//todo: rewrite these to just be inline with logic in button html
 	$scope.showOptions = false;
 	$scope.toggleOptions = function() {
 		console.log('toggleOptions()')
-		$scope.showOptions = $scope.showOptions === false ? true: false;
+		$scope.showOptions = ($scope.showOptions === false) ? true: false;
 	};
 
 	$scope.showStatus = false;
@@ -37,25 +40,31 @@ angular.module('demo', ['uiSwitch'])
         	    $scope.status = response.data;
         	    //
         	    // remove video file list from $scope.status
-        	    $scope.videofilelist = $scope.status.videofilelist
-        	    $scope.status.videofilelist = ''
+        	    //$scope.videofilelist = $scope.status.videofilelist
+        	    //$scope.status.videofilelist = ''
         	    
-        	    //calculate web page iframe for stream
-        	    var tmpWidth = $scope.status.config.stream.streamResolution[0]
-        	    var tmpHeight = $scope.status.config.stream.streamResolution[1]
-        	    $scope.streamWidth = tmpWidth + (tmpWidth * 0.03)
-        	    $scope.streamHeight = tmpHeight + (tmpWidth * 0.03) 
         	});
 	};
 
     //read user editable options
-    $scope.getParams = function () {
-		$http.get($scope.myUrl + 'params').
+    $scope.getConfig = function () {
+		$http.get($scope.myUrl + 'config').
         	then(function(response) {
-        	    $scope.params = response.data;
+        	    $scope.config = response.data;
+        	    convertConfig()
+        	    console.log('$scope.config', $scope.config)
         	});
 	};
 
+	function convertConfig() {
+	    //calculate web page iframe for stream
+	    // scope.config.stream.resolution is a string like "1024,768"
+		var tmpWidth = parseInt($scope.config.stream.resolution.split(',')[0],10)
+		var tmpHeight = parseInt($scope.config.stream.resolution.split(',')[1],10)
+		$scope.streamWidth = tmpWidth + (tmpWidth * 0.03)
+		$scope.streamHeight = tmpHeight + (tmpWidth * 0.03)
+	}
+	
 	$scope.getLastImage2 = function () {
 		$scope.lastImage2 = $scope.myUrl + 'lastimage' + '?' + new Date().getTime()
 	}
@@ -152,22 +161,27 @@ angular.module('demo', ['uiSwitch'])
         	});
 	}
 
-	$scope.setParam = function (param) {
-		console.log("setParam");
+	/*
+	$scope.setConfig = function (param) {
+		console.log("setConfig");
 		val = $scope.status.fps
 		$http.get($scope.myUrl + 'set/' + param + '/' + val).
         	then(function(response) {
-        	    //$scope.status = response.data;
+        	    $scope.config = response.data;
+        	    console.log('$scope.config', $scope.config)
         	});
 	}
-
+	*/
+	
 	$scope.mySubmit = function (param,val) {
 		//when checkbox is submitted, val is boolean, convert all value to int
-		val = Number(val)
 		console.log("mySubmit() " + param + " " + val);
+		console.log(typeof val)
 		$http.get($scope.myUrl + 'set/' + param + '/' + val).
         	then(function(response) {
-        	    //$scope.status = response.data;
+        	    $scope.config = response.data;
+        	    convertConfig()
+        	    console.log('$scope.config', $scope.config)
         	});
 	}
 
@@ -182,8 +196,8 @@ angular.module('demo', ['uiSwitch'])
 	$scope.loaddefaultoptions = function () {
 		$http.get($scope.myUrl + 'loadconfigdefaults').
         	then(function(response) {
-        	    //reload user configurable params
-        	    $scope.getParams();
+        	    //reload user configurable config
+        	    $scope.getConfig();
         	});
 	}
 	
@@ -195,8 +209,8 @@ angular.module('demo', ['uiSwitch'])
 	//});
 
 	$scope.getStatus(); //state of homecage server
-	$scope.getParams(); // params user can set
-	$interval($scope.getStatus, 900);      	
+	$scope.getConfig(); // config user can set
+	$interval($scope.getStatus, 400);      	
 	
 	$interval($scope.getLastImage2, 900);      	
 

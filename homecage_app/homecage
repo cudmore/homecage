@@ -1,0 +1,63 @@
+#  20180419
+
+function usage(){
+    echo "homecage - Illegal parameters"
+    echo "Usage:"
+    echo "   homecage start"
+    echo "   homecage stop"
+    echo "   homecage restart"
+}
+
+homecagePID=`pgrep -f homecage_app.py`
+
+myip=`hostname -I | xargs`
+
+function start() {
+	if [ -n "$homecagePID" ]; then
+		echo "homecage server is running, use 'homecage stop' to stop."
+		echo "   http://"$myip":5000"
+		exit 1
+	else
+		echo "starting homecage server"
+		#rm homecage_app.log
+		#python homecage_app.py | tee homecage_app.log 2>&1 &
+		python homecage_app.py > homecage_app.log 2>&1 &
+		#echo "   log file is in homecage_app.log"
+		echo "   http://"$myip":5000"
+	fi
+}
+
+function stop() {
+	if [ -n "$homecagePID" ]; then
+		echo "stopping homecage server ..."
+		kill -- -$homecagePID 2> /dev/null
+		echo "homecage server is now stopped"
+	else
+		echo "homecage server is not running, use 'server start' to start."
+		#exit 1
+	fi
+}
+
+function restart() {
+	#echo "stopping"
+	sleep 2
+	stop
+	echo "waiting 2 seconds before starting ..."
+	sleep 2
+	#echo "starting"
+	start
+}
+
+case "$1" in
+	start) start
+		;;
+	stop) stop
+		;;
+	restart) restart
+		;;
+	*) usage
+		;;
+esac
+
+exit 0
+

@@ -1,0 +1,41 @@
+{
+    "hardware": {
+        "triggerIn": [
+        	{"name": "myTriggerIn1", "pin": 20, "polarity": "rising"},
+ 	   		{"name": "myTriggerIn2", "pin": 21, "polarity": "rising"}
+        ],
+        
+        "triggerOutPins": [],
+        
+        "ledPins": [2,3,4],
+        
+        "eventIn": [
+        	{"name": "frame", "pin": 12, "polarity": "rising"}
+        ],
+        
+        "eventOutPins": [13],
+        
+        "emergencyStopPin": 14,
+        
+        "readtemperature": true, 
+        "temperatureInterval": 20, 
+        "temperatureSensor": 4
+    }, 
+    "lights": {
+        "auto": false, 
+        "sunset": 18, 
+        "sunrise": 6
+    }, 
+    "video": {
+        "fileDuration": 300, 
+        "converttomp4": true, 
+        "captureStill": true, 
+        "savepath": "/home/pi/video", 
+        "fps": 30, 
+        "stillInterval": 2, 
+        "resolution": "640,480"
+    }, 
+    "stream": {
+        "resolution": "640,480"
+    }
+}

@@ -29,8 +29,7 @@ This will make a folder `homecage` in your root directory. You can always return
 	
 	pip install rpi.gpio
 	pip install flask
-	sudo pip install flask-cors # not sure why sudo is needed?
-	
+
 	# if you run into errors then try installing
 	sudo apt-get install build-essential python-dev python-openssl
 		
@@ -46,8 +45,10 @@ curl http://www.linux-projects.org/listing/uv4l_repo/lrkey.asc | sudo apt-key ad
 deb http://www.linux-projects.org/listing/uv4l_repo/raspbian/stretch stretch main
 
 sudo apt-get update
-sudo apt-get install uv4l uv4l-raspicam uv4l-server
+sudo apt-get install uv4l uv4l-raspicam
 ```
+
+Don't install `uv4l-server`
 
 ## 5) Install avconv to convert videos from .h264 to .mp4
 
@@ -57,6 +58,7 @@ If you run into trouble, then see [this blog post][13].
 	sudo apt-get install libav-tools
 
 Video files will be saved to `/home/pi/video`. This can be changed in the web server configuration file `homecage/homecage_app/config.json`. If your going to save a lot of video, please [mount a usb key][12] and save videos there.
+
 
 ## 6) Install DHT temperature sensor (optional)
 

@@ -1,7 +1,10 @@
 import os, subprocess
 from datetime import datetime
+import json
 
-from flask import Flask, render_template, send_file, jsonify, redirect, abort
+#import mimetypes # to send files to ios
+
+from flask import Flask, render_template, send_file, jsonify, abort#, redirect, make_response
 from flask_cors import CORS
 
 # turn off printing to console
@@ -9,7 +12,7 @@ if 1:
 	import logging
 	log = logging.getLogger('werkzeug')
 	log.setLevel(logging.ERROR)
-
+	
 from home import home
 
 home = home()
@@ -26,6 +29,11 @@ def getStatus():
 def hello_world():
 	return render_template('index.html')
 
+@app.errorhandler(404)
+def page_not_found(e):
+	#return render_template('404.html'), 404
+	return 'Error 404: File not found. This happens when you manually delete video files.'
+	
 # help
 @app.route('/help')
 def dispHelp():
@@ -34,17 +42,14 @@ def dispHelp():
 # state of server, queried about every second
 @app.route('/status')
 def status():	
-	#print 'status()'
 	theStatus = getStatus()
-	#print '   theStatus:', theStatus
 	return jsonify(theStatus)
 	
 # params that can be set by the user
-@app.route('/params')
-def params():
-	print 'params()'
-	
-	status = home.getParams()
+@app.route('/config')
+def config():
+	#print 'app.route config()'
+	status = home.getConfig()
 	return jsonify(status)
 	
 @app.route('/lastimage')
@@ -58,44 +63,35 @@ def record(onoff):
 	home.record(onoff)
 
 	status = getStatus()
-	#return jsonify(status=list(status.items()))
 	return jsonify(status)
 	
 @app.route('/stream/<int:onoff>')
 def stream(onoff):
 	print 'stream() onoff:', onoff
 	home.stream(onoff)
-
 	status = getStatus()
-	#return jsonify(status=list(status.items()))
 	return jsonify(status)
 	
 @app.route('/irLED/<int:onoff>')
 def irLED(onoff):
 	print 'irLED() onoff:', onoff
-	home.irLED(onoff)
-
+	home.irLED(True if onoff else False)
 	status = getStatus()
-	#return jsonify(status=list(status.items()))
 	return jsonify(status)
 	
 @app.route('/whiteLED/<int:onoff>')
 def whiteLED(onoff):
 	print 'whiteLED() onoff:', onoff
-	home.whiteLED(onoff)
-
+	home.whiteLED(True if onoff else False)
 	status = getStatus()
-	#return jsonify(status=list(status.items()))
 	return jsonify(status)
 
-@app.route('/set/<paramName>/<int:value>')
+@app.route('/set/<paramName>/<value>')
 def setParam(paramName, value):
-	print '\n\tsetParam():', paramName, value, '\n'
+	#print 'app.route setParam():', paramName, value
 	home.setParam(paramName, value)
-	
-	status = getStatus()
-	#return jsonify(status=list(status.items()))
-	return jsonify(status)
+	config = home.getConfig()
+	return jsonify(config)
 
 @app.route('/saveconfig')
 def saveConfig():
@@ -113,54 +109,67 @@ def loadConfig():
 @app.route('/videolist')
 @app.route('/videolist/<path:req_path>')
 def videolist(req_path=''):
-	print 'videolist() req_path:', req_path
-	BASE_DIR = '/home/pi/video'
+	print '=== videolist() req_path:', req_path
+	BASE_DIR = home.videoPath + '/' #'/home/pi/video'
 	
-	req_path = req_path.replace('home/pi/video/', '')
-	print '   xxx videolist() req_path:', req_path
+	#req_path = req_path.replace('home/pi/video/', '')
+	tmpStr = BASE_DIR[1:]
+	req_path = req_path.replace(tmpStr, '')
+	#print '   videolist() req_path:', req_path
 	
 	abs_path = os.path.join(BASE_DIR, req_path)
 
 	# Return 404 if path doesn't exist
 	if not os.path.exists(abs_path):
-		return abort(404)
+		print 'videolist() aborting with 404, abs_path:', abs_path
+		return "" #abort(404)
 	
 	# Check if path is a file and serve
 	if os.path.isfile(abs_path):
+		'''
+		response = make_response("")
+		response.headers["X-Accel-Redirect"] = abs_path
+		response.headers["Content-Type"] = mimetypes.guess_type(os.path.basename(abs_path))
+		return response
+		'''
+		print 'videolist() is serving file:', abs_path
 		return send_file(abs_path)
 
 	# Show directory contents
-	#files = os.listdir(abs_path)
-	#files = [os.path.join(abs_path, f) for f in os.listdir(abs_path) if f.endswith('.mp4') or not os.path.isfile(f)]
 	files = []
 	for f in os.listdir(abs_path):
 		if f == '.AppleDouble':
 			continue
 		f2 = f
 		f = os.path.join(abs_path, f)
-		fd = {'path':f, 'file':f2}
+		fd = {'path':f, 'file':f2, 'isfile':True}
 		if not os.path.isfile(f):
 			files.append(fd)
-		elif f.endswith('.mp4'):
-			print fd
-			files.append(fd)
-	#print files
+		
+	# load from db file
+	dbFile = os.path.join(abs_path,'db.txt') 
+	if os.path.isfile(dbFile):
+		files2 = json.load(open(dbFile))
+		for file3 in files2:
+			if os.path.isfile(file3['path']):
+				file3['isfile'] = True
+			else:
+				file3['isfile'] = False
+			files.append(file3)
+	
 	# sort the list
 	files = sorted(files, key=lambda k: k['file']) 
+
+	print 'videolist() is serving videolist.html with abs_path:', abs_path
 	return render_template('videolist.html', files=files, abs_path=abs_path)
 
-	#files = os.listdir('/home/pi/video')
-	#return render_template('videolist.html', files=files)
-	
 '''
-@app.route('/servevideo/<path:req_path>')
-def servevideo(req_path):
-	BASE_DIR = '/home/pi/video/mp4'
-	abs_path = os.path.join(BASE_DIR, req_path)
-	#return send_file(abs_path)
-	print 'servevideo(): req_path:', req_path, 'abs_path:', abs_path
-	#return redirect(abs_path)
-	return send_file(abs_path)
+@app.route('/restart')
+def restartserver():
+	cmd = ['./homecage', 'restart']
+	child = subprocess.Popen(cmd, shell=True) #, stdout=subprocess.PIPE)
+	#out, err = child.communicate() # out is something like 'Raspberry Pi 2 Model B Rev 1.1'
+	return 'flask server is restarting'
 '''
 	
 def whatismyip():
@@ -172,8 +181,9 @@ def whatismyip():
 	return ipaddr
 
 if __name__ == '__main__':
-	print 'Running Flask server at:', 'http://' + whatismyip() + ':5000'
-	app.run(host=whatismyip(), port=5000, debug=True, threaded=True)
+	print 'homecage_app.py is running Flask server at:', 'http://' + whatismyip() + ':5000'
+	debug = False
+	app.run(host=whatismyip(), port=5000, debug=debug, threaded=True)
 	
 	
 	

@@ -1,53 +1,4 @@
 
-## Change Log
-
-#### 20180307
-
-Added script to convert all .h264 to .mp4 (without replacement), uses avconv. See homecage/convert for script and dev notes for a copy of the script.
-
-
-#### 20180202
-
-Added code to command line to convert .h264 to .mp4 at end of video recorindg.
-
-See `video.py`:
-
-```
-print '    Converting from .h264 to .mp4 with convert_video.sh (avconv)'
-cmd = './convert_video.sh ' + thisVideoFile + ' ' + str(fps)
-child = subprocess.Popen(cmd, shell=True)
-out, err = child.communicate()
-```
-
-Be careful as avconv uses `-framerate` and not `-r` as is with ffmpeg. See `convert_video.sh`:
-
-```
-cmd="avconv -loglevel error -framerate $2 -i $1 -vcodec copy -r $2 $dstfile"
-echo "    "$cmd
-```
-
-#### 20171201
-
- - Added dialog when stopping video
- - added 'videolist.html' page to display list of video and play on click !
- - now converting .h264 to .mp4
-    - added to config.json as 'config.video.converttomp4: true'
-    - added bash script convert_video.sh, to do conversion
-    - call bash script when video is done (in thread)
-    - added documentation to install avconv
- - now saving into date folder
-
-#### 20171111
-
- - finish index.html interface, mostly adding interface to change self.config
- - split self.config (from config.json) and self.status (runtime variables)
- - add in dht sensor code
- - add in white and ir sensor code
-
-#### 20171101
-
- - Started rewriting homecage to include (i) command line control, (ii) web interface. Previous version required manually running both lights and video as separate processes using `sreen`.
- 
 ## mkDocs
 
 We use [mkdocs][mkdocs] to generate the documentation website from markdown files.
@@ -112,6 +63,29 @@ sudo kill -- -PID
 
     sudo apt-get remove uv4l-raspicam-extras
     
+## Change Log
+
+#### 20171111
+
+ - finish index.html interface, mostly adding interface to change self.config
+ - split self.config (from config.json) and self.status (runtime variables)
+ - add in dht sensor code
+ - add in white and ir sensor code
+
+#### 20171201
+
+ - Added dialog when stopping video
+ - added 'videolist.html' page to display list of video and play on click !
+ - now converting .h264 to .mp4
+    - added to config.json
+    - added bash script convert_video.sh
+    - call bash script when video is done (in thread)
+    - added documentation to install avconv
+ - now saving into date folder
  
 [mkdocs]: http://www.mkdocs.org/
 
+### Setup
+
+homecage2 is b8:27:eb:88:33:07
+cudmore_pib is b8:27:eb:aa:51:6d

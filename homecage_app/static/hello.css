@@ -21,7 +21,7 @@ span.mysmall {
 
 .myTable0 td {
     border: 0px solid #ddd;
-    padding: 6px;
+    padding: 4px;
 }
 
 .myTable {
@@ -32,12 +32,12 @@ span.mysmall {
 
 .myTable td {
     border: 0px solid #ddd;
-    padding: 6px;
+    padding: 4px;
 }
 
 .myTable td:nth-child(1){ width:100px; }
 .myTable td:nth-child(2){ width:100px; }
-//.myTable td:nth-child(3){ width:100px; }
+.myTable td:nth-child(3){ width:100px; }
 //.myTable td:nth-child(4){ width:100px; }
 
 .myTable-small{
@@ -45,6 +45,10 @@ span.mysmall {
 }
 
 .indent {
+    margin-left: 40px;
+}
+
+.indent2 {
     margin-left: 40px;
 }
 
@@ -57,4 +61,22 @@ span.mysmall {
     border-style: inset;
     border-width: 1px;
 }
-Try it Yourself »
+
+.videoTable {
+	border-collapse: collapse;
+	width: 65%;
+	//table-layout: fixed;
+}
+.videoTable tbody tr:nth-child(even){
+	background-color: #EEEEEE;
+	/* color: #fff; */
+}
+.videoTable td {
+	font-size: 1.1em;
+	padding: 8px;
+}
+.videoTable th {
+	font-size: 1.1em;
+	padding: 8px;
+	text-align:left;
+}

@@ -1,24 +1,26 @@
 {
-    "hardware":{
-        "irLightPin": 7,
-        "whiteLightPin": 8,
-        "temperatureSensor": 9,
-        "temperatureInterval": 20
-    },
-    "lights":{
-        "controlLights": true, 
-    	"sunrise": 6,
-    	"sunset": 18
-    },
-    "video":{
+    "hardware": {
+        "readtemperature": true,
+        "temperatureInterval": 4, 
+        "temperatureSensor": 9, 
+        "irLightPin": 3, 
+        "whiteLightPin": 2
+    }, 
+    "lights": {
+        "auto": true, 
+        "sunset": 18, 
+        "sunrise": 6
+    }, 
+    "video": {
+        "savepath": "/home/pi/video", 
+        "fileDuration": 60, 
         "converttomp4": true, 
-        "fps": 30,
-        "resolution": [1024,768],
-        "fileDuration": 6,
-        "captureStill": true,
-        "stillInterval": 2
-    },
+        "stillInterval": 2, 
+        "fps": 30, 
+        "captureStill": true, 
+        "resolution": "640,480"
+    }, 
     "stream": {
-        "streamResolution": [1024,768]
+        "resolution": "640,480"
     }
 }

@@ -1,0 +1,227 @@
+<!doctype html>
+<html ng-app="videowall">
+	<head>
+		<title>Video Wall</title>
+
+		<link rel="stylesheet" href="/static/videowall.css">
+
+		<link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" href="/static/font-awesome-4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="/static/angular-ui-switch.min.css">
+
+		<script src="/static/angular/angular.min.js"></script>
+		<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+		<script src="/static/angular-ui-switch.min.js"></script>
+
+    	<script src="/static/videowall.js"></script>
+
+	    <!-- <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.6.6/angular-material.min.js"></script> -->
+	    <!-- <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.5.0.js"></script> -->
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	</head>
+
+<body>
+{% raw %}
+	<div ng-controller="videowall">
+
+		
+	<div class="container-fluid">
+  	<div class="row">
+
+	<!-- <table class="videoWallTable"> -->
+	<!-- <tr> -->
+	
+	<div class="col-lg-6" ng-repeat="oneVideo in videoArray track by $index">
+	<div class="myborder"> 
+	<!-- <td ng-repeat="oneVideo in videoArray track by $index"> -->
+		<!-- show timelapse -->
+		<span ng-if="oneVideo.status.isRecording==1 || (! oneVideo.status.isRecording==1 && ! oneVideo.status.isStreaming==1)">
+		<div class="embed-responsive">
+		<canvas class="mycanvas" ng-attr-id="{{oneVideo.image.canvasID}}" width="640" height="480"/>
+		</div>
+		</span>
+
+		<!-- show stream -->
+		<span ng-if="oneVideo.status.isStreaming==1">
+		<!-- <iframe class="my_iframe" ng-src="{{oneVideo.myStreamUrl}}" width="{{oneVideo.streamWidth}}" height="{{oneVideo.streamHeight}}"></iframe> -->
+		<div class="embed-responsive embed-responsive-4by3">
+		  <iframe class="embed-responsive-item" ng-src="{{oneVideo.myStreamUrl}}"></iframe>
+		</div>
+		</span>
+
+
+		<div class="videowall_indent">
+			{{oneVideo.status.hostname}} <A HREF="{{oneVideo.config.url}}" target="_blank">{{oneVideo.status.ip}}</A> {{oneVideo.status.time}}<BR>
+		</div>
+		
+		<!-- lights -->
+		<div class="videowall_indent">
+		Lights
+
+		<span>
+		<!-- <input type="checkbox" ng-model="config.lights.auto" ng-change="mySubmit('lights.auto',config.lights.auto)" ng-disabled="status.isRecording"/> -->
+		<input type="checkbox" ng-model="oneVideo.config.lights.auto" ng-change="mySubmit(oneVideo.myIdx, 'lights.auto',oneVideo.config.lights.auto)" ng-disabled="oneVideo.status.isRecording && oneVideo.config.auto"/>		
+		Auto
+		</span>
+
+		<span>
+		<input type="checkbox" ng-model="oneVideo.status.irLED" ng-change="mySubmit(oneVideo.myIdx, 'oneVideo.status.irLED',oneVideo.status.irLED)" ng-disabled="oneVideo.status.isRecording && oneVideo.config.auto"/>		
+		IR
+		</span>
+		<span>
+		<input type="checkbox" ng-model="oneVideo.status.whiteLED" ng-change="mySubmit(oneVideo.myIdx, 'oneVideo.status.whiteLED',oneVideo.status.whiteLED)" ng-disabled="oneVideo.status.isRecording && oneVideo.config.auto"/>		
+		White
+		</span>
+		</div>
+		
+		<!-- RECORDING -->
+		<div class="videowall_indent">
+		Recording
+			<span ng-if="oneVideo.status.isRecording"><B style="color:green;">Recording</B></span>
+			<span ng-if="! oneVideo.status.isRecording"><B style="color:red;">Stopped</B></span>
+	
+			<span ng-if="oneVideo.status.isRecording==0">
+				<button type="button" class="btn btn-success btn-sm" ng-click="startstoprecord(oneVideo.myIdx, 1)" ng-disabled="oneVideo.status.isStreaming">
+				<i class="fa fa-play fa-1x" aria-hidden="true"></i> Start
+				</button>
+			</span>
+			<span ng-if="oneVideo.status.isRecording==1">
+				<button type="button" class="btn btn-danger btn-sm" ng-click="startstoprecord(oneVideo.myIdx, 0)">
+				<i class="fa fa-stop fa-1x" aria-hidden="true"></i> Stop
+				</button>
+			<!-- {{ oneVideo.status.currentFile }} -->
+			{{ oneVideo.status.timeRemaining }} sec remaining
+			<!-- {{ oneVideo.config.fileDuration }} -->
+			</span>
+		</div>
+		
+		<!-- STREAMING -->
+		<div class="videowall_indent">
+		Streaming
+		<span ng-if="oneVideo.status.isStreaming"><B style="color:green;">Streaming</B></span>
+		<span ng-if="! oneVideo.status.isStreaming"><B style="color:red;">Stopped</B></span>
+
+		<span ng-if="oneVideo.status.isStreaming==0">
+			<button type="button" class="btn btn-success btn-sm" ng-click="startstopstream(oneVideo.myIdx, 1)" ng-disabled="oneVideo.status.isRecording">
+			<i class="fa fa-play fa-1x" aria-hidden="true"></i> Start
+			</button>
+		</span>
+		<span ng-if="oneVideo.status.isStreaming==1">
+			<button type="button" class="btn btn-danger btn-sm" ng-click="startstopstream(oneVideo.myIdx, 0)">
+			<i class="fa fa-stop fa-1x" aria-hidden="true"></i> Stop
+			</button>
+		</span>
+		</div>
+		
+		<!-- server status and config -->
+	<div class="videowall_indent">
+	<span ng-if="doDebug">
+		
+		<span ng-if="oneVideo.showConfig==0">
+			<button ng-click="toggleConfig(oneVideo.myIdx)" class="btn btn-default btn-sm"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+		</span>
+		<span ng-if="oneVideo.showConfig==1">
+			<button ng-click="toggleConfig(oneVideo.myIdx)" class="btn btn-default btn-sm"><i class="fa fa-chevron-down" aria-hidden="true"></i></button>
+		</span>
+	
+		Config
+		
+		<span ng-if="oneVideo.showConfig">
+		<!-- status table -->
+		<table class="myTable-small">
+		<tr style="vertical-align:top">
+		
+		<td>
+		<table class="myTable-small" style="border: 1px solid black">
+		  <tr ng-repeat="(x,y) in oneVideo.status">
+				<td>{{ x }}</td>
+				<td>{{ y }}</td>
+		  </tr>
+		</table>
+		</td>
+		
+		<!-- config table -->
+		<td>
+		<table class="myTable-small indent" style="border: 1px solid black" ng-repeat="(x,y) in oneVideo.config">
+		  <tr>
+		  <td>
+		  <b>{{ x }}</b>
+		  </td>
+		  <td></td>
+		  </tr>
+		  <tr ng-repeat="(x,y) in y">
+				<td>{{ x }}</td>
+				<td>{{ y }}</td>
+		  </tr>
+		</table>
+		</td>
+		</tr>
+		</table>
+		</span>
+	</span>
+	</div> <!-- server status <div class="videowall_indent">-->
+	
+	</div>
+	</div>
+	<!-- </td> -->
+	
+	</div>
+	</div>
+	<!-- </tr> -->
+	<!-- </table> -->
+
+
+
+	<BR>
+	
+	<!-- configure video wall -->
+	<span ng-if="showServerConfig==0">
+		<button ng-click="toggleServerConfig()" class="btn btn-default btn-sm"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+	</span>
+	<span ng-if="showServerConfig==1">
+		<button ng-click="toggleServerConfig()" class="btn btn-default btn-sm"><i class="fa fa-chevron-down" aria-hidden="true"></i></button>
+	</span>
+	
+	Video Wall Servers
+		
+	<div ng-show="showServerConfig">
+	<div class="videowall_indent2">
+		<button type="button" class="btn btn-success btn-sm" ng-click="addServer()">
+		Add Server <i class="fa fa-plus fa-1x" aria-hidden="true"></i>
+		</button>
+
+		<button type="button" class="btn btn-success btn-sm" ng-click="saveServers()">
+		Save Servers <i class="fa fa-save fa-1x" aria-hidden="true"></i>
+		</button>
+
+	   	<BR>
+		<table class="myTable" ng-repeat="server in serverList track by $index">
+		<tr>
+		<td>
+			<form ng-submit="setServer($index,server)">
+				<input style="width: 15em" 
+		   		type="string" 
+		   		ng-model="server"
+		   		/>
+
+				<button type="button" class="btn btn-success btn-sm" ng-click="removeServer($index)">
+				<i class="fa fa-minus fa-1x" aria-hidden="true"></i>
+				</button>
+			</form>
+		</td>
+		</tr>
+		</table>
+		
+		<input type="checkbox" ng-model="doDebug" ng-change="changeDebug(doDebug)"/>
+		Show Config		
+		
+	</div>
+	</div>
+
+
+	</div> <!-- ng-controller -->
+{% endraw %}
+</body>
+</html>

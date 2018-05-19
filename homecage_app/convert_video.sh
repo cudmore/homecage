@@ -17,6 +17,7 @@ mydir=$(dirname $1)
 #dstfile=$mydir'/mp4/'$filename'.mp4'
 dstfile=$mydir'/'$filename'.mp4'
 
-cmd="avconv -i $1 -r $2 -vcodec copy $dstfile"
+#cmd="avconv -i $1 -r $2 -vcodec copy $dstfile"
+cmd="avconv -loglevel error -framerate $2 -i $1 -vcodec copy $dstfile"
 echo $cmd
 $cmd
