@@ -1,4 +1,14 @@
 
+## git
+
+Commit all changes
+
+	git commit -a -m 'test'
+
+Push
+
+Pull
+
 ## mkDocs
 
 We use [mkdocs][mkdocs] to generate the documentation website from markdown files.
