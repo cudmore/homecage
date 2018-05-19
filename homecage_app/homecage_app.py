@@ -1,3 +1,5 @@
+from __future__ import print_function    # (at top of module)
+
 import os, subprocess
 from datetime import datetime
 import json
@@ -59,7 +61,7 @@ def lastimage():
 	
 @app.route('/record/<int:onoff>')
 def record(onoff):
-	print 'record() onoff:', onoff
+	print('record() onoff:', onoff)
 	home.record(onoff)
 
 	status = getStatus()
@@ -67,21 +69,21 @@ def record(onoff):
 	
 @app.route('/stream/<int:onoff>')
 def stream(onoff):
-	print 'stream() onoff:', onoff
+	print('stream() onoff:', onoff)
 	home.stream(onoff)
 	status = getStatus()
 	return jsonify(status)
 	
 @app.route('/irLED/<int:onoff>')
 def irLED(onoff):
-	print 'irLED() onoff:', onoff
+	print('irLED() onoff:', onoff)
 	home.irLED(True if onoff else False)
 	status = getStatus()
 	return jsonify(status)
 	
 @app.route('/whiteLED/<int:onoff>')
 def whiteLED(onoff):
-	print 'whiteLED() onoff:', onoff
+	print('whiteLED() onoff:', onoff)
 	home.whiteLED(True if onoff else False)
 	status = getStatus()
 	return jsonify(status)
@@ -109,7 +111,7 @@ def loadConfig():
 @app.route('/videolist')
 @app.route('/videolist/<path:req_path>')
 def videolist(req_path=''):
-	print '=== videolist() req_path:', req_path
+	print('=== videolist() req_path:', req_path)
 	BASE_DIR = home.videoPath + '/' #'/home/pi/video'
 	
 	#req_path = req_path.replace('home/pi/video/', '')
@@ -121,7 +123,7 @@ def videolist(req_path=''):
 
 	# Return 404 if path doesn't exist
 	if not os.path.exists(abs_path):
-		print 'videolist() aborting with 404, abs_path:', abs_path
+		print('videolist() aborting with 404, abs_path:', abs_path)
 		return "" #abort(404)
 	
 	# Check if path is a file and serve
@@ -132,7 +134,7 @@ def videolist(req_path=''):
 		response.headers["Content-Type"] = mimetypes.guess_type(os.path.basename(abs_path))
 		return response
 		'''
-		print 'videolist() is serving file:', abs_path
+		print('videolist() is serving file:', abs_path)
 		return send_file(abs_path)
 
 	# Show directory contents
@@ -160,7 +162,7 @@ def videolist(req_path=''):
 	# sort the list
 	files = sorted(files, key=lambda k: k['file']) 
 
-	print 'videolist() is serving videolist.html with abs_path:', abs_path
+	print('videolist() is serving videolist.html with abs_path:', abs_path)
 	return render_template('videolist.html', files=files, abs_path=abs_path)
 
 '''
@@ -181,7 +183,7 @@ def whatismyip():
 	return ipaddr
 
 if __name__ == '__main__':
-	print 'homecage_app.py is running Flask server at:', 'http://' + whatismyip() + ':5000'
+	print('homecage_app.py is running Flask server at:', 'http://' + whatismyip() + ':5000')
 	debug = False
 	app.run(host=whatismyip(), port=5000, debug=debug, threaded=True)
 	
