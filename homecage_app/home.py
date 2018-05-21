@@ -4,6 +4,7 @@
 '''
 To Do:
 	- add watermark on top of video when we receive a frame
+	- write a proper trial class
 '''
 
 from __future__ import print_function    # (at top of module)
@@ -144,6 +145,8 @@ class home:
 		print('   Done initializing home.py')
 		
 	def startTrial(self):
+		# todo: make a trial file to log timing within a trial
+		startTime = datetime.now()
 		self.trialNum += 1
 		self.trial['startTimeSeconds'] = time.time()
 		self.trial['timeStamp'] = datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -155,14 +158,18 @@ class home:
 		self.trial['currentFile'] = 'None'
 		self.trial['lastStillTime'] = None
 		self.trial['timeRemaining'] = None 
+
+		dateStr = startTime.strftime('%Y%m%d')
+		timeStr = startTime.strftime('%H%M%S')
 		
 	def newEpoch(self):
 		if self.trial['startTimeSeconds']:
 			self.trial['epochNum'] += 1
 			
 	def stopTrial(self):
+		# todo: finish up and close trial file
 		print('stopTrial()')
-		self.trial['startTimeSeconds'] = None
+		self.trial['startTimeSeconds'] = None # critical, using this to see if trial is running
 		self.trial['currentFile'] = 'None'
 
 	def isState(self, thisState):
@@ -411,9 +418,10 @@ class home:
 				#	print('ERROR: startArm() error')
 				#	return 0
 			else:
-				# stop background task with video loop
-				self.camera.stop_recording()	
-				self.camera.close()
+				if self.camera:
+					# stop background task with video loop
+					self.camera.stop_recording()	
+					self.camera.close()
 			self.lastResponse = 'Armed is ' + ('on' if onoff else 'off')
 	
 	def startArmVideo(self):
@@ -544,8 +552,16 @@ class home:
 					startTimeStr = startTime.strftime('%Y%m%d_%H%M%S')
 					beforefilename = startTimeStr + '_before' + '.h264'
 					afterfilename = startTimeStr + '_after' + '.h264'
-					beforefilepath = os.path.join(self.videoPath, beforefilename)
-					afterfilepath = os.path.join(self.videoPath, afterfilename)
+
+					# save into date folder
+					startTimeStr = startTime.strftime('%Y%m%d')
+					self.saveVideoPath = os.path.join(self.videoPath, startTimeStr)
+					if not os.path.isdir(self.saveVideoPath):
+						print('home.armVideoTread() is making output directory:', self.saveVideoPath)
+						os.makedirs(self.saveVideoPath)
+
+					beforefilepath = os.path.join(self.saveVideoPath, beforefilename)
+					afterfilepath = os.path.join(self.saveVideoPath, afterfilename)
 					# record the frames "after" motion
 					self.camera.split_recording(afterfilepath)
 					self.trial['currentFile'] = afterfilename
@@ -648,9 +664,10 @@ class home:
 		command = "avprobe -show_format -show_streams -loglevel 'quiet' " + str(mp4Path) + ' -of json'
 		#command = "avprobe -show_format -show_streams " + str(mp4Path) + ' -of json'
 		print(command)
-		p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
-		data = p.communicate()
-		data = json.loads((data[0]))
+		child = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
+		data, err = child.communicate()
+		data = data.decode('utf-8') # python 3
+		data = json.loads((data))
 		#print data
 		fd = {}
 		fd['path'] = mp4Path
