@@ -36,7 +36,7 @@
     
     
       
-        <title>REST interface - Home cage surveillance</title>
+        <title>Video Wall - Home cage surveillance</title>
       
     
     
@@ -89,7 +89,7 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="drawer"></label>
     
-      <a href="#server-status" tabindex="1" class="md-skip">
+      <a href="#install" tabindex="1" class="md-skip">
         Skip to content
       </a>
     
@@ -115,7 +115,7 @@
                 Home cage surveillance
               </span>
               <span class="md-header-nav__topic">
-                REST interface
+                Video Wall
               </span>
             
           
@@ -266,6 +266,18 @@
       
       
 
+
+  <li class="md-nav__item">
+    <a href="../rest-interface/" title="REST interface" class="md-nav__link">
+      REST interface
+    </a>
+  </li>
+
+    
+      
+      
+      
+
   
 
 
@@ -275,11 +287,11 @@
     
     
       <label class="md-nav__link md-nav__link--active" for="toc">
-        REST interface
+        Video Wall
       </label>
     
-    <a href="./" title="REST interface" class="md-nav__link md-nav__link--active">
-      REST interface
+    <a href="./" title="Video Wall" class="md-nav__link md-nav__link--active">
+      Video Wall
     </a>
     
       
@@ -291,50 +303,29 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#server-status" title="Server Status:" class="md-nav__link">
-    Server Status:
+  <a href="#install" title="Install" class="md-nav__link">
+    Install
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#record" title="Record" class="md-nav__link">
-    Record
+  <a href="#serve" title="Serve" class="md-nav__link">
+    Serve
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#stream" title="Stream" class="md-nav__link">
-    Stream
+  <a href="#browse" title="Browse" class="md-nav__link">
+    Browse
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#lights" title="Lights" class="md-nav__link">
-    Lights
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#images" title="Images" class="md-nav__link">
-    Images
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#set-user-options" title="Set user options" class="md-nav__link">
-    Set user options
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#simulate-a-scope" title="Simulate a scope" class="md-nav__link">
-    Simulate a scope
+  <a href="#example" title="Example" class="md-nav__link">
+    Example
   </a>
   
 </li>
@@ -347,18 +338,6 @@
   
 </nav>
     
-  </li>
-
-    
-      
-      
-      
-
-
-  <li class="md-nav__item">
-    <a href="../videowall/" title="Video Wall" class="md-nav__link">
-      Video Wall
-    </a>
   </li>
 
     
@@ -477,50 +456,29 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#server-status" title="Server Status:" class="md-nav__link">
-    Server Status:
+  <a href="#install" title="Install" class="md-nav__link">
+    Install
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#record" title="Record" class="md-nav__link">
-    Record
+  <a href="#serve" title="Serve" class="md-nav__link">
+    Serve
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#stream" title="Stream" class="md-nav__link">
-    Stream
+  <a href="#browse" title="Browse" class="md-nav__link">
+    Browse
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#lights" title="Lights" class="md-nav__link">
-    Lights
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#images" title="Images" class="md-nav__link">
-    Images
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#set-user-options" title="Set user options" class="md-nav__link">
-    Set user options
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#simulate-a-scope" title="Simulate a scope" class="md-nav__link">
-    Simulate a scope
+  <a href="#example" title="Example" class="md-nav__link">
+    Example
   </a>
   
 </li>
@@ -541,48 +499,25 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="http://github.com/cudmore/homecage/edit/master/docs/rest-interface.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                  <a href="http://github.com/cudmore/homecage/edit/master/docs/videowall.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
                 
                 
-                  <h1>REST interface</h1>
+                  <h1>Video Wall</h1>
                 
-                <p>The homecage server will respond to the following REST calls.</p>
-<h2 id="server-status">Server Status:</h2>
-<p>Get runtime status of server</p>
-<pre><code>/status
+                <p>Videowall is Javascript code and a python web-server to view and control multiple copies of homecage on different Raspberry Pi's! In theory, this allows you to control any number of Raspberry Pi's with their own cameras.</p>
+<h2 id="install">Install</h2>
+<p>See the main homecage <a href="http://blog.cudmore.io/homecage/installing-the-software/">install</a> page.</p>
+<h2 id="serve">Serve</h2>
+<p>Once homecage is <a href="http://blog.cudmore.io/homecage/installing-the-software/">installed</a>.</p>
+<pre><code>cd ~/homecage/videowall_app/
+python videowall_app.py
 </code></pre>
-<p>Get user configured options</p>
-<pre><code>/params
+<h2 id="browse">Browse</h2>
+<pre><code>http://[your_pi_ip]:8000
 </code></pre>
-<h2 id="record">Record</h2>
-<p>Start and stop video recording</p>
-<pre><code>/record/1 
-/record/0
-</code></pre>
-<h2 id="stream">Stream</h2>
-<p>Start and stop video streaming</p>
-<pre><code>/stream/1 
-/stream/0
-</code></pre>
-<h2 id="lights">Lights</h2>
-<p>Turn lights on and off</p>
-<pre><code>/irLED/1 
-/irLED/0 
-/whiteLED/1 
-/whiteLED/0
-</code></pre>
-<h2 id="images">Images</h2>
-<pre><code>/lastimage
-</code></pre>
-<h2 id="set-user-options">Set user options</h2>
-<pre><code>/set/fps/&lt;int:value&gt; 
-/set/fileDuration/&lt;int:value&gt;
-</code></pre>
-<h2 id="simulate-a-scope">Simulate a scope</h2>
-<pre><code>/simulate/triggerin
-/simulate/frame
-/simulate/stop
-</code></pre>
+<h2 id="example">Example</h2>
+<p>This example shows controlling one Raspberry Pi. Any number of Raspberry Pi camera systems can be added with the 'Add Server' button.</p>
+<p><IMG SRC="../img/videowall.png"></p>
                 
                   
                 
@@ -603,7 +538,7 @@
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
         
-          <a href="../web-interface/" title="Web interface" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../rest-interface/" title="REST interface" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-flex__cell md-flex__cell--shrink">
               <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
             </div>
@@ -612,19 +547,19 @@
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                Web interface
+                REST interface
               </span>
             </div>
           </a>
         
         
-          <a href="../videowall/" title="Video Wall" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../command-line/" title="Command line interface" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                Video Wall
+                Command line interface
               </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink">

@@ -35,6 +35,14 @@
 
     
     <url>
+     <loc>/videowall/</loc>
+     <lastmod>2018-05-21</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    
+
+    
+    <url>
      <loc>/command-line/</loc>
      <lastmod>2018-05-21</lastmod>
      <changefreq>daily</changefreq>

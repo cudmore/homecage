@@ -2,17 +2,17 @@
     "docs": [
         {
             "location": "/", 
-            "text": "Home cage surveillance is a system to record video of your animals in their home cage.\n\n\nIt is designed to run on a Raspberry Pi computer using a Raspberry Pi NoIR camera.\n\n\nFeatures\n\n\n\n\nRecord video 24/7\n\n\nAutomaticall controls day-time and night-time lights.\n\n\nLive video streaming to a web browser\n\n\n\n\nInterface options\n\n\n\n\nWeb\n - A point and click web browser interface.\n\n\nREST\n - A rest interface to communicate with a homecage server\n\n\nCommand line\n - A command line interface.", 
+            "text": "Home cage is a general purpose camera controller.\n\n\nIt is designed to run on a Raspberry Pi computer using a Raspberry Pi NoIR camera.\n\n\nFeatures\n\n\n\n\nRecord video 24/7\n\n\nAutomaticall controls day-time and night-time lights.\n\n\nLive video streaming to a web browser\n\n\nHardware triggers to start and stop video recording and watermark video with frames\n\n\nVideo wall to control any number of Raspberry Pi's, each with their own copy of homecage\n\n\n\n\nInterface options\n\n\n\n\nWeb\n - A point and click web browser interface.\n\n\nREST\n - A rest interface to communicate with a homecage server\n\n\nVideo Wall\n - A rest interface to communicate with a homecage server\n\n\nCommand line\n - A command line interface.", 
             "title": "Getting started"
         }, 
         {
             "location": "/#features", 
-            "text": "Record video 24/7  Automaticall controls day-time and night-time lights.  Live video streaming to a web browser", 
+            "text": "Record video 24/7  Automaticall controls day-time and night-time lights.  Live video streaming to a web browser  Hardware triggers to start and stop video recording and watermark video with frames  Video wall to control any number of Raspberry Pi's, each with their own copy of homecage", 
             "title": "Features"
         }, 
         {
             "location": "/#interface-options", 
-            "text": "Web  - A point and click web browser interface.  REST  - A rest interface to communicate with a homecage server  Command line  - A command line interface.", 
+            "text": "Web  - A point and click web browser interface.  REST  - A rest interface to communicate with a homecage server  Video Wall  - A rest interface to communicate with a homecage server  Command line  - A command line interface.", 
             "title": "Interface options"
         }, 
         {
@@ -159,6 +159,31 @@
             "location": "/rest-interface/#simulate-a-scope", 
             "text": "/simulate/triggerin\n/simulate/frame\n/simulate/stop", 
             "title": "Simulate a scope"
+        }, 
+        {
+            "location": "/videowall/", 
+            "text": "Videowall is Javascript code and a python web-server to view and control multiple copies of homecage on different Raspberry Pi's! In theory, this allows you to control any number of Raspberry Pi's with their own cameras.\n\n\nInstall\n\n\nSee the main homecage \ninstall\n page.\n\n\nServe\n\n\nOnce homecage is \ninstalled\n.\n\n\ncd ~/homecage/videowall_app/\npython videowall_app.py\n\n\n\nBrowse\n\n\nhttp://[your_pi_ip]:8000\n\n\n\nExample\n\n\nThis example shows controlling one Raspberry Pi. Any number of Raspberry Pi camera systems can be added with the 'Add Server' button.", 
+            "title": "Video Wall"
+        }, 
+        {
+            "location": "/videowall/#install", 
+            "text": "See the main homecage  install  page.", 
+            "title": "Install"
+        }, 
+        {
+            "location": "/videowall/#serve", 
+            "text": "Once homecage is  installed .  cd ~/homecage/videowall_app/\npython videowall_app.py", 
+            "title": "Serve"
+        }, 
+        {
+            "location": "/videowall/#browse", 
+            "text": "http://[your_pi_ip]:8000", 
+            "title": "Browse"
+        }, 
+        {
+            "location": "/videowall/#example", 
+            "text": "This example shows controlling one Raspberry Pi. Any number of Raspberry Pi camera systems can be added with the 'Add Server' button.", 
+            "title": "Example"
         }, 
         {
             "location": "/command-line/", 
