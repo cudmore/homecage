@@ -541,40 +541,59 @@ python homecage_app.py
 <h3 id="in-the-web-interface">In the web interface</h3>
 <p>Expand the <code>options</code> tab to set parameters of homecage. Each option will apply to the current session. Use <code>save options</code> to permanaently save the options. Load the default options again with 'Load Default Options'.</p>
 <p><IMG SRC="../img/web-options.png" width=325 style="border:1px solid black"></p>
+<p>Videos are saved as .h264 and need to be converted to .mp4 which can be slow. Turn off 'Convert video from h264 to mp4' and convert manually at the end of an experiment.</p>
 <h3 id="on-the-pi">On the Pi</h3>
-<p>The homecage options can be configured by editing the <a href="https://github.com/cudmore/homecage/blob/master/homecage_app/config.json">homecage/homecage_app/config.json</a> file.</p>
-<pre><code>cd
-pico homecage/homecage_app/config.json
+<p>Most of the options can be changed and saved using the web interface. The  options can also be configured manually by editing the <a href="https://github.com/cudmore/homecage/blob/master/homecage_app/config.json">homecage/homecage_app/config.json</a> file.</p>
+<pre><code>cd ~/homecage/homecage_app
+pico config.json
+</code></pre>
+<p>If you edit the config.json file it needs the correct sytax. Check the syntax with the following command. It will output the json if correct and an error otherwise.</p>
+<pre><code>cat config.json | python -m json.tool
 </code></pre>
 <p>The default file is:</p>
 <pre><code class="json">{
     &quot;hardware&quot;: {
-        &quot;irLightPin&quot;: 7, 
-        &quot;whiteLightPin&quot;: 8,
-        &quot;temperatureSensor&quot;: 9, 
-        &quot;temperatureInterval&quot;: 20 
+        &quot;whiteLightPin&quot;: 2, 
+        &quot;irLightPin&quot;: 3, 
+        &quot;readtemperature&quot;: true, 
+        &quot;temperatureInterval&quot;: 20, 
+        &quot;temperatureSensor&quot;: 4
     }, 
     &quot;lights&quot;: {
-        &quot;controlLights&quot;: true, 
+        &quot;auto&quot;: false, 
         &quot;sunset&quot;: 18, 
         &quot;sunrise&quot;: 6
     }, 
     &quot;video&quot;: {
-        &quot;fileDuration&quot;: 10, 
+        &quot;fileDuration&quot;: 5, 
         &quot;converttomp4&quot;: true, 
-        &quot;fps&quot;: 30, 
-        &quot;resolution&quot;: [
-            1024, 
-            768
-        ],
         &quot;captureStill&quot;: true, 
-        &quot;stillInterval&quot;: 2 
+        &quot;savepath&quot;: &quot;/home/pi/video&quot;, 
+        &quot;fps&quot;: 30, 
+        &quot;stillInterval&quot;: 2, 
+        &quot;resolution&quot;: &quot;1024,768&quot;
     }, 
     &quot;stream&quot;: {
-        &quot;streamResolution&quot;: [
-            1024, 
-            768
-        ]
+        &quot;resolution&quot;: &quot;640,480&quot;
+    }, 
+    &quot;scope&quot;: {
+        &quot;autoArm&quot;: false, 
+        &quot;bufferSeconds&quot;: 5, 
+        &quot;frameIn&quot;: {
+            &quot;enabled&quot;: true, 
+            &quot;pin&quot;: 18, 
+            &quot;polarity&quot;: &quot;rising&quot;
+        }, 
+        &quot;triggerIn&quot;: {
+            &quot;enabled&quot;: true, 
+            &quot;pin&quot;: 20, 
+            &quot;polarity&quot;: &quot;rising&quot;
+        }, 
+        &quot;triggerOut&quot;: {
+            &quot;enabled&quot;: true, 
+            &quot;pin&quot;: 31, 
+            &quot;polarity&quot;: &quot;rising&quot;
+        }
     }
 }
 </code></pre>

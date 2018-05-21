@@ -10,6 +10,7 @@ pages:
     - Install: installing-the-software.md
     - Web interface: web-interface.md
     - REST interface: rest-interface.md
+    - Video Wall: videowall.md
     - Command line interface: command-line.md
     - Mounting the file server: mounting-the-file-server.md
     - Wiring the system: wiring-the-system.md
