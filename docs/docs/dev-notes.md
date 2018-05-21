@@ -13,10 +13,14 @@ Pull
 
 	git pull
 
-Commit all changes
+Commit all changes. Do this a second time to see untracked files
 
 	git commit -a -m 'test'
 
+Add files
+
+	git add <filename>
+	
 Push
 
 	git push -u origin master
