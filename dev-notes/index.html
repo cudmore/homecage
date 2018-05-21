@@ -457,6 +457,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#20170520" title="20170520" class="md-nav__link">
+    20170520
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#setup" title="Setup" class="md-nav__link">
     Setup
   </a>
@@ -568,6 +575,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#20170520" title="20170520" class="md-nav__link">
+    20170520
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#setup" title="Setup" class="md-nav__link">
     Setup
   </a>
@@ -663,6 +677,9 @@ pip install mkdocs-material
 <pre><code>cd
 cd homecage/docs
 mkdocs serve
+
+# or if logged in to a remote pi, serve using the pi ip
+mkdocs serve -a 192.168.1.3:8000
 </code></pre>
 <p>Push to github</p>
 <pre><code>cd
@@ -723,9 +740,33 @@ sudo kill -- -PID
 </li>
 <li>now saving into date folder</li>
 </ul>
+<h4 id="20170520">20170520</h4>
+<ul>
+<li>
+<p>Added 3rd component to trigger recording from scope, this includes</p>
+<ul>
+<li>'Arm' state to continuously record video into a memory loop</li>
+<li>On trigger in, save pre-triggered video and start saving video for a trial</li>
+<li>On frame pin, watermark video with frame number</li>
+<li>Added 'scope' section to config.json</li>
+</ul>
+</li>
+<li>
+<p>Rewrote install documentation to include virtualenv</p>
+</li>
+<li>Started using git from Pi, can now synch with homecage on github, and push mkdocs !!!</li>
+<li>
+<p>To Do</p>
+<ul>
+<li>Fix background text on frame watermark</li>
+<li>Save trial information to a trial .txt file</li>
+<li>Revamp .log to include trial information</li>
+</ul>
+</li>
+</ul>
 <h3 id="setup">Setup</h3>
-<p>homecage2 is b8:27:eb:88:33:07
-cudmore_pib is b8:27:eb:aa:51:6d</p>
+<p>homecage2 is b8:27:eb:88:33:07</p>
+<p>cudmore_pib is b8:27:eb:aa:51:6d</p>
                 
                   
                 
