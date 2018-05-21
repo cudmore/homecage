@@ -36,7 +36,7 @@
     
     
       
-        <title>REST interface - Home cage surveillance</title>
+        <title>REST interface - Home cage</title>
       
     
     
@@ -98,7 +98,7 @@
   <nav class="md-header-nav md-grid">
     <div class="md-flex">
       <div class="md-flex__cell md-flex__cell--shrink">
-        <a href=".." title="Home cage surveillance" class="md-header-nav__button md-logo">
+        <a href=".." title="Home cage" class="md-header-nav__button md-logo">
           
             <i class="md-icon"></i>
           
@@ -112,7 +112,7 @@
           
             
               <span class="md-header-nav__topic">
-                Home cage surveillance
+                Home cage
               </span>
               <span class="md-header-nav__topic">
                 REST interface
@@ -199,7 +199,7 @@
         <i class="md-icon"></i>
       
     </span>
-    Home cage surveillance
+    Home cage
   </label>
   
     <div class="md-nav__source">
@@ -232,8 +232,8 @@
 
 
   <li class="md-nav__item">
-    <a href=".." title="Getting started" class="md-nav__link">
-      Getting started
+    <a href=".." title="Home" class="md-nav__link">
+      Home
     </a>
   </li>
 
@@ -356,8 +356,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../videowall/" title="Video Wall" class="md-nav__link">
-      Video Wall
+    <a href="../command-line/" title="Command line interface" class="md-nav__link">
+      Command line interface
     </a>
   </li>
 
@@ -368,8 +368,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../command-line/" title="Command line interface" class="md-nav__link">
-      Command line interface
+    <a href="../videowall/" title="Video wall" class="md-nav__link">
+      Video wall
     </a>
   </li>
 
@@ -454,6 +454,18 @@
   <li class="md-nav__item">
     <a href="../dev-notes/" title="Development notes" class="md-nav__link">
       Development notes
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../open-source/" title="Open source" class="md-nav__link">
+      Open source
     </a>
   </li>
 
@@ -546,13 +558,47 @@
                 
                   <h1>REST interface</h1>
                 
-                <p>The homecage server will respond to the following REST calls.</p>
+                <p>Once the homecage server is running, it will respond to the following <a href="https://en.wikipedia.org/wiki/Representational_state_transfer">REST</a> end points. Simply put, the REST interface allows you to control a Raspberry Pi camera from a web-browser.</p>
+<p>With this, it is relatively simple to write your own code to control a Raspberry Pi running the homecage server. You could do this from Python, Javascript, Matlab, or Igor. For example, we (and now you) are using this interface for both the <a href="../web-interface/">web</a> and <a href="../videowall/">video wall</a> interfaces.</p>
+<p>You can try this out by entering the following web addresses into your browser:</p>
+<pre><code>http://[your_pi_ip]:5000/status
+</code></pre>
+<p>And you should get something like this:</p>
+<pre><code>{
+  &quot;environment&quot;: {
+    &quot;humidity&quot;: 1.0,
+    &quot;temperature&quot;: 28.29
+  },
+  &quot;lights&quot;: {
+    &quot;irLED&quot;: false,
+    &quot;whiteLED&quot;: false
+  },
+  &quot;server&quot;: {
+    &quot;lastResponse&quot;: &quot;&quot;,
+    &quot;state&quot;: &quot;idle&quot;
+  },
+  &quot;system&quot;: {
+    &quot;cpuTemperature&quot;: &quot;48.3&quot;,
+    &quot;date&quot;: &quot;2018-05-21&quot;,
+    &quot;gbRemaining&quot;: &quot;7.70&quot;,
+    &quot;gbSize&quot;: &quot;14.48&quot;,
+    &quot;hostname&quot;: &quot;pi3&quot;,
+    &quot;ip&quot;: &quot;192.168.1.3&quot;,
+    &quot;time&quot;: &quot;13:24:23&quot;
+  },
+  &quot;trial&quot;: {
+    &quot;startTimeSeconds&quot;: null,
+    &quot;timeRemaining&quot;: null
+  }
+}
+</code></pre>
+
 <h2 id="server-status">Server Status:</h2>
 <p>Get runtime status of server</p>
 <pre><code>/status
 </code></pre>
 <p>Get user configured options</p>
-<pre><code>/params
+<pre><code>/config
 </code></pre>
 <h2 id="record">Record</h2>
 <p>Start and stop video recording</p>
@@ -618,13 +664,13 @@
           </a>
         
         
-          <a href="../videowall/" title="Video Wall" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../command-line/" title="Command line interface" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                Video Wall
+                Command line interface
               </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink">
