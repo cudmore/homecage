@@ -1,13 +1,18 @@
 
+To be esoteric, we have implemented a pure command line interface to contorl a Raspberry Pi camera. If you want to be obscure then please use this, otherwise just use the [web][web] interface.
+
+
 ## 1) Log in to the Pi
 
 On a Mac, use the terminal application in /Applications/Utilities/terminal.app
- 
-	# Type
-	ssh pi@10.16.80.162
 
-	# Enter password
-	[your_password]
+On Windows, use Putty
+ 
+```
+ssh pi@[your_ip]
+
+# Enter password when prompted
+```
 
 ## 2) Change into the homecage directory
 
@@ -81,8 +86,14 @@ On a Mac, use `Finder -> Go -> Connect To Server...` and log in as follows
 	username: pi
 	password: [your_password]
 
+On windows
+
+	smb:\\10.16.80.162
+	
 Files are saved in the `/video/` folder. Video files have the .h264 extension. There are also text files (extension .txt) saved, these have a log of temperature and humidity as well as the time the lights were turned on and off.
 
 ## 7) Log out of the Pi
 
 	exit
+	
+[web]: web-interface.md

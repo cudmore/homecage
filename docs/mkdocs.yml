@@ -1,4 +1,4 @@
-site_name: Home cage surveillance
+site_name: Home cage
 
 theme:
   name: 'material'
@@ -6,12 +6,12 @@ theme:
   #name: 'mkdocs'
   
 pages:
-    - Getting started: index.md
+    - Home: index.md
     - Install: installing-the-software.md
     - Web interface: web-interface.md
     - REST interface: rest-interface.md
-    - Video Wall: videowall.md
     - Command line interface: command-line.md
+    - Video wall: videowall.md
     - Mounting the file server: mounting-the-file-server.md
     - Wiring the system: wiring-the-system.md
     - Parts list: parts-list.md
@@ -19,6 +19,7 @@ pages:
     - Images: images.md
     - Implementation details: implementation-details.md
     - Development notes: dev-notes.md
+    - Open source: open-source.md
 
 repo_url: http://github.com/cudmore/homecage
 

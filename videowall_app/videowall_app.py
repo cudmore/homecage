@@ -1,3 +1,6 @@
+# Robert Cudmore
+# 20180101
+
 from __future__ import print_function    # (at top of module)
 
 import subprocess
@@ -5,6 +8,7 @@ import json
 
 from flask import Flask, render_template, send_file, jsonify, abort#, redirect, make_response
 from flask_cors import CORS
+from subprocess import check_output
 
 # turn off printing to console
 if 1:
@@ -42,6 +46,7 @@ def loadconfig():
 	#return jsonify(configfile)
 	return configfile
 	
+'''
 def whatismyip():
 	arg='ip route list'
 	p=subprocess.Popen(arg,shell=True,stdout=subprocess.PIPE)
@@ -49,6 +54,12 @@ def whatismyip():
 	split_data = data[0].split()
 	ipaddr = split_data[split_data.index('src')+1]
 	return ipaddr
+'''
+
+def whatismyip():
+	ips = check_output(['hostname', '--all-ip-addresses'])
+	ips = ips.decode('utf-8').strip()
+	return ips
 
 if __name__ == '__main__':
 	print('videoserver.py is running Flask server at:', 'http://' + whatismyip() + ':8000')

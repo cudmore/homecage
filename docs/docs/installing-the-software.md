@@ -1,42 +1,38 @@
-Homecage is a Raspberry Pi camera controller.
+# Install homecage
 
-## Features
+We will assume you have a functioning Raspberry Pi. To get started setting up a Pi from scratch, see our [setup intructions][0]. We will also assume you are logged in to the Pi using terminal on OSX or [Putty][putty] on Windows.
 
-- Record
-- Stream
-- Record on GPIO trigger
+## 1) Check your system
 
-## Overview of required libraries
+Homecage runs best on a Raspberry 2/3 and Debian stretch. **Do not run it on Raspberry Model B, it is too slow**.
 
-- [Wiring Pi][1] - Library that provides a command line interface to the GPIO pins. This should be installed by default.
-- [GPIO][3] - Python library to control GPIO pins.
-- [picamera][14] - Python library to control the camera.
-- [flask][2] - A python web server.
-- [Adafruit_DHT][4] - (optional) Python library to read from a DHT temperature and humidity sensor.
-- [uv4l][5] - Command line tool for live video streaming to a web browser.
-- [avconv][15] - Command line tool to convert video files.
+Check which version of the Raspberry Pi you have. You should have a Raspberry 2/3
 
+```
+#at a command prompt, type
+cat /proc/device-tree/model
 
-## 1) Get a functioning Raspberry Pi
+#you should get something like this
+# Raspberry Pi 3 Model B Rev 1.2
+```
 
-These instructions assume you have a functioning Raspberry Pi. To get started setting up a Pi from scratch, see our [setup intructions][0].
+Check which version of the Debian operating system you have. You should have a Debian Stretch
 
-### Check your system
+```
+#at a command prompt, type
+cat /etc/os-release
 
-homecage runs best on a Raspberry 2/3 and Debian stretch. **Do not run it on Raspberry Model B, it is too slow**.
+#you should get something like this
+Raspberry Pi 3 Model B Rev 1.2
+```
 
-Check which version of the Raspberry Pi you have (you should have a Raspberry 2/3)
+# 2) Install uv4l and avconv
 
-	cat /proc/device-tree/model
+We need uv4l for streaming and avoconv (ffmpeg) to convert from .h264 to .mp4
 
-Check your Debian version (you should be using Debian Stretch)
+## 2.1) Install uv4l for live video streaming (optional)
 
-	cat /etc/os-release
-
-
-## 2) Install uv4l for live video streaming (optional)
-
-If you run into trouble, then follow [this tutorial][5]. If you don't do this, the software should work but you won't be able to stream.
+If you run into trouble, then follow [this tutorial][5]. If you don't do this, homecage should work but you won't be able to stream.
 
 ```
 curl http://www.linux-projects.org/listing/uv4l_repo/lrkey.asc | sudo apt-key add -
@@ -54,7 +50,7 @@ sudo apt-get install uv4l uv4l-raspicam
 
 Note, do not install `uv4l-server`
 
-## 3) Install avconv to convert videos from .h264 to .mp4 (optional)
+## 2.2) Install avconv to convert videos from .h264 to .mp4 (optional)
 
 If you run into trouble, then see [this blog post][13]. If you don't do this, make sure you turn off 'Convert video from h264 to mp4'.
 
@@ -65,7 +61,7 @@ Video files will be saved to `/home/pi/video`. If your going to save a lot of vi
 
 
 
-## 4) Clone the homecage repository
+# 3) Clone the homecage repository
 
 This will make a folder `homecage` in your root directory. You can always return to your root directory with `cd` or `cd ~`.
 
@@ -74,7 +70,7 @@ This will make a folder `homecage` in your root directory. You can always return
 
 	git clone --depth=1 https://github.com/cudmore/homecage.git
 
-### 5.1) Either install python packages globally
+## 3.1) Either install python packages globally
 
 	# if you don't already have pip installed
 	sudo apt-get install python-pip
@@ -82,7 +78,7 @@ This will make a folder `homecage` in your root directory. You can always return
 	cd ~/homecage/homecage_app
 	pip install -r requirements.txt
 
-### 5.2) Or install in a virtual environment
+## 3.2) Or install in a virtual environment
 
 Make a clean virtual environment that does not depend on current installed Python packages
 
@@ -132,7 +128,7 @@ Exit virtual environment
 
 	deactivate
 
-## 6) Running homecage_app.py
+## 4) Running homecage_app.py
 
 	cd ~/homecage/homecage_app
 	python homecage_app.py
@@ -142,9 +138,9 @@ Browse to the homecage_App website
 	http://[yourip]:5000
 	
 
-## 7) Install DHT temperature sensor (optional)
+# 5) Install DHT temperature sensor (optional)
 
-If you run into trouble then go to [this tutorial][7].
+If you run into trouble then go to [this tutorial][7]. If you don't do this, homecage should work but you won't be able to read the temperature and humidity.
     
     cd
     mkdir tmp
@@ -153,7 +149,7 @@ If you run into trouble then go to [this tutorial][7].
     cd Adafruit_Python_DHT
     sudo python setup.py install
 
-## 8) Start homecage_app at boot (optional)
+# 6) Start homecage_app at boot (optional)
 
 Edit crontab
 
@@ -165,13 +161,13 @@ Add the following line to the end of the file (make sure it is one line)
 @reboot (sleep 10; cd /home/pi/homecage/homecage_app && /usr/bin/python /home/pi/homecage/homecage_app/homecage_app.py)
 ```
 
-## Done installing !!!
+# 7) Done installing !!!
 
-At this point you can interact with the homecage either through the [web][9] or from the [command line][8].
+At this point you can interact with the homecage server through the [web][9] interface.
 
-## Troubleshooting
+# Troubleshooting
 
-pip 10 seems to be broken. Uninstall and then install pip 9
+As of May 21, 2018 pip 10 seems to be broken. Uninstall and then install pip 9
 
 	# uninstall pip
 	python -m pip uninstall pip
@@ -203,3 +199,4 @@ If you edit the config.json file it needs the correct sytax. Check the syntax wi
 [13]: http://blog.cudmore.io/post/2017/11/01/libav-for-ffmpeg/
 [14]: https://picamera.readthedocs.io/en/release-1.13/
 [15]: https://libav.org/avconv.html
+[putty]: https://www.putty.org/

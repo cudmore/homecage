@@ -1,6 +1,4 @@
-Home cage is a general purpose camera controller.
-
-It is designed to run on a Raspberry Pi computer using a Raspberry Pi NoIR camera.
+Homecage is a general purpose camera controller that runs on a [Raspberry Pi computer][raspberrypi] using a [Pi NoIR camera][pinoir].
 
 ## Features
 
@@ -14,10 +12,8 @@ It is designed to run on a Raspberry Pi computer using a Raspberry Pi NoIR camer
 ## Interface options
 
 * **[Web](web-interface.md)** - A point and click web browser interface.
+* **[Video Wall](videowall.md)** - A web interface to control any number of Pi computers running homecage
 * **[REST](rest-interface.md)** - A rest interface to communicate with a homecage server
-* **[Video Wall](videowall.md)** - A rest interface to communicate with a homecage server
-* **[Command line](command-line.md)** - A command line interface.
 
-
-
-
+[raspberrypi]: https://www.raspberrypi.org/
+[pinoir]: https://www.raspberrypi.org/products/
