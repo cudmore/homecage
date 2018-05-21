@@ -29,7 +29,10 @@ Push
 
 Make a clean virtual environment that does not depend on current installed packages
 
-	# make a python 2 environment for now
+	# make a folder to hold your virtual environment
+	mkdir env
+		
+	# make a python 2 environment
 	#virtualenv -p python2 --no-site-packages env
 	
 	# make a python 3 environment
