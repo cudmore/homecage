@@ -1,26 +1,45 @@
 {
     "hardware": {
-        "readtemperature": true,
-        "temperatureInterval": 4, 
-        "temperatureSensor": 9, 
+        "whiteLightPin": 2, 
         "irLightPin": 3, 
-        "whiteLightPin": 2
+        "readtemperature": true, 
+        "temperatureInterval": 20, 
+        "temperatureSensor": 4
     }, 
     "lights": {
-        "auto": true, 
+        "auto": false, 
         "sunset": 18, 
         "sunrise": 6
     }, 
     "video": {
-        "savepath": "/home/pi/video", 
-        "fileDuration": 60, 
+        "fileDuration": 5, 
         "converttomp4": true, 
-        "stillInterval": 2, 
-        "fps": 30, 
         "captureStill": true, 
-        "resolution": "640,480"
+        "savepath": "/home/pi/video", 
+        "fps": 30, 
+        "stillInterval": 2, 
+        "resolution": "1024,768"
     }, 
     "stream": {
         "resolution": "640,480"
+    }, 
+    "scope": {
+        "autoArm": false, 
+        "bufferSeconds": 5, 
+        "frameIn": {
+            "enabled": true, 
+            "pin": 18, 
+            "polarity": "rising"
+        }, 
+        "triggerIn": {
+            "enabled": true, 
+            "pin": 20, 
+            "polarity": "rising"
+        }, 
+        "triggerOut": {
+            "enabled": true, 
+            "pin": 31, 
+            "polarity": "rising"
+        }
     }
 }

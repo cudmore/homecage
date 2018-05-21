@@ -83,6 +83,9 @@ Serve locally
     cd homecage/docs
     mkdocs serve
     
+    # or if logged in to a remote pi, serve using the pi ip
+    mkdocs serve -a 192.168.1.3:8000
+    
 Push to github
 
     cd
@@ -152,7 +155,26 @@ sudo kill -- -PID
  
 [mkdocs]: http://www.mkdocs.org/
 
+#### 20170520
+
+- Added 3rd component to trigger recording from scope, this includes
+  
+    - 'Arm' state to continuously record video into a memory loop
+    - On trigger in, save pre-triggered video and start saving video for a trial
+    - On frame pin, watermark video with frame number
+    - Added 'scope' section to config.json
+
+- Rewrote install documentation to include virtualenv
+- Started using git from Pi, can now synch with homecage on github, and push mkdocs !!!
+- To Do
+
+    - Fix background text on frame watermark
+    - Save trial information to a trial .txt file
+    - Revamp .log to include trial information
+    
+ 
 ### Setup
 
 homecage2 is b8:27:eb:88:33:07
+
 cudmore_pib is b8:27:eb:aa:51:6d

@@ -1,4 +1,12 @@
-## Overview: Required libraries
+Homecage is a Raspberry Pi camera controller.
+
+## Features
+
+- Record
+- Stream
+- Record on GPIO trigger
+
+## Overview of required libraries
 
 - [Wiring Pi][1] - Library that provides a command line interface to the GPIO pins. This should be installed by default.
 - [GPIO][3] - Python library to control GPIO pins.
@@ -13,54 +21,128 @@
 
 These instructions assume you have a functioning Raspberry Pi. To get started setting up a Pi from scratch, see our [setup intructions][0].
 
-## 2) Clone the repository
+### Check your system
 
-This will make a folder `homecage` in your root directory. You can always return to your root directory with `cd`
+homecage runs best on a Raspberry 2/3 and Debian stretch. **Do not run it on Raspberry Model B, it is too slow**.
 
-    # if you don't already have git installed
-    sudo apt-get install git
+Check which version of the Raspberry Pi you have (you should have a Raspberry 2/3)
 
-    git clone https://github.com/cudmore/homecage.git
+	cat /proc/device-tree/model
 
-## 3) Install python libraries
+Check your Debian version (you should be using Debian Stretch)
 
-	# if you don't already have pip installed
-	sudo apt-get install python-pip
-	
-	pip install rpi.gpio
-	pip install flask
+	cat /etc/os-release
 
-	# if you run into errors then try installing
-	sudo apt-get install build-essential python-dev python-openssl
-		
-## 4) Install uv4l for live video streaming (optional)
 
-If you run into trouble, then follow [this tutorial][5].
+## 2) Install uv4l for live video streaming (optional)
+
+If you run into trouble, then follow [this tutorial][5]. If you don't do this, the software should work but you won't be able to stream.
 
 ```
 curl http://www.linux-projects.org/listing/uv4l_repo/lrkey.asc | sudo apt-key add -
 
+# edit /etc/apt/sources.list
+sudo pico /etc/apt/sources.list
+
 # add the following line to /etc/apt/sources.list
-# start editor with `sudo pico /etc/apt/sources.list`
 deb http://www.linux-projects.org/listing/uv4l_repo/raspbian/stretch stretch main
 
+# update and install uv4l
 sudo apt-get update
 sudo apt-get install uv4l uv4l-raspicam
 ```
 
-Don't install `uv4l-server`
+Note, do not install `uv4l-server`
 
-## 5) Install avconv to convert videos from .h264 to .mp4
+## 3) Install avconv to convert videos from .h264 to .mp4 (optional)
 
-If you run into trouble, then see [this blog post][13].
+If you run into trouble, then see [this blog post][13]. If you don't do this, make sure you turn off 'Convert video from h264 to mp4'.
 
 	sudo apt-get update
 	sudo apt-get install libav-tools
 
-Video files will be saved to `/home/pi/video`. This can be changed in the web server configuration file `homecage/homecage_app/config.json`. If your going to save a lot of video, please [mount a usb key][12] and save videos there.
+Video files will be saved to `/home/pi/video`. If your going to save a lot of video, please [mount a usb key][12] and save videos there.
 
 
-## 6) Install DHT temperature sensor (optional)
+
+## 4) Clone the homecage repository
+
+This will make a folder `homecage` in your root directory. You can always return to your root directory with `cd` or `cd ~`.
+
+    # if you don't already have git installed
+    sudo apt-get install git
+
+	git clone --depth=1 https://github.com/cudmore/homecage.git
+
+### 5.1) Either install python packages globally
+
+	# if you don't already have pip installed
+	sudo apt-get install python-pip
+
+	cd ~/homecage/homecage_app
+	pip install -r requirements.txt
+
+### 5.2) Or install in a virtual environment
+
+Make a clean virtual environment that does not depend on current installed Python packages
+
+	# if you don't already have pip installed
+	sudo apt-get install python-pip
+
+	# install virtualenv if necessary
+	pip install virtualenv
+	
+	# make a folder to hold the virtual environment
+	cd ~/homecage/homecage_app
+	mkdir env	
+	
+	# either make a python 2 environment for now
+	#virtualenv -p python2 --no-site-packages env
+	
+	# or make a python 3 environment
+	virtualenv -p python3 --no-site-packages env
+
+Activate the environment. Once activated, the command prompt will begin with '(env)'
+
+	source env/bin/activate
+
+Check your python version
+
+	python -V
+	
+Make sure python command is running in the virtual environment
+
+	which python
+
+Install homecage_app dependencies
+
+	cd ~/homecage/homecage_app
+	pip install -r requirements.txt 
+
+Run homecage_app.py
+
+	cd ~/homecage/homecage_app
+	python homecage_app.py
+
+Browse to the homecage_App website
+
+	http://[yourip]:5000
+	
+Exit virtual environment
+
+	deactivate
+
+## 6) Running homecage_app.py
+
+	cd ~/homecage/homecage_app
+	python homecage_app.py
+
+Browse to the homecage_App website
+
+	http://[yourip]:5000
+	
+
+## 7) Install DHT temperature sensor (optional)
 
 If you run into trouble then go to [this tutorial][7].
     
@@ -71,7 +153,7 @@ If you run into trouble then go to [this tutorial][7].
     cd Adafruit_Python_DHT
     sudo python setup.py install
 
-## 7) Start the web server at boot (optional)
+## 8) Start homecage_app at boot (optional)
 
 Edit crontab
 
@@ -86,6 +168,24 @@ Add the following line to the end of the file (make sure it is one line)
 ## Done installing !!!
 
 At this point you can interact with the homecage either through the [web][9] or from the [command line][8].
+
+## Troubleshooting
+
+pip 10 seems to be broken. Uninstall and then install pip 9
+
+	# uninstall pip
+	python -m pip uninstall pip
+	
+	# install pip 9
+	python -m pip install -U "pip<10"
+	
+If virtualenv is not available (16.0.0)
+
+	sudo /usr/bin/easy_install virtualenv
+
+If you edit the config.json file it needs the correct sytax. Check the syntax with the following command. It will output the json if correct and an error otherwise.
+
+	cat config.json | python -m json.tool
 
 
 [0]: http://blog.cudmore.io/post/2017/11/22/raspian-stretch/

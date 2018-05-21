@@ -14,7 +14,7 @@ On a Mac, use the terminal application in /Applications/Utilities/terminal.app
 At the command prompt, type
 
 	cd
-	cd homecage
+	cd homecage/cli
 
 ## 3) Get command help
 

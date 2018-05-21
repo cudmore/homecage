@@ -42,3 +42,10 @@ Turn lights on and off
 
     /set/fps/<int:value> 
     /set/fileDuration/<int:value> 
+
+## Simulate a scope
+
+	/simulate/triggerin
+	/simulate/frame
+	/simulate/stop
+	
