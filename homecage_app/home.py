@@ -1,6 +1,11 @@
 # Robert Cudore
 # 20171103
 
+'''
+To Do:
+	- add watermark on top of video when we receive a frame
+'''
+
 from __future__ import print_function    # (at top of module)
 
 import os, time, math, io
@@ -156,6 +161,7 @@ class home:
 			self.trial['epochNum'] += 1
 			
 	def stopTrial(self):
+		print('stopTrial()')
 		self.trial['startTimeSeconds'] = None
 		self.trial['currentFile'] = 'None'
 
@@ -164,12 +170,19 @@ class home:
 		return True if self.state==thisState else False
 		
 	def frame_Callback(self, pin):
-		now = time.time()
 		print('framePin_Callback')
-		if self.trial['startTimeSeconds']:
+		now = time.time()
+		if self.trial['startTimeSeconds'] is not None:
+			#todo: append time relative to self.trial['startTimeSeconds']
 			self.trial['frameNum'] += 1
 			self.trial['lastFrameTime'] = now
 			self.trial['frameTimes'].append(now)
+			if self.camera:
+				#todo: fix annotation background
+				#todo: make sure we clear annotation background
+				self.camera.annotate_background = picamera.Color('black')
+				self.camera.annotate_text = ' ' + str(self.trial['frameNum']) + ' ' 
+			print('framePin_Callback()', now, self.trial['frameNum'])
 			
 	def triggerIn_Callback(self, pin):
 		print('triggerIn_Callback')
@@ -294,6 +307,7 @@ class home:
 		self.record(0)
 		self.stream(0)
 		self.stopArmVideo()
+		self.stopTrial()
 		
 	def record(self,onoff):
 		'''
@@ -424,88 +438,6 @@ class home:
 			#self.currentFile = ''
 			self.lastResponse = 'stopArmVideo'
 
-	#called from run()
-	def write_video_(self, stream, beforeFilePath):
-		# Write the entire content of the circular buffer to disk. No need to
-		# lock the stream here as we're definitely not writing to it simultaneously
-		with io.open(beforeFilePath, 'wb') as output:
-			for frame in stream.frames:
-				if frame.frame_type == picamera.PiVideoFrameType.sps_header:
-					stream.seek(frame.position)
-					break
-			while True:
-				buf = stream.read1()
-				if not buf:
-					break
-				output.write(buf)
-		# Wipe the circular stream once we're done
-		stream.seek(0)
-		stream.truncate()
-
-	def armVideoTread(self):
-		'''
-		Start recording from circular stream in response to trigger.
-		This will record until (i) fileDuration or (ii) stop trigger
-		'''
-		if self.camera:
-			#self.camera.annotate_text = 'S'
-			#self.camera.annotate_background = picamera.Color('black')
-			lastStill = 0
-			stillPath = os.path.dirname(__file__) + '/static/' + 'still.jpg'
-			while self.isState('armedrecording'):
-				#try:
-				if 1:
-					#todo: log time when trigger in is received
-					startTime0 = time.time()
-					startTime = datetime.now()
-					startTimeStr = startTime.strftime('%Y%m%d_%h%m%S')
-					beforefilename = startTimeStr + '_before' + '.h264'
-					afterfilename = startTimeStr + '_after' + '.h264'
-					self.beforefilepath = os.path.join(self.videoPath, beforefilename)
-					self.afterfilepath = os.path.join(self.videoPath, afterfilename)
-					# record the frames "after" motion
-					self.camera.split_recording(self.afterfilepath)
-					self.trial['currentFile'] = afterfilename
-					# Write the 10 seconds "before" motion to disk as well
-					self.write_video_(self.circulario, self.beforefilepath)
-	
-					fileDuration = self.config['video']['fileDuration']
-					stopOnTrigger = 0
-					while self.isState('armedrecording') and not stopOnTrigger and (time.time()<(startTime0 + fileDuration)):
-						self.camera.wait_recording(1) # seconds
-						'''
-						#this is for single trigger/frame pin in ScanImage
-						if not useTwoTriggerPins and (time.time() > (self.lastFrameTime + self.lastFrameTimeout)):
-							print 'run() is stopping after last frame timeout'
-							stopOnTrigger = 1
-						'''
-						if self.config['video']['captureStill'] and time.time() > (lastStill + self.config['video']['stillInterval']):
-							print('armVideoTread capturing still:', stillPath)
-							self.camera.capture(stillPath, use_video_port=True)
-							lastStill = time.time()
-							self.trial['lastStillTime'] = datetime.now().strftime('%Y%m%d %H:%M:%S')
-						
-					print('startVideoArm() received stopOnTrigger OR self.videoStarted==0 OR past fileDuration')
-					self.camera.split_recording(self.circulario)
-				
-					'''
-					#capture a foo.jpg frame every stillInterval seconds
-					thistime = time.time()
-					if self.doTimelapse and thistime > (lasttime+self.stillinterval):
-						lasttime = thistime
-						self.lastimage = self.GetTimestamp2() + '.jpg'
-						print 'capturing still frame:', self.lastimage
-						self.camera.capture(self.savepath + self.lastimage, use_video_port=True)
-					'''
-										
-					time.sleep(0.005) # seconds
-				#except:
-				#	print('startVideoArm() except clause -->>ERROR')
-			print('startVideoArm() fell out of while(self.state == armed) loop')
-			self.camera.stop_recording()	
-			self.camera.close()
-		time.sleep(0.05)
-
 	def irLED(self, onoff, allow=False):
 		# pass allow=true to control light during recording
 		if self.config['lights']['auto'] and not allow and self.isState('recording'):
@@ -593,8 +525,75 @@ class home:
 					self.lastResponse = ''
 			print('recordVideoThread() out of while')
 
+	def armVideoTread(self):
+		'''
+		Start recording from circular stream in response to trigger.
+		This will record until (i) fileDuration or (ii) stop trigger
+		'''
+		if self.camera:
+			#self.camera.annotate_text = 'S'
+			#self.camera.annotate_background = picamera.Color('black')
+			lastStill = 0
+			stillPath = os.path.dirname(__file__) + '/static/' + 'still.jpg'
+			while self.isState('armedrecording'):
+				#try:
+				if 1:
+					#todo: log time when trigger in is received
+					startTime0 = time.time()
+					startTime = datetime.now()
+					startTimeStr = startTime.strftime('%Y%m%d_%H%M%S')
+					beforefilename = startTimeStr + '_before' + '.h264'
+					afterfilename = startTimeStr + '_after' + '.h264'
+					beforefilepath = os.path.join(self.videoPath, beforefilename)
+					afterfilepath = os.path.join(self.videoPath, afterfilename)
+					# record the frames "after" motion
+					self.camera.split_recording(afterfilepath)
+					self.trial['currentFile'] = afterfilename
+					# Write the 10 seconds "before" motion to disk as well
+					self.write_video_(self.circulario, beforefilepath)
+	
+					fileDuration = self.config['video']['fileDuration']
+					stopOnTrigger = 0
+					while self.isState('armedrecording') and not stopOnTrigger and (time.time()<(startTime0 + fileDuration)):
+						self.camera.wait_recording(1) # seconds
+						'''
+						#this is for single trigger/frame pin in ScanImage
+						if not useTwoTriggerPins and (time.time() > (self.lastFrameTime + self.lastFrameTimeout)):
+							print 'run() is stopping after last frame timeout'
+							stopOnTrigger = 1
+						'''
+						if self.config['video']['captureStill'] and time.time() > (lastStill + self.config['video']['stillInterval']):
+							print('armVideoTread capturing still:', stillPath)
+							self.camera.capture(stillPath, use_video_port=True)
+							lastStill = time.time()
+							self.trial['lastStillTime'] = datetime.now().strftime('%Y%m%d %H:%M:%S')
+						
+					print('startVideoArm() received stopOnTrigger OR self.videoStarted==0 OR past fileDuration')
+					self.camera.split_recording(self.circulario)
+				
+					# convert to mp4
+					if self.config['video']['converttomp4']:
+						# before
+						print('   Converting to .mp4', beforefilepath)
+						self.lastResponse = 'Converting to mp4'
+						self.convertVideo(beforefilepath, self.config['video']['fps'])
+						# after
+						print('   Converting to .mp4', afterfilepath)
+						self.lastResponse = 'Converting to mp4'
+						self.convertVideo(afterfilepath, self.config['video']['fps'])
+
+						self.lastResponse = ''
+										
+					time.sleep(0.005) # seconds
+				#except:
+				#	print('startVideoArm() except clause -->>ERROR')
+			print('startVideoArm() fell out of while(self.state == armed) loop')
+			self.camera.stop_recording()	
+			self.camera.close()
+		time.sleep(0.05)
+
 	def tempThread(self):
-		# thread to run temperature/humidity in backfround
+		# thread to run temperature/humidity in background
 		# dht is blocking, long delay cause delays in web interface
 		temperatureInterval = self.config['hardware']['temperatureInterval'] # seconds
 		pin = self.config['hardware']['temperatureSensor']
@@ -613,6 +612,24 @@ class home:
 						print('readTemperature() exception reading temperature/humidity')
 			time.sleep(0.5)
 	
+	#called from armVideoTread()
+	def write_video_(self, stream, beforeFilePath):
+		# Write the entire content of the circular buffer to disk. No need to
+		# lock the stream here as we're definitely not writing to it simultaneously
+		with io.open(beforeFilePath, 'wb') as output:
+			for frame in stream.frames:
+				if frame.frame_type == picamera.PiVideoFrameType.sps_header:
+					stream.seek(frame.position)
+					break
+			while True:
+				buf = stream.read1()
+				if not buf:
+					break
+				output.write(buf)
+		# Wipe the circular stream once we're done
+		stream.seek(0)
+		stream.truncate()
+
 	def convertVideo(self, videoFilePath, fps):
 		# at end of video recording, convert h264 to mp4
 		# also build a db.txt with videos in a folder
