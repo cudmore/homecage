@@ -1,3 +1,5 @@
+from __future__ import print_function    # (at top of module)
+
 import subprocess
 import json
 
@@ -24,20 +26,21 @@ def hello_world():
 
 @app.route('/saveconfig/<configfile>')
 def saveconfig(configfile):
-	print 'saveconfig()'
-	print '   configfile:', configfile
+	print('saveconfig()')
+	print('   configfile:', configfile)
 	with open('config_videowall.json', 'w') as outfile:
 		json.dump(configfile, outfile, indent=4)
 	return 'saved'
 	
 @app.route('/loadconfig')
 def loadconfig():
-	print 'loadconfig()'
+	print('loadconfig()')
 	configfile = ''
 	with open('config_videowall.json') as configFile:
 		configfile = json.load(configFile)
-	print configfile
-	return jsonify(configfile)
+	print('configfile:', configfile)
+	#return jsonify(configfile)
+	return configfile
 	
 def whatismyip():
 	arg='ip route list'
@@ -48,6 +51,6 @@ def whatismyip():
 	return ipaddr
 
 if __name__ == '__main__':
-	print 'videoserver.py is running Flask server at:', 'http://' + whatismyip() + ':8000'
+	print('videoserver.py is running Flask server at:', 'http://' + whatismyip() + ':8000')
 	debug = True
 	app.run(host=whatismyip(), port=8000, debug=debug, threaded=True)

@@ -3,8 +3,9 @@
 
 from __future__ import print_function    # (at top of module)
 
-import os, time, math
+import os, time, math, io
 import subprocess
+from subprocess import check_output
 import threading
 from datetime import datetime
 from collections import OrderedDict
@@ -21,7 +22,7 @@ try:
 	g_dhtLoaded = 1
 except:
 	g_dhtLoaded = 0
-	print('error loading Adafruit_DHT, temperature and humidity will not work')
+	print('ERROR: home.py loading Adafruit_DHT, temperature and humidity will not work')
 
 class home:
 	def __init__(self):
@@ -30,37 +31,73 @@ class home:
 	def init(self):
 		print('Initializing home.py')
 		
-		self.config = self.loadConfigFile()
-		
-		GPIO.setmode(GPIO.BCM)
+		# dict to convert polarity string to number, e.g. self.polarity['rising'] yields GPIO.RISING
+		self.polarityDict_ = { 'rising': GPIO.RISING, 'falling': GPIO.FALLING, 'both': GPIO.BOTH}
 
+		self.config = self.loadConfigFile()
+				
+		self.camera = None
+		
+		#
+		# GPIO
+		GPIO.setmode(GPIO.BCM)
 		GPIO.setwarnings(False)
 
 		GPIO.setup(self.config['hardware']['whiteLightPin'], GPIO.OUT)
-		GPIO.setup(self.config['hardware']['irLightPin'], GPIO.OUT)
-
 		GPIO.output(self.config['hardware']['whiteLightPin'], 0)
-		GPIO.output(self.config['hardware']['irLightPin'], 0)
-
 		self.whiteIsOn = False
-		self.irIsOn = False
 
-		self.isRecording = False
-		self.isStreaming = False
+		GPIO.setup(self.config['hardware']['irLightPin'], GPIO.OUT)
+		GPIO.output(self.config['hardware']['irLightPin'], 0)
+		self.irIsOn = False
 		
-		self.currentFile = 'None'
-		self.currentStartSeconds = float('nan')
+		if self.config['scope']['autoArm']:
+			print('auto arm is on')
+			self.state = "armed"
+		else:
+			self.state = "idle"
+
+		if self.config['scope']['frameIn']['enabled']:
+			pin = int(self.config['scope']['frameIn']['pin'])
+			polarity = self.config['scope']['frameIn']['polarity']
+			polarity = self.polarityDict_[polarity]
+			GPIO.setup(pin, GPIO.IN)
+			GPIO.add_event_detect(pin, polarity, callback=self.frame_Callback, bouncetime=200) # ms
+
+		if self.config['scope']['triggerIn']['enabled']:
+			pin = self.config['scope']['triggerIn']['pin']
+			polarity = self.config['scope']['triggerIn']['polarity']
+			polarity = self.polarityDict_[polarity]
+			GPIO.setup(pin, GPIO.IN)
+			GPIO.add_event_detect(pin, polarity, callback=self.triggerIn_Callback, bouncetime=200) # ms
+
+		if self.config['scope']['triggerOut']['enabled']:
+			pin = self.config['scope']['triggerOut']['pin']
+			#polarity = self.config['scope']['triggerOut']['polarity']
+			GPIO.setup(pin, GPIO.OUT)
+
+		#
+		self.trialNum = 0
+		self.trial = OrderedDict()
+		self.trial['startTimeSeconds'] = None
+		
+		#self.currentFile = 'None'
+		#self.currentStartSeconds = float('nan')
+
+		#
+		# save path
 		self.videoPath = self.config['video']['savepath']
 		self.saveVideoPath = '' # set when we start video recording
+		if not os.path.isdir(self.videoPath):
+			os.makedirs(self.videoPath)
+			
+		#self.lastStillTime = '' # time.time()
 		
-		self.lastStillTime = '' # time.time()
-		
-		self.ip = self.whatismyip()
 		self.lastResponse = ''
 		
-		#self.streamWidth = 1024
-		#self.streamHeight = 768
-
+		self.armVideoRunning = False
+		
+		#
 		# temperature and humidity
 		self.lastTemperatureTime = 0
 		self.lastTemperature = None
@@ -75,21 +112,19 @@ class home:
 		else:
 			print('   Did not find DHT temperature sensor')
 			
-		if not os.path.isdir(self.videoPath):
-			os.makedirs(self.videoPath)
-			
+		#
+		# system information
+		self.ip = self.whatismyip()
+		self.gbRemaining = None
+		self.gbSize = None
+		self.cpuTemperature = None
+		
 		# get the raspberry pi version, we can run on version 2/3, on model B streaming does not work
 		cmd = 'cat /proc/device-tree/model'
 		child = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
 		out, err = child.communicate() # out is something like 'Raspberry Pi 2 Model B Rev 1.1'
-		print('out:', out)
-		goodModels = ["Raspberry Pi 2", "Rapsberry Pi 3"]
-		found = [a for a in goodModels if a in out]
-		if len(found)>0:
-			print('   Good: Running on a:', out)
-		else:
-			print('   Warning: You are running on a potentially unsupported Pi, please use either 2 or 3')
-			print('   ', out)
+		out = out.decode('utf-8')
+		print('   ', out)
 		self.raspberryModel = out
 		
 		# get the version of Raspian, we want to be running on Jessie or Stretch
@@ -97,12 +132,49 @@ class home:
 		dist = platform.dist() # 8 is jessie, 9 is stretch
 		if len(dist)==3:
 			if float(dist[1]) >= 8:
-				print('   Good: running on Jessie, Stretch or above')
+				print('   Running on Jessie, Stretch or newer')
 			else:
-				print('   Warning: not designed to work on Raspina before Jesiie')
+				print('   Warning: not designed to work on Raspbian before Jessie')
 		
 		print('   Done initializing home.py')
 		
+	def startTrial(self):
+		self.trialNum += 1
+		self.trial['startTimeSeconds'] = time.time()
+		self.trial['timeStamp'] = datetime.now().strftime('%Y%m%d_%H%M%S')
+		self.trial['trialNum'] = self.trialNum
+		self.trial['epochNum'] = 0 # increment each time we make a new file
+		self.trial['frameNum'] = 0
+		self.trial['lastFrameTime'] = None
+		self.trial['frameTimes'] = []
+		self.trial['currentFile'] = 'None'
+		self.trial['lastStillTime'] = None
+		self.trial['timeRemaining'] = None 
+		
+	def newEpoch(self):
+		if self.trial['startTimeSeconds']:
+			self.trial['epochNum'] += 1
+			
+	def stopTrial(self):
+		self.trial['startTimeSeconds'] = None
+		self.trial['currentFile'] = 'None'
+
+	def isState(self, thisState):
+		''' Return True if self.state == thisState'''
+		return True if self.state==thisState else False
+		
+	def frame_Callback(self, pin):
+		now = time.time()
+		print('framePin_Callback')
+		if self.trial['startTimeSeconds']:
+			self.trial['frameNum'] += 1
+			self.trial['lastFrameTime'] = now
+			self.trial['frameTimes'].append(now)
+			
+	def triggerIn_Callback(self, pin):
+		print('triggerIn_Callback')
+		self.startArmVideo()
+				
 	def log(self, event1, event2, event3, state):
 		# log events to a file
 		delimStr = ','
@@ -181,53 +253,66 @@ class home:
 				
 		status = OrderedDict()
 
-		status['date'] = now.strftime('%Y-%m-%d')
-		status['time'] = now.strftime('%H:%M:%S')
-		status['ip'] = self.ip
-		status['hostname'] = socket.gethostname()
+		status['server'] = OrderedDict()
+		status['server']['state'] = self.state
+		status['server']['lastResponse'] = self.lastResponse # filled in by each route
 
-		status['isRecording'] = self.isRecording
-		status['isStreaming'] = self.isStreaming
-		status['irLED'] = self.irIsOn
-		status['whiteLED'] = self.whiteIsOn
+		status['lights'] = OrderedDict()
+		status['lights']['irLED'] = self.irIsOn
+		status['lights']['whiteLED'] = self.whiteIsOn
 
-		status['currentFile'] = self.currentFile
-		if self.isRecording and self.currentStartSeconds>0:
-			status['timeRemaining'] = round(self.config['video']['fileDuration'] - (time.time() - self.currentStartSeconds),2)
+		# update trial (not used by home.py)
+		if self.trial['startTimeSeconds']:
+			self.trial['timeRemaining'] = round(self.config['video']['fileDuration'] - (time.time() - self.trial['startTimeSeconds']),2)
 		else:
-			status['timeRemaining'] = 'n/a'
-			
-		status['lastResponse'] = self.lastResponse # filled in by each route
+			self.trial['timeRemaining'] = None
 
-		status['lastStillTime'] = self.lastStillTime
-		
-		#
-		#filelist = self.make_tree('/home/pi/video')
-		#status['videofilelist'] = json.dumps(filelist)
+		status['trial'] = self.trial
 		
 		# temperature and humidity
-		status['temperature'] = self.lastTemperature
-		status['humidity'] = self.lastHumidity
+		status['environment'] = OrderedDict()
+		status['environment']['temperature'] = self.lastTemperature
+		status['environment']['humidity'] = self.lastHumidity
 			
+		self.drivespaceremaining()
+		status['system'] = OrderedDict()
+		status['system']['date'] = now.strftime('%Y-%m-%d')
+		status['system']['time'] = now.strftime('%H:%M:%S')
+		status['system']['ip'] = self.ip
+		status['system']['hostname'] = socket.gethostname()
+		status['system']['gbRemaining'] = self.gbRemaining
+		status['system']['gbSize'] = self.gbSize
+		status['system']['cpuTemperature'] = self.cpuTemperature
+
 		return status
 
 	def getConfig(self):
 		# parameters that can be set by user
 		return self.config
 		
+	def stop(self):
+		self.record(0)
+		self.stream(0)
+		self.stopArmVideo()
+		
 	def record(self,onoff):
-		# sart and stop video recording
-		if self.isStreaming:
-			self.lastResponse = 'Recording not allowed during streaming'
+		'''
+		start and stop video recording
+		'''
+		okGo = self.state in ['idle'] if onoff else self.state in ['recording']
+		print('record() got onoff:', onoff, 'okGo:', okGo)
+		
+		if not okGo:
+			self.lastResponse = 'Recording not allowed while ' + self.state
 		else:
-			self.isRecording = onoff
-			if self.isRecording:
+			self.state = 'recording' if onoff else 'idle'
+			if onoff:
 				# set output path
 				startTime = datetime.now()
 				startTimeStr = startTime.strftime('%Y%m%d')
-				self.saveVideoPath = self.videoPath + '/' + startTimeStr + '/'
-				print('home.record() is making output directory:', self.saveVideoPath)
+				self.saveVideoPath = os.path.join(self.videoPath, startTimeStr)
 				if not os.path.isdir(self.saveVideoPath):
+					print('home.record() is making output directory:', self.saveVideoPath)
 					os.makedirs(self.saveVideoPath)
 								
 				# start a background thread
@@ -235,7 +320,8 @@ class home:
 				thread.daemon = True							# Daemonize thread
 				thread.start()									# Start the execution
 			else:
-				self.currentStartSeconds = float('nan')
+				self.stopTrial()
+				#self.currentStartSeconds = float('nan')
 				# this is set when the thread actually exits
 				#self.currentFile = 'None'
 				# turn off lights
@@ -244,6 +330,288 @@ class home:
 					self.irLED(False)
 
 			self.lastResponse = 'Recording is ' + ('on' if onoff else 'off')
+	
+	def stream(self,onoff):
+		'''
+		start and stop video stream
+		'''
+		okGo = self.state in ['idle'] if onoff else self.state in ['streaming']
+		print('stream() got onoff:', onoff, 'okGo:', okGo)
+
+		if not okGo:
+			self.lastResponse = 'Streaming not allowed during ' + self.state
+		else:
+			self.state = 'streaming' if onoff else 'idle'
+			self.log('streaming', '', '', onoff)
+			if onoff:
+				width = self.config['stream']['resolution'].split(',')[0]
+				height = self.config['stream']['resolution'].split(',')[1]
+				cmd = './stream start ' \
+					+ width \
+					+ ' ' \
+					+ height
+				print('cmd:', cmd)
+				child = subprocess.Popen(cmd, shell=True)
+				out, err = child.communicate()
+				#print 'out:', out
+				#print 'err:', err
+			else:
+				cmd = './stream stop'
+				print('cmd:', cmd)
+				child = subprocess.Popen(cmd, shell=True)
+				out, err = child.communicate()
+				#print 'out:', out
+				#print 'err:', err
+			self.lastResponse = 'Streaming is ' + ('on' if onoff else 'off')
+
+	def arm(self, onoff):
+		'''
+		start and stop arm
+		'''
+		okGo = self.state in ['idle'] if onoff else self.state in ['armed']
+		print('arm() got onoff:', onoff, 'okGo:', okGo)
+		if not okGo:
+			self.lastResponse = 'Arming not allowed during ' + self.state
+		else:
+			self.state = 'armed' if onoff else 'idle'
+			self.log('arm', '', '', onoff)
+			if onoff:
+				# spawn background task with video loop
+				#try:
+				if 1:
+					print('arm() initializing camera')
+					self.camera = picamera.PiCamera()
+					width = int(self.config['video']['resolution'].split(',')[0])
+					height = int(self.config['video']['resolution'].split(',')[1])
+					self.camera.resolution = (width, height)
+					self.camera.led = 0
+					self.camera.framerate = self.config['video']['fps']
+					self.camera.start_preview()
+
+					print('startArm() starting circular stream')
+					self.circulario = picamera.PiCameraCircularIO(self.camera, seconds=self.config['scope']['bufferSeconds'])
+					self.camera.start_recording(self.circulario, format='h264')				
+				#except PiCameraMMALError:
+				#	print 'startArm() error: PiCameraMMALError'
+				#except:
+				#	print('ERROR: startArm() error')
+				#	return 0
+			else:
+				# stop background task with video loop
+				self.camera.stop_recording()	
+				self.camera.close()
+			self.lastResponse = 'Armed is ' + ('on' if onoff else 'off')
+	
+	def startArmVideo(self):
+		if not self.isState('armed'):
+			self.lastResponse = 'startArmVideo not allowed during ' + self.state
+		else:
+			self.state = 'armedrecording'
+			self.startTrial()
+			# start a background thread
+			thread = threading.Thread(target=self.armVideoTread, args=())
+			thread.daemon = True							# Daemonize thread
+			thread.start()									# Start the execution
+			self.lastResponse = 'startArmVideo'
+			
+	def stopArmVideo(self):
+		if not self.isState('armedrecording'):
+			self.lastResponse = 'stopArmVideo not allowed during ' + self.state
+		else:
+			# force armVideoTread() out of while loop
+			self.stopTrial()
+			self.state = 'armed'
+			#self.currentFile = ''
+			self.lastResponse = 'stopArmVideo'
+
+	#called from run()
+	def write_video_(self, stream, beforeFilePath):
+		# Write the entire content of the circular buffer to disk. No need to
+		# lock the stream here as we're definitely not writing to it simultaneously
+		with io.open(beforeFilePath, 'wb') as output:
+			for frame in stream.frames:
+				if frame.frame_type == picamera.PiVideoFrameType.sps_header:
+					stream.seek(frame.position)
+					break
+			while True:
+				buf = stream.read1()
+				if not buf:
+					break
+				output.write(buf)
+		# Wipe the circular stream once we're done
+		stream.seek(0)
+		stream.truncate()
+
+	def armVideoTread(self):
+		'''
+		Start recording from circular stream in response to trigger.
+		This will record until (i) fileDuration or (ii) stop trigger
+		'''
+		if self.camera:
+			#self.camera.annotate_text = 'S'
+			#self.camera.annotate_background = picamera.Color('black')
+			lastStill = 0
+			stillPath = os.path.dirname(__file__) + '/static/' + 'still.jpg'
+			while self.isState('armedrecording'):
+				#try:
+				if 1:
+					#todo: log time when trigger in is received
+					startTime0 = time.time()
+					startTime = datetime.now()
+					startTimeStr = startTime.strftime('%Y%m%d_%h%m%S')
+					beforefilename = startTimeStr + '_before' + '.h264'
+					afterfilename = startTimeStr + '_after' + '.h264'
+					self.beforefilepath = os.path.join(self.videoPath, beforefilename)
+					self.afterfilepath = os.path.join(self.videoPath, afterfilename)
+					# record the frames "after" motion
+					self.camera.split_recording(self.afterfilepath)
+					self.trial['currentFile'] = afterfilename
+					# Write the 10 seconds "before" motion to disk as well
+					self.write_video_(self.circulario, self.beforefilepath)
+	
+					fileDuration = self.config['video']['fileDuration']
+					stopOnTrigger = 0
+					while self.isState('armedrecording') and not stopOnTrigger and (time.time()<(startTime0 + fileDuration)):
+						self.camera.wait_recording(1) # seconds
+						'''
+						#this is for single trigger/frame pin in ScanImage
+						if not useTwoTriggerPins and (time.time() > (self.lastFrameTime + self.lastFrameTimeout)):
+							print 'run() is stopping after last frame timeout'
+							stopOnTrigger = 1
+						'''
+						if self.config['video']['captureStill'] and time.time() > (lastStill + self.config['video']['stillInterval']):
+							print('armVideoTread capturing still:', stillPath)
+							self.camera.capture(stillPath, use_video_port=True)
+							lastStill = time.time()
+							self.trial['lastStillTime'] = datetime.now().strftime('%Y%m%d %H:%M:%S')
+						
+					print('startVideoArm() received stopOnTrigger OR self.videoStarted==0 OR past fileDuration')
+					self.camera.split_recording(self.circulario)
+				
+					'''
+					#capture a foo.jpg frame every stillInterval seconds
+					thistime = time.time()
+					if self.doTimelapse and thistime > (lasttime+self.stillinterval):
+						lasttime = thistime
+						self.lastimage = self.GetTimestamp2() + '.jpg'
+						print 'capturing still frame:', self.lastimage
+						self.camera.capture(self.savepath + self.lastimage, use_video_port=True)
+					'''
+										
+					time.sleep(0.005) # seconds
+				#except:
+				#	print('startVideoArm() except clause -->>ERROR')
+			print('startVideoArm() fell out of while(self.state == armed) loop')
+			self.camera.stop_recording()	
+			self.camera.close()
+		time.sleep(0.05)
+
+	def irLED(self, onoff, allow=False):
+		# pass allow=true to control light during recording
+		if self.config['lights']['auto'] and not allow and self.isState('recording'):
+			self.lastResponse = 'Not allowed during recording'
+		else:
+			GPIO.output(self.config['hardware']['irLightPin'], onoff)
+			changed = self.irIsOn != onoff
+			self.irIsOn = onoff
+			if changed:
+				self.log('lights', 'ir', '', onoff)
+			if not allow:
+				self.lastResponse = 'ir light is ' + ('on' if onoff else 'off')
+
+	def whiteLED(self,onoff, allow=False):
+		# pass allow=true to control light during recording
+		if self.config['lights']['auto'] and not allow and self.isState('recording'):
+			self.lastResponse = 'Not allowed during recording'
+		else:
+			GPIO.output(self.config['hardware']['whiteLightPin'], onoff)
+			changed = self.whiteIsOn != onoff
+			self.whiteIsOn = onoff
+			if changed:
+				self.log('lights', 'white', '', onoff)
+			if not allow:
+				self.lastResponse = 'white light is ' + ('on' if onoff else 'off')
+
+	def controlLights(self):
+		# control lights during recording
+		if self.config['lights']['auto']:
+			now = datetime.now()
+			isDaytime = now.hour > self.config['lights']['sunrise'] and now.hour < self.config['lights']['sunset']
+			if isDaytime:
+				self.whiteLED(True, allow=True)
+				self.irLED(False, allow=True)
+			else:
+				self.whiteLED(False, allow=True)
+				self.irLED(True, allow=True)
+			
+	def recordVideoThread(self):
+		# record individual video files in background thread
+		with picamera.PiCamera() as camera:
+			camera.led = False
+			width = int(self.config['video']['resolution'].split(',')[0])
+			height = int(self.config['video']['resolution'].split(',')[1])
+			camera.resolution = (width, height)
+			camera.framerate = self.config['video']['fps']
+
+			stillPath = os.path.dirname(__file__) + '/static/' + 'still.jpg'
+			
+			lastStill = 0
+			while self.isState('recording'):
+				startNow = time.time()
+				startTime = datetime.now()
+				startTimeStr = startTime.strftime('%Y%m%d_%H%M%S')
+
+				#the file we are about to record/save
+				currentFile = startTimeStr + '.h264'
+				self.trial['currentFile'] = currentFile
+				#self.currentStartSeconds = time.time()
+				thisVideoFile = self.saveVideoPath + currentFile
+	
+				print('   Start video file:', currentFile)
+				self.log('video', thisVideoFile, currentFile, True)
+	
+				camera.start_recording(thisVideoFile)
+				while self.isState('recording') and (time.time() < (startNow + self.config['video']['fileDuration'])):
+					self.controlLights()
+					camera.wait_recording(0.3)
+					self.lastResponse = 'Recording file: ' + currentFile
+					if self.config['video']['captureStill'] and time.time() > (lastStill + self.config['video']['stillInterval']):
+						print('   capturing still:', stillPath)
+						camera.capture(stillPath, use_video_port=True)
+						lastStill = time.time()
+						self.trial['lastStillTime'] = datetime.now().strftime('%Y%m%d %H:%M:%S')
+				camera.stop_recording()
+				self.log('video', thisVideoFile, currentFile, False)
+				#self.currentFile = 'None'
+				print('   Stop video file:', thisVideoFile)
+
+				# convert to mp4
+				if self.config['video']['converttomp4']:
+					print('   Converting to .mp4', thisVideoFile)
+					self.lastResponse = 'Converting to mp4'
+					self.convertVideo(thisVideoFile, self.config['video']['fps'])
+					self.lastResponse = ''
+			print('recordVideoThread() out of while')
+
+	def tempThread(self):
+		# thread to run temperature/humidity in backfround
+		# dht is blocking, long delay cause delays in web interface
+		temperatureInterval = self.config['hardware']['temperatureInterval'] # seconds
+		pin = self.config['hardware']['temperatureSensor']
+		while True:
+			if g_dhtLoaded:
+				if time.time() > self.lastTemperatureTime + temperatureInterval:
+					try:
+						humidity, temperature = Adafruit_DHT.read(Adafruit_DHT.DHT22, pin)
+						if humidity is not None and temperature is not None:
+							self.lastTemperature = math.floor(temperature * 100) / 100
+							self.lastHumidity = math.floor(humidity * 100) / 100
+							# todo: log this to a file
+						# set even on fail, this way we do not immediately hit it again
+						self.lastTemperatureTime = time.time()
+					except:
+						print('readTemperature() exception reading temperature/humidity')
+			time.sleep(0.5)
 	
 	def convertVideo(self, videoFilePath, fps):
 		# at end of video recording, convert h264 to mp4
@@ -302,153 +670,45 @@ class home:
 		f = open(dbFile,"w")
 		f.write(txt)
 		f.close()
-		
-	def stream(self,onoff):
-		# start and stop video stream
-		print('stream()')
-		if self.isRecording:
-			self.lastResponse = 'Streaming not allowed during recording'
-		else:
-			self.isStreaming = onoff
-			self.log('stream', '', '', self.isStreaming)
-			if self.isStreaming:
-				width = self.config['stream']['resolution'].split(',')[0]
-				height = self.config['stream']['resolution'].split(',')[1]
-				cmd = './stream start ' \
-					+ width \
-					+ ' ' \
-					+ height
-				print('cmd:', cmd)
-				child = subprocess.Popen(cmd, shell=True)
-				out, err = child.communicate()
-				#print 'out:', out
-				#print 'err:', err
-			else:
-				cmd = './stream stop'
-				print('cmd:', cmd)
-				child = subprocess.Popen(cmd, shell=True)
-				out, err = child.communicate()
-				#print 'out:', out
-				#print 'err:', err
-			self.lastResponse = 'Streaming is ' + ('on' if self.isStreaming else 'off')
-
-	def irLED(self, onoff, allow=False):
-		# pass allow=true to control light during recording
-		if self.config['lights']['auto'] and not allow and self.isRecording:
-			self.lastResponse = 'Not allowed during recording'
-		else:
-			GPIO.output(self.config['hardware']['irLightPin'], onoff)
-			changed = self.irIsOn != onoff
-			self.irIsOn = onoff
-			if changed:
-				self.log('lights', 'ir', '', onoff)
-			if not allow:
-				self.lastResponse = 'ir light is ' + ('on' if onoff else 'off')
-
-	def whiteLED(self,onoff, allow=False):
-		# pass allow=true to control light during recording
-		if self.config['lights']['auto'] and not allow and self.isRecording:
-			self.lastResponse = 'Not allowed during recording'
-		else:
-			GPIO.output(self.config['hardware']['whiteLightPin'], onoff)
-			changed = self.whiteIsOn != onoff
-			self.whiteIsOn = onoff
-			if changed:
-				self.log('lights', 'white', '', onoff)
-			if not allow:
-				self.lastResponse = 'white light is ' + ('on' if onoff else 'off')
-
-	def controlLights(self):
-		# control lights during recording
-		if self.config['lights']['auto']:
-			now = datetime.now()
-			isDaytime = now.hour > self.config['lights']['sunrise'] and now.hour < self.config['lights']['sunset']
-			if isDaytime:
-				self.whiteLED(True, allow=True)
-				self.irLED(False, allow=True)
-			else:
-				self.whiteLED(False, allow=True)
-				self.irLED(True, allow=True)
-			
-	def recordVideoThread(self):
-		# record individual video files in background thread
-		with picamera.PiCamera() as camera:
-			camera.led = False
-			width = int(self.config['video']['resolution'].split(',')[0])
-			height = int(self.config['video']['resolution'].split(',')[1])
-			camera.resolution = (width, height)
-			camera.framerate = self.config['video']['fps']
-
-			stillPath = os.path.dirname(__file__) + '/static/' + 'still.jpg'
-			
-			lastStill = 0
-			while self.isRecording:
-				startNow = time.time()
-				startTime = datetime.now()
-				startTimeStr = startTime.strftime('%Y%m%d_%H%M%S')
-
-				#the file we are about to record/save
-				self.currentFile = startTimeStr + '.h264'
-				self.currentStartSeconds = time.time()
-				thisVideoFile = self.saveVideoPath + self.currentFile
-	
-				print('   Start video file:', self.currentFile)
-				self.log('video', thisVideoFile, self.currentFile, True)
-	
-				camera.start_recording(thisVideoFile)
-				while self.isRecording and (time.time() < (startNow + self.config['video']['fileDuration'])):
-					self.controlLights()
-					camera.wait_recording(0.3)
-					self.lastResponse = 'Recording file: ' + self.currentFile
-					if self.config['video']['captureStill'] and time.time() > (lastStill + self.config['video']['stillInterval']):
-						print('   capturing still:', stillPath)
-						camera.capture(stillPath, use_video_port=True)
-						lastStill = time.time()
-						self.lastStillTime = datetime.now().strftime('%Y%m%d %H:%M:%S')
-				camera.stop_recording()
-				self.log('video', thisVideoFile, self.currentFile, False)
-				self.currentFile = 'None'
-				print('   Stop video file:', thisVideoFile)
-
-				# convert to mp4
-				if self.config['video']['converttomp4']:
-					print('   Converting to .mp4', thisVideoFile)
-					self.lastResponse = 'Converting to mp4'
-					self.convertVideo(thisVideoFile, self.config['video']['fps'])
-					self.lastResponse = ''
-			print('recordVideoThread() out of while')
-
-	def tempThread(self):
-		# thread to run temperature/humidity in backfround
-		# dht is blocking, long delay cause delays in web interface
-		temperatureInterval = self.config['hardware']['temperatureInterval']
-		pin = self.config['hardware']['temperatureSensor']
-		while True:
-			if g_dhtLoaded:
-				if time.time() > self.lastTemperatureTime + temperatureInterval:
-					try:
-						humidity, temperature = Adafruit_DHT.read(Adafruit_DHT.DHT22, pin)
-						if humidity is not None and temperature is not None:
-							self.lastTemperature = math.floor(temperature * 100) / 100
-							self.lastHumidity = math.floor(humidity * 100) / 100
-							#print 'tempThread()', self.lastTemperature, self.lastHumidity
-						# set even on fail, this way we do not immediately hit it again
-						self.lastTemperatureTime = time.time()
-					except:
-						print('readTemperature() exception reading temperature/humidity')
-			time.sleep(0.5)
-	
-			
+					
 	#
 	# Utility
 	#
+	'''
 	def whatismyip(self):
 		arg='ip route list'
 		p=subprocess.Popen(arg,shell=True,stdout=subprocess.PIPE)
-		data = p.communicate()
-		split_data = data[0].split()
-		ipaddr = split_data[split_data.index('src')+1]
+		data = p.communicate()[0].decode('utf-8').strip()
+		ipaddr = data[data.index('src')+1]
 		return ipaddr
+	'''
+	
+	def whatismyip(self):
+		ips = check_output(['hostname', '--all-ip-addresses'])
+		ips = ips.decode('utf-8').strip()
+		return ips
+
+	def drivespaceremaining(self):
+		#see: http://stackoverflow.com/questions/51658/cross-platform-space-remaining-on-volume-using-python
+		statvfs = os.statvfs('/home/pi/video')
+		
+		#http://www.stealthcopter.com/blog/2009/09/python-diskspace/
+		capacity = statvfs.f_bsize * statvfs.f_blocks
+		available = statvfs.f_bsize * statvfs.f_bavail
+		used = statvfs.f_bsize * (statvfs.f_blocks - statvfs.f_bavail) 
+		#print 'drivespaceremaining()', used/1.073741824e9, available/1.073741824e9, capacity/1.073741824e9
+		self.gbRemaining = available/1.073741824e9
+		self.gbSize = capacity/1.073741824e9
+
+		#round to 2 decimal places
+		self.gbRemaining = "{0:.2f}".format(self.gbRemaining)
+		self.gbSize = "{0:.2f}".format(self.gbSize)
+		#print self.gbRemaining, self.gbSize
+
+		#cpu temperature
+		res = os.popen('vcgencmd measure_temp').readline()
+		self.cpuTemperature = res.replace("temp=","").replace("'C\n","")
+		#print 'cpu temp = ', self.cpuTemperature
 
 	# generate a file list of video files
 	def make_tree(self, path):

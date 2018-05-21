@@ -61,8 +61,9 @@ angular.module('videowall', ['uiSwitch'])
 		var url = $scope.myUrl + 'loadconfig'
 		$http.get(url).
         	then(function(response) {
-        	    //console.log('response.data;', response.data)
-        	    var array = JSON.parse(response.data)
+        	    console.log('response.data;', response.data)
+        	    //var array = JSON.parse(response.data)
+        	    var array = response.data
         	    //console.log('array:', array)
         	    $scope.serverList = array
         	    $scope.numServers = array.length
@@ -123,10 +124,11 @@ angular.module('videowall', ['uiSwitch'])
 					//text
 					context.font = "18px Arial";
 					context.fillStyle = "red";
-					var myStr = $scope.videoArray[this.myIdx].status.lastStillTime
+					var myStr = $scope.videoArray[this.myIdx].status.trial.lastStillTime
 					context.fillText(myStr,5,20);
 					
-					if ($scope.videoArray[this.myIdx].status.isRecording == false) {
+					//if ($scope.videoArray[this.myIdx].status.isRecording == false) {
+					if (! $scope.isState(this.myIdx, 'recording')) {
 						context.font = "56px Arial";
 						context.fillStyle = "red";
 						var myStr = "Stopped"
@@ -147,6 +149,13 @@ angular.module('videowall', ['uiSwitch'])
 		}
 	}
 		
+	$scope.isState = function(idx, thisState) {
+		if (idx > 0) {
+			console.log(idx)
+		}
+		return $scope.videoArray[idx].status.server.state == thisState
+	}
+
 	$scope.toggleConfig = function(idx) {
 		console.log('toggleConfig()', idx)
 		$scope.videoArray[idx].showConfig = $scope.videoArray[idx].showConfig === false ? true: false;
@@ -236,7 +245,7 @@ angular.module('videowall', ['uiSwitch'])
 		
 		valInt = (val) ? 1 : 0
 		
-		if (param == 'oneVideo.status.irLED') {
+		if (param == 'oneVideo.status.lights.irLED') {
 			url = $scope.videoArray[idx].restUrl + 'irLED/' + valInt
 			$http.get(url).
         		then(function(response) {
@@ -246,7 +255,7 @@ angular.module('videowall', ['uiSwitch'])
         			console.log('mySubmit() error url:', url)
         		});
 		}
-		if (param == 'oneVideo.status.whiteLED') {
+		if (param == 'oneVideo.status.lights.whiteLED') {
 			url = $scope.videoArray[idx].restUrl + 'whiteLED/' + valInt
 			$http.get(url).
         		then(function(response) {
@@ -260,8 +269,8 @@ angular.module('videowall', ['uiSwitch'])
 			url = $scope.videoArray[idx].restUrl + 'set/' + param + '/' + val
 			$http.get(url).
         		then(function(response) {
-					$scope.videoArray[idx].status = response.data;
-					console.log('done:', $scope.videoArray[idx].status)
+					$scope.videoArray[idx].config = response.data;
+					console.log('done:', $scope.videoArray[idx].config)
         		}, function errorCallback(response) {
         			console.log('mySubmit() error url:', url)
         		});

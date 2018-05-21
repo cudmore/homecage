@@ -1,14 +1,27 @@
 
 ## git
 
+Set up password
+
+	git config --global credential.helper 'cache --timeout=10000000'
+	
+Clone
+
+	git clone https://github.com/cudmore/homecage.git
+	
+Pull
+
+	git pull
+
 Commit all changes
 
 	git commit -a -m 'test'
 
 Push
 
-Pull
-
+	git push -u origin master
+	
+	
 ## mkDocs
 
 We use [mkdocs][mkdocs] to generate the documentation website from markdown files.

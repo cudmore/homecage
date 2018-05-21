@@ -37,14 +37,14 @@
 	<div class="myborder"> 
 	<!-- <td ng-repeat="oneVideo in videoArray track by $index"> -->
 		<!-- show timelapse -->
-		<span ng-if="oneVideo.status.isRecording==1 || (! oneVideo.status.isRecording==1 && ! oneVideo.status.isStreaming==1)">
+		<span ng-if="isState($index,'recording') || (! isState($index,'recording') && ! isState($index,'streaming'))">
 		<div class="embed-responsive">
 		<canvas class="mycanvas" ng-attr-id="{{oneVideo.image.canvasID}}" width="640" height="480"/>
 		</div>
 		</span>
 
 		<!-- show stream -->
-		<span ng-if="oneVideo.status.isStreaming==1">
+		<span ng-if="isState($index,'streaming')">
 		<!-- <iframe class="my_iframe" ng-src="{{oneVideo.myStreamUrl}}" width="{{oneVideo.streamWidth}}" height="{{oneVideo.streamHeight}}"></iframe> -->
 		<div class="embed-responsive embed-responsive-4by3">
 		  <iframe class="embed-responsive-item" ng-src="{{oneVideo.myStreamUrl}}"></iframe>
@@ -53,7 +53,7 @@
 
 
 		<div class="videowall_indent">
-			{{oneVideo.status.hostname}} <A HREF="{{oneVideo.config.url}}" target="_blank">{{oneVideo.status.ip}}</A> {{oneVideo.status.time}}<BR>
+			{{oneVideo.status.system.hostname}} <A HREF="{{oneVideo.config.url}}" target="_blank">{{oneVideo.status.system.ip}}</A> {{oneVideo.status.system.time}}<BR>
 		</div>
 		
 		<!-- lights -->
@@ -61,17 +61,25 @@
 		Lights
 
 		<span>
-		<!-- <input type="checkbox" ng-model="config.lights.auto" ng-change="mySubmit('lights.auto',config.lights.auto)" ng-disabled="status.isRecording"/> -->
-		<input type="checkbox" ng-model="oneVideo.config.lights.auto" ng-change="mySubmit(oneVideo.myIdx, 'lights.auto',oneVideo.config.lights.auto)" ng-disabled="oneVideo.status.isRecording && oneVideo.config.auto"/>		
+		<input type="checkbox" 
+			ng-model="oneVideo.config.lights.auto" 
+			ng-change="mySubmit(oneVideo.myIdx, 'lights.auto',oneVideo.config.lights.auto)" 
+			ng-disabled="isState($index,'recording') && oneVideo.config.lights.auto"/>		
 		Auto
 		</span>
 
 		<span>
-		<input type="checkbox" ng-model="oneVideo.status.irLED" ng-change="mySubmit(oneVideo.myIdx, 'oneVideo.status.irLED',oneVideo.status.irLED)" ng-disabled="oneVideo.status.isRecording && oneVideo.config.auto"/>		
+		<input type="checkbox" 
+			ng-model="oneVideo.status.lights.irLED" 
+			ng-change="mySubmit(oneVideo.myIdx, 'oneVideo.status.lights.irLED',oneVideo.status.lights.irLED)" 
+			ng-disabled="isState($index,'recording') && oneVideo.config.lights.auto"/>		
 		IR
 		</span>
 		<span>
-		<input type="checkbox" ng-model="oneVideo.status.whiteLED" ng-change="mySubmit(oneVideo.myIdx, 'oneVideo.status.whiteLED',oneVideo.status.whiteLED)" ng-disabled="oneVideo.status.isRecording && oneVideo.config.auto"/>		
+		<input type="checkbox" 
+			ng-model="oneVideo.status.lights.whiteLED" 
+			ng-change="mySubmit(oneVideo.myIdx, 'oneVideo.status.lights.whiteLED',oneVideo.status.lights.whiteLED)" 
+			ng-disabled="isState($index,'recording') && oneVideo.config.lights.auto"/>		
 		White
 		</span>
 		</div>
@@ -79,20 +87,23 @@
 		<!-- RECORDING -->
 		<div class="videowall_indent">
 		Recording
-			<span ng-if="oneVideo.status.isRecording"><B style="color:green;">Recording</B></span>
-			<span ng-if="! oneVideo.status.isRecording"><B style="color:red;">Stopped</B></span>
+			<span ng-if="isState($index,'recording')"><B style="color:green;">Recording</B></span>
+			<span ng-if="! isState($index,'recording')"><B style="color:red;">Stopped</B></span>
 	
-			<span ng-if="oneVideo.status.isRecording==0">
-				<button type="button" class="btn btn-success btn-sm" ng-click="startstoprecord(oneVideo.myIdx, 1)" ng-disabled="oneVideo.status.isStreaming">
+			<span ng-if="! isState($index,'recording')">
+				<button type="button" 
+					class="btn btn-success btn-sm" 
+					ng-click="startstoprecord(oneVideo.myIdx, 1)" 
+					ng-disabled="isState($index,'streaming')">
 				<i class="fa fa-play fa-1x" aria-hidden="true"></i> Start
 				</button>
 			</span>
-			<span ng-if="oneVideo.status.isRecording==1">
+			<span ng-if="isState($index,'recording')">
 				<button type="button" class="btn btn-danger btn-sm" ng-click="startstoprecord(oneVideo.myIdx, 0)">
 				<i class="fa fa-stop fa-1x" aria-hidden="true"></i> Stop
 				</button>
 			<!-- {{ oneVideo.status.currentFile }} -->
-			{{ oneVideo.status.timeRemaining }} sec remaining
+			{{ oneVideo.status.trial.timeRemaining }} sec remaining
 			<!-- {{ oneVideo.config.fileDuration }} -->
 			</span>
 		</div>
@@ -100,15 +111,18 @@
 		<!-- STREAMING -->
 		<div class="videowall_indent">
 		Streaming
-		<span ng-if="oneVideo.status.isStreaming"><B style="color:green;">Streaming</B></span>
-		<span ng-if="! oneVideo.status.isStreaming"><B style="color:red;">Stopped</B></span>
+		<span ng-if="isState($index,'streaming')"><B style="color:green;">Streaming</B></span>
+		<span ng-if="! isState($index,'streaming')"><B style="color:red;">Stopped</B></span>
 
-		<span ng-if="oneVideo.status.isStreaming==0">
-			<button type="button" class="btn btn-success btn-sm" ng-click="startstopstream(oneVideo.myIdx, 1)" ng-disabled="oneVideo.status.isRecording">
+		<span ng-if="! isState($index,'streaming')">
+			<button type="button" 
+				class="btn btn-success btn-sm" 
+				ng-click="startstopstream(oneVideo.myIdx, 1)" 
+				ng-disabled="isState($index,'recording')">
 			<i class="fa fa-play fa-1x" aria-hidden="true"></i> Start
 			</button>
 		</span>
-		<span ng-if="oneVideo.status.isStreaming==1">
+		<span ng-if="isState($index,'streaming')">
 			<button type="button" class="btn btn-danger btn-sm" ng-click="startstopstream(oneVideo.myIdx, 0)">
 			<i class="fa fa-stop fa-1x" aria-hidden="true"></i> Stop
 			</button>

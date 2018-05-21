@@ -116,6 +116,14 @@ angular.module('demo', ['uiSwitch'])
 		}
 	};
 
+	$scope.startstoparm = function (startstop) {
+		console.log("startstoparm");		
+		$http.get($scope.myUrl + 'arm/' + startstop).
+        	then(function(response) {
+        	    //$scope.status = response.data;
+        	});
+	};
+
 	function callAtTimeout() {
 		console.log("callAtTimeout()");
 		if ($scope.hardCloseStream) {
@@ -144,7 +152,7 @@ angular.module('demo', ['uiSwitch'])
 	};
 	
 	$scope.whiteChange = function () {
-		var isOn = $scope.status.whiteLED ? 1 : 0;
+		var isOn = $scope.status.lights.whiteLED ? 1 : 0;
 		//console.log(isOn);
 		$http.get($scope.myUrl + 'whiteLED/' + isOn).
         	then(function(response) {
@@ -153,7 +161,7 @@ angular.module('demo', ['uiSwitch'])
 	}
 	
 	$scope.irChange = function () {
-		var isOn = $scope.status.irLED ? 1 : 0;
+		var isOn = $scope.status.lights.irLED ? 1 : 0;
 		//console.log(isOn);
 		$http.get($scope.myUrl + 'irLED/' + isOn).
         	then(function(response) {
@@ -199,6 +207,14 @@ angular.module('demo', ['uiSwitch'])
         	    //reload user configurable config
         	    $scope.getConfig();
         	});
+	}
+	
+	$scope.isState = function(thisState) {
+		return $scope.status.server.state == thisState
+	}
+	
+	$scope.allowEditeOptions = function() {
+		return $scope.status.server.state == 'idle'
 	}
 	
 	//called once page is loaded

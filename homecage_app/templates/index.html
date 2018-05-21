@@ -28,13 +28,13 @@
 	<table class="myTable0">
 	<tr>
 	<TD>
-	{{status.hostname}}
+	{{status.system.hostname}}
 	</TD>
 	<TD>
-	{{status.date}}
+	{{status.system.date}}
 	</TD>
 	<TD>
-	{{status.time}}
+	{{status.system.time}}
 	</TD>
 	<td>
 		<A HREF="{{myUrl}}videolist" target="_blank" style="color: #000000;"><i class="fa fa-hdd-o" aria-hidden="true"></i></a>
@@ -54,26 +54,40 @@
 		<td>Lights</td>
 		<td style="width:120px;">
 		IR
-		<switch id="enabled" name="enabled" ng-model="status.irLED" ng-change="irChange" disabled="config.lights.auto && status.isRecording" on="On" off="Off" class="green"></switch>
+		<switch id="enabled" 
+			name="enabled" 
+			ng-model="status.lights.irLED" 
+			ng-change="irChange" 
+			disabled="config.lights.auto && isState('recording')" 
+			on="On" 
+			off="Off" 
+			class="green">
+		</switch>
 		</td>
 		<td style="width:120px;">
 		White
-		<switch id="enabled" name="enabled" ng-model="status.whiteLED" ng-change="whiteChange" disabled="config.lights.auto && status.isRecording" on="On" off="Off" class="green"></switch>
+		<switch id="enabled" 
+			name="enabled" 
+			ng-model="status.lights.whiteLED" 
+			ng-change="whiteChange" 
+			disabled="config.lights.auto && isState('recording')" 
+			on="On" off="Off" class="green">
+		</switch>
 		</td>
 	</tr>
 	
 	<tr>
 		<td>Recording</td>
 		<td>
-		<span ng-bind="status.isRecording ? 'On' : 'Off'"></span>
+		<span ng-bind="isState('recording') ? 'On' : 'Off'"></span>
 		</td>
 		<td>
-		<span ng-if="status.isRecording==0">
-			<button type="button" class="btn btn-success btn-sm" ng-click="startstoprecord(1)" ng-disabled="status.isStreaming">
+		<span ng-if="! isState('recording')">
+			<button type="button" class="btn btn-success btn-sm" ng-click="startstoprecord(1)" ng-disabled="! isState('idle')">
 			<i class="fa fa-play fa-1x" aria-hidden="true"></i> Start
 			</button>
 		</span>
-		<span ng-if="status.isRecording==1">
+		<span ng-if="isState('recording')">
 			<button type="button" class="btn btn-danger btn-sm" ng-click="startstoprecord(0)">
 			<i class="fa fa-stop fa-1x" aria-hidden="true"></i> Stop
 			</button>
@@ -81,48 +95,49 @@
 		</span>
 		</td>
 		<td>
-		<span ng-show="1 || status.isRecording">File: {{status.currentFile}}</span><BR>
-		<span ng-show="1 || status.isRecording">Time Remaining (sec): {{status.timeRemaining}}</span>
+		<span ng-show="1 || isState('recording')">File: {{status.trial.currentFile}}</span><BR>
+		<span ng-show="1 || isState('recording')">Time Remaining (sec): {{status.timeRemaining}}</span>
 		</td>
 	</tr>
-
-<!-- http://fdietz.github.io/recipes-with-angular-js/common-user-interface-patterns/displaying-a-modal-dialog.html -->
-<!--
-  <div modal="showModal" close="cancel()">
-    <div class="modal-header">
-        <h4>Modal Dialog</h4>
-    </div>
-    <div class="modal-body">
-        <p>Example paragraph with some text.</p>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-success" ng-click="ok()">Okay</button>
-      <button class="btn" ng-click="cancel()">Cancel</button>
-    </div>
-  </div>
-
--->
-
 
 	<tr>
 		<td>Streaming</td>
 		<td>
-		<span ng-bind="status.isStreaming ? 'On' : 'Off'"></span>
+		<span ng-bind="isState('streaming') ? 'On' : 'Off'"></span>
 		</td>
 		<td>
-		<span ng-if="status.isStreaming==0">
-			<button type="button" class="btn btn-success btn-sm" ng-click="startstopstream(1)" ng-disabled="status.isRecording">
+		<span ng-if="! isState('streaming')">
+			<button type="button" class="btn btn-success btn-sm" ng-click="startstopstream(1)" ng-disabled="! isState('idle')">
 			<!-- "{'icon-resize-small': isCollapsed, 'icon-fullscreen': !isCollapsed}" -->
 			<i class="fa fa-play fa-1x" aria-hidden="true"></i> Start
 			</button>
 		</span>
-		<span ng-if="status.isStreaming==1">
+		<span ng-if="isState('streaming')">
 			<button type="button" class="btn btn-danger btn-sm" ng-click="startstopstream(0)">
 			<i class="fa fa-stop fa-1x" aria-hidden="true"></i> Stop
 			</button>
 		</span>
 		</td>
+	</tr>
 
+	<tr>
+		<td>Armed</td>
+		<td>
+		<span ng-bind="isState('armed') ? 'On' : 'Off'"></span>
+		</td>
+		<td>
+		<span ng-if="! isState('armed')">
+			<button type="button" class="btn btn-success btn-sm" ng-click="startstoparm(1)" ng-disabled="! isState('idle')">
+			<!-- "{'icon-resize-small': isCollapsed, 'icon-fullscreen': !isCollapsed}" -->
+			<i class="fa fa-play fa-1x" aria-hidden="true"></i> Start
+			</button>
+		</span>
+		<span ng-if="isState('armed')">
+			<button type="button" class="btn btn-danger btn-sm" ng-click="startstoparm(0)">
+			<i class="fa fa-stop fa-1x" aria-hidden="true"></i> Stop
+			</button>
+		</span>
+		</td>
 	</tr>
 	</table>
 
@@ -130,7 +145,7 @@
 	<table class="myTable">
 	<tr>
 	<TD>
-	Status: {{status.lastResponse}}
+	Status: {{status.server.lastResponse}}
 	</TD>
 	</tr>
 	<!--
@@ -146,9 +161,9 @@
 	<!-- table for recording still -->
 	<table>
 	<tr>
-	<td colspan=4 ng-show="1 || status.isRecording">
+	<td colspan=4 ng-show="1 || isState('recording') || isState('armedrecording')">
 			<!--
-			<span class="mysmall">Recording file: {{status.currentFile}}</span>
+			<span class="mysmall">Recording file: {{status.trial.currentFile}}</span>
 			<span class="mysmall">Time Remaining (sec): {{status.timeRemaining}}</span>
 			-->
 			<BR>
@@ -169,7 +184,7 @@
 	<!-- table for stream -->
 	<table>
 	<tr>
-	<td colspan=4 ng-show="!hardCloseStream && status.isStreaming">
+	<td colspan=4 ng-show="!hardCloseStream && isState('streaming')">
 	<span class="mysmall">View stream at <A HREF="{{myStreamUrl0}}" target="_blank">{{myStreamUrl0}}</a></span>
 	<BR>
 	<iframe ng-src="{{myStreamUrl}}" width="{{streamWidth}}" height="{{streamHeight}}"></iframe>
@@ -201,7 +216,7 @@
 		   <input style="width: 5em" 
 		   	type="number" 
 		   	ng-model="config.video.fileDuration" 
-		   	ng-disabled="status.isRecording" 
+		   	ng-disabled="! allowEditeOptions()" 
 		   	ng-change="mySubmit('video.fileDuration',config.video.fileDuration)"
 		   	/>
 		   	<BR>
@@ -212,30 +227,45 @@
 		   <input style="width: 3em" 
 		   	type="number" 
 		   	ng-model="config.video.fps"
-		   	ng-disabled="status.isRecording"
+		   	ng-disabled="! allowEditeOptions()" 
 		   	ng-change="mySubmit('video.fps',config.video.fps)"
 		   	/>
 		   	<BR>
 		<!-- </form> -->
 
-		Video Size  <select name="" ng-init="config.video.resolution" ng-model="config.video.resolution" ng-Change="mySubmit('video.resolution',config.video.resolution)" ng-disabled="status.isRecording"">
+		Video Size 
+		<select name="" 
+			ng-init="config.video.resolution" 
+			ng-model="config.video.resolution" 
+			ng-Change="mySubmit('video.resolution',config.video.resolution)" 
+		   	ng-disabled="! allowEditeOptions()" 
+			>
 		  <option value="640,480">640 x 480</option>
 		  <option value="1024,768">1024 x 768</option>
 		  <option value="1296,972">1296 x 972</option>
 		</select>
 
 		<BR>
-		<input type="checkbox" ng-model="config.video.captureStill" ng-change="mySubmit('video.captureStill',config.video.captureStill)" ng-disabled="status.isRecording"/>		
+		<input type="checkbox" 
+			ng-model="config.video.captureStill" 
+			ng-change="mySubmit('video.captureStill',config.video.captureStill)" 
+		   	ng-disabled="! allowEditeOptions()" 
+			/>		
+			
 		   Capture still image at interval (sec)
 		   <input style="width: 3em" 
 		   	type="number" 
 		   	ng-model="config.video.stillInterval" 
-		   	ng-disabled="status.isRecording" 
+		   	ng-disabled="! allowEditeOptions()" 
 		   	ng-change="mySubmit('video.stillInterval',config.video.stillInterval)"
 		   	/>
 
 		<BR>
-		<input type="checkbox" ng-model="config.video.converttomp4" ng-change="mySubmit('video.converttomp4',config.video.converttomp4)" ng-disabled="status.isRecording"/>
+		<input type="checkbox" 
+			ng-model="config.video.converttomp4"
+			ng-change="mySubmit('video.converttomp4',config.video.converttomp4)" 
+		   	ng-disabled="! allowEditeOptions()" 
+			/>
 		Convert video from h264 to mp4 
 		
 
@@ -245,7 +275,11 @@
 		
 		<div class="indent2">
 
-		<input type="checkbox" ng-model="config.lights.auto" ng-change="mySubmit('lights.auto',config.lights.auto)" ng-disabled="status.isRecording"/>
+		<input type="checkbox" 
+			ng-model="config.lights.auto" 
+			ng-change="mySubmit('lights.auto',config.lights.auto)" 
+		   	ng-disabled="! allowEditeOptions()" 
+			/>
 		Automatically turn lights on and off 
 		
 		<BR>
@@ -254,7 +288,7 @@
 		   <input style="width: 3em" 
 		   type="number" 
 		   ng-model="config.lights.sunrise"
-		   ng-disabled="status.isRecording"
+		   	ng-disabled="! allowEditeOptions()" 
 		   ng-change="mySubmit('lights.sunrise',config.lights.sunrise)"
 		   />
 		<!-- </form> -->
@@ -263,7 +297,7 @@
 		   <input style="width: 3em" 
 		   type="number" 
 		   ng-model="config.lights.sunset" 
-		   ng-disabled="status.isRecording"
+		   	ng-disabled="! allowEditeOptions()" 
 		   ng-change="mySubmit('lights.sunset',config.lights.sunset)"
 		   />
 		<!-- </form> -->
@@ -273,7 +307,13 @@
 		<b>Stream</b>
 		
 		<div class="indent2">
-		Stream Size  <select name="" ng-init="config.stream.resolution" ng-model="config.stream.resolution" ng-Change="mySubmit('stream.resolution',config.stream.resolution)" ng-disabled="status.isRecording"">
+		Stream Size  
+		<select name="" 
+			ng-init="config.stream.resolution" 
+			ng-model="config.stream.resolution" 
+			ng-Change="mySubmit('stream.resolution',config.stream.resolution)" 
+		   	ng-disabled="! allowEditeOptions()" 
+			>
 		  <option value="640,480">640 x 480</option>
 		  <option value="1024,768">1024 x 768</option>
 		  <option value="1296,972">1296 x 972</option>
@@ -281,8 +321,8 @@
 		</div>
 
 		<BR>
-		<button type="button" class="btn btn-info btn-sm" ng-click="saveoptions()" ng-disabled="status.isRecording">Save Options</button>
-		<button type="button" class="btn btn-info btn-sm" ng-click="loaddefaultoptions()" ng-disabled="status.isRecording">Load Default Options</button>
+		<button type="button" class="btn btn-info btn-sm" ng-click="saveoptions()" ng-disabled="! allowEditeOptions()">Save Options</button>
+		<button type="button" class="btn btn-info btn-sm" ng-click="loaddefaultoptions()" ng-disabled="! allowEditeOptions()">Load Default Options</button>
 		
 		</div> <!-- indent -->
 		
@@ -305,14 +345,21 @@
 		<tr>
 		
 		<td style="vertical-align:top">
-		<table class="myTable-small" style="border: 1px solid black">
-		  <tr ng-repeat="(x,y) in status">
+		<table class="myTable-small" style="border: 1px solid black" ng-repeat="(x,y) in status">
+		  <tr>
+		  <td>
+		  <b>{{ x }}</b>
+		  </td>
+		  <td></td>
+		  </tr>
+		  <tr ng-repeat="(x,y) in y">
 				<td>{{ x }}</td>
 				<td>{{ y }}</td>
 		  </tr>
 		</table>
 		</td>
 		
+		<!--
 		<td style="vertical-align:top">
 		<table class="myTable-small indent" style="border: 1px solid black" ng-repeat="(x,y) in config">
 		  <tr>
@@ -327,6 +374,7 @@
 		  </tr>
 		</table>
 		</td>
+		-->
 		
 		</tr>
 		</table>

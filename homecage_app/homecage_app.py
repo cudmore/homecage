@@ -1,8 +1,9 @@
 from __future__ import print_function    # (at top of module)
 
-import os, subprocess
+import os
 from datetime import datetime
 import json
+from subprocess import check_output
 
 #import mimetypes # to send files to ios
 
@@ -73,6 +74,29 @@ def stream(onoff):
 	home.stream(onoff)
 	status = getStatus()
 	return jsonify(status)
+	
+@app.route('/arm/<int:onoff>')
+def arm(onoff):
+	print('arm() onoff:', onoff)
+	home.arm(onoff)
+	status = getStatus()
+	return jsonify(status)
+
+@app.route('/simulate/triggerin')
+def sim_triggerin():
+	home.triggerIn_Callback(1)
+	return jsonify(getStatus())
+	
+@app.route('/simulate/frame')
+def sim_frame():
+	home.frame_Callback(1)
+	return jsonify(getStatus())
+
+@app.route('/simulate/stop')
+def sim_stop():
+	home.stop()
+	return jsonify(getStatus())
+	
 	
 @app.route('/irLED/<int:onoff>')
 def irLED(onoff):
@@ -175,17 +199,15 @@ def restartserver():
 '''
 	
 def whatismyip():
-	arg='ip route list'
-	p=subprocess.Popen(arg,shell=True,stdout=subprocess.PIPE)
-	data = p.communicate()
-	split_data = data[0].split()
-	ipaddr = split_data[split_data.index('src')+1]
-	return ipaddr
+	ips = check_output(['hostname', '--all-ip-addresses'])
+	ips = ips.decode('utf-8').strip()
+	return ips
 
 if __name__ == '__main__':
-	print('homecage_app.py is running Flask server at:', 'http://' + whatismyip() + ':5000')
-	debug = False
-	app.run(host=whatismyip(), port=5000, debug=debug, threaded=True)
+	myip = whatismyip()
+	print('homecage_app.py is running Flask server at:', 'http://' + myip + ':5000')
+	debug = True
+	app.run(host=myip, port=5000, debug=debug, threaded=True)
 	
 	
 	
