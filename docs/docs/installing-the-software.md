@@ -6,14 +6,14 @@ We will assume you have a functioning Raspberry Pi. To get started setting up a 
 
 Homecage runs best on a Raspberry 2/3 and Debian stretch. **Do not run it on Raspberry Model B, it is too slow**.
 
-Check which version of the Raspberry Pi you have. You should have a Raspberry 2/3
+Check which version of the Raspberry Pi you have.
 
 ```
 #at a command prompt, type
 cat /proc/device-tree/model
 
 #you should get something like this
-# Raspberry Pi 3 Model B Rev 1.2
+Raspberry Pi 3 Model B Rev 1.2
 ```
 
 Check which version of the Debian operating system you have. You should have a Debian Stretch
@@ -23,14 +23,15 @@ Check which version of the Debian operating system you have. You should have a D
 cat /etc/os-release
 
 #you should get something like this
-Raspberry Pi 3 Model B Rev 1.2
+PRETTY_NAME="Raspbian GNU/Linux 8 (jessie)"
+NAME="Raspbian GNU/Linux"
+VERSION_ID="8"
+VERSION="8 (jessie)"
 ```
 
-# 2) Install uv4l and avconv
+## 2) Install uv4l and avconv
 
-We need uv4l for streaming and avoconv (ffmpeg) to convert from .h264 to .mp4
-
-## 2.1) Install uv4l for live video streaming (optional)
+### 2.1) Install uv4l for live video streaming (optional)
 
 If you run into trouble, then follow [this tutorial][5]. If you don't do this, homecage should work but you won't be able to stream.
 
@@ -48,11 +49,9 @@ sudo apt-get update
 sudo apt-get install uv4l uv4l-raspicam
 ```
 
-Note, do not install `uv4l-server`
+### 2.2) Install avconv to convert videos from .h264 to .mp4 (optional)
 
-## 2.2) Install avconv to convert videos from .h264 to .mp4 (optional)
-
-If you run into trouble, then see [this blog post][13]. If you don't do this, make sure you turn off 'Convert video from h264 to mp4'.
+If you run into trouble, then see [this blog post][13]. If you don't do this, make sure you turn off the 'Convert video from h264 to mp4' option.
 
 	sudo apt-get update
 	sudo apt-get install libav-tools
@@ -61,7 +60,7 @@ Video files will be saved to `/home/pi/video`. If your going to save a lot of vi
 
 
 
-# 3) Clone the homecage repository
+## 3) Clone the homecage repository
 
 This will make a folder `homecage` in your root directory. You can always return to your root directory with `cd` or `cd ~`.
 
@@ -70,32 +69,32 @@ This will make a folder `homecage` in your root directory. You can always return
 
 	git clone --depth=1 https://github.com/cudmore/homecage.git
 
-## 3.1) Either install python packages globally
+### 3.1) Either install python packages globally
 
-	# if you don't already have pip installed
+	# if you don't already have pip installed (see troubleshooting)
 	sudo apt-get install python-pip
 
 	cd ~/homecage/homecage_app
 	pip install -r requirements.txt
 
-## 3.2) Or install in a virtual environment
+### 3.2) Or install in a virtual environment
 
 Make a clean virtual environment that does not depend on current installed Python packages
 
-	# if you don't already have pip installed
+	# if you don't already have pip installed (see troubleshooting)
 	sudo apt-get install python-pip
 
-	# install virtualenv if necessary
+	# install virtualenv if necessary (see troubleshooting)
 	pip install virtualenv
 	
 	# make a folder to hold the virtual environment
 	cd ~/homecage/homecage_app
 	mkdir env	
 	
-	# either make a python 2 environment for now
+	# either make a python 2 environment in the folder 'env'
 	#virtualenv -p python2 --no-site-packages env
 	
-	# or make a python 3 environment
+	# or make a python 3 environment in the folder 'env'
 	virtualenv -p python3 --no-site-packages env
 
 Activate the environment. Once activated, the command prompt will begin with '(env)'
@@ -120,7 +119,7 @@ Run homecage_app.py
 	cd ~/homecage/homecage_app
 	python homecage_app.py
 
-Browse to the homecage_App website
+Browse to the homecage_app website
 
 	http://[yourip]:5000
 	
@@ -133,12 +132,12 @@ Exit virtual environment
 	cd ~/homecage/homecage_app
 	python homecage_app.py
 
-Browse to the homecage_App website
+Browse to the homecage_app website
 
 	http://[yourip]:5000
 	
 
-# 5) Install DHT temperature sensor (optional)
+## 5) Install DHT temperature sensor (optional)
 
 If you run into trouble then go to [this tutorial][7]. If you don't do this, homecage should work but you won't be able to read the temperature and humidity.
     
@@ -149,7 +148,7 @@ If you run into trouble then go to [this tutorial][7]. If you don't do this, hom
     cd Adafruit_Python_DHT
     sudo python setup.py install
 
-# 6) Start homecage_app at boot (optional)
+## 6) Start homecage_app at boot (optional)
 
 Edit crontab
 
@@ -161,7 +160,7 @@ Add the following line to the end of the file (make sure it is one line)
 @reboot (sleep 10; cd /home/pi/homecage/homecage_app && /usr/bin/python /home/pi/homecage/homecage_app/homecage_app.py)
 ```
 
-# 7) Done installing !!!
+## 7) Done installing !!!
 
 At this point you can interact with the homecage server through the [web][9] interface.
 

@@ -36,7 +36,7 @@
     
     
       
-        <title>Web interface - Home cage surveillance</title>
+        <title>Web interface - Home cage</title>
       
     
     
@@ -98,7 +98,7 @@
   <nav class="md-header-nav md-grid">
     <div class="md-flex">
       <div class="md-flex__cell md-flex__cell--shrink">
-        <a href=".." title="Home cage surveillance" class="md-header-nav__button md-logo">
+        <a href=".." title="Home cage" class="md-header-nav__button md-logo">
           
             <i class="md-icon"></i>
           
@@ -112,7 +112,7 @@
           
             
               <span class="md-header-nav__topic">
-                Home cage surveillance
+                Home cage
               </span>
               <span class="md-header-nav__topic">
                 Web interface
@@ -199,7 +199,7 @@
         <i class="md-icon"></i>
       
     </span>
-    Home cage surveillance
+    Home cage
   </label>
   
     <div class="md-nav__source">
@@ -232,8 +232,8 @@
 
 
   <li class="md-nav__item">
-    <a href=".." title="Getting started" class="md-nav__link">
-      Getting started
+    <a href=".." title="Home" class="md-nav__link">
+      Home
     </a>
   </li>
 
@@ -348,8 +348,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../videowall/" title="Video Wall" class="md-nav__link">
-      Video Wall
+    <a href="../command-line/" title="Command line interface" class="md-nav__link">
+      Command line interface
     </a>
   </li>
 
@@ -360,8 +360,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../command-line/" title="Command line interface" class="md-nav__link">
-      Command line interface
+    <a href="../videowall/" title="Video wall" class="md-nav__link">
+      Video wall
     </a>
   </li>
 
@@ -450,6 +450,18 @@
   </li>
 
     
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../open-source/" title="Open source" class="md-nav__link">
+      Open source
+    </a>
+  </li>
+
+    
   </ul>
 </nav>
                   </div>
@@ -533,9 +545,9 @@
                 <p><IMG SRC="../img/web-interface-minimal.png" width=600 style="border:1px solid black"></p>
 <h2 id="running-the-web-server">Running the web server</h2>
 <p>Login to the Pi</p>
-<pre><code>ssh pi@[your_ip]
+<pre><code>ssh pi@[your_pi_ip]
 </code></pre>
-<p>Where [your_ip] is the IP address of your Pi.</p>
+<p>Where [your_pi_ip] is the IP address of your Pi.</p>
 <p>At a command prompt, type:</p>
 <pre><code>cd
 cd homecage/homecage_app
@@ -543,26 +555,26 @@ python homecage_app.py
 </code></pre>
 
 <p>Once <code>homecage_app.py</code> is running you can access the web server in a browser with the address:</p>
-<pre><code>http:[your_ip]:5000
+<pre><code>http:[your_pi_ip]:5000
 </code></pre>
-<p>Where [your_ip] is the IP address of your Pi.</p>
+<p>Where [your_pi_ip] is the IP address of your Pi.</p>
 <p>To stop the homecage web server, in the command prompt use keyboard <code>ctrl+c</code></p>
 <h2 id="viewing-saved-videos">Viewing saved videos</h2>
 <p>Click the hard-drive icon to view saved video files.</p>
 <h2 id="setting-options">Setting options</h2>
 <h3 id="in-the-web-interface">In the web interface</h3>
-<p>Expand the <code>options</code> tab to set parameters of homecage. Each option will apply to the current session. Use <code>save options</code> to permanaently save the options. Load the default options again with 'Load Default Options'.</p>
+<p>Expand the <code>options</code> tab to set parameters of homecage. Use <code>save options</code> to permanaently save the options. Load the default options again with 'Load Default Options'.</p>
 <p><IMG SRC="../img/web-options.png" width=325 style="border:1px solid black"></p>
-<p>Videos are saved as .h264 and need to be converted to .mp4 which can be slow. Turn off 'Convert video from h264 to mp4' and convert manually at the end of an experiment.</p>
+<p>Videos are saved in the .h264 format and need to be converted to .mp4 which can be slow. Turn off 'Convert video from h264 to mp4' and convert manually at the end of an experiment.</p>
 <h3 id="on-the-pi">On the Pi</h3>
 <p>Most of the options can be changed and saved using the web interface. The  options can also be configured manually by editing the <a href="https://github.com/cudmore/homecage/blob/master/homecage_app/config.json">homecage/homecage_app/config.json</a> file.</p>
 <pre><code>cd ~/homecage/homecage_app
 pico config.json
 </code></pre>
-<p>If you edit the config.json file it needs the correct sytax. Check the syntax with the following command. It will output the json if correct and an error otherwise.</p>
+<p>If you edit the config.json file it needs the correct sytax. Without the correct syntax <code>python homecage_app.py</code> <strong>will</strong> fail. Check the syntax with the following command. It will output the json if correct and an error otherwise.</p>
 <pre><code>cat config.json | python -m json.tool
 </code></pre>
-<p>The default file is:</p>
+<p>The default <a href="https://github.com/cudmore/homecage/blob/master/homecage_app/config.json">config.json</a> file is:</p>
 <pre><code class="json">{
     &quot;hardware&quot;: {
         &quot;whiteLightPin&quot;: 2, 

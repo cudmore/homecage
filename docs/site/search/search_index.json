@@ -2,8 +2,8 @@
     "docs": [
         {
             "location": "/", 
-            "text": "Home cage is a general purpose camera controller.\n\n\nIt is designed to run on a Raspberry Pi computer using a Raspberry Pi NoIR camera.\n\n\nFeatures\n\n\n\n\nRecord video 24/7\n\n\nAutomaticall controls day-time and night-time lights.\n\n\nLive video streaming to a web browser\n\n\nHardware triggers to start and stop video recording and watermark video with frames\n\n\nVideo wall to control any number of Raspberry Pi's, each with their own copy of homecage\n\n\n\n\nInterface options\n\n\n\n\nWeb\n - A point and click web browser interface.\n\n\nREST\n - A rest interface to communicate with a homecage server\n\n\nVideo Wall\n - A rest interface to communicate with a homecage server\n\n\nCommand line\n - A command line interface.", 
-            "title": "Getting started"
+            "text": "Homecage is a general purpose camera controller that runs on a \nRaspberry Pi computer\n using a \nPi NoIR camera\n.\n\n\nFeatures\n\n\n\n\nRecord video 24/7\n\n\nAutomaticall controls day-time and night-time lights.\n\n\nLive video streaming to a web browser\n\n\nHardware triggers to start and stop video recording and watermark video with frames\n\n\nVideo wall to control any number of Raspberry Pi's, each with their own copy of homecage\n\n\n\n\nInterface options\n\n\n\n\nWeb\n - A point and click web browser interface.\n\n\nVideo Wall\n - A web interface to control any number of Pi computers running homecage\n\n\nREST\n - A rest interface to communicate with a homecage server", 
+            "title": "Home"
         }, 
         {
             "location": "/#features", 
@@ -12,92 +12,87 @@
         }, 
         {
             "location": "/#interface-options", 
-            "text": "Web  - A point and click web browser interface.  REST  - A rest interface to communicate with a homecage server  Video Wall  - A rest interface to communicate with a homecage server  Command line  - A command line interface.", 
+            "text": "Web  - A point and click web browser interface.  Video Wall  - A web interface to control any number of Pi computers running homecage  REST  - A rest interface to communicate with a homecage server", 
             "title": "Interface options"
         }, 
         {
             "location": "/installing-the-software/", 
-            "text": "Homecage is a Raspberry Pi camera controller.\n\n\nFeatures\n\n\n\n\nRecord\n\n\nStream\n\n\nRecord on GPIO trigger\n\n\n\n\nOverview of required libraries\n\n\n\n\nWiring Pi\n - Library that provides a command line interface to the GPIO pins. This should be installed by default.\n\n\nGPIO\n - Python library to control GPIO pins.\n\n\npicamera\n - Python library to control the camera.\n\n\nflask\n - A python web server.\n\n\nAdafruit_DHT\n - (optional) Python library to read from a DHT temperature and humidity sensor.\n\n\nuv4l\n - Command line tool for live video streaming to a web browser.\n\n\navconv\n - Command line tool to convert video files.\n\n\n\n\n1) Get a functioning Raspberry Pi\n\n\nThese instructions assume you have a functioning Raspberry Pi. To get started setting up a Pi from scratch, see our \nsetup intructions\n.\n\n\nCheck your system\n\n\nhomecage runs best on a Raspberry 2/3 and Debian stretch. \nDo not run it on Raspberry Model B, it is too slow\n.\n\n\nCheck which version of the Raspberry Pi you have (you should have a Raspberry 2/3)\n\n\ncat /proc/device-tree/model\n\n\n\nCheck your Debian version (you should be using Debian Stretch)\n\n\ncat /etc/os-release\n\n\n\n2) Install uv4l for live video streaming (optional)\n\n\nIf you run into trouble, then follow \nthis tutorial\n. If you don't do this, the software should work but you won't be able to stream.\n\n\ncurl http://www.linux-projects.org/listing/uv4l_repo/lrkey.asc | sudo apt-key add -\n\n# edit /etc/apt/sources.list\nsudo pico /etc/apt/sources.list\n\n# add the following line to /etc/apt/sources.list\ndeb http://www.linux-projects.org/listing/uv4l_repo/raspbian/stretch stretch main\n\n# update and install uv4l\nsudo apt-get update\nsudo apt-get install uv4l uv4l-raspicam\n\n\n\n\nNote, do not install \nuv4l-server\n\n\n3) Install avconv to convert videos from .h264 to .mp4 (optional)\n\n\nIf you run into trouble, then see \nthis blog post\n. If you don't do this, make sure you turn off 'Convert video from h264 to mp4'.\n\n\nsudo apt-get update\nsudo apt-get install libav-tools\n\n\n\nVideo files will be saved to \n/home/pi/video\n. If your going to save a lot of video, please \nmount a usb key\n and save videos there.\n\n\n4) Clone the homecage repository\n\n\nThis will make a folder \nhomecage\n in your root directory. You can always return to your root directory with \ncd\n or \ncd ~\n.\n\n\n# if you don't already have git installed\nsudo apt-get install git\n\ngit clone --depth=1 https://github.com/cudmore/homecage.git\n\n\n\n5.1) Either install python packages globally\n\n\n# if you don't already have pip installed\nsudo apt-get install python-pip\n\ncd ~/homecage/homecage_app\npip install -r requirements.txt\n\n\n\n5.2) Or install in a virtual environment\n\n\nMake a clean virtual environment that does not depend on current installed Python packages\n\n\n# if you don't already have pip installed\nsudo apt-get install python-pip\n\n# install virtualenv if necessary\npip install virtualenv\n\n# make a folder to hold the virtual environment\ncd ~/homecage/homecage_app\nmkdir env\n\n# either make a python 2 environment for now\n#virtualenv -p python2 --no-site-packages env\n\n# or make a python 3 environment\nvirtualenv -p python3 --no-site-packages env\n\n\n\nActivate the environment. Once activated, the command prompt will begin with '(env)'\n\n\nsource env/bin/activate\n\n\n\nCheck your python version\n\n\npython -V\n\n\n\nMake sure python command is running in the virtual environment\n\n\nwhich python\n\n\n\nInstall homecage_app dependencies\n\n\ncd ~/homecage/homecage_app\npip install -r requirements.txt\n\n\n\nRun homecage_app.py\n\n\ncd ~/homecage/homecage_app\npython homecage_app.py\n\n\n\nBrowse to the homecage_App website\n\n\nhttp://[yourip]:5000\n\n\n\nExit virtual environment\n\n\ndeactivate\n\n\n\n6) Running homecage_app.py\n\n\ncd ~/homecage/homecage_app\npython homecage_app.py\n\n\n\nBrowse to the homecage_App website\n\n\nhttp://[yourip]:5000\n\n\n\n7) Install DHT temperature sensor (optional)\n\n\nIf you run into trouble then go to \nthis tutorial\n.\n\n\ncd\nmkdir tmp\ncd tmp\ngit clone https://github.com/adafruit/Adafruit_Python_DHT.git\ncd Adafruit_Python_DHT\nsudo python setup.py install\n\n\n\n8) Start homecage_app at boot (optional)\n\n\nEdit crontab\n\n\ncrontab -e\n\n\n\nAdd the following line to the end of the file (make sure it is one line)\n\n\n@reboot (sleep 10; cd /home/pi/homecage/homecage_app \n /usr/bin/python /home/pi/homecage/homecage_app/homecage_app.py)\n\n\n\n\nDone installing !!!\n\n\nAt this point you can interact with the homecage either through the \nweb\n or from the \ncommand line\n.\n\n\nTroubleshooting\n\n\npip 10 seems to be broken. Uninstall and then install pip 9\n\n\n# uninstall pip\npython -m pip uninstall pip\n\n# install pip 9\npython -m pip install -U \"pip\n10\"\n\n\n\nIf virtualenv is not available (16.0.0)\n\n\nsudo /usr/bin/easy_install virtualenv\n\n\n\nIf you edit the config.json file it needs the correct sytax. Check the syntax with the following command. It will output the json if correct and an error otherwise.\n\n\ncat config.json | python -m json.tool", 
+            "text": "Install homecage\n\n\nWe will assume you have a functioning Raspberry Pi. To get started setting up a Pi from scratch, see our \nsetup intructions\n. We will also assume you are logged in to the Pi using terminal on OSX or \nPutty\n on Windows.\n\n\n1) Check your system\n\n\nHomecage runs best on a Raspberry 2/3 and Debian stretch. \nDo not run it on Raspberry Model B, it is too slow\n.\n\n\nCheck which version of the Raspberry Pi you have. You should have a Raspberry 2/3\n\n\n#at a command prompt, type\ncat /proc/device-tree/model\n\n#you should get something like this\n# Raspberry Pi 3 Model B Rev 1.2\n\n\n\n\nCheck which version of the Debian operating system you have. You should have a Debian Stretch\n\n\n#at a command prompt, type\ncat /etc/os-release\n\n#you should get something like this\nRaspberry Pi 3 Model B Rev 1.2\n\n\n\n\n2) Install uv4l and avconv\n\n\nWe need uv4l for streaming and avoconv (ffmpeg) to convert from .h264 to .mp4\n\n\n2.1) Install uv4l for live video streaming (optional)\n\n\nIf you run into trouble, then follow \nthis tutorial\n. If you don't do this, homecage should work but you won't be able to stream.\n\n\ncurl http://www.linux-projects.org/listing/uv4l_repo/lrkey.asc | sudo apt-key add -\n\n# edit /etc/apt/sources.list\nsudo pico /etc/apt/sources.list\n\n# add the following line to /etc/apt/sources.list\ndeb http://www.linux-projects.org/listing/uv4l_repo/raspbian/stretch stretch main\n\n# update and install uv4l\nsudo apt-get update\nsudo apt-get install uv4l uv4l-raspicam\n\n\n\n\nNote, do not install \nuv4l-server\n\n\n2.2) Install avconv to convert videos from .h264 to .mp4 (optional)\n\n\nIf you run into trouble, then see \nthis blog post\n. If you don't do this, make sure you turn off 'Convert video from h264 to mp4'.\n\n\nsudo apt-get update\nsudo apt-get install libav-tools\n\n\n\nVideo files will be saved to \n/home/pi/video\n. If your going to save a lot of video, please \nmount a usb key\n and save videos there.\n\n\n3) Clone the homecage repository\n\n\nThis will make a folder \nhomecage\n in your root directory. You can always return to your root directory with \ncd\n or \ncd ~\n.\n\n\n# if you don't already have git installed\nsudo apt-get install git\n\ngit clone --depth=1 https://github.com/cudmore/homecage.git\n\n\n\n3.1) Either install python packages globally\n\n\n# if you don't already have pip installed\nsudo apt-get install python-pip\n\ncd ~/homecage/homecage_app\npip install -r requirements.txt\n\n\n\n3.2) Or install in a virtual environment\n\n\nMake a clean virtual environment that does not depend on current installed Python packages\n\n\n# if you don't already have pip installed\nsudo apt-get install python-pip\n\n# install virtualenv if necessary\npip install virtualenv\n\n# make a folder to hold the virtual environment\ncd ~/homecage/homecage_app\nmkdir env\n\n# either make a python 2 environment for now\n#virtualenv -p python2 --no-site-packages env\n\n# or make a python 3 environment\nvirtualenv -p python3 --no-site-packages env\n\n\n\nActivate the environment. Once activated, the command prompt will begin with '(env)'\n\n\nsource env/bin/activate\n\n\n\nCheck your python version\n\n\npython -V\n\n\n\nMake sure python command is running in the virtual environment\n\n\nwhich python\n\n\n\nInstall homecage_app dependencies\n\n\ncd ~/homecage/homecage_app\npip install -r requirements.txt\n\n\n\nRun homecage_app.py\n\n\ncd ~/homecage/homecage_app\npython homecage_app.py\n\n\n\nBrowse to the homecage_App website\n\n\nhttp://[yourip]:5000\n\n\n\nExit virtual environment\n\n\ndeactivate\n\n\n\n4) Running homecage_app.py\n\n\ncd ~/homecage/homecage_app\npython homecage_app.py\n\n\n\nBrowse to the homecage_App website\n\n\nhttp://[yourip]:5000\n\n\n\n5) Install DHT temperature sensor (optional)\n\n\nIf you run into trouble then go to \nthis tutorial\n. If you don't do this, homecage should work but you won't be able to read the temperature and humidity.\n\n\ncd\nmkdir tmp\ncd tmp\ngit clone https://github.com/adafruit/Adafruit_Python_DHT.git\ncd Adafruit_Python_DHT\nsudo python setup.py install\n\n\n\n6) Start homecage_app at boot (optional)\n\n\nEdit crontab\n\n\ncrontab -e\n\n\n\nAdd the following line to the end of the file (make sure it is one line)\n\n\n@reboot (sleep 10; cd /home/pi/homecage/homecage_app \n /usr/bin/python /home/pi/homecage/homecage_app/homecage_app.py)\n\n\n\n\n7) Done installing !!!\n\n\nAt this point you can interact with the homecage server through the \nweb\n interface.\n\n\nTroubleshooting\n\n\nAs of May 21, 2018 pip 10 seems to be broken. Uninstall and then install pip 9\n\n\n# uninstall pip\npython -m pip uninstall pip\n\n# install pip 9\npython -m pip install -U \"pip\n10\"\n\n\n\nIf virtualenv is not available (16.0.0)\n\n\nsudo /usr/bin/easy_install virtualenv\n\n\n\nIf you edit the config.json file it needs the correct sytax. Check the syntax with the following command. It will output the json if correct and an error otherwise.\n\n\ncat config.json | python -m json.tool", 
             "title": "Install"
         }, 
         {
-            "location": "/installing-the-software/#features", 
-            "text": "Record  Stream  Record on GPIO trigger", 
-            "title": "Features"
+            "location": "/installing-the-software/#install-homecage", 
+            "text": "We will assume you have a functioning Raspberry Pi. To get started setting up a Pi from scratch, see our  setup intructions . We will also assume you are logged in to the Pi using terminal on OSX or  Putty  on Windows.", 
+            "title": "Install homecage"
         }, 
         {
-            "location": "/installing-the-software/#overview-of-required-libraries", 
-            "text": "Wiring Pi  - Library that provides a command line interface to the GPIO pins. This should be installed by default.  GPIO  - Python library to control GPIO pins.  picamera  - Python library to control the camera.  flask  - A python web server.  Adafruit_DHT  - (optional) Python library to read from a DHT temperature and humidity sensor.  uv4l  - Command line tool for live video streaming to a web browser.  avconv  - Command line tool to convert video files.", 
-            "title": "Overview of required libraries"
+            "location": "/installing-the-software/#1-check-your-system", 
+            "text": "Homecage runs best on a Raspberry 2/3 and Debian stretch.  Do not run it on Raspberry Model B, it is too slow .  Check which version of the Raspberry Pi you have. You should have a Raspberry 2/3  #at a command prompt, type\ncat /proc/device-tree/model\n\n#you should get something like this\n# Raspberry Pi 3 Model B Rev 1.2  Check which version of the Debian operating system you have. You should have a Debian Stretch  #at a command prompt, type\ncat /etc/os-release\n\n#you should get something like this\nRaspberry Pi 3 Model B Rev 1.2", 
+            "title": "1) Check your system"
         }, 
         {
-            "location": "/installing-the-software/#1-get-a-functioning-raspberry-pi", 
-            "text": "These instructions assume you have a functioning Raspberry Pi. To get started setting up a Pi from scratch, see our  setup intructions .", 
-            "title": "1) Get a functioning Raspberry Pi"
+            "location": "/installing-the-software/#2-install-uv4l-and-avconv", 
+            "text": "We need uv4l for streaming and avoconv (ffmpeg) to convert from .h264 to .mp4", 
+            "title": "2) Install uv4l and avconv"
         }, 
         {
-            "location": "/installing-the-software/#check-your-system", 
-            "text": "homecage runs best on a Raspberry 2/3 and Debian stretch.  Do not run it on Raspberry Model B, it is too slow .  Check which version of the Raspberry Pi you have (you should have a Raspberry 2/3)  cat /proc/device-tree/model  Check your Debian version (you should be using Debian Stretch)  cat /etc/os-release", 
-            "title": "Check your system"
+            "location": "/installing-the-software/#21-install-uv4l-for-live-video-streaming-optional", 
+            "text": "If you run into trouble, then follow  this tutorial . If you don't do this, homecage should work but you won't be able to stream.  curl http://www.linux-projects.org/listing/uv4l_repo/lrkey.asc | sudo apt-key add -\n\n# edit /etc/apt/sources.list\nsudo pico /etc/apt/sources.list\n\n# add the following line to /etc/apt/sources.list\ndeb http://www.linux-projects.org/listing/uv4l_repo/raspbian/stretch stretch main\n\n# update and install uv4l\nsudo apt-get update\nsudo apt-get install uv4l uv4l-raspicam  Note, do not install  uv4l-server", 
+            "title": "2.1) Install uv4l for live video streaming (optional)"
         }, 
         {
-            "location": "/installing-the-software/#2-install-uv4l-for-live-video-streaming-optional", 
-            "text": "If you run into trouble, then follow  this tutorial . If you don't do this, the software should work but you won't be able to stream.  curl http://www.linux-projects.org/listing/uv4l_repo/lrkey.asc | sudo apt-key add -\n\n# edit /etc/apt/sources.list\nsudo pico /etc/apt/sources.list\n\n# add the following line to /etc/apt/sources.list\ndeb http://www.linux-projects.org/listing/uv4l_repo/raspbian/stretch stretch main\n\n# update and install uv4l\nsudo apt-get update\nsudo apt-get install uv4l uv4l-raspicam  Note, do not install  uv4l-server", 
-            "title": "2) Install uv4l for live video streaming (optional)"
-        }, 
-        {
-            "location": "/installing-the-software/#3-install-avconv-to-convert-videos-from-h264-to-mp4-optional", 
+            "location": "/installing-the-software/#22-install-avconv-to-convert-videos-from-h264-to-mp4-optional", 
             "text": "If you run into trouble, then see  this blog post . If you don't do this, make sure you turn off 'Convert video from h264 to mp4'.  sudo apt-get update\nsudo apt-get install libav-tools  Video files will be saved to  /home/pi/video . If your going to save a lot of video, please  mount a usb key  and save videos there.", 
-            "title": "3) Install avconv to convert videos from .h264 to .mp4 (optional)"
+            "title": "2.2) Install avconv to convert videos from .h264 to .mp4 (optional)"
         }, 
         {
-            "location": "/installing-the-software/#4-clone-the-homecage-repository", 
+            "location": "/installing-the-software/#3-clone-the-homecage-repository", 
             "text": "This will make a folder  homecage  in your root directory. You can always return to your root directory with  cd  or  cd ~ .  # if you don't already have git installed\nsudo apt-get install git\n\ngit clone --depth=1 https://github.com/cudmore/homecage.git", 
-            "title": "4) Clone the homecage repository"
+            "title": "3) Clone the homecage repository"
         }, 
         {
-            "location": "/installing-the-software/#51-either-install-python-packages-globally", 
+            "location": "/installing-the-software/#31-either-install-python-packages-globally", 
             "text": "# if you don't already have pip installed\nsudo apt-get install python-pip\n\ncd ~/homecage/homecage_app\npip install -r requirements.txt", 
-            "title": "5.1) Either install python packages globally"
+            "title": "3.1) Either install python packages globally"
         }, 
         {
-            "location": "/installing-the-software/#52-or-install-in-a-virtual-environment", 
+            "location": "/installing-the-software/#32-or-install-in-a-virtual-environment", 
             "text": "Make a clean virtual environment that does not depend on current installed Python packages  # if you don't already have pip installed\nsudo apt-get install python-pip\n\n# install virtualenv if necessary\npip install virtualenv\n\n# make a folder to hold the virtual environment\ncd ~/homecage/homecage_app\nmkdir env\n\n# either make a python 2 environment for now\n#virtualenv -p python2 --no-site-packages env\n\n# or make a python 3 environment\nvirtualenv -p python3 --no-site-packages env  Activate the environment. Once activated, the command prompt will begin with '(env)'  source env/bin/activate  Check your python version  python -V  Make sure python command is running in the virtual environment  which python  Install homecage_app dependencies  cd ~/homecage/homecage_app\npip install -r requirements.txt  Run homecage_app.py  cd ~/homecage/homecage_app\npython homecage_app.py  Browse to the homecage_App website  http://[yourip]:5000  Exit virtual environment  deactivate", 
-            "title": "5.2) Or install in a virtual environment"
+            "title": "3.2) Or install in a virtual environment"
         }, 
         {
-            "location": "/installing-the-software/#6-running-homecage_apppy", 
+            "location": "/installing-the-software/#4-running-homecage_apppy", 
             "text": "cd ~/homecage/homecage_app\npython homecage_app.py  Browse to the homecage_App website  http://[yourip]:5000", 
-            "title": "6) Running homecage_app.py"
+            "title": "4) Running homecage_app.py"
         }, 
         {
-            "location": "/installing-the-software/#7-install-dht-temperature-sensor-optional", 
-            "text": "If you run into trouble then go to  this tutorial .  cd\nmkdir tmp\ncd tmp\ngit clone https://github.com/adafruit/Adafruit_Python_DHT.git\ncd Adafruit_Python_DHT\nsudo python setup.py install", 
-            "title": "7) Install DHT temperature sensor (optional)"
+            "location": "/installing-the-software/#5-install-dht-temperature-sensor-optional", 
+            "text": "If you run into trouble then go to  this tutorial . If you don't do this, homecage should work but you won't be able to read the temperature and humidity.  cd\nmkdir tmp\ncd tmp\ngit clone https://github.com/adafruit/Adafruit_Python_DHT.git\ncd Adafruit_Python_DHT\nsudo python setup.py install", 
+            "title": "5) Install DHT temperature sensor (optional)"
         }, 
         {
-            "location": "/installing-the-software/#8-start-homecage_app-at-boot-optional", 
+            "location": "/installing-the-software/#6-start-homecage_app-at-boot-optional", 
             "text": "Edit crontab  crontab -e  Add the following line to the end of the file (make sure it is one line)  @reboot (sleep 10; cd /home/pi/homecage/homecage_app   /usr/bin/python /home/pi/homecage/homecage_app/homecage_app.py)", 
-            "title": "8) Start homecage_app at boot (optional)"
+            "title": "6) Start homecage_app at boot (optional)"
         }, 
         {
-            "location": "/installing-the-software/#done-installing", 
-            "text": "At this point you can interact with the homecage either through the  web  or from the  command line .", 
-            "title": "Done installing !!!"
+            "location": "/installing-the-software/#7-done-installing", 
+            "text": "At this point you can interact with the homecage server through the  web  interface.", 
+            "title": "7) Done installing !!!"
         }, 
         {
             "location": "/installing-the-software/#troubleshooting", 
-            "text": "pip 10 seems to be broken. Uninstall and then install pip 9  # uninstall pip\npython -m pip uninstall pip\n\n# install pip 9\npython -m pip install -U \"pip 10\"  If virtualenv is not available (16.0.0)  sudo /usr/bin/easy_install virtualenv  If you edit the config.json file it needs the correct sytax. Check the syntax with the following command. It will output the json if correct and an error otherwise.  cat config.json | python -m json.tool", 
+            "text": "As of May 21, 2018 pip 10 seems to be broken. Uninstall and then install pip 9  # uninstall pip\npython -m pip uninstall pip\n\n# install pip 9\npython -m pip install -U \"pip 10\"  If virtualenv is not available (16.0.0)  sudo /usr/bin/easy_install virtualenv  If you edit the config.json file it needs the correct sytax. Check the syntax with the following command. It will output the json if correct and an error otherwise.  cat config.json | python -m json.tool", 
             "title": "Troubleshooting"
         }, 
         {
             "location": "/web-interface/", 
-            "text": "Running the web server\n\n\nLogin to the Pi\n\n\nssh pi@[your_ip]\n\n\n\nWhere [your_ip] is the IP address of your Pi.\n\n\nAt a command prompt, type:\n\n\ncd\ncd homecage/homecage_app\npython homecage_app.py\n\n\n\n\nOnce \nhomecage_app.py\n is running you can access the web server in a browser with the address:\n\n\nhttp:[your_ip]:5000\n\n\n\nWhere [your_ip] is the IP address of your Pi.\n\n\nTo stop the homecage web server, in the command prompt use keyboard \nctrl+c\n\n\nViewing saved videos\n\n\nClick the hard-drive icon to view saved video files.\n\n\nSetting options\n\n\nIn the web interface\n\n\nExpand the \noptions\n tab to set parameters of homecage. Each option will apply to the current session. Use \nsave options\n to permanaently save the options. Load the default options again with 'Load Default Options'.\n\n\n\n\nVideos are saved as .h264 and need to be converted to .mp4 which can be slow. Turn off 'Convert video from h264 to mp4' and convert manually at the end of an experiment.\n\n\nOn the Pi\n\n\nMost of the options can be changed and saved using the web interface. The  options can also be configured manually by editing the \nhomecage/homecage_app/config.json\n file.\n\n\ncd ~/homecage/homecage_app\npico config.json\n\n\n\nIf you edit the config.json file it needs the correct sytax. Check the syntax with the following command. It will output the json if correct and an error otherwise.\n\n\ncat config.json | python -m json.tool\n\n\n\nThe default file is:\n\n\n{\n    \nhardware\n: {\n        \nwhiteLightPin\n: 2, \n        \nirLightPin\n: 3, \n        \nreadtemperature\n: true, \n        \ntemperatureInterval\n: 20, \n        \ntemperatureSensor\n: 4\n    }, \n    \nlights\n: {\n        \nauto\n: false, \n        \nsunset\n: 18, \n        \nsunrise\n: 6\n    }, \n    \nvideo\n: {\n        \nfileDuration\n: 5, \n        \nconverttomp4\n: true, \n        \ncaptureStill\n: true, \n        \nsavepath\n: \n/home/pi/video\n, \n        \nfps\n: 30, \n        \nstillInterval\n: 2, \n        \nresolution\n: \n1024,768\n\n    }, \n    \nstream\n: {\n        \nresolution\n: \n640,480\n\n    }, \n    \nscope\n: {\n        \nautoArm\n: false, \n        \nbufferSeconds\n: 5, \n        \nframeIn\n: {\n            \nenabled\n: true, \n            \npin\n: 18, \n            \npolarity\n: \nrising\n\n        }, \n        \ntriggerIn\n: {\n            \nenabled\n: true, \n            \npin\n: 20, \n            \npolarity\n: \nrising\n\n        }, \n        \ntriggerOut\n: {\n            \nenabled\n: true, \n            \npin\n: 31, \n            \npolarity\n: \nrising\n\n        }\n    }\n}", 
+            "text": "Running the web server\n\n\nLogin to the Pi\n\n\nssh pi@[your_pi_ip]\n\n\n\nWhere [your_pi_ip] is the IP address of your Pi.\n\n\nAt a command prompt, type:\n\n\ncd\ncd homecage/homecage_app\npython homecage_app.py\n\n\n\n\nOnce \nhomecage_app.py\n is running you can access the web server in a browser with the address:\n\n\nhttp:[your_pi_ip]:5000\n\n\n\nWhere [your_pi_ip] is the IP address of your Pi.\n\n\nTo stop the homecage web server, in the command prompt use keyboard \nctrl+c\n\n\nViewing saved videos\n\n\nClick the hard-drive icon to view saved video files.\n\n\nSetting options\n\n\nIn the web interface\n\n\nExpand the \noptions\n tab to set parameters of homecage. Use \nsave options\n to permanaently save the options. Load the default options again with 'Load Default Options'.\n\n\n\n\nVideos are saved in the .h264 format and need to be converted to .mp4 which can be slow. Turn off 'Convert video from h264 to mp4' and convert manually at the end of an experiment.\n\n\nOn the Pi\n\n\nMost of the options can be changed and saved using the web interface. The  options can also be configured manually by editing the \nhomecage/homecage_app/config.json\n file.\n\n\ncd ~/homecage/homecage_app\npico config.json\n\n\n\nIf you edit the config.json file it needs the correct sytax. Without the correct syntax \npython homecage_app.py\n \nwill\n fail. Check the syntax with the following command. It will output the json if correct and an error otherwise.\n\n\ncat config.json | python -m json.tool\n\n\n\nThe default \nconfig.json\n file is:\n\n\n{\n    \nhardware\n: {\n        \nwhiteLightPin\n: 2, \n        \nirLightPin\n: 3, \n        \nreadtemperature\n: true, \n        \ntemperatureInterval\n: 20, \n        \ntemperatureSensor\n: 4\n    }, \n    \nlights\n: {\n        \nauto\n: false, \n        \nsunset\n: 18, \n        \nsunrise\n: 6\n    }, \n    \nvideo\n: {\n        \nfileDuration\n: 5, \n        \nconverttomp4\n: true, \n        \ncaptureStill\n: true, \n        \nsavepath\n: \n/home/pi/video\n, \n        \nfps\n: 30, \n        \nstillInterval\n: 2, \n        \nresolution\n: \n1024,768\n\n    }, \n    \nstream\n: {\n        \nresolution\n: \n640,480\n\n    }, \n    \nscope\n: {\n        \nautoArm\n: false, \n        \nbufferSeconds\n: 5, \n        \nframeIn\n: {\n            \nenabled\n: true, \n            \npin\n: 18, \n            \npolarity\n: \nrising\n\n        }, \n        \ntriggerIn\n: {\n            \nenabled\n: true, \n            \npin\n: 20, \n            \npolarity\n: \nrising\n\n        }, \n        \ntriggerOut\n: {\n            \nenabled\n: true, \n            \npin\n: 31, \n            \npolarity\n: \nrising\n\n        }\n    }\n}", 
             "title": "Web interface"
         }, 
         {
             "location": "/web-interface/#running-the-web-server", 
-            "text": "Login to the Pi  ssh pi@[your_ip]  Where [your_ip] is the IP address of your Pi.  At a command prompt, type:  cd\ncd homecage/homecage_app\npython homecage_app.py  Once  homecage_app.py  is running you can access the web server in a browser with the address:  http:[your_ip]:5000  Where [your_ip] is the IP address of your Pi.  To stop the homecage web server, in the command prompt use keyboard  ctrl+c", 
+            "text": "Login to the Pi  ssh pi@[your_pi_ip]  Where [your_pi_ip] is the IP address of your Pi.  At a command prompt, type:  cd\ncd homecage/homecage_app\npython homecage_app.py  Once  homecage_app.py  is running you can access the web server in a browser with the address:  http:[your_pi_ip]:5000  Where [your_pi_ip] is the IP address of your Pi.  To stop the homecage web server, in the command prompt use keyboard  ctrl+c", 
             "title": "Running the web server"
         }, 
         {
@@ -112,22 +107,22 @@
         }, 
         {
             "location": "/web-interface/#in-the-web-interface", 
-            "text": "Expand the  options  tab to set parameters of homecage. Each option will apply to the current session. Use  save options  to permanaently save the options. Load the default options again with 'Load Default Options'.   Videos are saved as .h264 and need to be converted to .mp4 which can be slow. Turn off 'Convert video from h264 to mp4' and convert manually at the end of an experiment.", 
+            "text": "Expand the  options  tab to set parameters of homecage. Use  save options  to permanaently save the options. Load the default options again with 'Load Default Options'.   Videos are saved in the .h264 format and need to be converted to .mp4 which can be slow. Turn off 'Convert video from h264 to mp4' and convert manually at the end of an experiment.", 
             "title": "In the web interface"
         }, 
         {
             "location": "/web-interface/#on-the-pi", 
-            "text": "Most of the options can be changed and saved using the web interface. The  options can also be configured manually by editing the  homecage/homecage_app/config.json  file.  cd ~/homecage/homecage_app\npico config.json  If you edit the config.json file it needs the correct sytax. Check the syntax with the following command. It will output the json if correct and an error otherwise.  cat config.json | python -m json.tool  The default file is:  {\n     hardware : {\n         whiteLightPin : 2, \n         irLightPin : 3, \n         readtemperature : true, \n         temperatureInterval : 20, \n         temperatureSensor : 4\n    }, \n     lights : {\n         auto : false, \n         sunset : 18, \n         sunrise : 6\n    }, \n     video : {\n         fileDuration : 5, \n         converttomp4 : true, \n         captureStill : true, \n         savepath :  /home/pi/video , \n         fps : 30, \n         stillInterval : 2, \n         resolution :  1024,768 \n    }, \n     stream : {\n         resolution :  640,480 \n    }, \n     scope : {\n         autoArm : false, \n         bufferSeconds : 5, \n         frameIn : {\n             enabled : true, \n             pin : 18, \n             polarity :  rising \n        }, \n         triggerIn : {\n             enabled : true, \n             pin : 20, \n             polarity :  rising \n        }, \n         triggerOut : {\n             enabled : true, \n             pin : 31, \n             polarity :  rising \n        }\n    }\n}", 
+            "text": "Most of the options can be changed and saved using the web interface. The  options can also be configured manually by editing the  homecage/homecage_app/config.json  file.  cd ~/homecage/homecage_app\npico config.json  If you edit the config.json file it needs the correct sytax. Without the correct syntax  python homecage_app.py   will  fail. Check the syntax with the following command. It will output the json if correct and an error otherwise.  cat config.json | python -m json.tool  The default  config.json  file is:  {\n     hardware : {\n         whiteLightPin : 2, \n         irLightPin : 3, \n         readtemperature : true, \n         temperatureInterval : 20, \n         temperatureSensor : 4\n    }, \n     lights : {\n         auto : false, \n         sunset : 18, \n         sunrise : 6\n    }, \n     video : {\n         fileDuration : 5, \n         converttomp4 : true, \n         captureStill : true, \n         savepath :  /home/pi/video , \n         fps : 30, \n         stillInterval : 2, \n         resolution :  1024,768 \n    }, \n     stream : {\n         resolution :  640,480 \n    }, \n     scope : {\n         autoArm : false, \n         bufferSeconds : 5, \n         frameIn : {\n             enabled : true, \n             pin : 18, \n             polarity :  rising \n        }, \n         triggerIn : {\n             enabled : true, \n             pin : 20, \n             polarity :  rising \n        }, \n         triggerOut : {\n             enabled : true, \n             pin : 31, \n             polarity :  rising \n        }\n    }\n}", 
             "title": "On the Pi"
         }, 
         {
             "location": "/rest-interface/", 
-            "text": "The homecage server will respond to the following REST calls.\n\n\nServer Status:\n\n\nGet runtime status of server\n\n\n/status\n\n\n\nGet user configured options\n\n\n/params\n\n\n\nRecord\n\n\nStart and stop video recording\n\n\n/record/1 \n/record/0\n\n\n\nStream\n\n\nStart and stop video streaming\n\n\n/stream/1 \n/stream/0\n\n\n\nLights\n\n\nTurn lights on and off\n\n\n/irLED/1 \n/irLED/0 \n/whiteLED/1 \n/whiteLED/0\n\n\n\nImages\n\n\n/lastimage\n\n\n\nSet user options\n\n\n/set/fps/\nint:value\n \n/set/fileDuration/\nint:value\n\n\n\n\nSimulate a scope\n\n\n/simulate/triggerin\n/simulate/frame\n/simulate/stop", 
+            "text": "Once the homecage server is running, it will respond to the following \nREST\n end points. Simply put, the REST interface allows you to control a Raspberry Pi camera from a web-browser.\n\n\nWith this, it is relatively simple to write your own code to control a Raspberry Pi running the homecage server. You could do this from Python, Javascript, Matlab, or Igor. For example, we (and now you) are using this interface for both the \nweb\n and \nvideo wall\n interfaces.\n\n\nYou can try this out by entering the following web addresses into your browser:\n\n\nhttp://[your_pi_ip]:5000/status\n\n\n\nAnd you should get something like this:\n\n\n{\n  \nenvironment\n: {\n    \nhumidity\n: 1.0,\n    \ntemperature\n: 28.29\n  },\n  \nlights\n: {\n    \nirLED\n: false,\n    \nwhiteLED\n: false\n  },\n  \nserver\n: {\n    \nlastResponse\n: \n,\n    \nstate\n: \nidle\n\n  },\n  \nsystem\n: {\n    \ncpuTemperature\n: \n48.3\n,\n    \ndate\n: \n2018-05-21\n,\n    \ngbRemaining\n: \n7.70\n,\n    \ngbSize\n: \n14.48\n,\n    \nhostname\n: \npi3\n,\n    \nip\n: \n192.168.1.3\n,\n    \ntime\n: \n13:24:23\n\n  },\n  \ntrial\n: {\n    \nstartTimeSeconds\n: null,\n    \ntimeRemaining\n: null\n  }\n}\n\n\n\n\nServer Status:\n\n\nGet runtime status of server\n\n\n/status\n\n\n\nGet user configured options\n\n\n/config\n\n\n\nRecord\n\n\nStart and stop video recording\n\n\n/record/1 \n/record/0\n\n\n\nStream\n\n\nStart and stop video streaming\n\n\n/stream/1 \n/stream/0\n\n\n\nLights\n\n\nTurn lights on and off\n\n\n/irLED/1 \n/irLED/0 \n/whiteLED/1 \n/whiteLED/0\n\n\n\nImages\n\n\n/lastimage\n\n\n\nSet user options\n\n\n/set/fps/\nint:value\n \n/set/fileDuration/\nint:value\n\n\n\n\nSimulate a scope\n\n\n/simulate/triggerin\n/simulate/frame\n/simulate/stop", 
             "title": "REST interface"
         }, 
         {
             "location": "/rest-interface/#server-status", 
-            "text": "Get runtime status of server  /status  Get user configured options  /params", 
+            "text": "Get runtime status of server  /status  Get user configured options  /config", 
             "title": "Server Status:"
         }, 
         {
@@ -161,38 +156,13 @@
             "title": "Simulate a scope"
         }, 
         {
-            "location": "/videowall/", 
-            "text": "Videowall is Javascript code and a python web-server to view and control multiple copies of homecage on different Raspberry Pi's! In theory, this allows you to control any number of Raspberry Pi's with their own cameras.\n\n\nInstall\n\n\nSee the main homecage \ninstall\n page.\n\n\nServe\n\n\nOnce homecage is \ninstalled\n.\n\n\ncd ~/homecage/videowall_app/\npython videowall_app.py\n\n\n\nBrowse\n\n\nhttp://[your_pi_ip]:8000\n\n\n\nExample\n\n\nThis example shows controlling one Raspberry Pi. Any number of Raspberry Pi camera systems can be added with the 'Add Server' button.", 
-            "title": "Video Wall"
-        }, 
-        {
-            "location": "/videowall/#install", 
-            "text": "See the main homecage  install  page.", 
-            "title": "Install"
-        }, 
-        {
-            "location": "/videowall/#serve", 
-            "text": "Once homecage is  installed .  cd ~/homecage/videowall_app/\npython videowall_app.py", 
-            "title": "Serve"
-        }, 
-        {
-            "location": "/videowall/#browse", 
-            "text": "http://[your_pi_ip]:8000", 
-            "title": "Browse"
-        }, 
-        {
-            "location": "/videowall/#example", 
-            "text": "This example shows controlling one Raspberry Pi. Any number of Raspberry Pi camera systems can be added with the 'Add Server' button.", 
-            "title": "Example"
-        }, 
-        {
             "location": "/command-line/", 
-            "text": "1) Log in to the Pi\n\n\nOn a Mac, use the terminal application in /Applications/Utilities/terminal.app\n\n\n# Type\nssh pi@10.16.80.162\n\n# Enter password\n[your_password]\n\n\n\n2) Change into the homecage directory\n\n\nAt the command prompt, type\n\n\ncd\ncd homecage/cli\n\n\n\n3) Get command help\n\n\nThe commands allow you to start and stop a video stream and video recording. They can also be used to turn the white and IR lights on and off.\n\n\nTo get help, at the command prompt, type \n\n\n./help\n\n\n\nThis returns\n\n\n Status\n    status - check the status\n Video Recording\n    record start\n    record stop\n Video Streaming\n    stream start\n    stream stop\n IR Light\n    light ir on\n    light ir off\n White Light\n    light white on\n    light white off\n Online Manual\n    http://blog.cudmore.io/homecage\n\n\n\n4) Position the cages within a good field-of-view\n\n\nStart a video stream and then view the stream in a web browser.\n\n\nstream start\n\n# Returns\nView the stream at:\n   http://10.16.80.162:8080/stream\n\n\n\nIn any browser, go to the address \nhttp://10.16.80.162:8080/stream\n\n\nWhile positioning cages, turn the white and or IR LEDs on and off\n\n\n# Turn the white lights on\nlight white on\n\n# Turn the white lights off\nlight white off\n\n\n\nWhen your happy with position, stop the video stream\n\n\nstream stop\n\n\n\n5) Start continuous video recording\n\n\nrecord start\n\n\n\nThis will save recorded video into individual files, 5 minutes of video per file. This will also control the light cycle, at night (6 PM - 6 AM) the white light is off and the IR light is on. During the day (6 AM - 6 PM), the white light is on and the IR light is off. Both the duration of each video file at the timing of the light cycle can easily be changed.\n\n\n6) Mount the file server to get your video files\n\n\nOn a Mac, use \nFinder -\n Go -\n Connect To Server...\n and log in as follows\n\n\nafp://10.16.80.162\nusername: pi\npassword: [your_password]\n\n\n\nFiles are saved in the \n/video/\n folder. Video files have the .h264 extension. There are also text files (extension .txt) saved, these have a log of temperature and humidity as well as the time the lights were turned on and off.\n\n\n7) Log out of the Pi\n\n\nexit", 
+            "text": "To be esoteric, we have implemented a pure command line interface to contorl a Raspberry Pi camera. If you want to be obscure then please use this, otherwise just use the \nweb\n interface.\n\n\n1) Log in to the Pi\n\n\nOn a Mac, use the terminal application in /Applications/Utilities/terminal.app\n\n\nOn Windows, use Putty\n\n\nssh pi@[your_ip]\n\n# Enter password when prompted\n\n\n\n\n2) Change into the homecage directory\n\n\nAt the command prompt, type\n\n\ncd\ncd homecage/cli\n\n\n\n3) Get command help\n\n\nThe commands allow you to start and stop a video stream and video recording. They can also be used to turn the white and IR lights on and off.\n\n\nTo get help, at the command prompt, type \n\n\n./help\n\n\n\nThis returns\n\n\n Status\n    status - check the status\n Video Recording\n    record start\n    record stop\n Video Streaming\n    stream start\n    stream stop\n IR Light\n    light ir on\n    light ir off\n White Light\n    light white on\n    light white off\n Online Manual\n    http://blog.cudmore.io/homecage\n\n\n\n4) Position the cages within a good field-of-view\n\n\nStart a video stream and then view the stream in a web browser.\n\n\nstream start\n\n# Returns\nView the stream at:\n   http://10.16.80.162:8080/stream\n\n\n\nIn any browser, go to the address \nhttp://10.16.80.162:8080/stream\n\n\nWhile positioning cages, turn the white and or IR LEDs on and off\n\n\n# Turn the white lights on\nlight white on\n\n# Turn the white lights off\nlight white off\n\n\n\nWhen your happy with position, stop the video stream\n\n\nstream stop\n\n\n\n5) Start continuous video recording\n\n\nrecord start\n\n\n\nThis will save recorded video into individual files, 5 minutes of video per file. This will also control the light cycle, at night (6 PM - 6 AM) the white light is off and the IR light is on. During the day (6 AM - 6 PM), the white light is on and the IR light is off. Both the duration of each video file at the timing of the light cycle can easily be changed.\n\n\n6) Mount the file server to get your video files\n\n\nOn a Mac, use \nFinder -\n Go -\n Connect To Server...\n and log in as follows\n\n\nafp://10.16.80.162\nusername: pi\npassword: [your_password]\n\n\n\nOn windows\n\n\nsmb:\\\\10.16.80.162\n\n\n\nFiles are saved in the \n/video/\n folder. Video files have the .h264 extension. There are also text files (extension .txt) saved, these have a log of temperature and humidity as well as the time the lights were turned on and off.\n\n\n7) Log out of the Pi\n\n\nexit", 
             "title": "Command line interface"
         }, 
         {
             "location": "/command-line/#1-log-in-to-the-pi", 
-            "text": "On a Mac, use the terminal application in /Applications/Utilities/terminal.app  # Type\nssh pi@10.16.80.162\n\n# Enter password\n[your_password]", 
+            "text": "On a Mac, use the terminal application in /Applications/Utilities/terminal.app  On Windows, use Putty  ssh pi@[your_ip]\n\n# Enter password when prompted", 
             "title": "1) Log in to the Pi"
         }, 
         {
@@ -217,13 +187,38 @@
         }, 
         {
             "location": "/command-line/#6-mount-the-file-server-to-get-your-video-files", 
-            "text": "On a Mac, use  Finder -  Go -  Connect To Server...  and log in as follows  afp://10.16.80.162\nusername: pi\npassword: [your_password]  Files are saved in the  /video/  folder. Video files have the .h264 extension. There are also text files (extension .txt) saved, these have a log of temperature and humidity as well as the time the lights were turned on and off.", 
+            "text": "On a Mac, use  Finder -  Go -  Connect To Server...  and log in as follows  afp://10.16.80.162\nusername: pi\npassword: [your_password]  On windows  smb:\\\\10.16.80.162  Files are saved in the  /video/  folder. Video files have the .h264 extension. There are also text files (extension .txt) saved, these have a log of temperature and humidity as well as the time the lights were turned on and off.", 
             "title": "6) Mount the file server to get your video files"
         }, 
         {
             "location": "/command-line/#7-log-out-of-the-pi", 
             "text": "exit", 
             "title": "7) Log out of the Pi"
+        }, 
+        {
+            "location": "/videowall/", 
+            "text": "Videowall is Javascript code and a python web-server to view and control multiple copies of homecage on different Raspberry Pi's! In theory, this allows you to control any number of Raspberry Pi's with their own cameras.\n\n\nInstall\n\n\nSee the main homecage \ninstall\n page.\n\n\nServe\n\n\nOnce homecage is \ninstalled\n.\n\n\ncd ~/homecage/videowall_app/\npython videowall_app.py\n\n\n\nBrowse\n\n\nhttp://[your_pi_ip]:8000\n\n\n\nExample\n\n\nThis example shows controlling one Raspberry Pi. Any number of Raspberry Pi camera systems can be added with the 'Add Server' button.", 
+            "title": "Video wall"
+        }, 
+        {
+            "location": "/videowall/#install", 
+            "text": "See the main homecage  install  page.", 
+            "title": "Install"
+        }, 
+        {
+            "location": "/videowall/#serve", 
+            "text": "Once homecage is  installed .  cd ~/homecage/videowall_app/\npython videowall_app.py", 
+            "title": "Serve"
+        }, 
+        {
+            "location": "/videowall/#browse", 
+            "text": "http://[your_pi_ip]:8000", 
+            "title": "Browse"
+        }, 
+        {
+            "location": "/videowall/#example", 
+            "text": "This example shows controlling one Raspberry Pi. Any number of Raspberry Pi camera systems can be added with the 'Add Server' button.", 
+            "title": "Example"
         }, 
         {
             "location": "/mounting-the-file-server/", 
@@ -464,6 +459,41 @@
             "location": "/dev-notes/#setup", 
             "text": "homecage2 is b8:27:eb:88:33:07  cudmore_pib is b8:27:eb:aa:51:6d", 
             "title": "Setup"
+        }, 
+        {
+            "location": "/open-source/", 
+            "text": "Homecage only exists because of the massive amount of creativity, expertise, and effort that has been put in to creating and maintaining a slew of open-source software projects.\n\n\nServer\n\n\n\n\nDebian\n - Operating system\n\n\nNGINX \n - Web server for load balancing, microservices, and API gateways\n\n\nuwsgi\n - Web standard for NGINX to talk to Python\n\n\n\n\nPython\n (back-end)\n\n\n\n\nFlask\n - Web microframework\n\n\nSciPy\n - Scientific computing ecosystem\n\n\nNumPy\n - Scientific computing for Python\n\n\nPandas\n - Data analysis library\n\n\nMatplotlib\n - Plotting\n\n\nTifffile - General purpose Tiff file library\n\n\nRedis\n - Database\n\n\nCelery\n - Distributed task queue\n\n\n\n\nJavascript\n (front-end)\n\n\n\n\nAngular\n - Superheroic Javascript framework\n\n\nJQuery\n\n\nD3\n - Data driven documents\n\n\nLeaflet\n - Interactive maps\n\n\nPlotly\n - Modern visualization for the data era\n\n\nBootstrap\n - Worlds most popular HTML/CSS/JS Toolkit\n\n\n\n\nContainers\n\n\n\n\nDocker\n - Software containers are the future\n\n\n\n\nDocumentation\n\n\n\n\nJekyll\n - Static site generator (Main \nMap Manager\n documentation)\n\n\nmkDocs\n - Static site generator (This Website)\n\n\nSphinx\n - To create documentation (\nPyMapManager API Documentation\n)\n\n\n\n\nDistribution\n\n\n\n\nGithub\n - Software development platform for online storage/sharing/computation\n\n\nPyPi\n - Python package index for online distribution", 
+            "title": "Open source"
+        }, 
+        {
+            "location": "/open-source/#server", 
+            "text": "Debian  - Operating system  NGINX   - Web server for load balancing, microservices, and API gateways  uwsgi  - Web standard for NGINX to talk to Python", 
+            "title": "Server"
+        }, 
+        {
+            "location": "/open-source/#python-back-end", 
+            "text": "Flask  - Web microframework  SciPy  - Scientific computing ecosystem  NumPy  - Scientific computing for Python  Pandas  - Data analysis library  Matplotlib  - Plotting  Tifffile - General purpose Tiff file library  Redis  - Database  Celery  - Distributed task queue", 
+            "title": "Python (back-end)"
+        }, 
+        {
+            "location": "/open-source/#javascript-front-end", 
+            "text": "Angular  - Superheroic Javascript framework  JQuery  D3  - Data driven documents  Leaflet  - Interactive maps  Plotly  - Modern visualization for the data era  Bootstrap  - Worlds most popular HTML/CSS/JS Toolkit", 
+            "title": "Javascript (front-end)"
+        }, 
+        {
+            "location": "/open-source/#containers", 
+            "text": "Docker  - Software containers are the future", 
+            "title": "Containers"
+        }, 
+        {
+            "location": "/open-source/#documentation", 
+            "text": "Jekyll  - Static site generator (Main  Map Manager  documentation)  mkDocs  - Static site generator (This Website)  Sphinx  - To create documentation ( PyMapManager API Documentation )", 
+            "title": "Documentation"
+        }, 
+        {
+            "location": "/open-source/#distribution", 
+            "text": "Github  - Software development platform for online storage/sharing/computation  PyPi  - Python package index for online distribution", 
+            "title": "Distribution"
         }
     ]
 }

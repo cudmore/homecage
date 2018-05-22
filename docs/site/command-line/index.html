@@ -36,7 +36,7 @@
     
     
       
-        <title>Command line interface - Home cage surveillance</title>
+        <title>Command line interface - Home cage</title>
       
     
     
@@ -98,7 +98,7 @@
   <nav class="md-header-nav md-grid">
     <div class="md-flex">
       <div class="md-flex__cell md-flex__cell--shrink">
-        <a href=".." title="Home cage surveillance" class="md-header-nav__button md-logo">
+        <a href=".." title="Home cage" class="md-header-nav__button md-logo">
           
             <i class="md-icon"></i>
           
@@ -112,7 +112,7 @@
           
             
               <span class="md-header-nav__topic">
-                Home cage surveillance
+                Home cage
               </span>
               <span class="md-header-nav__topic">
                 Command line interface
@@ -199,7 +199,7 @@
         <i class="md-icon"></i>
       
     </span>
-    Home cage surveillance
+    Home cage
   </label>
   
     <div class="md-nav__source">
@@ -232,8 +232,8 @@
 
 
   <li class="md-nav__item">
-    <a href=".." title="Getting started" class="md-nav__link">
-      Getting started
+    <a href=".." title="Home" class="md-nav__link">
+      Home
     </a>
   </li>
 
@@ -270,18 +270,6 @@
   <li class="md-nav__item">
     <a href="../rest-interface/" title="REST interface" class="md-nav__link">
       REST interface
-    </a>
-  </li>
-
-    
-      
-      
-      
-
-
-  <li class="md-nav__item">
-    <a href="../videowall/" title="Video Wall" class="md-nav__link">
-      Video Wall
     </a>
   </li>
 
@@ -380,6 +368,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../videowall/" title="Video wall" class="md-nav__link">
+      Video wall
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
     <a href="../mounting-the-file-server/" title="Mounting the file server" class="md-nav__link">
       Mounting the file server
     </a>
@@ -454,6 +454,18 @@
   <li class="md-nav__item">
     <a href="../dev-notes/" title="Development notes" class="md-nav__link">
       Development notes
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../open-source/" title="Open source" class="md-nav__link">
+      Open source
     </a>
   </li>
 
@@ -546,14 +558,15 @@
                 
                   <h1>Command line interface</h1>
                 
-                <h2 id="1-log-in-to-the-pi">1) Log in to the Pi</h2>
+                <p>To be esoteric, we have implemented a pure command line interface to contorl a Raspberry Pi camera. If you want to be obscure then please use this, otherwise just use the <a href="../web-interface/">web</a> interface.</p>
+<h2 id="1-log-in-to-the-pi">1) Log in to the Pi</h2>
 <p>On a Mac, use the terminal application in /Applications/Utilities/terminal.app</p>
-<pre><code># Type
-ssh pi@10.16.80.162
+<p>On Windows, use Putty</p>
+<pre><code>ssh pi@[your_ip]
 
-# Enter password
-[your_password]
+# Enter password when prompted
 </code></pre>
+
 <h2 id="2-change-into-the-homecage-directory">2) Change into the homecage directory</h2>
 <p>At the command prompt, type</p>
 <pre><code>cd
@@ -611,6 +624,9 @@ light white off
 username: pi
 password: [your_password]
 </code></pre>
+<p>On windows</p>
+<pre><code>smb:\\10.16.80.162
+</code></pre>
 <p>Files are saved in the <code>/video/</code> folder. Video files have the .h264 extension. There are also text files (extension .txt) saved, these have a log of temperature and humidity as well as the time the lights were turned on and off.</p>
 <h2 id="7-log-out-of-the-pi">7) Log out of the Pi</h2>
 <pre><code>exit
@@ -635,7 +651,7 @@ password: [your_password]
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
         
-          <a href="../videowall/" title="Video Wall" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../rest-interface/" title="REST interface" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-flex__cell md-flex__cell--shrink">
               <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
             </div>
@@ -644,19 +660,19 @@ password: [your_password]
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                Video Wall
+                REST interface
               </span>
             </div>
           </a>
         
         
-          <a href="../mounting-the-file-server/" title="Mounting the file server" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../videowall/" title="Video wall" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                Mounting the file server
+                Video wall
               </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink">
