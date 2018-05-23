@@ -69,7 +69,7 @@ This will make a folder `homecage` in your root directory. You can always return
 
 	git clone --depth=1 https://github.com/cudmore/homecage.git
 
-### 3.1) Either install python packages globally
+## 4.1) Either install python packages globally
 
 	# if you don't already have pip installed (see troubleshooting)
 	sudo apt-get install python-pip
@@ -77,7 +77,7 @@ This will make a folder `homecage` in your root directory. You can always return
 	cd ~/homecage/homecage_app
 	pip install -r requirements.txt
 
-### 3.2) Or install in a virtual environment
+## 4.2) Or install in a virtual environment
 
 Make a clean virtual environment that does not depend on current installed Python packages
 
@@ -87,8 +87,11 @@ Make a clean virtual environment that does not depend on current installed Pytho
 	# install virtualenv if necessary (see troubleshooting)
 	pip install virtualenv
 	
+	# if you still can't use virtualenv, then install like this
+	# sudo /usr/bin/easy_install virtualenv
+	
 	# make a folder to hold the virtual environment
-	cd ~/homecage/homecage_app
+	cd
 	mkdir env	
 	
 	# either make a python 2 environment in the folder 'env'
@@ -99,6 +102,7 @@ Make a clean virtual environment that does not depend on current installed Pytho
 
 Activate the environment. Once activated, the command prompt will begin with '(env)'
 
+	cd
 	source env/bin/activate
 
 Check your python version
@@ -127,7 +131,7 @@ Exit virtual environment
 
 	deactivate
 
-## 4) Running homecage_app.py
+## 5) Running homecage_app.py
 
 	cd ~/homecage/homecage_app
 	python homecage_app.py
@@ -137,36 +141,14 @@ Browse to the homecage_app website
 	http://[yourip]:5000
 	
 
-## 5) Install DHT temperature sensor (optional)
 
-If you run into trouble then go to [this tutorial][7]. If you don't do this, homecage should work but you won't be able to read the temperature and humidity.
-    
-    cd
-    mkdir tmp
-    cd tmp
-    git clone https://github.com/adafruit/Adafruit_Python_DHT.git
-    cd Adafruit_Python_DHT
-    sudo python setup.py install
-
-## 6) Start homecage_app at boot (optional)
-
-Edit crontab
-
-    crontab -e
-    
-Add the following line to the end of the file (make sure it is one line)
-
-```
-@reboot (sleep 10; cd /home/pi/homecage/homecage_app && /usr/bin/python /home/pi/homecage/homecage_app/homecage_app.py)
-```
-
-## 7) Done installing !!!
+## 6) Done installing !!!
 
 At this point you can interact with the homecage server through the [web][9] interface.
 
 # Troubleshooting
 
-As of May 21, 2018 pip 10 seems to be broken. Uninstall and then install pip 9
+As of May 2018, pip version 10 seems to be broken. Uninstall and then install pip version 9
 
 	# uninstall pip
 	python -m pip uninstall pip
@@ -189,7 +171,6 @@ If you edit the config.json file it needs the correct sytax. Check the syntax wi
 [3]: https://sourceforge.net/projects/raspberry-gpio-python/
 [4]: https://github.com/adafruit/Adafruit_Python_DHT
 [5]: https://www.linux-projects.org/uv4l/installation/
-[7]: https://learn.adafruit.com/dht-humidity-sensing-on-raspberry-pi-with-gdocs-logging/software-install-updated
 [8]: command-line.md
 [9]: web-interface.md
 [10]: rest-interface.md

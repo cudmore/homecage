@@ -1,7 +1,7 @@
-# Robert Cudore
-# 20171103
-
 '''
+Author: Robert Cudore
+Date: 20171103
+
 To Do:
 	- add watermark on top of video when we receive a frame
 	- write a proper trial class
@@ -11,7 +11,6 @@ from __future__ import print_function    # (at top of module)
 
 import os, time, math, io
 import subprocess
-from subprocess import check_output
 import threading
 from datetime import datetime
 from collections import OrderedDict
@@ -21,6 +20,12 @@ import socket # to get hostname
 import RPi.GPIO as GPIO
 import picamera
 
+import logging
+
+#log = logging.getLogger('homecage_app.home')
+#log.info('testing info log from home.py')
+logger = logging.getLogger('homecage.home')
+
 # load dht temperature/humidity sensor library
 g_dhtLoaded = 0
 try:
@@ -28,7 +33,7 @@ try:
 	g_dhtLoaded = 1
 except:
 	g_dhtLoaded = 0
-	print('ERROR: home.py loading Adafruit_DHT, temperature and humidity will not work')
+	print('WARNING: home.py did not load Adafruit_DHT')
 
 class home:
 	def __init__(self):
@@ -36,6 +41,7 @@ class home:
 
 	def init(self):
 		print('Initializing home.py')
+		logger.debug('start init')
 		
 		# dict to convert polarity string to number, e.g. self.polarity['rising'] yields GPIO.RISING
 		self.polarityDict_ = { 'rising': GPIO.RISING, 'falling': GPIO.FALLING, 'both': GPIO.BOTH}
@@ -143,6 +149,7 @@ class home:
 				print('   Warning: not designed to work on Raspbian before Jessie')
 		
 		print('   Done initializing home.py')
+		logger.debug('finish init')
 		
 	def startTrial(self):
 		# todo: make a trial file to log timing within a trial
@@ -187,8 +194,11 @@ class home:
 			if self.camera:
 				#todo: fix annotation background
 				#todo: make sure we clear annotation background
-				self.camera.annotate_background = picamera.Color('black')
-				self.camera.annotate_text = ' ' + str(self.trial['frameNum']) + ' ' 
+				try:
+					self.camera.annotate_background = picamera.Color('black')
+					self.camera.annotate_text = ' ' + str(self.trial['frameNum']) + ' ' 
+				except PiCameraClosed as e:
+					print(e)
 			print('framePin_Callback()', now, self.trial['frameNum'])
 			
 	def triggerIn_Callback(self, pin):
@@ -268,6 +278,8 @@ class home:
 	def getStatus(self):
 		# return the status of the server, all params
 		# is called at a short interval, ~1 sec
+
+		#logger.info('xxx testing info log from home.py')
 
 		now = datetime.now()
 				
@@ -367,23 +379,45 @@ class home:
 			if onoff:
 				width = self.config['stream']['resolution'].split(',')[0]
 				height = self.config['stream']['resolution'].split(',')[1]
+				'''
 				cmd = './stream start ' \
 					+ width \
 					+ ' ' \
 					+ height
 				print('cmd:', cmd)
-				child = subprocess.Popen(cmd, shell=True)
+				child = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
 				out, err = child.communicate()
-				#print 'out:', out
-				#print 'err:', err
+				print('stream() out:', out)
+				print('stream() err:', err)
+				'''
+				cmd = ["./stream", "start", str(width), str(height)]
+				try:
+					out = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+					self.lastResponse = 'Streaming is on'
+				except subprocess.CalledProcessError as e:
+				    print('e:', e)
+				    print('e.returncode:', e.returncode) # 1 is failure, 0 is sucess
+				    print('e.output:', e.output)
+				    self.lastResponse = e.output
 			else:
+				'''
 				cmd = './stream stop'
 				print('cmd:', cmd)
 				child = subprocess.Popen(cmd, shell=True)
 				out, err = child.communicate()
-				#print 'out:', out
-				#print 'err:', err
-			self.lastResponse = 'Streaming is ' + ('on' if onoff else 'off')
+				print('stream() out:', out)
+				print('stream() err:', err)
+				'''
+				cmd = ["./stream", "stop"]
+				try:
+					out = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+					self.lastResponse = 'Streaming is off'
+				except subprocess.CalledProcessError as e:
+				    print('e:', e)
+				    print('e.returncode:', e.returncode) # 1 is failure, 0 is sucess
+				    print('e.output:', e.output)
+				    self.lastResponse = e.output
+			
 
 	def arm(self, onoff):
 		'''
@@ -496,7 +530,9 @@ class home:
 			stillPath = os.path.dirname(__file__) + '/static/' + 'still.jpg'
 			
 			lastStill = 0
-			while self.isState('recording'):
+			numberOfRepeats = self.config['video']['numberOfRepeats']
+			currentRepeat = 1
+			while self.isState('recording') and currentRepeat <= numberOfRepeats:
 				startNow = time.time()
 				startTime = datetime.now()
 				startTimeStr = startTime.strftime('%Y%m%d_%H%M%S')
@@ -521,8 +557,8 @@ class home:
 						lastStill = time.time()
 						self.trial['lastStillTime'] = datetime.now().strftime('%Y%m%d %H:%M:%S')
 				camera.stop_recording()
+				currentRepeat += 1
 				self.log('video', thisVideoFile, currentFile, False)
-				#self.currentFile = 'None'
 				print('   Stop video file:', thisVideoFile)
 
 				# convert to mp4
@@ -531,6 +567,7 @@ class home:
 					self.lastResponse = 'Converting to mp4'
 					self.convertVideo(thisVideoFile, self.config['video']['fps'])
 					self.lastResponse = ''
+			self.state = 'idle'
 			print('recordVideoThread() out of while')
 
 	def armVideoTread(self):
@@ -543,7 +580,9 @@ class home:
 			#self.camera.annotate_background = picamera.Color('black')
 			lastStill = 0
 			stillPath = os.path.dirname(__file__) + '/static/' + 'still.jpg'
-			while self.isState('armedrecording'):
+			numberOfRepeats = self.config['video']['numberOfRepeats']
+			currentRepeat = 1
+			while self.isState('armedrecording') and currentRepeat<=numberOfRepeats:
 				#try:
 				if 1:
 					#todo: log time when trigger in is received
@@ -586,7 +625,8 @@ class home:
 						
 					print('startVideoArm() received stopOnTrigger OR self.videoStarted==0 OR past fileDuration')
 					self.camera.split_recording(self.circulario)
-				
+					currentRepeat += 1
+					
 					# convert to mp4
 					if self.config['video']['converttomp4']:
 						# before
@@ -604,6 +644,7 @@ class home:
 				#except:
 				#	print('startVideoArm() except clause -->>ERROR')
 			print('startVideoArm() fell out of while(self.state == armed) loop')
+			self.state = 'armed'
 			self.camera.stop_recording()	
 			self.camera.close()
 		time.sleep(0.05)
@@ -649,18 +690,31 @@ class home:
 	def convertVideo(self, videoFilePath, fps):
 		# at end of video recording, convert h264 to mp4
 		# also build a db.txt with videos in a folder
-		print('convertVideo()', videoFilePath, fps)
+		print('=== convertVideo()', videoFilePath, fps)
+		'''
 		cmd = './convert_video.sh ' + videoFilePath + ' ' + str(fps)
 		child = subprocess.Popen(cmd, shell=True)
 		out, err = child.communicate()
-		#print 'out:', out
-		#print 'err:', err
+		print('   convertVideo() out:', out)
+		print('   convertVideo() err:', err)
+		'''
+		
+		cmd = ["./convert_video.sh", videoFilePath, str(fps)]
+		try:
+			out = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+			self.lastResponse = 'Converted video to mp4'
+		except subprocess.CalledProcessError as e:
+			print('e:', e)
+			print('e.returncode:', e.returncode) # 1 is failure, 0 is sucess
+			print('e.output:', e.output)
+			self.lastResponse = e.output
 		
 		# append to dict and save in file
 		dirname = os.path.dirname(videoFilePath) 
 		mp4File = os.path.basename(videoFilePath).split('.')[0] + '.mp4'
 		mp4Path = os.path.join(dirname, mp4File)
-		print('mp4Path:', mp4Path)
+		#print('mp4Path:', mp4Path)
+		#todo: also include .h264 (if we are not converting to .mp4)
 		command = "avprobe -show_format -show_streams -loglevel 'quiet' " + str(mp4Path) + ' -of json'
 		#command = "avprobe -show_format -show_streams " + str(mp4Path) + ' -of json'
 		print(command)
@@ -718,7 +772,7 @@ class home:
 	'''
 	
 	def whatismyip(self):
-		ips = check_output(['hostname', '--all-ip-addresses'])
+		ips = subprocess.check_output(['hostname', '--all-ip-addresses'])
 		ips = ips.decode('utf-8').strip()
 		return ips
 

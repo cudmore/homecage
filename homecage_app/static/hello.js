@@ -217,6 +217,18 @@ angular.module('demo', ['uiSwitch'])
 		return $scope.status.server.state == 'idle'
 	}
 	
+	$scope.simulate = function(cmd) {
+		console.log('simulate()', cmd)
+		$http.get($scope.myUrl + 'simulate/' + cmd).
+        	then(function(response) {
+        	    //$scope.config = response.data;
+        	    //convertConfig()
+        	    //console.log('$scope.config', $scope.config)
+        	}, function errorCallback(response) {
+        		console.log('simulate() error cmd:', cmd)
+        	});
+	}
+	
 	//called once page is loaded
 	//angular.element(function () {
 	//	console.log('page loading completed');

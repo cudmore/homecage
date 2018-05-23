@@ -155,7 +155,7 @@ sudo kill -- -PID
  
 [mkdocs]: http://www.mkdocs.org/
 
-#### 20170520
+#### 20180520
 
 - Added 3rd component to trigger recording from scope, this includes
   
@@ -172,7 +172,12 @@ sudo kill -- -PID
     - Save trial information to a trial .txt file
     - Revamp .log to include trial information
     
- 
+#### 20180520
+
+	- Added checks in bash scripts to exit nicely if uv4l and avconv are not installed
+	- Added script for avprobe (so we can fail niely when not installed)
+	- Added option to record x number of files (set to one when on scope and using triggerIn)
+	
 ### Setup
 
 homecage2 is b8:27:eb:88:33:07

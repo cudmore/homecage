@@ -12,7 +12,8 @@
         "sunrise": 6
     }, 
     "video": {
-        "fileDuration": 5, 
+        "fileDuration": 10, 
+        "numberOfRepeats": 1, 
         "converttomp4": true, 
         "captureStill": true, 
         "savepath": "/home/pi/video", 

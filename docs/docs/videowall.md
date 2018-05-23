@@ -17,7 +17,7 @@ Once homecage is [installed][install].
 
 ## Example
 
-This example shows controlling one Raspberry Pi. Any number of Raspberry Pi camera systems can be added with the 'Add Server' button.
+This example shows controlling three Raspberry Pi computers, each running homecage. Any number of Raspberry Pi camera systems can be added with the 'Add Server' button. The videowall allows each Pi to be independently controlled.
 
 <IMG SRC="../img/videowall.png">
 

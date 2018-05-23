@@ -138,6 +138,29 @@
 			</button>
 		</span>
 		</td>
+		<td>
+			<span ng-if="isState('armed') || isState('armedrecording')">
+			<button type="button" 
+				class="btn btn-info btn-sm" 
+				ng-click="simulate('triggerin')" 
+				ng-disabled="0 && ! allowEditeOptions()">
+				Simulate triggerIn
+			</button>
+			<button type="button" 
+				class="btn btn-info btn-sm" 
+				ng-click="simulate('frame')" 
+				ng-disabled="0 && ! allowEditeOptions()">
+				Simulate frame
+			</button>
+			<button type="button" 
+				class="btn btn-info btn-sm" 
+				ng-click="simulate('stop')" 
+				ng-disabled="0 && ! allowEditeOptions()">
+				Simulate stop
+			</button>
+			</span>
+			
+		</td>
 	</tr>
 	</table>
 
@@ -221,6 +244,15 @@
 		   	/>
 		   	<BR>
 		<!-- </form> -->
+
+		   Number of repeats
+		   <input style="width: 5em" 
+		   	type="number" 
+		   	ng-model="config.video.numberOfRepeats" 
+		   	ng-disabled="! allowEditeOptions()" 
+		   	ng-change="mySubmit('video.numberOfRepeats',config.video.numberOfRepeats)"
+		   	/>
+		   	<BR>
 		
 		<!-- <form ng-submit="mySubmit('video.fps',config.video.fps)"> -->
 		   Frames Per Second
@@ -358,6 +390,7 @@
 		  </tr>
 		</table>
 		</td>
+		
 		
 		<!--
 		<td style="vertical-align:top">

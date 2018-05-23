@@ -8,11 +8,11 @@ theme:
 pages:
     - Home: index.md
     - Install: installing-the-software.md
+    - Install extras: install-extras.md
     - Web interface: web-interface.md
     - REST interface: rest-interface.md
     - Command line interface: command-line.md
     - Video wall: videowall.md
-    - Mounting the file server: mounting-the-file-server.md
     - Wiring the system: wiring-the-system.md
     - Parts list: parts-list.md
     - Troubleshooting: troubleshooting.md

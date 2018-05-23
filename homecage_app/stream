@@ -20,8 +20,9 @@ function streamStart(){
 		exit 1
 	fi
 
-	#h264
-	#sudo service uv4l_raspicam start
+	# check that uv4l is available
+	type uv4l >/dev/null 2>&1 || { >&2 echo "uv4l not installed"; exit 1; }
+
 	uv4l --driver raspicam --auto-video_nr --encoding h264 --width $streamWidth --height $streamHeight --enable-server on
 	#uv4l --verbosity=-1 --driver raspicam --auto-video_nr --encoding h264 --width 1280 --height 720 --enable-server on
 	
@@ -33,6 +34,9 @@ function streamStart(){
 }
 
 function streamStop(){
+	# check that uv4l is available
+	type uv4l >/dev/null 2>&1 || { >&2 echo "uv4l not installed"; exit 1; }
+
 	uv4lPID=`pgrep -f uv4l`
 	if [ -n "$uv4lPID" ]; then
 		echo "stopping video stream ..."

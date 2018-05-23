@@ -18,6 +18,12 @@ mydir=$(dirname $1)
 dstfile=$mydir'/'$filename'.mp4'
 
 #cmd="avconv -i $1 -r $2 -vcodec copy $dstfile"
+
+# check that uv4l is available
+type avconv >/dev/null 2>&1 || { echo >&2 "avconv not installed"; exit 1; }
+
 cmd="avconv -loglevel error -framerate $2 -i $1 -vcodec copy $dstfile"
 echo $cmd
 $cmd
+
+exit 0
