@@ -12,7 +12,7 @@
         "sunrise": 6
     }, 
     "video": {
-        "fileDuration": 10, 
+        "fileDuration": 13, 
         "numberOfRepeats": 1, 
         "converttomp4": true, 
         "captureStill": true, 

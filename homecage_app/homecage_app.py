@@ -11,49 +11,58 @@ from flask_cors import CORS
 
 import logging
 from logging.handlers import RotatingFileHandler
-	
-from home import home
 
-app = Flask('homecage')
+from logging.config import dictConfig
+
+logFormat = "[%(asctime)s] {%(filename)s %(funcName)s:%(lineno)d} %(levelname)s - %(message)s"
+dictConfig({
+    'version': 1,
+    'formatters': {'default': {
+        'format': logFormat,
+    }},
+    'handlers': {'wsgi': {
+        'class': 'logging.StreamHandler',
+        'stream': 'ext://flask.logging.wsgi_errors_stream',
+        'formatter': 'default'
+    }},
+    'root': {
+        'level': 'INFO',
+        'handlers': ['wsgi']
+    }
+})
+
+app = Flask('homecage_app')
 #app = Flask(__name__)
 CORS(app)
 
-# turn off printing web request logs to console
-log = logging.getLogger('werkzeug')
-log.setLevel(logging.ERROR)
+'''
+from flask.logging import default_handler
+app.logger.removeHandler(default_handler)
+'''
 
-logHandler = RotatingFileHandler('log.log', maxBytes=100000) #, backupCount=1)
+maxBytes = 1000000
+logHandler = RotatingFileHandler('log.log', maxBytes=maxBytes, backupCount=1)
 logHandler.setLevel(logging.DEBUG)
-myFormatter = logging.Formatter(
-	"[%(asctime)s] {%(filename)s %(funcName)s:%(lineno)d} %(levelname)s - %(message)s")
+myFormatter = logging.Formatter(logFormat)
 logHandler.setFormatter(myFormatter)
-
-# set the app logger level
-app.logger.setLevel(logging.DEBUG)
-#app.logger.setFormatter(myFormatter) # this does not work
 app.logger.addHandler(logHandler)	
 
-#logger = logging.getLogger(__name__)
-#logger.setLevel(logging.ERROR)
-#logger.addHandler(logHandler)
-
-# this works but I want error to be looged as well
-# figure out how to use app.logger
 '''
-logger = logging.getLogger('homecage')
-logger.setLevel(logging.DEBUG)
-handler = RotatingFileHandler('log.log', maxBytes=20000) #, backupCount=10)
-handler.setFormatter(myFormatter)
-logger.addHandler(handler)
+myStreamHandler = logging.StreamHandler(sys.stdout)
+myStreamHandler.setLevel(logging.DEBUG)
+formatter = logging.Formatter(logFormat)
+myStreamHandler.setFormatter(formatter)
+app.logger.addHandler(logHandler)	
 '''
 
-'''
-strmHandler = logging.StreamHandler(sys.stderr)
-strmHandler.setFormatter(myFormatter)
-logger.addHandler(strmHandler)
-'''
+app.logger.setLevel(logging.DEBUG)
+
+# turn off werkzeug logging
+werkzeugLogger = logging.getLogger('werkzeug')
+werkzeugLogger.setLevel(logging.ERROR)
 
 #
+from home import home
 home = home()
 
 
@@ -261,8 +270,8 @@ def whatismyip():
 
 if __name__ == '__main__':	
 	myip = whatismyip()
-	print('homecage_app.py is running Flask server at:', 'http://' + myip + ':5000')
-	debug = True
+	app.logger.debug('Flask server is running at: ' + 'http://' + str(myip) + ':5000')
+	debug = False
 	app.run(host=myip, port=5000, debug=debug, threaded=True)
 	
 	

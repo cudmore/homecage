@@ -21,11 +21,7 @@ import RPi.GPIO as GPIO
 import picamera
 
 import logging
-
-#log = logging.getLogger('homecage_app.home')
-#log.info('testing info log from home.py')
-#logger = logging.getLogger('homecage.home')
-logger = logging.getLogger('homecage_app')
+logger = logging.getLogger('flask.app')
 
 # load dht temperature/humidity sensor library
 g_dhtLoaded = 0
@@ -34,15 +30,16 @@ try:
 	g_dhtLoaded = 1
 except:
 	g_dhtLoaded = 0
-	print('WARNING: home.py did not load Adafruit_DHT')
-
+	#print('WARNING: home.py did not load Adafruit_DHT')
+	logger.warning('Did not load Adafruit_DHT')
+	
 class home:
 	def __init__(self):
 		self.init()
 
 	def init(self):
-		#print('Initializing home.py')
 		logger.debug('start home.init()')
+		
 		
 		# dict to convert polarity string to number, e.g. self.polarity['rising'] yields GPIO.RISING
 		self.polarityDict_ = { 'rising': GPIO.RISING, 'falling': GPIO.FALLING, 'both': GPIO.BOTH}
@@ -117,13 +114,15 @@ class home:
 		self.lastHumidity = None
 		
 		if g_dhtLoaded and self.config['hardware']['readtemperature']>0:
-			print('   Initialized DHT temperature sensor')
+			#print('   Initialized DHT temperature sensor')
+			logger.debug('Initialized DHT temperature sensor')
 			GPIO.setup(self.config['hardware']['temperatureSensor'], GPIO.IN)
 			myThread = threading.Thread(target = self.tempThread)
 			myThread.daemon = True
 			myThread.start()
 		else:
-			print('   Did not find DHT temperature sensor')
+			#print('   Did not find DHT temperature sensor')
+			logger.debug('Did not find DHT temperature sensor')
 			
 		#
 		# system information
@@ -137,7 +136,8 @@ class home:
 		child = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
 		out, err = child.communicate() # out is something like 'Raspberry Pi 2 Model B Rev 1.1'
 		out = out.decode('utf-8')
-		print('   ', out)
+		#print('   ', out)
+		logger.info(out)
 		self.raspberryModel = out
 		
 		# get the version of Raspian, we want to be running on Jessie or Stretch
@@ -145,16 +145,18 @@ class home:
 		dist = platform.dist() # 8 is jessie, 9 is stretch
 		if len(dist)==3:
 			if float(dist[1]) >= 8:
-				print('   Running on Jessie, Stretch or newer')
+				#print('   Running on Jessie, Stretch or newer')
+				logger.info('Running on Jessie, Stretch or newer')
 			else:
-				print('   Warning: not designed to work on Raspbian before Jessie')
+				#print('   Warning: not designed to work on Raspbian before Jessie')
+				logger.warning('Not designed to work on Raspbian before Jessie')
 		
 		#print('   Done initializing home.py')
-		logger.debug('home.init() finished')
+		logger.debug('finished home.init()')
 		
 	def startTrial(self):
 		# todo: make a trial file to log timing within a trial
-		print('startTrial()')
+		logger.debug('startTrial')
 		startTime = datetime.now()
 		self.trialNum += 1
 		self.trial['startTimeSeconds'] = time.time()		
@@ -177,7 +179,7 @@ class home:
 			
 	def stopTrial(self):
 		# todo: finish up and close trial file
-		print('stopTrial()')
+		logger.debug('stopTrial')
 		self.trial['startTimeSeconds'] = None # critical, using this to see if trial is running
 		self.trial['currentFile'] = 'None'
 
@@ -186,7 +188,6 @@ class home:
 		return True if self.state==thisState else False
 		
 	def frame_Callback(self, pin):
-		print('framePin_Callback')
 		now = time.time()
 		if self.trial['startTimeSeconds'] is not None:
 			#todo: append time relative to self.trial['startTimeSeconds']
@@ -201,11 +202,13 @@ class home:
 					self.camera.annotate_text = ' ' + str(self.trial['frameNum']) + ' ' 
 				except PiCameraClosed as e:
 					print(e)
-			print('framePin_Callback()', now, self.trial['frameNum'])
+			#print('framePin_Callback()', now, self.trial['frameNum'])
+			logger.debug('triggerIn_Callback finished')
 			
 	def triggerIn_Callback(self, pin):
-		print('triggerIn_Callback')
+		#print('triggerIn_Callback')
 		self.startArmVideo()
+		logger.debug("triggerIn_Callback finished self.trial['frameNum']=" + str(self.trial['frameNum']))
 				
 	def log(self, event1, event2, event3, state):
 		# log events to a file
@@ -230,7 +233,8 @@ class home:
 			file.write(oneLine)
 		
 	def setParam(self, param, value):
-		print('setParam()', param, value, 'type:', type(value))
+		#print('setParam()', param, value, 'type:', type(value))
+		logger.debug(param + ' ' + str(value))
 		one, two = param.split('.')
 		if one not in self.config:
 			# error
@@ -241,7 +245,7 @@ class home:
 			print('ERROR: setParam() did not find', two, 'in self.config["', one, '"]')
 			return
 			
-		print('   was:', self.config[one][two], 'type:', type(self.config[one][two]))
+		#print('   was:', self.config[one][two], 'type:', type(self.config[one][two]))
 		theType = type(self.config[one][two])
 		if theType == str:
 			value = str(value)
@@ -258,21 +262,23 @@ class home:
 		
 		self.lastResponse = one + ' ' + two + ' is now ' + str(value)
 		
-		print('   now:', self.config[one][two], 'type:', type(self.config[one][two]))
-		
+		#print('   now:', self.config[one][two], 'type:', type(self.config[one][two]))
+		logger.debug('finished ' + str(self.config[one][two]))
+
 	def loadConfigDefaultsFile(self):
-		print('home.py loadConfigDefaultsFile()')
+		logger.debug('loadConfigDefaultsFile')
 		with open('config_defaults.json') as configFile:
 			self.config = json.load(configFile)
 		self.lastResponse = 'Loaded default options file'
 	
 	def loadConfigFile(self):
+		logger.debug('loadConfigFile')
 		with open('config.json') as configFile:
 			config = json.load(configFile, object_pairs_hook=OrderedDict)
 		return config
 	
 	def saveConfigFile(self):
-		print('home.py saveConfigFile()')
+		logger.debug('saveConfigFile')
 		with open('config.json', 'w') as outfile:
 			json.dump(self.config, outfile, indent=4)
 		self.lastResponse = 'Saved options file'
@@ -325,6 +331,7 @@ class home:
 		return self.config
 		
 	def stop(self):
+		logger.debug('stop')
 		self.record(0)
 		self.stream(0)
 		self.stopArmVideo()
@@ -335,7 +342,8 @@ class home:
 		start and stop video recording
 		'''
 		okGo = self.state in ['idle'] if onoff else self.state in ['recording']
-		print('record() got onoff:', onoff, 'okGo:', okGo)
+		logger.debug('record onoff:' + str(onoff) + ' okGo:' + str(okGo))
+		#print('record() got onoff:', onoff, 'okGo:', okGo)
 		
 		if not okGo:
 			self.lastResponse = 'Recording not allowed while ' + self.state
@@ -372,7 +380,7 @@ class home:
 		start and stop video stream
 		'''
 		okGo = self.state in ['idle'] if onoff else self.state in ['streaming']
-		print('stream() got onoff:', onoff, 'okGo:', okGo)
+		logger.debug('stream onoff:' + str(onoff) + ' okGo:' + str(okGo))
 
 		if not okGo:
 			self.lastResponse = 'Streaming not allowed during ' + self.state
@@ -427,7 +435,7 @@ class home:
 		start and stop arm
 		'''
 		okGo = self.state in ['idle'] if onoff else self.state in ['armed']
-		print('arm() got onoff:', onoff, 'okGo:', okGo)
+		logger.debug('arm onoff:' + str(onoff) + ' okGo:' + str(okGo))
 		if not okGo:
 			self.lastResponse = 'Arming not allowed during ' + self.state
 		else:
@@ -437,7 +445,8 @@ class home:
 				# spawn background task with video loop
 				#try:
 				if 1:
-					print('arm() initializing camera')
+					#print('arm() initializing camera')
+					logger.debug('Initializing camera')
 					self.camera = picamera.PiCamera()
 					width = int(self.config['video']['resolution'].split(',')[0])
 					height = int(self.config['video']['resolution'].split(',')[1])
@@ -446,7 +455,8 @@ class home:
 					self.camera.framerate = self.config['video']['fps']
 					self.camera.start_preview()
 
-					print('startArm() starting circular stream')
+					#print('startArm() starting circular stream')
+					logger.debug('Starting circular stream')
 					self.circulario = picamera.PiCameraCircularIO(self.camera, seconds=self.config['scope']['bufferSeconds'])
 					self.camera.start_recording(self.circulario, format='h264')				
 				#except PiCameraMMALError:
@@ -546,7 +556,8 @@ class home:
 				#self.currentStartSeconds = time.time()
 				thisVideoFile = self.saveVideoPath + currentFile
 	
-				print('   Start video file:', currentFile)
+				#print('   Start video file:', currentFile)
+				logger.debug('Start video file:' + currentFile)
 				self.log('video', thisVideoFile, currentFile, True)
 	
 				camera.start_recording(thisVideoFile)
@@ -562,17 +573,16 @@ class home:
 				camera.stop_recording()
 				currentRepeat += 1
 				self.log('video', thisVideoFile, currentFile, False)
-				print('   Stop video file:', thisVideoFile)
+				logging.debug('recordVideoThread fell out of inner while')
 
 				# convert to mp4
 				if self.config['video']['converttomp4']:
-					print('   Converting to .mp4', thisVideoFile)
 					self.lastResponse = 'Converting to mp4'
 					self.convertVideo(thisVideoFile, self.config['video']['fps'])
 					self.lastResponse = ''
 			self.state = 'idle'
 			self.stopTrial()
-			print('recordVideoThread() out of while')
+			logging.debug('recordVideoThread fell out of outer while')
 
 	def armVideoTread(self):
 		'''
@@ -634,18 +644,17 @@ class home:
 							lastStill = time.time()
 							self.trial['lastStillTime'] = datetime.now().strftime('%Y%m%d %H:%M:%S')
 						
-					print('startVideoArm() received stopOnTrigger OR self.videoStarted==0 OR past fileDuration')
+					#print('startVideoArm() received stopOnTrigger OR self.videoStarted==0 OR past fileDuration')
+					logger.debug('armVideoTread fell out of inner while loop, state:' + self.state)
 					self.camera.split_recording(self.circulario)
 					currentRepeat += 1
 					
 					# convert to mp4
 					if self.config['video']['converttomp4']:
 						# before
-						print('   Converting to .mp4', beforefilepath)
 						self.lastResponse = 'Converting to mp4'
 						self.convertVideo(beforefilepath, self.config['video']['fps'])
 						# after
-						print('   Converting to .mp4', afterfilepath)
 						self.lastResponse = 'Converting to mp4'
 						self.convertVideo(afterfilepath, self.config['video']['fps'])
 
@@ -654,7 +663,8 @@ class home:
 					time.sleep(0.005) # seconds
 				#except:
 				#	print('startVideoArm() except clause -->>ERROR')
-			print('startVideoArm() fell out of while(self.state == armed) loop')
+			#print('startVideoArm() fell out of while(self.state == armed) loop')
+			logger.debug('startVideoArm fell out of outer while loop')
 			self.state = 'armed'
 			self.stopTrial()
 			#self.camera.stop_recording()	
@@ -702,7 +712,7 @@ class home:
 	def convertVideo(self, videoFilePath, fps):
 		# at end of video recording, convert h264 to mp4
 		# also build a db.txt with videos in a folder
-		print('=== convertVideo()', videoFilePath, fps)
+		logger.debug(converting video:' + videoFilePath + ' ' + str(fps))
 		'''
 		cmd = './convert_video.sh ' + videoFilePath + ' ' + str(fps)
 		child = subprocess.Popen(cmd, shell=True)
@@ -729,7 +739,7 @@ class home:
 		#todo: also include .h264 (if we are not converting to .mp4)
 		command = "avprobe -show_format -show_streams -loglevel 'quiet' " + str(mp4Path) + ' -of json'
 		#command = "avprobe -show_format -show_streams " + str(mp4Path) + ' -of json'
-		print(command)
+		#print(command)
 		child = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
 		data, err = child.communicate()
 		data = data.decode('utf-8') # python 3
@@ -758,7 +768,7 @@ class home:
 		# load existing database (list of dict)
 		folder = os.path.dirname(videoFilePath)
 		dbFile = os.path.join(folder,'db.txt')
-		print('dbFile:', dbFile)
+		#print('dbFile:', dbFile)
 		db = []
 		if os.path.isfile(dbFile):
 			db = json.load(open(dbFile))
