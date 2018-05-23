@@ -6,7 +6,7 @@ from subprocess import check_output
 
 #import mimetypes # to send files to ios
 
-from flask import Flask, render_template, send_file, jsonify, abort#, redirect, make_response
+from flask import Flask, render_template, send_file, jsonify, abort, request#, redirect, make_response
 from flask_cors import CORS
 
 import logging
@@ -64,6 +64,23 @@ def getStatus():
 	# Get struct of status from the backend
 	status = home.getStatus()
 	return status
+	
+@app.before_request
+def myBeforeRequest():
+	#print('before_request()')
+	pass
+	
+@app.after_request
+def myAfterRequest(response):
+	#print('after_request()')
+	if request.endpoint is None or request.endpoint in ["status", "lastimage"]:
+		# ignore
+		pass
+	else:
+		#request.endpoint is name of my function (not web address)
+		#print(request.url)
+		app.logger.debug('after ' + request.url)
+	return response
 	
 @app.route('/')
 def hello_world():
