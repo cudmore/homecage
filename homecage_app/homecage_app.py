@@ -14,24 +14,27 @@ from logging.handlers import RotatingFileHandler
 	
 from home import home
 
+print('__name__:', __name__)
+
 #print('__name__:', __name__)
+app = Flask('homecage')
 #app = Flask(__name__)
-app = Flask(__name__)
 CORS(app)
 
 # turn off printing web request logs to console
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
 
-logHandler = RotatingFileHandler('info.log', maxBytes=100000) #, backupCount=1)
+logHandler = RotatingFileHandler('log.log', maxBytes=100000) #, backupCount=1)
 logHandler.setLevel(logging.DEBUG)
 myFormatter = logging.Formatter(
-	"[%(asctime)s] {%(filename)s.%(funcName)s:%(lineno)d} %(levelname)s - %(message)s")
+	"[%(asctime)s] {%(filename)s %(funcName)s:%(lineno)d} %(levelname)s - %(message)s")
 logHandler.setFormatter(myFormatter)
 
 # set the app logger level
-app.logger.setLevel(logging.ERROR)
-#app.logger.addHandler(logHandler)	
+app.logger.setLevel(logging.DEBUG)
+#app.logger.setFormatter(myFormatter) # this does not work
+app.logger.addHandler(logHandler)	
 
 #logger = logging.getLogger(__name__)
 #logger.setLevel(logging.ERROR)
@@ -39,15 +42,19 @@ app.logger.setLevel(logging.ERROR)
 
 # this works but I want error to be looged as well
 # figure out how to use app.logger
+'''
 logger = logging.getLogger('homecage')
 logger.setLevel(logging.DEBUG)
 handler = RotatingFileHandler('log.log', maxBytes=20000) #, backupCount=10)
 handler.setFormatter(myFormatter)
 logger.addHandler(handler)
+'''
 
+'''
 strmHandler = logging.StreamHandler(sys.stderr)
 strmHandler.setFormatter(myFormatter)
 logger.addHandler(strmHandler)
+'''
 
 #
 home = home()
@@ -60,7 +67,7 @@ def getStatus():
 	
 @app.route('/')
 def hello_world():
-	logger.debug('/')
+	app.logger.debug('/')
 	return render_template('index.html')
 
 @app.route('/log')

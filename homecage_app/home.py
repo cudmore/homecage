@@ -24,7 +24,8 @@ import logging
 
 #log = logging.getLogger('homecage_app.home')
 #log.info('testing info log from home.py')
-logger = logging.getLogger('homecage.home')
+#logger = logging.getLogger('homecage.home')
+logger = logging.getLogger('homecage_app')
 
 # load dht temperature/humidity sensor library
 g_dhtLoaded = 0
