@@ -41,8 +41,8 @@ class home:
 		self.init()
 
 	def init(self):
-		print('Initializing home.py')
-		logger.debug('start init')
+		#print('Initializing home.py')
+		logger.debug('start home.init()')
 		
 		# dict to convert polarity string to number, e.g. self.polarity['rising'] yields GPIO.RISING
 		self.polarityDict_ = { 'rising': GPIO.RISING, 'falling': GPIO.FALLING, 'both': GPIO.BOTH}
@@ -149,14 +149,15 @@ class home:
 			else:
 				print('   Warning: not designed to work on Raspbian before Jessie')
 		
-		print('   Done initializing home.py')
-		logger.debug('finish init')
+		#print('   Done initializing home.py')
+		logger.debug('home.init() finished')
 		
 	def startTrial(self):
 		# todo: make a trial file to log timing within a trial
+		print('startTrial()')
 		startTime = datetime.now()
 		self.trialNum += 1
-		self.trial['startTimeSeconds'] = time.time()
+		self.trial['startTimeSeconds'] = time.time()		
 		self.trial['timeStamp'] = datetime.now().strftime('%Y%m%d_%H%M%S')
 		self.trial['trialNum'] = self.trialNum
 		self.trial['epochNum'] = 0 # increment each time we make a new file
@@ -295,7 +296,7 @@ class home:
 		status['lights']['whiteLED'] = self.whiteIsOn
 
 		# update trial (not used by home.py)
-		if self.trial['startTimeSeconds']:
+		if self.trial['startTimeSeconds'] is not None:
 			self.trial['timeRemaining'] = round(self.config['video']['fileDuration'] - (time.time() - self.trial['startTimeSeconds']),2)
 		else:
 			self.trial['timeRemaining'] = None
@@ -342,6 +343,7 @@ class home:
 			self.state = 'recording' if onoff else 'idle'
 			if onoff:
 				# set output path
+				self.startTrial()
 				startTime = datetime.now()
 				startTimeStr = startTime.strftime('%Y%m%d')
 				self.saveVideoPath = os.path.join(self.videoPath, startTimeStr)
@@ -553,7 +555,7 @@ class home:
 					camera.wait_recording(0.3)
 					self.lastResponse = 'Recording file: ' + currentFile
 					if self.config['video']['captureStill'] and time.time() > (lastStill + self.config['video']['stillInterval']):
-						print('   capturing still:', stillPath)
+						#print('   capturing still:', stillPath)
 						camera.capture(stillPath, use_video_port=True)
 						lastStill = time.time()
 						self.trial['lastStillTime'] = datetime.now().strftime('%Y%m%d %H:%M:%S')
@@ -569,6 +571,7 @@ class home:
 					self.convertVideo(thisVideoFile, self.config['video']['fps'])
 					self.lastResponse = ''
 			self.state = 'idle'
+			self.stopTrial()
 			print('recordVideoThread() out of while')
 
 	def armVideoTread(self):
@@ -603,7 +606,11 @@ class home:
 					beforefilepath = os.path.join(self.saveVideoPath, beforefilename)
 					afterfilepath = os.path.join(self.saveVideoPath, afterfilename)
 					# record the frames "after" motion
-					self.camera.split_recording(afterfilepath)
+					try:
+						self.camera.split_recording(afterfilepath)
+					except picamera.exc.PiCameraNotRecording:
+						print('xxx000xxx CAUGHT IT')
+					
 					self.trial['currentFile'] = afterfilename
 					# Write the 10 seconds "before" motion to disk as well
 					self.write_video_(self.circulario, beforefilepath)
@@ -611,15 +618,18 @@ class home:
 					fileDuration = self.config['video']['fileDuration']
 					stopOnTrigger = 0
 					while self.isState('armedrecording') and not stopOnTrigger and (time.time()<(startTime0 + fileDuration)):
+						#todo: i need to clean up logic of start/stop armed recording
 						self.camera.wait_recording(1) # seconds
+						
 						'''
 						#this is for single trigger/frame pin in ScanImage
 						if not useTwoTriggerPins and (time.time() > (self.lastFrameTime + self.lastFrameTimeout)):
 							print 'run() is stopping after last frame timeout'
 							stopOnTrigger = 1
 						'''
+						
 						if self.config['video']['captureStill'] and time.time() > (lastStill + self.config['video']['stillInterval']):
-							print('armVideoTread capturing still:', stillPath)
+							#print('armVideoTread capturing still:', stillPath)
 							self.camera.capture(stillPath, use_video_port=True)
 							lastStill = time.time()
 							self.trial['lastStillTime'] = datetime.now().strftime('%Y%m%d %H:%M:%S')
@@ -646,8 +656,9 @@ class home:
 				#	print('startVideoArm() except clause -->>ERROR')
 			print('startVideoArm() fell out of while(self.state == armed) loop')
 			self.state = 'armed'
-			self.camera.stop_recording()	
-			self.camera.close()
+			self.stopTrial()
+			#self.camera.stop_recording()	
+			#self.camera.close()
 		time.sleep(0.05)
 
 	def tempThread(self):

@@ -14,9 +14,6 @@ from logging.handlers import RotatingFileHandler
 	
 from home import home
 
-print('__name__:', __name__)
-
-#print('__name__:', __name__)
 app = Flask('homecage')
 #app = Flask(__name__)
 CORS(app)
@@ -79,12 +76,12 @@ def myAfterRequest(response):
 	else:
 		#request.endpoint is name of my function (not web address)
 		#print(request.url)
-		app.logger.debug('after ' + request.url)
+		app.logger.debug('after ' + request.url + ' state:' + home.state)
 	return response
 	
 @app.route('/')
 def hello_world():
-	app.logger.debug('/')
+	#app.logger.debug('/')
 	return render_template('index.html')
 
 @app.route('/log')
@@ -121,7 +118,7 @@ def lastimage():
 	
 @app.route('/record/<int:onoff>')
 def record(onoff):
-	print('record() onoff:', onoff)
+	#print('record() onoff:', onoff)
 	home.record(onoff)
 
 	status = getStatus()
@@ -129,14 +126,14 @@ def record(onoff):
 	
 @app.route('/stream/<int:onoff>')
 def stream(onoff):
-	print('stream() onoff:', onoff)
+	#print('stream() onoff:', onoff)
 	home.stream(onoff)
 	status = getStatus()
 	return jsonify(status)
 	
 @app.route('/arm/<int:onoff>')
 def arm(onoff):
-	print('arm() onoff:', onoff)
+	#print('arm() onoff:', onoff)
 	home.arm(onoff)
 	status = getStatus()
 	return jsonify(status)
@@ -159,14 +156,14 @@ def sim_stop():
 	
 @app.route('/irLED/<int:onoff>')
 def irLED(onoff):
-	print('irLED() onoff:', onoff)
+	#print('irLED() onoff:', onoff)
 	home.irLED(True if onoff else False)
 	status = getStatus()
 	return jsonify(status)
 	
 @app.route('/whiteLED/<int:onoff>')
 def whiteLED(onoff):
-	print('whiteLED() onoff:', onoff)
+	#print('whiteLED() onoff:', onoff)
 	home.whiteLED(True if onoff else False)
 	status = getStatus()
 	return jsonify(status)
