@@ -154,24 +154,25 @@ class home:
 		#print('   Done initializing home.py')
 		logger.debug('finished home.init()')
 		
-	def startTrial(self):
+	def startTrial(self, now=time.time()):
+		print('startTrial now:', now)
 		# todo: make a trial file to log timing within a trial
 		logger.debug('startTrial')
-		startTime = datetime.now()
+		timeStr = time.strftime('%Y%m%d_%H%M%S', time.localtime(now))
 		self.trialNum += 1
-		self.trial['startTimeSeconds'] = time.time()		
-		self.trial['timeStamp'] = datetime.now().strftime('%Y%m%d_%H%M%S')
+		self.trial['startTimeSeconds'] = now
+		self.trial['startTimeStr'] = timeStr #datetime.now().strftime('%Y%m%d_%H%M%S')
 		self.trial['trialNum'] = self.trialNum
 		self.trial['epochNum'] = 0 # increment each time we make a new file
 		self.trial['frameNum'] = 0
 		self.trial['lastFrameTime'] = None
-		self.trial['frameTimes'] = []
+		self.trial['frameTimes'] = [] # relative to self.trial['startTimeSeconds']
 		self.trial['currentFile'] = 'None'
 		self.trial['lastStillTime'] = None
 		self.trial['timeRemaining'] = None 
 
-		dateStr = startTime.strftime('%Y%m%d')
-		timeStr = startTime.strftime('%H%M%S')
+		# todo: make trial a class and add its own log file (one per trial)
+		self.log(self, 'startTrial', '', '', 1, now=now)
 		
 	def newEpoch(self):
 		if self.trial['startTimeSeconds']:
@@ -182,6 +183,11 @@ class home:
 		logger.debug('stopTrial')
 		self.trial['startTimeSeconds'] = None # critical, using this to see if trial is running
 		self.trial['currentFile'] = 'None'
+		try:
+			#self.camera.annotate_background = picamera.Color('black')
+			self.camera.annotate_text = ''
+		except PiCameraClosed as e:
+			print(e)
 
 	def isState(self, thisState):
 		''' Return True if self.state == thisState'''
@@ -191,9 +197,11 @@ class home:
 		now = time.time()
 		if self.trial['startTimeSeconds'] is not None:
 			#todo: append time relative to self.trial['startTimeSeconds']
-			self.trial['frameNum'] += 1
-			self.trial['lastFrameTime'] = now
-			self.trial['frameTimes'].append(now)
+			frameNumber = self.trial['frameNum'] + 1
+			frameTime = now - self.trial['startTimeSeconds'] # relative to start
+			self.trial['frameNum'] = frameNumber
+			self.trial['lastFrameTime'] = frameTime
+			self.trial['frameTimes'].append(frameTime)
 			if self.camera:
 				#todo: fix annotation background
 				#todo: make sure we clear annotation background
@@ -202,24 +210,23 @@ class home:
 					self.camera.annotate_text = ' ' + str(self.trial['frameNum']) + ' ' 
 				except PiCameraClosed as e:
 					print(e)
-			#print('framePin_Callback()', now, self.trial['frameNum'])
-			logger.debug('triggerIn_Callback finished')
+			self.log(self, 'newFrame', '', '', frameNumber, now=now)
+			#logger.debug('frame_Callback finished')
 			
 	def triggerIn_Callback(self, pin):
-		#print('triggerIn_Callback')
-		self.startArmVideo()
-		logger.debug("triggerIn_Callback finished self.trial['frameNum']=" + str(self.trial['frameNum']))
+		now = time.time()
+		self.startArmVideo(now=now)
+		#logger.debug("triggerIn_Callback finished trial:" + str(self.trial['frameNum']))
 				
-	def log(self, event1, event2, event3, state):
+	def log(self, event1, event2, event3, state, now=time.time()):
 		# log events to a file
+		print('log now:', now)
 		delimStr = ','
 		eolStr = '\n'
 
-		epochSeconds = time.time()
-		startTime = datetime.now()
-		dateStr = startTime.strftime('%Y%m%d')
-		timeStr = startTime.strftime('%H%M%S')
-		logFile = startTime.strftime('%Y%m%d') + '.txt'
+		dateStr = time.strftime('%Y%m%d', time.localtime(now))
+		timeStr = time.strftime('%H:%M:%S', time.localtime(now))
+		logFile = dateStr + '.txt'
 		logFolder = os.path.join(self.videoPath, dateStr)
 		logPath = os.path.join(logFolder, logFile)
 		if not os.path.isfile(logPath):
@@ -229,7 +236,7 @@ class home:
 				oneLine = 'date' + delimStr + 'time' + delimStr + 'seconds' + delimStr + 'event1' + delimStr + 'event2' + delimStr + 'event3' + delimStr + 'state' + eolStr
 				file.write(oneLine)
 		with open(logPath,'a') as file:
-			oneLine = dateStr + delimStr + timeStr + delimStr + str(epochSeconds) + delimStr + str(event1) + delimStr + str(event2) + delimStr + str(event3) + delimStr + str(state) + eolStr
+			oneLine = dateStr + delimStr + timeStr + delimStr + str(now) + delimStr + str(event1) + delimStr + str(event2) + delimStr + str(event3) + delimStr + str(state) + eolStr
 			file.write(oneLine)
 		
 	def setParam(self, param, value):
@@ -471,12 +478,12 @@ class home:
 					self.camera.close()
 			self.lastResponse = 'Armed is ' + ('on' if onoff else 'off')
 	
-	def startArmVideo(self):
+	def startArmVideo(self, now=time.time()):
 		if not self.isState('armed'):
 			self.lastResponse = 'startArmVideo not allowed during ' + self.state
 		else:
 			self.state = 'armedrecording'
-			self.startTrial()
+			self.startTrial(now=now)
 			# start a background thread
 			thread = threading.Thread(target=self.armVideoTread, args=())
 			thread.daemon = True							# Daemonize thread
@@ -712,7 +719,7 @@ class home:
 	def convertVideo(self, videoFilePath, fps):
 		# at end of video recording, convert h264 to mp4
 		# also build a db.txt with videos in a folder
-		logger.debug(converting video:' + videoFilePath + ' ' + str(fps))
+		logger.debug('converting video:' + videoFilePath + ' fps:' + str(fps))
 		'''
 		cmd = './convert_video.sh ' + videoFilePath + ' ' + str(fps)
 		child = subprocess.Popen(cmd, shell=True)

@@ -271,7 +271,7 @@ def whatismyip():
 if __name__ == '__main__':	
 	myip = whatismyip()
 	app.logger.debug('Flask server is running at: ' + 'http://' + str(myip) + ':5000')
-	debug = False
+	debug = True
 	app.run(host=myip, port=5000, debug=debug, threaded=True)
 	
 	
