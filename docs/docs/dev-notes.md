@@ -1,6 +1,28 @@
 
 ## git
 
+### git dev branch
+
+	# checkout a branch 'dev'
+	git checkout dev
+	
+	# push the branch on github
+	git push origin dev
+	
+	# see all branches
+	git branch
+	
+	# then proceed normally, commit
+	git commit -a -m 'test'
+	
+	# CRITICAL, push to 'dev'
+	git push -u origin dev
+
+	# merge
+	git merge dev
+	
+### git master branch
+
 Set up password
 
 	git config --global credential.helper 'cache --timeout=10000000'
