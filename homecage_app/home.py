@@ -30,16 +30,156 @@ try:
 	g_dhtLoaded = 1
 except:
 	g_dhtLoaded = 0
-	#print('WARNING: home.py did not load Adafruit_DHT')
 	logger.warning('Did not load Adafruit_DHT')
+
+class trial:
+	def __init__(self):
+		self.trialNum = 0
+		
+		self.trial = OrderedDict()
+		self.trial['isRunning'] = False
+		self.trial['startTimeSeconds'] = None
+		self.trial['startTimeStr'] = ''
+		self.trial['dateStr'] = ''
+		self.trial['timeStr'] = ''
+
+		self.trial['trialNum'] = None
+
+		self.trial['lastEpochSeconds'] = None
+
+		self.trial['eventTypes'] = []
+		self.trial['eventValues'] = []
+		self.trial['eventTimes'] = [] # relative to self.trial['startTimeSeconds']
+
+		self.trial['currentFile'] = ''
+		self.trial['lastStillTime'] = None
+		
+	def startTrial(self, now=time.time()):
+		logger.debug('startTrial now:' + str(now))
+		self.trialNum += 1
+		
+		self.trial['isRunning'] = True
+		self.trial['startTimeSeconds'] = now
+		self.trial['startTimeStr'] = time.strftime('%Y%m%d_%H%M%S', time.localtime(now)) 
+		self.trial['dateStr'] = time.strftime('%Y%m%d', time.localtime(now))
+		self.trial['timeStr'] = time.strftime('%H:%M:%S', time.localtime(now))
+
+		self.trial['trialNum'] = self.trialNum
+		
+		self.trial['lastEpochSeconds'] = now
+		
+		self.trial['eventTypes'] = []
+		self.trial['eventValues'] = []
+		self.trial['eventTimes'] = [] # relative to self.trial['startTimeSeconds']
+		
+		self.trial['currentFile'] = 'n/a' # video
+		self.trial['lastStillTime'] = None
+		
+		# trials always start with an epoch
+		#self.newEpoch(now)
+		
+	def stopTrial(self):
+		# todo: finish up and close trial file
+		logger.debug('stopTrial')
+		self.trial['isRunning'] = False
+		self.saveTrial()
+		'''
+		try:
+			#self.camera.annotate_background = picamera.Color('black')
+			self.camera.annotate_text = ''
+		except PiCameraClosed as e:
+			print(e)
+		'''
+		
+	def newEvent(self, type, val, now=time.time()):
+		if self.isRunning:
+			self.trial['eventTypes'].append(type)
+			self.trial['eventValues'].append(val)
+			self.trial['eventTimes'].append(now)
+		
+	def newEpoch(self, now=time.time()):
+		if self.isRunning:
+			self.trial['lastEpochSeconds'] = now
+			self.newEvent('epoch', self.numEpochs + 1, now=now)
+		
+	def saveTrial(self):
+		delim = ','
+		eol = '\n'
+		saveFile = self.trial['startTimeStr'] + '_t' + str(self.trialNum) + '.txt'
+		savePath = os.path.join('/home/pi/video', self.trial['dateStr'])
+		saveFilePath = os.path.join(savePath, saveFile)
+		if not os.path.exists(savePath):
+			os.makedirs(savePath)
+		dateStr = self.trial['dateStr']
+		timeStr = self.trial['timeStr']
+		fakeNow = ''
+		with open(saveFilePath, 'w') as file:
+			# one line header
+			headerLine = 'date=' + self.trial['dateStr'] + ';' \
+							'time=' + self.trial['timeStr'] + ';' \
+							'startTimeSeconds=' + str(self.trial['startTimeSeconds']) + ';' \
+							'trialNum=' + str(self.trial['trialNum']) + ';' \
+							'numEpochs=' + str(self.numEpochs) + eol
+			file.write(headerLine)
+			# column header for event data
+			columnHeader = 'date' + delim + 'time' + delim + 'seconds' + delim + 'event' + delim + 'value' + eol
+			file.write(columnHeader)
+			# one line per frame
+			for idx, eventTime in enumerate(self.trial['eventTimes']):
+				# need ths plus at end of each line here
+				frameLine = self.trial['dateStr'] + delim + \
+							self.trial['timeStr'] + delim + \
+							str(eventTime) + delim + \
+							self.trial['eventTypes'][idx] + delim + \
+							str(self.trial['eventValues'][idx]) + eol
+				file.write(frameLine)
+
+	@property
+	def isRunning(self):
+		return self.trial['isRunning']
+
+	@property
+	def timeElapsed(self):
+		''' time elapsed since startTimeSeconds '''
+		if self.isRunning:
+			return round(time.time() - self.trial['startTimeSeconds'], 2)
+		else:
+			return None
 	
+	@property
+	def epochTimeElapsed(self):
+		if self.isRunning:
+			return round(time.time() - self.trial['lastEpochSeconds'], 2)
+		else:
+			return None
+			
+	@property
+	def numFrames(self):
+		return self.trial['eventTypes'].count('frame')
+	@property
+	def numEpochs(self):
+		return self.trial['eventTypes'].count('epoch')
+		
+	@property
+	def startTimeSeconds(self):
+		return self.trial['startTimeSeconds'] # can be None
+
+class camera:
+	def __init__(self):
+		self.camera = None
+	def annotate(self, str):
+		try:
+			#self.camera.annotate_background = picamera.Color('black')
+			self.camera.annotate_text = ''
+		except PiCameraClosed as e:
+			print(e)
+		
 class home:
 	def __init__(self):
 		self.init()
 
 	def init(self):
 		logger.debug('start home.init()')
-		
 		
 		# dict to convert polarity string to number, e.g. self.polarity['rising'] yields GPIO.RISING
 		self.polarityDict_ = { 'rising': GPIO.RISING, 'falling': GPIO.FALLING, 'both': GPIO.BOTH}
@@ -87,9 +227,12 @@ class home:
 			GPIO.setup(pin, GPIO.OUT)
 
 		#
+		self.trial = trial()
+		'''
 		self.trialNum = 0
 		self.trial = OrderedDict()
 		self.trial['startTimeSeconds'] = None
+		'''
 		
 		#self.currentFile = 'None'
 		#self.currentStartSeconds = float('nan')
@@ -154,6 +297,7 @@ class home:
 		#print('   Done initializing home.py')
 		logger.debug('finished home.init()')
 		
+	'''
 	def startTrial(self, now=time.time()):
 		print('startTrial now:', now)
 		# todo: make a trial file to log timing within a trial
@@ -165,7 +309,6 @@ class home:
 		self.trial['trialNum'] = self.trialNum
 		self.trial['epochNum'] = 0 # increment each time we make a new file
 		self.trial['frameNum'] = 0
-		self.trial['lastFrameTime'] = None
 		self.trial['frameTimes'] = [] # relative to self.trial['startTimeSeconds']
 		self.trial['currentFile'] = 'None'
 		self.trial['lastStillTime'] = None
@@ -173,11 +316,15 @@ class home:
 
 		# todo: make trial a class and add its own log file (one per trial)
 		self.log(self, 'startTrial', '', '', 1, now=now)
+	'''
 		
+	'''
 	def newEpoch(self):
 		if self.trial['startTimeSeconds']:
 			self.trial['epochNum'] += 1
+	'''
 			
+	'''
 	def stopTrial(self):
 		# todo: finish up and close trial file
 		logger.debug('stopTrial')
@@ -188,29 +335,25 @@ class home:
 			self.camera.annotate_text = ''
 		except PiCameraClosed as e:
 			print(e)
-
+	'''
+	
 	def isState(self, thisState):
 		''' Return True if self.state == thisState'''
 		return True if self.state==thisState else False
 		
 	def frame_Callback(self, pin):
 		now = time.time()
-		if self.trial['startTimeSeconds'] is not None:
-			#todo: append time relative to self.trial['startTimeSeconds']
-			frameNumber = self.trial['frameNum'] + 1
-			frameTime = now - self.trial['startTimeSeconds'] # relative to start
-			self.trial['frameNum'] = frameNumber
-			self.trial['lastFrameTime'] = frameTime
-			self.trial['frameTimes'].append(frameTime)
+		if self.trial.isRunning:
+			self.trial.newEvent('frame', self.trial.numFrames + 1, now=now)
 			if self.camera:
 				#todo: fix annotation background
 				#todo: make sure we clear annotation background
 				try:
 					self.camera.annotate_background = picamera.Color('black')
-					self.camera.annotate_text = ' ' + str(self.trial['frameNum']) + ' ' 
+					self.camera.annotate_text = ' ' + str(self.trial.numFrames) + ' ' 
 				except PiCameraClosed as e:
 					print(e)
-			self.log(self, 'newFrame', '', '', frameNumber, now=now)
+			#self.log(self, 'newFrame', '', '', frameNumber, now=now)
 			#logger.debug('frame_Callback finished')
 			
 	def triggerIn_Callback(self, pin):
@@ -308,20 +451,24 @@ class home:
 		status['lights']['irLED'] = self.irIsOn
 		status['lights']['whiteLED'] = self.whiteIsOn
 
-		# update trial (not used by home.py)
-		if self.trial['startTimeSeconds'] is not None:
-			self.trial['timeRemaining'] = round(self.config['video']['fileDuration'] - (time.time() - self.trial['startTimeSeconds']),2)
-		else:
-			self.trial['timeRemaining'] = None
+		status['trial'] = self.trial.trial
 
-		status['trial'] = self.trial
+		# special case
+		if self.trial.isRunning:
+			status['trial']['epochTimeElapsed'] = self.trial.epochTimeElapsed
+		else:
+			status['trial']['epochTimeElapsed'] = None
+
 		
 		# temperature and humidity
 		status['environment'] = OrderedDict()
 		status['environment']['temperature'] = self.lastTemperature
 		status['environment']['humidity'] = self.lastHumidity
 			
+		'''
+		add a web button to refresh this
 		self.drivespaceremaining()
+		'''
 		status['system'] = OrderedDict()
 		status['system']['date'] = now.strftime('%Y-%m-%d')
 		status['system']['time'] = now.strftime('%H:%M:%S')
@@ -342,7 +489,7 @@ class home:
 		self.record(0)
 		self.stream(0)
 		self.stopArmVideo()
-		self.stopTrial()
+		self.trial.stopTrial()
 		
 	def record(self,onoff):
 		'''
@@ -358,7 +505,7 @@ class home:
 			self.state = 'recording' if onoff else 'idle'
 			if onoff:
 				# set output path
-				self.startTrial()
+				self.trial.startTrial()
 				startTime = datetime.now()
 				startTimeStr = startTime.strftime('%Y%m%d')
 				self.saveVideoPath = os.path.join(self.videoPath, startTimeStr)
@@ -371,7 +518,7 @@ class home:
 				thread.daemon = True							# Daemonize thread
 				thread.start()									# Start the execution
 			else:
-				self.stopTrial()
+				self.trial.stopTrial()
 				#self.currentStartSeconds = float('nan')
 				# this is set when the thread actually exits
 				#self.currentFile = 'None'
@@ -393,7 +540,7 @@ class home:
 			self.lastResponse = 'Streaming not allowed during ' + self.state
 		else:
 			self.state = 'streaming' if onoff else 'idle'
-			self.log('streaming', '', '', onoff)
+			#self.log('streaming', '', '', onoff)
 			if onoff:
 				width = self.config['stream']['resolution'].split(',')[0]
 				height = self.config['stream']['resolution'].split(',')[1]
@@ -447,7 +594,7 @@ class home:
 			self.lastResponse = 'Arming not allowed during ' + self.state
 		else:
 			self.state = 'armed' if onoff else 'idle'
-			self.log('arm', '', '', onoff)
+			#self.log('arm', '', '', onoff)
 			if onoff:
 				# spawn background task with video loop
 				#try:
@@ -483,9 +630,9 @@ class home:
 			self.lastResponse = 'startArmVideo not allowed during ' + self.state
 		else:
 			self.state = 'armedrecording'
-			self.startTrial(now=now)
+			self.trial.startTrial(now=now)
 			# start a background thread
-			thread = threading.Thread(target=self.armVideoTread, args=())
+			thread = threading.Thread(target=self.armVideoThread, args=())
 			thread.daemon = True							# Daemonize thread
 			thread.start()									# Start the execution
 			self.lastResponse = 'startArmVideo'
@@ -494,8 +641,8 @@ class home:
 		if not self.isState('armedrecording'):
 			self.lastResponse = 'stopArmVideo not allowed during ' + self.state
 		else:
-			# force armVideoTread() out of while loop
-			self.stopTrial()
+			# force armVideoThread() out of while loop
+			self.trial.stopTrial()
 			self.state = 'armed'
 			#self.currentFile = ''
 			self.lastResponse = 'stopArmVideo'
@@ -509,7 +656,8 @@ class home:
 			changed = self.irIsOn != onoff
 			self.irIsOn = onoff
 			if changed:
-				self.log('lights', 'ir', '', onoff)
+				#self.log('lights', 'ir', '', onoff)
+				self.trial.newEvent('irLED', onoff, now=time.time()) 
 			if not allow:
 				self.lastResponse = 'ir light is ' + ('on' if onoff else 'off')
 
@@ -522,7 +670,8 @@ class home:
 			changed = self.whiteIsOn != onoff
 			self.whiteIsOn = onoff
 			if changed:
-				self.log('lights', 'white', '', onoff)
+				#self.log('lights', 'white', '', onoff)
+				self.trial.newEvent('whiteLED', onoff, now=time.time()) 
 			if not allow:
 				self.lastResponse = 'white light is ' + ('on' if onoff else 'off')
 
@@ -552,34 +701,45 @@ class home:
 			lastStill = 0
 			numberOfRepeats = self.config['video']['numberOfRepeats']
 			currentRepeat = 1
-			while self.isState('recording') and currentRepeat <= numberOfRepeats:
-				startNow = time.time()
+			while self.isState('recording') and currentRepeat<=numberOfRepeats:
+				now = time.time()
 				startTime = datetime.now()
 				startTimeStr = startTime.strftime('%Y%m%d_%H%M%S')
 
 				#the file we are about to record/save
 				currentFile = startTimeStr + '.h264'
-				self.trial['currentFile'] = currentFile
-				#self.currentStartSeconds = time.time()
-				thisVideoFile = self.saveVideoPath + currentFile
+				
+				# todo: fix logic here
+				self.trial.trial['currentFile'] = currentFile
 	
-				#print('   Start video file:', currentFile)
+				# save into date folder
+				dateStr = startTime.strftime('%Y%m%d')
+				self.saveVideoPath = os.path.join(self.videoPath, dateStr)
+				if not os.path.isdir(self.saveVideoPath):
+					print('home.recordVideoThread() is making output directory:', self.saveVideoPath)
+					os.makedirs(self.saveVideoPath)
+
+				thisVideoFile = os.path.join(self.saveVideoPath, currentFile)
+
+				self.trial.newEpoch(now)
+				self.trial.newEvent('recordVideo', thisVideoFile, now=now)
+				
 				logger.debug('Start video file:' + currentFile)
-				self.log('video', thisVideoFile, currentFile, True)
 	
 				camera.start_recording(thisVideoFile)
-				while self.isState('recording') and (time.time() < (startNow + self.config['video']['fileDuration'])):
+				while self.isState('recording') and (time.time() < (now + self.config['video']['fileDuration'])):
 					self.controlLights()
 					camera.wait_recording(0.3)
 					self.lastResponse = 'Recording file: ' + currentFile
 					if self.config['video']['captureStill'] and time.time() > (lastStill + self.config['video']['stillInterval']):
-						#print('   capturing still:', stillPath)
 						camera.capture(stillPath, use_video_port=True)
 						lastStill = time.time()
+						'''
 						self.trial['lastStillTime'] = datetime.now().strftime('%Y%m%d %H:%M:%S')
+						'''
 				camera.stop_recording()
 				currentRepeat += 1
-				self.log('video', thisVideoFile, currentFile, False)
+				#self.log('video', thisVideoFile, currentFile, False)
 				logging.debug('recordVideoThread fell out of inner while')
 
 				# convert to mp4
@@ -587,11 +747,13 @@ class home:
 					self.lastResponse = 'Converting to mp4'
 					self.convertVideo(thisVideoFile, self.config['video']['fps'])
 					self.lastResponse = ''
+				self.drivespaceremaining()
+			print('yyy', currentRepeat,numberOfRepeats, self.state)
 			self.state = 'idle'
-			self.stopTrial()
+			self.trial.stopTrial()
 			logging.debug('recordVideoThread fell out of outer while')
 
-	def armVideoTread(self):
+	def armVideoThread(self):
 		'''
 		Start recording from circular stream in response to trigger.
 		This will record until (i) fileDuration or (ii) stop trigger
@@ -604,76 +766,81 @@ class home:
 			numberOfRepeats = self.config['video']['numberOfRepeats']
 			currentRepeat = 1
 			while self.isState('armedrecording') and currentRepeat<=numberOfRepeats:
-				#try:
-				if 1:
-					#todo: log time when trigger in is received
-					startTime0 = time.time()
-					startTime = datetime.now()
-					startTimeStr = startTime.strftime('%Y%m%d_%H%M%S')
-					beforefilename = startTimeStr + '_before' + '.h264'
-					afterfilename = startTimeStr + '_after' + '.h264'
+				#todo: log time when trigger in is received
+				now = time.time()
+				startTime = datetime.now()
+				startTimeStr = startTime.strftime('%Y%m%d_%H%M%S')
+				beforefilename = startTimeStr + '_before' + '.h264'
+				afterfilename = startTimeStr + '_after' + '.h264'
 
-					# save into date folder
-					startTimeStr = startTime.strftime('%Y%m%d')
-					self.saveVideoPath = os.path.join(self.videoPath, startTimeStr)
-					if not os.path.isdir(self.saveVideoPath):
-						print('home.armVideoTread() is making output directory:', self.saveVideoPath)
-						os.makedirs(self.saveVideoPath)
+				# save into date folder
+				startTimeStr = startTime.strftime('%Y%m%d')
+				self.saveVideoPath = os.path.join(self.videoPath, startTimeStr)
+				if not os.path.isdir(self.saveVideoPath):
+					print('home.armVideoThread() is making output directory:', self.saveVideoPath)
+					os.makedirs(self.saveVideoPath)
 
-					beforefilepath = os.path.join(self.saveVideoPath, beforefilename)
-					afterfilepath = os.path.join(self.saveVideoPath, afterfilename)
-					# record the frames "after" motion
-					try:
-						self.camera.split_recording(afterfilepath)
-					except picamera.exc.PiCameraNotRecording:
-						print('xxx000xxx CAUGHT IT')
+				beforefilepath = os.path.join(self.saveVideoPath, beforefilename)
+				afterfilepath = os.path.join(self.saveVideoPath, afterfilename)
+				# record the frames "after" motion
+				try:
+					self.camera.split_recording(afterfilepath)
+				except picamera.exc.PiCameraNotRecording:
+					print('xxx000xxx CAUGHT IT')
+				
+				# todo: fix logic here
+				self.trial.trial['currentFile'] = afterfilename
+
+				self.trial.newEpoch(now)
+				self.trial.newEvent('recordArmVideo', afterfilepath, now=now)
+
+				# Write the 10 seconds "before" motion to disk as well
+				self.write_video_(self.circulario, beforefilepath)
+
+				fileDuration = self.config['video']['fileDuration']
+				stopOnTrigger = 0
+				while self.isState('armedrecording') and not stopOnTrigger and (time.time()<(now + fileDuration)):
+					#todo: i need to clean up logic of start/stop armed recording
+					self.camera.wait_recording(1) # seconds
 					
-					self.trial['currentFile'] = afterfilename
-					# Write the 10 seconds "before" motion to disk as well
-					self.write_video_(self.circulario, beforefilepath)
-	
-					fileDuration = self.config['video']['fileDuration']
-					stopOnTrigger = 0
-					while self.isState('armedrecording') and not stopOnTrigger and (time.time()<(startTime0 + fileDuration)):
-						#todo: i need to clean up logic of start/stop armed recording
-						self.camera.wait_recording(1) # seconds
-						
-						'''
-						#this is for single trigger/frame pin in ScanImage
-						if not useTwoTriggerPins and (time.time() > (self.lastFrameTime + self.lastFrameTimeout)):
-							print 'run() is stopping after last frame timeout'
-							stopOnTrigger = 1
-						'''
-						
-						if self.config['video']['captureStill'] and time.time() > (lastStill + self.config['video']['stillInterval']):
-							#print('armVideoTread capturing still:', stillPath)
-							self.camera.capture(stillPath, use_video_port=True)
-							lastStill = time.time()
-							self.trial['lastStillTime'] = datetime.now().strftime('%Y%m%d %H:%M:%S')
-						
-					#print('startVideoArm() received stopOnTrigger OR self.videoStarted==0 OR past fileDuration')
-					logger.debug('armVideoTread fell out of inner while loop, state:' + self.state)
-					self.camera.split_recording(self.circulario)
-					currentRepeat += 1
+					'''
+					#this is for single trigger/frame pin in ScanImage
+					if not useTwoTriggerPins and (time.time() > (self.lastFrameTime + self.lastFrameTimeout)):
+						print 'run() is stopping after last frame timeout'
+						stopOnTrigger = 1
+					'''
 					
-					# convert to mp4
-					if self.config['video']['converttomp4']:
-						# before
-						self.lastResponse = 'Converting to mp4'
-						self.convertVideo(beforefilepath, self.config['video']['fps'])
-						# after
-						self.lastResponse = 'Converting to mp4'
-						self.convertVideo(afterfilepath, self.config['video']['fps'])
+					if self.config['video']['captureStill'] and time.time() > (lastStill + self.config['video']['stillInterval']):
+						#print('armVideoThread capturing still:', stillPath)
+						self.camera.capture(stillPath, use_video_port=True)
+						lastStill = time.time()
+						'''
+						self.trial['lastStillTime'] = datetime.now().strftime('%Y%m%d %H:%M:%S')
+						'''
+						
+				#print('startVideoArm() received stopOnTrigger OR self.videoStarted==0 OR past fileDuration')
+				logger.debug('armVideoThread fell out of inner while loop, state:' + self.state)
+				self.camera.split_recording(self.circulario)
+				currentRepeat += 1
+				
+				# convert to mp4
+				if self.config['video']['converttomp4']:
+					# before
+					self.lastResponse = 'Converting to mp4'
+					self.convertVideo(beforefilepath, self.config['video']['fps'])
+					# after
+					self.lastResponse = 'Converting to mp4'
+					self.convertVideo(afterfilepath, self.config['video']['fps'])
 
-						self.lastResponse = ''
-										
-					time.sleep(0.005) # seconds
-				#except:
-				#	print('startVideoArm() except clause -->>ERROR')
-			#print('startVideoArm() fell out of while(self.state == armed) loop')
+					self.lastResponse = ''
+
+				self.drivespaceremaining()
+									
+				time.sleep(0.005) # seconds
+			print('yyy', currentRepeat,numberOfRepeats, self.state)
 			logger.debug('startVideoArm fell out of outer while loop')
 			self.state = 'armed'
-			self.stopTrial()
+			self.trial.stopTrial()
 			#self.camera.stop_recording()	
 			#self.camera.close()
 		time.sleep(0.05)
@@ -698,7 +865,7 @@ class home:
 						print('readTemperature() exception reading temperature/humidity')
 			time.sleep(0.5)
 	
-	#called from armVideoTread()
+	#called from armVideoThread()
 	def write_video_(self, stream, beforeFilePath):
 		# Write the entire content of the circular buffer to disk. No need to
 		# lock the stream here as we're definitely not writing to it simultaneously
