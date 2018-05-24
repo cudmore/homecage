@@ -12,7 +12,7 @@
 	# see all branches
 	git branch
 	
-	# then proceed normally, commit
+	# commit ('dev' is implicit)
 	git commit -a -m 'test'
 	
 	# CRITICAL, push to 'dev'
