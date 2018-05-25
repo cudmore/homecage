@@ -18,7 +18,8 @@
 	# CRITICAL, push to 'dev'
 	git push -u origin dev
 
-	# merge
+	# merge (go into master and fast-forward merge dev)
+	git checkout master
 	git merge dev
 	
 ### git master branch
