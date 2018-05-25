@@ -1,0 +1,4 @@
+git checkout dev
+git commit -a -m 'test'
+git push -u origin dev
+
