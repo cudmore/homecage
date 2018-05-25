@@ -132,6 +132,7 @@ class home:
 		now = time.time()
 		if self.trial.isRunning:
 			self.trial.newEvent('frame', self.trial.numFrames + 1, now=now)
+			#todo: call self.camera.annotate()
 			if self.camera:
 				#todo: fix annotation background
 				#todo: make sure we clear annotation background

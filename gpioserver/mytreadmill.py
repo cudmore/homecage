@@ -4,6 +4,7 @@ from gpioserver import gpioserver
 
 class mytreadmill(gpioserver):
 	def triggerIn_Callback(self, pin, index, name):
+		print 'mytreadmill.triggerIn_Callback()', pin, index, name
 		super(mytreadmill, self).triggerIn_Callback(pin, index, name)
 
 	def led(self, num, on):

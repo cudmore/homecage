@@ -6,10 +6,12 @@ import subprocess
 
 from flask import Flask, jsonify
 
-from gpioserver import gpioserver
+#from gpioserver import gpioserver
+from mytreadmill import mytreadmill
 
 global myserver
-myserver = gpioserver()
+#myserver = gpioserver()
+myserver = mytreadmill()
 
 app = Flask(__name__)
 
