@@ -6,9 +6,6 @@
 	# checkout a branch 'dev'
 	git checkout dev
 	
-	# push the branch on github
-	git push origin dev
-	
 	# see all branches
 	git branch
 	
