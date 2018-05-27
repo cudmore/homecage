@@ -6,11 +6,11 @@ from subprocess import check_output
 
 #import mimetypes # to send files to ios
 
-from flask import Flask, render_template, send_file, jsonify, abort, request#, redirect, make_response
+from flask import Flask, render_template, send_file, jsonify, abort, request, Response #, redirect, make_response
 from flask_cors import CORS
 
 import logging
-from logging.handlers import RotatingFileHandler
+from logging import FileHandler #RotatingFileHandler
 
 from logging.config import dictConfig
 
@@ -35,25 +35,11 @@ app = Flask('homecage_app')
 #app = Flask(__name__)
 CORS(app)
 
-'''
-from flask.logging import default_handler
-app.logger.removeHandler(default_handler)
-'''
-
-maxBytes = 1000000
-logHandler = RotatingFileHandler('log.log', maxBytes=maxBytes, backupCount=1)
+logHandler = FileHandler('log.log', mode='w')
 logHandler.setLevel(logging.DEBUG)
 myFormatter = logging.Formatter(logFormat)
 logHandler.setFormatter(myFormatter)
 app.logger.addHandler(logHandler)	
-
-'''
-myStreamHandler = logging.StreamHandler(sys.stdout)
-myStreamHandler.setLevel(logging.DEBUG)
-formatter = logging.Formatter(logFormat)
-myStreamHandler.setFormatter(formatter)
-app.logger.addHandler(logHandler)	
-'''
 
 app.logger.setLevel(logging.DEBUG)
 
@@ -79,15 +65,20 @@ def myBeforeRequest():
 @app.after_request
 def myAfterRequest(response):
 	#print('after_request()')
-	if request.endpoint is None or request.endpoint in ["status", "lastimage"]:
+	if request.endpoint is None or request.endpoint in ["status", "lastimage", "log"]:
 		# ignore
 		pass
 	else:
 		#request.endpoint is name of my function (not web address)
 		#print(request.url)
-		app.logger.debug('after ' + request.url + ' state:' + home.state)
+		app.logger.debug('after ' + request.path + ' state:' + home.state)
 	return response
-	
+
+@app.errorhandler(404)
+def page_not_found(e):
+	#return render_template('404.html'), 404
+	return 'Error 404: File not found. This happens when you manually delete video files.'
+		
 @app.route('/')
 def hello_world():
 	#app.logger.debug('/')
@@ -95,27 +86,22 @@ def hello_world():
 
 @app.route('/log')
 def log():
-	return send_file('info.log')
-	
-@app.errorhandler(404)
-def page_not_found(e):
-	#return render_template('404.html'), 404
-	return 'Error 404: File not found. This happens when you manually delete video files.'
-	
-# help
+	with open('log.log', 'r') as f:
+		return Response(f.read(), mimetype='text/plain')
+		
 @app.route('/help')
 def dispHelp():
 	return render_template('help.html')
 
-# state of server, queried about every second
 @app.route('/status')
 def status():	
+	# state of server, queried about every second
 	theStatus = getStatus()
 	return jsonify(theStatus)
 	
-# params that can be set by the user
 @app.route('/config')
 def config():
+	# params that can be set by the user
 	#print 'app.route config()'
 	status = home.getConfig()
 	return jsonify(status)
@@ -127,7 +113,7 @@ def lastimage():
 	
 @app.route('/record/<int:onoff>')
 def record(onoff):
-	#print('record() onoff:', onoff)
+	#turn recording on/off
 	home.record(onoff)
 
 	status = getStatus()
@@ -135,14 +121,14 @@ def record(onoff):
 	
 @app.route('/stream/<int:onoff>')
 def stream(onoff):
-	#print('stream() onoff:', onoff)
+	#turn streaming on/off
 	home.stream(onoff)
 	status = getStatus()
 	return jsonify(status)
 	
 @app.route('/arm/<int:onoff>')
 def arm(onoff):
-	#print('arm() onoff:', onoff)
+	#turn arm on/off (when armed will start video on GPIO triggerIn
 	home.arm(onoff)
 	status = getStatus()
 	return jsonify(status)
@@ -154,7 +140,8 @@ def sim_triggerin():
 	
 @app.route('/simulate/frame')
 def sim_frame():
-	home.frame_Callback(1)
+	#home.frame_Callback(1)
+	home.eventIn_Callback('frame')
 	return jsonify(getStatus())
 
 @app.route('/simulate/stop')
@@ -162,7 +149,13 @@ def sim_stop():
 	home.stop()
 	return jsonify(getStatus())
 	
+@app.route('/api/eventout/<name>/<int:onoff>')
+def eventOut(name, onoff):
+	''' turn named output pin on/off '''
+	home.eventOut(name, True if onoff else False)
+	return jsonify(getStatus())
 	
+'''
 @app.route('/irLED/<int:onoff>')
 def irLED(onoff):
 	#print('irLED() onoff:', onoff)
@@ -176,10 +169,10 @@ def whiteLED(onoff):
 	home.whiteLED(True if onoff else False)
 	status = getStatus()
 	return jsonify(status)
+'''
 
 @app.route('/set/<paramName>/<value>')
 def setParam(paramName, value):
-	#print 'app.route setParam():', paramName, value
 	home.setParam(paramName, value)
 	config = home.getConfig()
 	return jsonify(config)
@@ -200,13 +193,12 @@ def loadConfig():
 @app.route('/videolist')
 @app.route('/videolist/<path:req_path>')
 def videolist(req_path=''):
-	print('=== videolist() req_path:', req_path)
+	# serve a list of video files
 	BASE_DIR = home.videoPath + '/' #'/home/pi/video'
 	
 	#req_path = req_path.replace('home/pi/video/', '')
 	tmpStr = BASE_DIR[1:]
 	req_path = req_path.replace(tmpStr, '')
-	#print '   videolist() req_path:', req_path
 	
 	abs_path = os.path.join(BASE_DIR, req_path)
 
@@ -251,7 +243,6 @@ def videolist(req_path=''):
 	# sort the list
 	files = sorted(files, key=lambda k: k['file']) 
 
-	print('videolist() is serving videolist.html with abs_path:', abs_path)
 	return render_template('videolist.html', files=files, abs_path=abs_path)
 
 '''

@@ -21,7 +21,8 @@ class bTrial:
 
 		self.trial['trialNum'] = None
 
-		self.trial['lastEpochSeconds'] = None
+		self.trial['currentEpoch'] = None
+		self.trial['lastEpochSeconds'] = None # start time of epoch
 
 		self.trial['eventTypes'] = []
 		self.trial['eventValues'] = []
@@ -42,6 +43,7 @@ class bTrial:
 
 		self.trial['trialNum'] = self.trialNum
 		
+		self.trial['currentEpoch'] = 0
 		self.trial['lastEpochSeconds'] = now
 		
 		self.trial['eventTypes'] = []
@@ -56,16 +58,17 @@ class bTrial:
 		
 	def stopTrial(self):
 		# todo: finish up and close trial file
-		logger.debug('stopTrial')
-		self.trial['isRunning'] = False
-		self.saveTrial()
-		'''
-		try:
-			#self.camera.annotate_background = picamera.Color('black')
-			self.camera.annotate_text = ''
-		except PiCameraClosed as e:
-			print(e)
-		'''
+		if self.isRunning:
+			logger.debug('stopTrial')
+			self.trial['isRunning'] = False
+			self.saveTrial()
+			'''
+			try:
+				#self.camera.annotate_background = picamera.Color('black')
+				self.camera.annotate_text = ''
+			except PiCameraClosed as e:
+				print(e)
+			'''
 		
 	def newEvent(self, type, val, now=time.time()):
 		if self.isRunning:
@@ -75,8 +78,9 @@ class bTrial:
 		
 	def newEpoch(self, now=time.time()):
 		if self.isRunning:
+			self.trial['currentEpoch'] += 1
 			self.trial['lastEpochSeconds'] = now
-			self.newEvent('epoch', self.numEpochs + 1, now=now)
+			self.newEvent('epoch', self.currentEpoch, now=now)
 		
 	def saveTrial(self):
 		delim = ','
@@ -95,7 +99,7 @@ class bTrial:
 							'time=' + self.trial['timeStr'] + ';' \
 							'startTimeSeconds=' + str(self.trial['startTimeSeconds']) + ';' \
 							'trialNum=' + str(self.trial['trialNum']) + ';' \
-							'numEpochs=' + str(self.numEpochs) + eol
+							'numEpochs=' + str(self.trial['currentEpoch']) + eol
 			file.write(headerLine)
 			# column header for event data
 			columnHeader = 'date' + delim + 'time' + delim + 'seconds' + delim + 'event' + delim + 'value' + eol
@@ -132,9 +136,11 @@ class bTrial:
 	@property
 	def numFrames(self):
 		return self.trial['eventTypes'].count('frame')
+
 	@property
-	def numEpochs(self):
-		return self.trial['eventTypes'].count('epoch')
+	def currentEpoch(self):
+		#return self.trial['eventTypes'].count('epoch')
+		return self.trial['currentEpoch']
 		
 	@property
 	def startTimeSeconds(self):

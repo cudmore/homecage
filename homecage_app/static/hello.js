@@ -59,8 +59,8 @@ angular.module('demo', ['uiSwitch'])
 	function convertConfig() {
 	    //calculate web page iframe for stream
 	    // scope.config.stream.resolution is a string like "1024,768"
-		var tmpWidth = parseInt($scope.config.stream.resolution.split(',')[0],10)
-		var tmpHeight = parseInt($scope.config.stream.resolution.split(',')[1],10)
+		var tmpWidth = parseInt($scope.config.video.streamResolution.split(',')[0],10)
+		var tmpHeight = parseInt($scope.config.video.streamResolution.split(',')[1],10)
 		$scope.streamWidth = tmpWidth + (tmpWidth * 0.03)
 		$scope.streamHeight = tmpHeight + (tmpWidth * 0.03)
 	}
@@ -135,6 +135,19 @@ angular.module('demo', ['uiSwitch'])
 		}
 	}
 
+	// set the state of an event out (usually led, lick port, motor, etc)
+	$scope.eventOutChange = function (name) {
+		var isOn = $scope.status.server.eventOut[name] ? 1 : 0
+		console.log('eventOutChange:', $scope.status.eventOut)
+		url = $scope.myUrl + 'api/eventout/' + name + '/' + isOn
+		console.log(url)
+		$http.get(url).
+        	then(function(response) {
+        	    //$scope.status = response.data;
+        	});
+	}
+
+	/*
 	$scope.iron = function (isOn) {
 		console.log("iron");
 		$http.get($scope.myUrl + 'irLED/' + isOn).
@@ -159,7 +172,7 @@ angular.module('demo', ['uiSwitch'])
         	    //$scope.status = response.data;
         	});
 	}
-	
+		
 	$scope.irChange = function () {
 		var isOn = $scope.status.lights.irLED ? 1 : 0;
 		//console.log(isOn);
@@ -168,6 +181,7 @@ angular.module('demo', ['uiSwitch'])
         	    //$scope.status = response.data;
         	});
 	}
+	*/
 
 	/*
 	$scope.setConfig = function (param) {
@@ -210,11 +224,19 @@ angular.module('demo', ['uiSwitch'])
 	}
 	
 	$scope.isState = function(thisState) {
-		return $scope.status.server.state == thisState
+		if ($scope.status) {
+			return $scope.status.server.state == thisState
+		} else {
+			return false
+		}
 	}
 	
 	$scope.allowEditeOptions = function() {
-		return $scope.status.server.state == 'idle'
+		if ($scope.status) {
+			return $scope.status.server.state == 'idle'
+		} else {
+			return false
+		}
 	}
 	
 	$scope.simulate = function(cmd) {

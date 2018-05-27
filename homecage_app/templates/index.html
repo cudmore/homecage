@@ -56,8 +56,8 @@
 		IR
 		<switch id="enabled" 
 			name="enabled" 
-			ng-model="status.lights.irLED" 
-			ng-change="irChange" 
+			ng-model="status.server.eventOut.irLED" 
+			ng-change="eventOutChange('irLED')" 
 			disabled="config.lights.auto && isState('recording')" 
 			on="On" 
 			off="Off" 
@@ -68,8 +68,8 @@
 		White
 		<switch id="enabled" 
 			name="enabled" 
-			ng-model="status.lights.whiteLED" 
-			ng-change="whiteChange" 
+			ng-model="status.server.eventOut.whiteLED" 
+			ng-change="eventOutChange('whiteLED')" 
 			disabled="config.lights.auto && isState('recording')" 
 			on="On" off="Off" class="green">
 		</switch>
@@ -91,12 +91,16 @@
 			<button type="button" class="btn btn-danger btn-sm" ng-click="startstoprecord(0)">
 			<i class="fa fa-stop fa-1x" aria-hidden="true"></i> Stop
 			</button>
-
 		</span>
 		</td>
 		<td>
-		<span ng-show="1 || isState('recording')">File: {{status.trial.currentFile}}</span><BR>
-		<span ng-show="1 || isState('recording')">Repeat Time Elapsed (sec): {{status.trial.epochTimeElapsed}}</span>
+		<span ng-show="isState('recording') || isState('armedrecording')">
+			File: {{status.server.currentFile}}
+		</span>
+		<BR>
+		<span ng-show="isState('recording') || isState('armedrecording')">
+			Repeat {{status.server.currentEpoch}} elapsed (sec): {{status.server.epochElapsedSec}}
+		</span>
 		</td>
 	</tr>
 
@@ -189,7 +193,6 @@
 			<span class="mysmall">Recording file: {{status.trial.currentFile}}</span>
 			<span class="mysmall">Time Remaining (sec): {{status.timeRemaining}}</span>
 			-->
-			<BR>
 			<span ng-if="showStill==0">
 				<button ng-click="toggleStill()" class="btn btn-default btn-sm"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
 			</span>
@@ -245,6 +248,14 @@
 		   	<BR>
 		<!-- </form> -->
 
+		<input type="checkbox" 
+			ng-model="config.video.recordInfinity" 
+			ng-change="mySubmit('video.recordInfinity',config.video.recordInfinity)" 
+		   	ng-disabled="! allowEditeOptions()" 
+			/>		
+		Record indefinitely
+		<BR>
+
 		   Number of repeats
 		   <input style="width: 5em" 
 		   	type="number" 
@@ -253,7 +264,8 @@
 		   	ng-change="mySubmit('video.numberOfRepeats',config.video.numberOfRepeats)"
 		   	/>
 		   	<BR>
-		
+
+				
 		<!-- <form ng-submit="mySubmit('video.fps',config.video.fps)"> -->
 		   Frames Per Second
 		   <input style="width: 3em" 
@@ -341,9 +353,9 @@
 		<div class="indent2">
 		Stream Size  
 		<select name="" 
-			ng-init="config.stream.resolution" 
-			ng-model="config.stream.resolution" 
-			ng-Change="mySubmit('stream.resolution',config.stream.resolution)" 
+			ng-init="config.video.streamResolution" 
+			ng-model="config.video.streamResolution" 
+			ng-Change="mySubmit('video.streamResolution',config.video.streamResolution)" 
 		   	ng-disabled="! allowEditeOptions()" 
 			>
 		  <option value="640,480">640 x 480</option>

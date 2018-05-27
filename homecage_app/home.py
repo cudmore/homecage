@@ -2,14 +2,14 @@
 Author: Robert Cudore
 Date: 20171103
 
-To Do:
+To Do:frameIn
 	- add watermark on top of video when we receive a frame
 	- write a proper trial class
 '''
 
 from __future__ import print_function    # (at top of module)
 
-import os, time, math, io
+import os, sys, time, math, io
 import subprocess
 import threading
 from datetime import datetime
@@ -37,120 +37,195 @@ from bCamera import bCamera
 
 #########################################################################
 class home:
+	# dict to convert polarity string to number, e.g. self.polarity['rising'] yields GPIO.RISING
+	polarityDict_ = { 'rising': GPIO.RISING, 'falling': GPIO.FALLING, 'both': GPIO.BOTH}
+	pullUpDownDict = { 'up': GPIO.PUD_UP, 'down': GPIO.PUD_DOWN}
+
 	def __init__(self):
 		self.init()
 
 	def init(self):
 		logger.debug('start home.init()')
 		
-		# dict to convert polarity string to number, e.g. self.polarity['rising'] yields GPIO.RISING
-		self.polarityDict_ = { 'rising': GPIO.RISING, 'falling': GPIO.FALLING, 'both': GPIO.BOTH}
-
 		self.config = self.loadConfigFile()
 				
 		self.trial = bTrial()
 		self.camera = bCamera(self.trial)
+		# set parameters of camera from config file, be sure to call again when they change
+		self.camera.setConfig(self.config) 
 		
-		#
 		# GPIO
-		GPIO.setmode(GPIO.BCM)
-		GPIO.setwarnings(False)
-
-		GPIO.setup(self.config['hardware']['whiteLightPin'], GPIO.OUT)
-		GPIO.output(self.config['hardware']['whiteLightPin'], 0)
-		self.whiteIsOn = False
-
-		GPIO.setup(self.config['hardware']['irLightPin'], GPIO.OUT)
-		GPIO.output(self.config['hardware']['irLightPin'], 0)
-		self.irIsOn = False
+		self.initGPIO_()
 		
-		if self.config['scope']['autoArm']:
-			print('auto arm is on')
-			self.state = "armed"
-		else:
-			self.state = "idle"
-
-		if self.config['scope']['frameIn']['enabled']:
-			pin = int(self.config['scope']['frameIn']['pin'])
-			polarity = self.config['scope']['frameIn']['polarity']
-			polarity = self.polarityDict_[polarity]
-			GPIO.setup(pin, GPIO.IN)
-			GPIO.add_event_detect(pin, polarity, callback=self.frame_Callback, bouncetime=200) # ms
-
-		if self.config['scope']['triggerIn']['enabled']:
-			pin = self.config['scope']['triggerIn']['pin']
-			polarity = self.config['scope']['triggerIn']['polarity']
-			polarity = self.polarityDict_[polarity]
-			GPIO.setup(pin, GPIO.IN)
-			GPIO.add_event_detect(pin, polarity, callback=self.triggerIn_Callback, bouncetime=200) # ms
-
-		if self.config['scope']['triggerOut']['enabled']:
-			pin = self.config['scope']['triggerOut']['pin']
-			#polarity = self.config['scope']['triggerOut']['polarity']
-			GPIO.setup(pin, GPIO.OUT)
-
-		#
 		# save path
 		self.videoPath = self.config['video']['savepath']
 		self.saveVideoPath = '' # set when we start video recording
 		if not os.path.isdir(self.videoPath):
 			os.makedirs(self.videoPath)
-			
-		#self.lastStillTime = '' # time.time()
-		
+					
 		self.lastResponse = ''
-		
-		self.armVideoRunning = False
-		
+				
 		#
 		# temperature and humidity
 		self.lastTemperatureTime = 0
 		self.lastTemperature = None
 		self.lastHumidity = None
 		
-		if g_dhtLoaded and self.config['hardware']['readtemperature']>0:
-			#print('   Initialized DHT temperature sensor')
-			logger.debug('Initialized DHT temperature sensor')
-			GPIO.setup(self.config['hardware']['temperatureSensor'], GPIO.IN)
-			myThread = threading.Thread(target = self.tempThread)
-			myThread.daemon = True
-			myThread.start()
-		else:
-			#print('   Did not find DHT temperature sensor')
-			logger.debug('Did not find DHT temperature sensor')
+		if self.config['hardware']['readtemperature']:
+			if g_dhtLoaded:
+				logger.debug('Initialized DHT temperature sensor')
+				GPIO.setup(self.config['hardware']['temperatureSensor'], GPIO.IN)
+				myThread = threading.Thread(target = self.tempThread)
+				myThread.daemon = True
+				myThread.start()
+			else:
+				logger.debug('Did not load DHT temperature sensor')
 			
 		#
 		# system information
 		self.systemInfo = bUtil.getSystemInfo()
+		
+	@property
+	def state(self):
+		return self.camera.state
 		
 	def isState(self, thisState):
 		''' Return True if self.state == thisState'''
 		#return True if self.state==thisState else False
 		return True if self.camera.state==thisState else False
 		
-	def frame_Callback(self, pin):
-		now = time.time()
-		if self.trial.isRunning:
-			self.trial.newEvent('frame', self.trial.numFrames + 1, now=now)
-			#todo: call self.camera.annotate()
-			if self.camera:
-				#todo: fix annotation background
-				#todo: make sure we clear annotation background
-				try:
-					self.camera.annotate_background = picamera.Color('black')
-					self.camera.annotate_text = ' ' + str(self.trial.numFrames) + ' ' 
-				except PiCameraClosed as e:
-					print(e)
-			#self.log(self, 'newFrame', '', '', frameNumber, now=now)
-			#logger.debug('frame_Callback finished')
+	def initGPIO_(self):
+		''' init gpio pins '''
+		# not sure if this is a good idea
+		'''
+		try:
+			GPIO.cleanup()
+		except RuntimeWarning:
+			print('xxxzzz')
+			pass
+		'''
 			
+		GPIO.setmode(GPIO.BCM)
+		GPIO.setwarnings(False)
+
+		if self.config['hardware']['triggerIn']['enabled']:
+			pin = self.config['hardware']['triggerIn']['pin']
+			polarity = self.config['hardware']['triggerIn']['polarity'] # rising, falling, or both
+			polarity = home.polarityDict_[polarity]
+			pull_up_down = self.config['hardware']['triggerIn']['pull_up_down'] # up or down
+			pull_up_down = home.pullUpDownDict[pull_up_down]
+			GPIO.setup(pin, GPIO.IN, pull_up_down=pull_up_down)
+			GPIO.add_event_detect(pin, polarity, callback=self.triggerIn_Callback, bouncetime=200) # ms
+			#logger.info('gpio configured:' + str(self.config['hardware']['triggerIn']))
+		else:
+			pin = self.config['hardware']['triggerIn']['pin']
+			try:
+				GPIO.remove_event_detect(pin)
+			except:
+				print('error in triggerIn remove_event_detect')
+				
+		if self.config['hardware']['triggerOut']['enabled']:
+			pin = self.config['hardware']['triggerOut']['pin']
+			#polarity = self.config['scope']['triggerOut']['polarity']
+			GPIO.setup(pin, GPIO.OUT)
+
+		# events in (e.g. frame)
+		if self.config['hardware']['eventIn']:
+			for idx,eventIn in enumerate(self.config['hardware']['eventIn']):
+				name = eventIn['name']
+				pin = eventIn['pin']
+				enabled = eventIn['enabled'] # is it enabled to receive events
+				if enabled:
+					pull_up_down = eventIn['pull_up_down'] # up or down
+					pull_up_down = home.pullUpDownDict[pull_up_down]
+					GPIO.setup(pin, GPIO.IN, pull_up_down=pull_up_down)
+					# pin is always passed as first argument, this is why we have undefined 'x' here
+					cb = lambda x, arg1=name, arg2=enabled, arg3=pin: self.eventIn_Callback(x,arg1, arg1,arg2, arg3)
+					# as long as each event is different pin, polarity can be different
+					polarity = home.polarityDict_[eventIn['polarity']]
+					GPIO.add_event_detect(pin, polarity, callback=cb, bouncetime=200) # ms
+					#print('   ', idx, 'name:', name, 'pin:', pin, 'polarity:', polarity)
+				else:
+					try:
+						GPIO.remove_event_detect(pin)
+					except:
+						print('error in trieventInggerIn remove_event_detect')
+				
+		# events out (e.g. led, motor, or lick port)
+		if self.config['hardware']['eventOut']:
+			for idx,eventOut in enumerate(self.config['hardware']['eventOut']):
+				enabled = eventOut['enabled'] # is it enabled to receive events
+				pin = eventOut['pin']
+				defaultValue = eventOut['defaultValue']
+				# set the status in the config struct
+				self.config['hardware']['eventOut'][idx]['state'] = defaultValue # so javascript can read state
+				self.config['hardware']['eventOut'][idx]['idx'] = idx # for reverse lookup
+				#
+				if enabled:
+					GPIO.setup(pin, GPIO.OUT)
+					GPIO.output(pin, defaultValue)
+
+	##########################################
+	# Input pin callbacks
+	##########################################
+	def eventIn_Callback(self, name, enabled=None, pin=None):
+		''' Can call manually with just name '''
+		now = time.time()
+		if pin is None:
+			# called by user, look up event in list by ['name']
+			dictList = self.config['hardware']['eventIn']
+			thisItem = (item for item in dictList if item["name"] == name).next()
+			if thisItem is None:
+				#error
+				pass
+			else:
+				enabled = thisItem['enabled']
+				pin = thisItem['pin']
+		if enabled:
+			#print('eventIn_Callback() enabled:' + str(enabled) + ' pin:' + str(pin) + ' name:' + name)
+
+			if name == 'frame':
+				if self.trial.isRunning:
+					self.trial.numFrames += 1
+					self.trial.newEvent('frame', self.trial.numFrames, now=now)
+					if self.camera:
+						self.camera.annotate(self.trial.numFrames)
+			if name == 'otherEvent':
+				pass
+
 	def triggerIn_Callback(self, pin):
 		now = time.time()
 		self.camera.startArmVideo(now=now)
 		#logger.debug("triggerIn_Callback finished trial:" + str(self.trial['frameNum']))
 				
+	##########################################
+	# Output pins on/off
+	##########################################
+	def eventOut(self, name, onoff):
+		''' turn output pins on/off '''
+		dictList = self.config['hardware']['eventOut'] # list of event out(s)
+		try:
+			thisItem = (item for item in dictList if item["name"] == name).next()
+		except StopIteration:
+			thisItem = None
+		if thisItem is None:
+			err = 'eventOut() got bad name: ' + name
+			logger.error(err)
+			self.lastResponse = err
+		else:
+			pin = thisItem['pin']
+			GPIO.output(pin, onoff)
+			# set the state of the out pin we just set
+			wasThis = self.config['hardware']['eventOut'][thisItem['idx']]['state']
+			if wasThis != onoff:
+				self.config['hardware']['eventOut'][thisItem['idx']]['state'] = onoff
+				self.trial.newEvent(name, onoff, now=time.time())
+				logger.debug('eventOut ' + name + ' '+ str(onoff))
+
+	##########################################
+	# Config, loaded from and saved to config.json
+	##########################################
 	def setParam(self, param, value):
-		#todo: pass camera values and set in self.camera
 		logger.debug(param + ' ' + str(value))
 		one, two = param.split('.')
 		if one not in self.config:
@@ -162,11 +237,13 @@ class home:
 			print('ERROR: setParam() did not find', two, 'in self.config["', one, '"]')
 			return
 			
-		#print('   was:', self.config[one][two], 'type:', type(self.config[one][two]))
 		theType = type(self.config[one][two])
 		if theType == str:
 			value = str(value)
 		if theType == int:
+			if value == 'null':
+				# we are getting empty values as user types
+				return
 			value = int(value)
 		if theType == bool:
 			if value == 'false':
@@ -177,22 +254,36 @@ class home:
 		# set
 		self.config[one][two] = value
 		
+		# IMPORTANT: update camera config parameters
+		self.camera.setConfig(self.config) 
+		
 		self.lastResponse = one + ' ' + two + ' is now ' + str(value)
 		
-		#print('   now:', self.config[one][two], 'type:', type(self.config[one][two]))
-		logger.debug('finished ' + str(self.config[one][two]))
-
 	def loadConfigDefaultsFile(self):
 		logger.debug('loadConfigDefaultsFile')
 		with open('config_defaults.json') as configFile:
-			self.config = json.load(configFile)
-		self.lastResponse = 'Loaded default options file'
-	
+			try:
+				config = json.load(configFile, object_pairs_hook=OrderedDict)
+			except ValueError, e:
+				logger.error('config_defaults.json ValueError: ' + str(e))
+				self.lastResponse = 'Error loading default options file: ' + str(e)
+			else:
+				self.config = config
+				self.initGPIO_()
+				# IMPORTANT: update camera config parameters
+				self.camera.setConfig(self.config) 
+				self.lastResponse = 'Loaded default options file'
+
 	def loadConfigFile(self):
 		logger.debug('loadConfigFile')
 		with open('config.json') as configFile:
-			config = json.load(configFile, object_pairs_hook=OrderedDict)
-		return config
+			try:
+				config = json.load(configFile, object_pairs_hook=OrderedDict)
+			except ValueError, e:
+				logger.error('config.json ValueError: ' + str(e))
+				sys.exit(1)
+			else:
+				return config
 	
 	def saveConfigFile(self):
 		logger.debug('saveConfigFile')
@@ -200,121 +291,128 @@ class home:
 			json.dump(self.config, outfile, indent=4)
 		self.lastResponse = 'Saved options file'
 	
-	def getStatus(self):
-		# return the status of the server, all params
-		# is called at a short interval, ~1 sec
-
-		now = datetime.now()
-				
-		status = OrderedDict()
-
-		status['server'] = OrderedDict()
-		status['server']['state'] = self.camera.state
-		status['server']['lastResponse'] = self.lastResponse # filled in by each route
-
-		status['lights'] = OrderedDict()
-		status['lights']['irLED'] = self.irIsOn
-		status['lights']['whiteLED'] = self.whiteIsOn
-
-		status['trial'] = self.trial.trial
-
-		# special case
-		if self.trial.isRunning:
-			status['trial']['epochTimeElapsed'] = self.trial.epochTimeElapsed
-		else:
-			status['trial']['epochTimeElapsed'] = None
-
-		
-		# temperature and humidity
-		status['environment'] = OrderedDict()
-		status['environment']['temperature'] = self.lastTemperature
-		status['environment']['humidity'] = self.lastHumidity
-			
-		# system status (ip, host, cpu temperature, drive space remaining, etc)
-		#todo: add a web button to refresh this self.drivespaceremaining()		'''
-		status['system'] = OrderedDict()
-		status['system']['date'] = now.strftime('%Y-%m-%d')
-		status['system']['time'] = now.strftime('%H:%M:%S')
-		for k, v in self.systemInfo.iteritems():
-			status['system'][k] = v
-
-		return status
-
 	def getConfig(self):
 		# parameters that can be set by user
 		return self.config
 		
+	##########################################
+	# Status, real-time
+	##########################################
+	def getStatus(self):
+		'''
+		Return the status of the server, all params
+		Is called at a short interval, ~1 sec
+		'''
+						
+		status = OrderedDict()
+		
+		status['server'] = OrderedDict()
+		status['server']['state'] = self.camera.state
+		status['server']['currentFile'] = self.camera.currentFile
+		status['server']['lastResponse'] = self.lastResponse # filled in by each route
+
+		# need to make a dict so javascript can read off which eventOut is on/off
+		status['server']['eventOut'] = OrderedDict()
+		for eventOut in self.config['hardware']['eventOut']:
+			if 'state' in eventOut:
+				status['server']['eventOut'][eventOut['name']] = eventOut['state']
+			
+		#status['trial'] = self.trial.trial
+		status['server']['trialElapsedSec'] = self.trial.timeElapsed
+		status['server']['epochElapsedSec'] = self.trial.epochTimeElapsed
+		status['server']['currentEpoch'] = self.trial.currentEpoch
+		
+		# temperature and humidity
+		status['server']['environment'] = OrderedDict()
+		status['server']['environment']['temperature'] = self.lastTemperature
+		status['server']['environment']['humidity'] = self.lastHumidity
+			
+		# system status (ip, host, cpu temperature, drive space remaining, etc)
+		#todo: add a web button to refresh this self.drivespaceremaining()		'''
+		status['system'] = OrderedDict()
+		for k, v in self.systemInfo.iteritems():
+			status['system'][k] = v
+		now = datetime.now()
+		status['system']['date'] = now.strftime('%Y-%m-%d')
+		status['system']['time'] = now.strftime('%H:%M:%S')
+
+		return status
+
+	##########################################
+	# Start and stop video, stream, arm
+	##########################################
 	def stop(self):
 		logger.debug('stop')
 		self.record(0)
 		self.stream(0)
 		self.stopArmVideo()
 		self.trial.stopTrial()
-		
+		if self.isState('idle'):
+			self.lastResponse = 'Idle'
+			
 	def record(self, onoff):
 		self.camera.record(onoff)
-		
+		if self.isState('recording'):
+			myThread = threading.Thread(target = self.lightsThread)
+			myThread.daemon = True
+			myThread.start()
+
+		if self.isState('recording'):
+			self.lastResponse = 'Started recording'
+		elif self.isState('idle'):
+			self.lastResponse = 'Stopped recording'
+
 	def stream(self, onoff):
 		self.camera.stream(onoff)
-		
+		if self.isState('streaming'):
+			self.lastResponse = 'Started streaming'
+		elif self.isState('idle'):
+			self.lastResponse = 'Stopped streaming'
+
 	def arm(self, onoff):
 		self.camera.arm(onoff)
-	
+		if self.isState('armed'):
+			self.lastResponse = 'Started arm, waiting for trigger in'
+		elif self.isState('idle'):
+			self.lastResponse = 'Stopped arm'
+
 	def startArmVideo(self, now=time.time()):
 		self.camera.startArmVideo(now=now)
+		if self.isState('armedrecording'):
+			self.lastResponse = 'Started armed video recording'
 		
 	def stopArmVideo(self):
 		self.camera.stopArmVideo()
-		
-	
-	def irLED(self, onoff, allow=False):
-		# pass allow=true to control light during recording
-		if self.config['lights']['auto'] and not allow and self.isState('recording'):
-			self.lastResponse = 'Not allowed during recording'
-		else:
-			GPIO.output(self.config['hardware']['irLightPin'], onoff)
-			changed = self.irIsOn != onoff
-			self.irIsOn = onoff
-			if changed:
-				#self.log('lights', 'ir', '', onoff)
-				self.trial.newEvent('irLED', onoff, now=time.time()) 
-			if not allow:
-				self.lastResponse = 'ir light is ' + ('on' if onoff else 'off')
+		if self.isState('idle'):
+			self.lastResponse = 'Stopped armed video recording'
 
-	def whiteLED(self,onoff, allow=False):
-		# pass allow=true to control light during recording
-		if self.config['lights']['auto'] and not allow and self.isState('recording'):
-			self.lastResponse = 'Not allowed during recording'
-		else:
-			GPIO.output(self.config['hardware']['whiteLightPin'], onoff)
-			changed = self.whiteIsOn != onoff
-			self.whiteIsOn = onoff
-			if changed:
-				#self.log('lights', 'white', '', onoff)
-				self.trial.newEvent('whiteLED', onoff, now=time.time()) 
-			if not allow:
-				self.lastResponse = 'white light is ' + ('on' if onoff else 'off')
-
+	##########################################
+	# Background threads
+	##########################################
+	# todo: merge into lightsThread() function
 	def controlLights(self):
 		# control lights during recording
 		if self.config['lights']['auto']:
 			now = datetime.now()
 			isDaytime = now.hour > self.config['lights']['sunrise'] and now.hour < self.config['lights']['sunset']
 			if isDaytime:
-				self.whiteLED(True, allow=True)
-				self.irLED(False, allow=True)
+				self.eventOut('whiteLED', True)
+				self.eventOut('irLED', False)
 			else:
-				self.whiteLED(False, allow=True)
-				self.irLED(True, allow=True)
-			
+				self.eventOut('whiteLED', False)
+				self.eventOut('irLED', True)
+
 	def lightsThread(self):
+		logger.debug('lightsThread start')
 		while self.isState('recording'):
 			self.controlLights()
-			time.sleep(0.5)
-				
+			time.sleep(.05)
+		logger.debug('lightsThread stop')
+
 	def tempThread(self):
 		# thread to run temperature/humidity in background
 		# dht is blocking, long delay cause delays in web interface
+		logger.info('tempThread() start')
 		temperatureInterval = self.config['hardware']['temperatureInterval'] # seconds
 		pin = self.config['hardware']['temperatureSensor']
 		while True:
@@ -325,105 +423,20 @@ class home:
 						if humidity is not None and temperature is not None:
 							self.lastTemperature = math.floor(temperature * 100) / 100
 							self.lastHumidity = math.floor(humidity * 100) / 100
-							# todo: log this to a file
+							# log this to a file
+							self.trial.newEvent('temperature', self.lastTemperature, now=time.time())
+							self.trial.newEvent('humidity', self.lastHumidity, now=time.time())
+							logger.debug('temperature/humidity ' + str(self.lastTemperature) + '/' + + str(self.lastHumidity))
+						else:
+							logger.warning('temperature/humidity error')
 						# set even on fail, this way we do not immediately hit it again
 						self.lastTemperatureTime = time.time()
 					except:
 						print('readTemperature() exception reading temperature/humidity')
 			time.sleep(0.5)
-	
-	"""
-	#called from armVideoThread()
-	def write_video_(self, stream, beforeFilePath):
-		# Write the entire content of the circular buffer to disk. No need to
-		# lock the stream here as we're definitely not writing to it simultaneously
-		with io.open(beforeFilePath, 'wb') as output:
-			for frame in stream.frames:
-				if frame.frame_type == picamera.PiVideoFrameType.sps_header:
-					stream.seek(frame.position)
-					break
-			while True:
-				buf = stream.read1()
-				if not buf:
-					break
-				output.write(buf)
-		# Wipe the circular stream once we're done
-		stream.seek(0)
-		stream.truncate()
+		logger.info('tempThread() stop')
 
-	def convertVideo(self, videoFilePath, fps):
-		# at end of video recording, convert h264 to mp4
-		# also build a db.txt with videos in a folder
-		logger.debug('converting video:' + videoFilePath + ' fps:' + str(fps))
-		'''
-		cmd = './convert_video.sh ' + videoFilePath + ' ' + str(fps)
-		child = subprocess.Popen(cmd, shell=True)
-		out, err = child.communicate()
-		print('   convertVideo() out:', out)
-		print('   convertVideo() err:', err)
-		'''
-		
-		cmd = ["./convert_video.sh", videoFilePath, str(fps)]
-		try:
-			out = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-			self.lastResponse = 'Converted video to mp4'
-		except subprocess.CalledProcessError as e:
-			print('e:', e)
-			print('e.returncode:', e.returncode) # 1 is failure, 0 is sucess
-			print('e.output:', e.output)
-			self.lastResponse = e.output
-		
-		# append to dict and save in file
-		dirname = os.path.dirname(videoFilePath) 
-		mp4File = os.path.basename(videoFilePath).split('.')[0] + '.mp4'
-		mp4Path = os.path.join(dirname, mp4File)
-		#print('mp4Path:', mp4Path)
-		#todo: also include .h264 (if we are not converting to .mp4)
-		command = "avprobe -show_format -show_streams -loglevel 'quiet' " + str(mp4Path) + ' -of json'
-		#command = "avprobe -show_format -show_streams " + str(mp4Path) + ' -of json'
-		#print(command)
-		child = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
-		data, err = child.communicate()
-		data = data.decode('utf-8') # python 3
-		data = json.loads((data))
-		#print data
-		fd = {}
-		fd['path'] = mp4Path
-		fd['file'] = mp4File
-		if 'format' in data:
-			fd['duration'] =  math.floor(float(data['format']['duration'])*100)/100
-		else:
-			fd['duration'] =  '?'
-		if 'streams' in data:
-			fd['width'] =  data['streams'][0]['width']
-			fd['height'] =  data['streams'][0]['height']
-			#stretch
-			#fd['fps'] = data['streams'][0]['avg_frame_rate'].split('/')[0] # parsing 25/1
-			#jessie
-			#fd['fps'] = data['streams'][0]['r_frame_rate'].split('/')[0] # parsing 25/1
-			fd['fps'] = fps
-		else:
-			fd['width'] =  '?'
-			fd['height'] =  '?'
-			fd['fps'] = '?'
-		
-		# load existing database (list of dict)
-		folder = os.path.dirname(videoFilePath)
-		dbFile = os.path.join(folder,'db.txt')
-		#print('dbFile:', dbFile)
-		db = []
-		if os.path.isfile(dbFile):
-			db = json.load(open(dbFile))
-			#print 'loaded db:', db
-		# append
-		db.append(fd)
-		# save
-		txt = json.dumps(db)
-		f = open(dbFile,"w")
-		f.write(txt)
-		f.close()
-	"""
-				
+	'''
 	# generate a file list of video files
 	def make_tree(self, path):
 		filelist = []
@@ -432,5 +445,4 @@ class home:
 				if file.endswith('.h264'):
 					filelist.append(file)
 		return filelist
-
-
+	'''

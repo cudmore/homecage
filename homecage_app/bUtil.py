@@ -65,7 +65,6 @@ def raspberrymodel():
 def debianversion():
 	# get the version of Raspian, we want to be running on Jessie or Stretch
 	dist = platform.dist() # 8 is jessie, 9 is stretch
-	print dist
 	ret = ''
 	if len(dist)==3:
 		ret = dist[0] + ' ' + dist[1]

@@ -15,7 +15,7 @@ span.mysmall {
 
 .myTable0 {
     border-collapse: collapse;
-    width: 75%;
+    width: 100%;
     //table-layout: fixed;
 }
 
@@ -24,9 +24,14 @@ span.mysmall {
     padding: 4px;
 }
 
+.myTable0 td:nth-child(1){ width:100px; }
+.myTable0 td:nth-child(2){ width:100px; }
+.myTable0 td:nth-child(3){ width:100px; }
+.myTable0 td:nth-child(4){ width:50px; }
+
 .myTable {
     border-collapse: collapse;
-    width: 75%;
+    width: 90%;
     //table-layout: fixed;
 }
 
@@ -38,7 +43,6 @@ span.mysmall {
 .myTable td:nth-child(1){ width:100px; }
 .myTable td:nth-child(2){ width:100px; }
 .myTable td:nth-child(3){ width:100px; }
-//.myTable td:nth-child(4){ width:100px; }
 
 .myTable-small{
 	font-size: 12px;

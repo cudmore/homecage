@@ -2,7 +2,7 @@
     "hardware": {
         "triggerIn": [
         	{"name": "myTriggerIn1", "pin": 20, "polarity": "rising"},
- 	   		{"name": "myTriggerIn2", "pin": 21, "polarity": "rising"}
+ 	   	{"name": "myTriggerIn2", "pin": 21, "polarity": "rising"}
         ],
         
         "triggerOutPins": [],
