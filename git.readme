@@ -1,4 +1,10 @@
 git checkout dev
-git commit -a -m 'test'
+git commit -a -m 'dev changes'
 git push -u origin dev
 
+# to marge dev into master
+git checkout master
+git merge dev
+
+git commit -a -m 'merged with dev'
+git push -u origin master
