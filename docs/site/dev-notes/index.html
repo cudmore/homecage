@@ -403,6 +403,26 @@
     git
   </a>
   
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#git-dev-branch" title="git dev branch" class="md-nav__link">
+    git dev branch
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#git-master-branch" title="git master branch" class="md-nav__link">
+    git master branch
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -540,6 +560,26 @@
     git
   </a>
   
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#git-dev-branch" title="git dev branch" class="md-nav__link">
+    git dev branch
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#git-master-branch" title="git master branch" class="md-nav__link">
+    git master branch
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -653,6 +693,24 @@
                   <h1>Development notes</h1>
                 
                 <h2 id="git">git</h2>
+<h3 id="git-dev-branch">git dev branch</h3>
+<pre><code># checkout a branch 'dev'
+git checkout dev
+
+# see all branches
+git branch
+
+# commit ('dev' is implicit)
+git commit -a -m 'test'
+
+# CRITICAL, push to 'dev'
+git push -u origin dev
+
+# merge (go into master and fast-forward merge dev)
+git checkout master
+git merge dev
+</code></pre>
+<h3 id="git-master-branch">git master branch</h3>
 <p>Set up password</p>
 <pre><code>git config --global credential.helper 'cache --timeout=10000000'
 </code></pre>
