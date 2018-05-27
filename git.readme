@@ -1,5 +1,5 @@
 git checkout dev
-git commit -a -m 'test'
+git commit -a -m 'dev changes'
 git push -u origin dev
 
 # to marge dev into master
