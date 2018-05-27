@@ -159,6 +159,7 @@ class bCamera:
 			self.state = 'streaming' if onoff else 'idle'
 			if onoff:
 				cmd = ["./stream", "start", str(self.streamWidth), str(self.streamHeight)]
+				logger.info(cmd)
 				try:
 					out = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
 					self.lastResponse = 'Streaming is on'

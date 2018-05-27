@@ -264,7 +264,7 @@ class home:
 		with open('config_defaults.json') as configFile:
 			try:
 				config = json.load(configFile, object_pairs_hook=OrderedDict)
-			except ValueError, e:
+			except ValueError as e:
 				logger.error('config_defaults.json ValueError: ' + str(e))
 				self.lastResponse = 'Error loading default options file: ' + str(e)
 			else:
@@ -279,7 +279,7 @@ class home:
 		with open('config.json') as configFile:
 			try:
 				config = json.load(configFile, object_pairs_hook=OrderedDict)
-			except ValueError, e:
+			except ValueError as e:
 				logger.error('config.json ValueError: ' + str(e))
 				sys.exit(1)
 			else:
@@ -330,7 +330,7 @@ class home:
 		# system status (ip, host, cpu temperature, drive space remaining, etc)
 		#todo: add a web button to refresh this self.drivespaceremaining()		'''
 		status['system'] = OrderedDict()
-		for k, v in self.systemInfo.iteritems():
+		for k, v in self.systemInfo.items():
 			status['system'][k] = v
 		now = datetime.now()
 		status['system']['date'] = now.strftime('%Y-%m-%d')

@@ -61,6 +61,8 @@ angular.module('demo', ['uiSwitch'])
 	    // scope.config.stream.resolution is a string like "1024,768"
 		var tmpWidth = parseInt($scope.config.video.streamResolution.split(',')[0],10)
 		var tmpHeight = parseInt($scope.config.video.streamResolution.split(',')[1],10)
+		//console.log('scope.config.video:', $scope.config.video)
+		//console.log('tmpWidth:', tmpWidth, 'tmpHeight:', tmpHeight)
 		$scope.streamWidth = tmpWidth + (tmpWidth * 0.03)
 		$scope.streamHeight = tmpHeight + (tmpWidth * 0.03)
 	}
