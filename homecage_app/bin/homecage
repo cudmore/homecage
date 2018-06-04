@@ -1,0 +1,98 @@
+#!/bin/bash
+
+# Author: Robert H Cudmore
+# Date: 20180419
+
+# asssuming $homecage_path has been set-up in install-homecage.sh
+
+function usage(){
+    echo "homecage - Illegal parameters"
+    echo "Usage:"
+    echo "   homecage start"
+    echo "   homecage start debug"
+    echo "   homecage stop"
+    echo "   homecage restart"
+    echo "   homecage status"
+}
+
+homecagePID=`pgrep -f homecage_app.py`
+
+myip=`hostname -I | xargs`
+
+function start() {
+	# $1 refers to parameter passed to *this function start()
+	if [ -n "$homecagePID" ]; then
+		echo "homecage server is already running, use 'homecage stop' to stop."
+		echo "   homecage server is running at http://$myip:5000"
+		exit 1
+	else
+		echo "Starting homecage server in $homecage_path"
+
+		cd $homecage_path
+
+		#rm homecage_app.log
+		#python homecage_app.py | tee homecage_app.log 2>&1 &
+
+		# activate python env if it exists
+		if [ ! -f env/bin/activate ]; then
+		    echo "Did not find python environment env/bin/activate"
+		else
+			echo "Activating Python environment with 'source env/bin/activate'"
+			source env/bin/activate
+		fi
+
+		python -V
+
+		# was working
+		#python homecage_app.py $1 > homecage_app.log 2>&1 &
+		python homecage_app.py $1 > homecage_app.log 2>&1
+
+		#echo "   log file is in homecage_app.log"
+		echo "   Browse to the server at http://"$myip":5000"
+	fi
+}
+
+function stop() {
+	if [ -n "$homecagePID" ]; then
+		echo "stopping homecage server"
+		kill -- $homecagePID 2> /dev/null
+		echo "   homecage server is now stopped"
+	else
+		echo "homecage server is not running, use 'homecage start' to start."
+		#exit 1
+	fi
+}
+
+function restart() {
+	#echo "stopping"
+	sleep 2
+	stop
+	echo "waiting 2 seconds before starting ..."
+	sleep 2
+	#echo "starting"
+	start
+}
+
+function status() {
+	if [ -n "$homecagePID" ]; then
+		echo "homecage server is running at http://$myip:5000"
+	else
+		echo "homecage server is not running, use 'homecage start' to start"
+	fi
+}
+
+case "$1" in
+	start) start $2
+		;;
+	stop) stop
+		;;
+	restart) restart
+		;;
+	status) status
+		;;
+	*) usage
+		;;
+esac
+
+exit 0
+
