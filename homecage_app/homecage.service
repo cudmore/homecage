@@ -1,0 +1,11 @@
+[Unit]
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Environment=homecage_path=/home/pi/Sites/homecage/homecage_app
+ExecStart=/bin/bash /home/pi/Sites/homecage/homecage_app/bin/homecage_service.sh
+
+[Install]
+WantedBy=default.target
+
