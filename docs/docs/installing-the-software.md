@@ -29,38 +29,8 @@ VERSION_ID="8"
 VERSION="8 (jessie)"
 ```
 
-## 2) Install uv4l and avconv
 
-### 2.1) Install uv4l for live video streaming (optional)
-
-If you run into trouble, then follow [this tutorial][5]. If you don't do this, homecage should work but you won't be able to stream.
-
-```
-curl http://www.linux-projects.org/listing/uv4l_repo/lrkey.asc | sudo apt-key add -
-
-# edit /etc/apt/sources.list
-sudo pico /etc/apt/sources.list
-
-# add the following line to /etc/apt/sources.list
-deb http://www.linux-projects.org/listing/uv4l_repo/raspbian/stretch stretch main
-
-# update and install uv4l
-sudo apt-get update
-sudo apt-get install uv4l uv4l-raspicam
-```
-
-### 2.2) Install avconv to convert videos from .h264 to .mp4 (optional)
-
-If you run into trouble, then see [this blog post][13]. If you don't do this, make sure you turn off the 'Convert video from h264 to mp4' option.
-
-	sudo apt-get update
-	sudo apt-get install libav-tools
-
-Video files will be saved to `/home/pi/video`. If your going to save a lot of video, please [mount a usb key][12] and save videos there.
-
-
-
-## 3) Clone the homecage repository
+## 2) Clone the homecage repository
 
 This will make a folder `homecage` in your root directory. You can always return to your root directory with `cd` or `cd ~`.
 
@@ -69,7 +39,7 @@ This will make a folder `homecage` in your root directory. You can always return
 
 	git clone --depth=1 https://github.com/cudmore/homecage.git
 
-## 4.1) Either install python packages globally
+## 3.1) Either install python packages globally
 
 	# if you don't already have pip installed (see troubleshooting)
 	sudo apt-get install python-pip
@@ -77,7 +47,7 @@ This will make a folder `homecage` in your root directory. You can always return
 	cd ~/homecage/homecage_app
 	pip install -r requirements.txt
 
-## 4.2) Or install in a virtual environment
+## 3.2) Or install in a virtual environment
 
 Make a clean virtual environment that does not depend on current installed Python packages
 
@@ -131,7 +101,7 @@ Exit virtual environment
 
 	deactivate
 
-## 5) Running homecage_app.py
+## 4) Running homecage_app.py
 
 	cd ~/homecage/homecage_app
 	python homecage_app.py
@@ -139,12 +109,48 @@ Exit virtual environment
 Browse to the homecage_app website
 
 	http://[yourip]:5000
-	
 
 
-## 6) Done installing !!!
+## 5) Install uv4l and avconv
 
-At this point you can interact with the homecage server through the [web][9] interface.
+### 5.1) Install uv4l for live video streaming (optional)
+
+If you run into trouble, then follow [this tutorial][5]. If you don't do this, homecage should work but you won't be able to stream.
+
+```
+curl http://www.linux-projects.org/listing/uv4l_repo/lrkey.asc | sudo apt-key add -
+
+# edit /etc/apt/sources.list
+sudo pico /etc/apt/sources.list
+
+# add the following line to /etc/apt/sources.list
+deb http://www.linux-projects.org/listing/uv4l_repo/raspbian/stretch stretch main
+
+# or append without using pico
+stretch_install='deb http://www.linux-projects.org/listing/uv4l_repo/raspbian/stretch stretch main'
+echo $stretch_install | sudo tee -a /etc/apt/sources.list
+
+# or append without using pico
+#jessie_install='deb http://www.linux-projects.org/listing/uv4l_repo/raspbian/ jessie main'
+#echo $jessie_install | sudo tee -a /etc/apt/sources.list
+
+
+
+# update and install uv4l
+sudo apt-get update
+sudo apt-get install uv4l uv4l-raspicam
+```
+
+### 5.2) Install avconv to convert videos from .h264 to .mp4 (optional)
+
+If you run into trouble, then see [this blog post][13]. If you don't do this, make sure you turn off the 'Convert video from h264 to mp4' option.
+
+	sudo apt-get update
+	sudo apt-get install libav-tools
+
+Video files will be saved to `/home/pi/video`. If your going to save a lot of video, please [mount a usb key][12] and save videos there.
+
+
 
 # Troubleshooting
 

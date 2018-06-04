@@ -4,6 +4,7 @@ function usage(){
     echo "stream - Illegal parameters"
     echo "Usage:"
     echo "   stream start"
+    echo "   stream start width height"
     echo "   stream stop"
 }
 

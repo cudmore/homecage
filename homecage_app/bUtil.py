@@ -1,6 +1,8 @@
 # Robert H Cudmore
 # 20180525
 
+from __future__ import print_function	# (at top of module)
+
 import os, subprocess
 import platform, socket
 from collections import OrderedDict
@@ -13,7 +15,7 @@ def getSystemInfo():
 	ret['date'] = now.strftime('%Y-%m-%d')
 	ret['time'] = now.strftime('%H:%M:%S')
 
-	ret['ip'] = whatismyip()
+	ret['ip'] = whatismyip_safe()
 	ret['hostname'] = socket.gethostname()
 	
 	ret['cpuTemperature'] = cpuTemperature()
@@ -22,6 +24,7 @@ def getSystemInfo():
 	
 	ret['raspberryModel'] = raspberrymodel()
 	ret['debianVersion'] = debianversion()
+	ret['pythonVersion'] = pythonversion()
 	
 	return ret
 	
@@ -30,6 +33,17 @@ def whatismyip():
 	ips = ips.decode('utf-8').strip()
 	return ips
 
+def whatismyip_safe():
+	'''
+	Goal here was to get ip address at boot using 'systemctl enable homecage.service'
+	This does not work? I make sure I call getSystemInfo() when loading homepage '/'
+	'''
+	arg='hostname -I'
+	p=subprocess.Popen(arg,shell=True,stdout=subprocess.PIPE)
+	data = p.communicate()
+	ip = data[0].decode('utf-8').strip()
+	return ip
+	
 def cpuTemperature():
 	#cpu temperature
 	res = os.popen('vcgencmd measure_temp').readline()
@@ -77,3 +91,6 @@ def debianversion():
 	else:
 		pass
 	return ret
+	
+def pythonversion():
+	return platform.python_version()

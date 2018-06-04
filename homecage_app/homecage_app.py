@@ -48,6 +48,7 @@ werkzeugLogger = logging.getLogger('werkzeug')
 werkzeugLogger.setLevel(logging.ERROR)
 
 #
+import bUtil
 from home import home
 home = home()
 
@@ -82,6 +83,7 @@ def page_not_found(e):
 @app.route('/')
 def hello_world():
 	#app.logger.debug('/')
+	home.getSystemInfo() # update cpu temp, disk space, ip
 	return render_template('index.html')
 
 @app.route('/log')
@@ -260,10 +262,21 @@ def whatismyip():
 	return ips
 
 if __name__ == '__main__':	
-	myip = whatismyip()
+	#myip = whatismyip()
+	myip = bUtil.whatismyip_safe()
+	
+	debug = False
+	if len(sys.argv) == 2:
+		if sys.argv[1] == 'debug':
+			debug = True
+	app.logger.debug('Running flask server with debug = ' + str(debug))
+		
 	app.logger.debug('Flask server is running at: ' + 'http://' + str(myip) + ':5000')
-	debug = True
-	app.run(host=myip, port=5000, debug=debug, threaded=True)
+	
+	# 0.0.0.0 will reun on external ip and needed to start at boot with systemctl
+	# before we get a valid ip from whatismyip()
+	
+	app.run(host='0.0.0.0', port=5000, debug=debug, threaded=True)
 	
 	
 	

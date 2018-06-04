@@ -174,7 +174,9 @@ class home:
 		if pin is None:
 			# called by user, look up event in list by ['name']
 			dictList = self.config['hardware']['eventIn']
-			thisItem = (item for item in dictList if item["name"] == name).next()
+			# having lots of problems b/w python 2/3 with g.next() versus next(g)
+			#thisItem = (item for item in dictList if item["name"] == name).next()
+			thisItem = next(item for item in dictList if item["name"] == name)
 			if thisItem is None:
 				#error
 				pass
@@ -186,7 +188,7 @@ class home:
 
 			if name == 'frame':
 				if self.trial.isRunning:
-					self.trial.numFrames += 1
+					#self.trial.numFrames += 1 # can't do this, no setter
 					self.trial.newEvent('frame', self.trial.numFrames, now=now)
 					if self.camera:
 						self.camera.annotate(self.trial.numFrames)
@@ -205,7 +207,9 @@ class home:
 		''' turn output pins on/off '''
 		dictList = self.config['hardware']['eventOut'] # list of event out(s)
 		try:
-			thisItem = (item for item in dictList if item["name"] == name).next()
+			# having lots of problems b/w python 2/3 with g.next() versus next(g)
+			#thisItem = (item for item in dictList if item["name"] == name).next()
+			thisItem = next(item for item in dictList if item["name"] == name)
 		except StopIteration:
 			thisItem = None
 		if thisItem is None:
@@ -337,6 +341,13 @@ class home:
 		status['system']['time'] = now.strftime('%H:%M:%S')
 
 		return status
+
+	def getSystemInfo(self):
+		'''
+		Assume this is expensive, don't call often.
+		Fetches system information like cpu temperature, hard drive space remaining, ip, etc.
+		'''
+		self.systemInfo = bUtil.getSystemInfo()
 
 	##########################################
 	# Start and stop video, stream, arm

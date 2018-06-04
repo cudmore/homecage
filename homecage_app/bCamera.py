@@ -193,9 +193,13 @@ class bCamera:
 					self.camera.framerate = self.fps
 					self.camera.start_preview()
 
-					logger.debug('Starting circular stream')
-					self.circulario = picamera.PiCameraCircularIO(self.camera, self.bufferSeconds)
-					self.camera.start_recording(self.circulario, format='h264')				
+					logger.debug('Starting circular stream, bufferSeconds:' + str(self.bufferSeconds))
+					self.circulario = picamera.PiCameraCircularIO(self.camera, seconds=self.bufferSeconds)
+					self.camera.start_recording(self.circulario, format='h264')
+					
+					'''
+					need to create thread here
+					'''			
 			else:
 				if self.camera:
 					# stop background task with video loop
@@ -212,6 +216,10 @@ class bCamera:
 			if self.trial is not None:
 				self.trial.startTrial(now=now)
 			# start a background thread
+			'''
+			at this point, thread should already be started and looping with xxx
+			all we need to do here is assign global to tell this thread 'trigger'
+			'''
 			thread = threading.Thread(target=self.armVideoThread, args=())
 			thread.daemon = True							# Daemonize thread
 			thread.start()									# Start the execution
@@ -234,6 +242,13 @@ class bCamera:
 			#stillPath = os.path.dirname(__file__) + 'still.jpg'
 			currentRepeat = 1
 			numberOfRepeats = float('Inf') if self.recordInfinity else self.numberOfRepeats
+			
+			'''
+			i need
+			1) another outer loop here with camera.wait_recording(1)
+			2) if we_got_trigger:
+				
+			'''
 			while self.isState('armedrecording') and (currentRepeat <= numberOfRepeats):
 				#todo: log time when trigger in is received
 				now = time.time()
