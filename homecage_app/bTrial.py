@@ -1,7 +1,7 @@
 # Robert H Cudmore
 # 20180525
 
-import os, time
+import os, time, json
 from collections import OrderedDict
 
 import logging
@@ -53,22 +53,18 @@ class bTrial:
 		self.trial['currentFile'] = 'n/a' # video
 		self.trial['lastStillTime'] = None
 		
+		self.newEvent('startTrial', self.trialNum, now)
 		# trials always start with an epoch
 		#self.newEpoch(now)
 		
 	def stopTrial(self):
 		# todo: finish up and close trial file
+		now = time.time()
 		if self.isRunning:
 			logger.debug('stopTrial')
+			self.newEvent('stopTrial', self.trialNum, now)
 			self.trial['isRunning'] = False
 			self.saveTrial()
-			'''
-			try:
-				#self.camera.annotate_background = picamera.Color('black')
-				self.camera.annotate_text = ''
-			except PiCameraClosed as e:
-				print(e)
-			'''
 		
 	def newEvent(self, type, val, now=time.time()):
 		if self.isRunning:
@@ -80,7 +76,7 @@ class bTrial:
 		if self.isRunning:
 			self.trial['currentEpoch'] += 1
 			self.trial['lastEpochSeconds'] = now
-			self.newEvent('epoch', self.currentEpoch, now=now)
+			self.newEvent('newEpoch', self.currentEpoch, now=now)
 		
 	def saveTrial(self):
 		delim = ','
@@ -106,14 +102,37 @@ class bTrial:
 			file.write(columnHeader)
 			# one line per frame
 			for idx, eventTime in enumerate(self.trial['eventTimes']):
-				# need ths plus at end of each line here
-				frameLine = self.trial['dateStr'] + delim + \
-							self.trial['timeStr'] + delim + \
+				# convert epoch seconds to date/time str 
+				dateStr = time.strftime('%Y%m%d', time.localtime(eventTime))
+				timeStr = time.strftime('%H:%M:%S', time.localtime(eventTime))
+				# need the plus at end of each line here
+				frameLine = dateStr + delim + \
+							timeStr + delim + \
 							str(eventTime) + delim + \
 							self.trial['eventTypes'][idx] + delim + \
 							str(self.trial['eventValues'][idx]) + eol
 				file.write(frameLine)
 
+		#
+		# append to db.txt for folder, see bCamera.convertVideo()
+		fd = {}
+		fd['path'] = saveFilePath
+		fd['file'] = saveFile
+		# load existing database (list of dict)
+		folder = os.path.dirname(saveFilePath)
+		dbFile = os.path.join(folder,'db.txt')
+		db = []
+		print('saveTrial() looking for dbFile:', dbFile)
+		if os.path.isfile(dbFile):
+			db = json.load(open(dbFile))
+		# append
+		db.append(fd)
+		# save
+		txt = json.dumps(db)
+		f = open(dbFile,"w")
+		f.write(txt)
+		f.close()
+		
 	@property
 	def isRunning(self):
 		return self.trial['isRunning']
