@@ -232,7 +232,16 @@
 	<span ng-show="showOptions">		
 
 		<div class="indent">
-		
+
+		<b>Animal ID</b>
+		   <input style="width: 5em" 
+		   	type="text" 
+		   	ng-model="config.server.animalID" 
+		   	ng-disabled="! allowEditeOptions()" 
+		   	ng-change="mySubmit('server.animalID',config.server.animalID)"
+		   	/>
+		   	<BR>
+
 		<b>Video</b>
 		
 		<div class="indent2">

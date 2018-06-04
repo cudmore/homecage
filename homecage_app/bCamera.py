@@ -124,7 +124,10 @@ class bCamera:
 			self.trial.newEpoch(now)
 
 			#the file we are about to record/save
-			self.currentFile = startTimeStr + '_t' + str(self.trial.trialNum) + '_r' + str(self.trial.currentEpoch) + '.h264'
+			animalID_str = ''
+			if self.trial.animalID:
+				animalID_str = '_id' + self.trial.animalID
+			self.currentFile = startTimeStr + animalID_str + '_t' + str(self.trial.trialNum) + '_r' + str(self.trial.currentEpoch) + '.h264'
 			videoFilePath = os.path.join(self.saveVideoPath, self.currentFile)
 			logger.debug('Start video file:' + videoFilePath + ' dur:' + str(self.recordDuration) + ' fps:' + str(self.fps))
 

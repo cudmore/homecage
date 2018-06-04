@@ -1,32 +1,71 @@
 {
+    "server": {
+    	"animalID": "xxx"
+    },
     "hardware": {
-        "triggerIn": {"enabled": true, "pin": 21, "polarity": "rising", "pull_up_down": "down"}, 
-        "triggerOut": {"enabled": true, "pin": 31, "polarity": "rising"},
+        "triggerIn": {
+            "enabled": true,
+            "pin": 21,
+            "polarity": "rising",
+            "pull_up_down": "down"
+        },
+        "triggerOut": {
+            "enabled": true,
+            "pin": 31,
+            "polarity": "rising"
+        },
         "eventIn": [
-        	{"enabled": true, "name": "frame", "pin": 12, "polarity": "rising", "pull_up_down": "down"},
-        	{"enabled": true, "name": "otherEvent", "pin": 13, "polarity": "rising", "pull_up_down": "down"}
+            {
+                "enabled": true,
+                "name": "frame",
+                "pin": 12,
+                "polarity": "rising",
+                "pull_up_down": "down"
+            },
+            {
+                "enabled": false,
+                "name": "otherEvent",
+                "pin": 13,
+                "polarity": "rising",
+                "pull_up_down": "down"
+            }
         ],
         "eventOut": [
-        	{"enabled": true, "name": "whiteLED", "pin": 2, "defaultValue": false},
-        	{"enabled": true, "name": "irLED", "pin": 3, "defaultValue": false}
+            {
+                "enabled": true,
+                "name": "whiteLED",
+                "pin": 2,
+                "defaultValue": false,
+                "state": true,
+                "idx": 0
+            },
+            {
+                "enabled": true,
+                "name": "irLED",
+                "pin": 3,
+                "defaultValue": false,
+                "state": false,
+                "idx": 1
+            }
         ],
-        "readtemperature": true, 
-        "temperatureInterval": 60, 
+        "readtemperature": false,
+        "temperatureInterval": 60,
         "temperatureSensor": 4
-    }, 
+    },
     "lights": {
-        "auto": false, 
-        "sunset": 18, 
+        "auto": true,
+        "sunset": 18,
         "sunrise": 6
-    }, 
+    },
     "video": {
-        "fileDuration": 10, 
-        "numberOfRepeats": 1, 
-        "converttomp4": true, 
-        "captureStill": true, 
-        "savepath": "/home/pi/video", 
-        "fps": 30, 
-        "stillInterval": 2, 
+        "fileDuration": 5,
+        "recordInfinity": true,
+        "numberOfRepeats": 3,
+        "converttomp4": true,
+        "captureStill": true,
+        "savepath": "/home/pi/video",
+        "fps": 30,
+        "stillInterval": 2,
         "resolution": "1024,768",
         "bufferSeconds": 5,
         "streamResolution": "640,480"

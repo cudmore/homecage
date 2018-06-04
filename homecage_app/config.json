@@ -1,4 +1,7 @@
 {
+    "server": {
+    	"animalID": "xxx"
+    },
     "hardware": {
         "triggerIn": {
             "enabled": true,

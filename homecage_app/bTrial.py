@@ -30,6 +30,11 @@ class bTrial:
 
 		self.trial['currentFile'] = ''
 		self.trial['lastStillTime'] = None
+
+		self.trial['animalID'] = ''
+		
+	def setAnimalID(self, animalID):
+		self.trial['animalID'] = animalID
 		
 	def startTrial(self, now=time.time()):
 		logger.debug('startTrial now:' + str(now))
@@ -164,6 +169,10 @@ class bTrial:
 	@property
 	def startTimeSeconds(self):
 		return self.trial['startTimeSeconds'] # can be None
+
+	@property
+	def animalID(self):
+		return self.trial['animalID'] # can be None
 
 if __name__ == '__main__':
 	logger = logging.getLogger()

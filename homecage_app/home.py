@@ -46,7 +46,7 @@ class home:
 
 	def init(self):
 		logger.debug('start home.init()')
-		
+				
 		self.config = self.loadConfigFile()
 				
 		self.trial = bTrial()
@@ -261,6 +261,9 @@ class home:
 		# IMPORTANT: update camera config parameters
 		self.camera.setConfig(self.config) 
 		
+		# important
+		self.trial.setAnimalID(self.config['server']['animalID'])
+		
 		self.lastResponse = one + ' ' + two + ' is now ' + str(value)
 		
 	def loadConfigDefaultsFile(self):
@@ -311,6 +314,7 @@ class home:
 		status = OrderedDict()
 		
 		status['server'] = OrderedDict()
+		status['server']['animalID'] = self.config['server']['animalID']
 		status['server']['state'] = self.camera.state
 		status['server']['currentFile'] = self.camera.currentFile
 		status['server']['lastResponse'] = self.lastResponse # filled in by each route
