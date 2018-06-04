@@ -76,7 +76,7 @@ class bTrial:
 		if self.isRunning:
 			self.trial['currentEpoch'] += 1
 			self.trial['lastEpochSeconds'] = now
-			self.newEvent('newEpoch', self.currentEpoch, now=now)
+			self.newEvent('newRepeat', self.currentEpoch, now=now)
 		
 	def saveTrial(self):
 		delim = ','
@@ -95,7 +95,7 @@ class bTrial:
 							'time=' + self.trial['timeStr'] + ';' \
 							'startTimeSeconds=' + str(self.trial['startTimeSeconds']) + ';' \
 							'trialNum=' + str(self.trial['trialNum']) + ';' \
-							'numEpochs=' + str(self.trial['currentEpoch']) + eol
+							'numRepeats=' + str(self.trial['currentEpoch']) + eol
 			file.write(headerLine)
 			# column header for event data
 			columnHeader = 'date' + delim + 'time' + delim + 'seconds' + delim + 'event' + delim + 'value' + eol

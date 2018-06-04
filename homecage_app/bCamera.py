@@ -73,21 +73,24 @@ class bCamera:
 			self.state = 'recording' if onoff else 'idle'
 			if onoff:
 				# set output path
+				'''
 				now = time.time()
 				startTime = datetime.now()
 				startTimeStr = startTime.strftime('%Y%m%d')
 				self.saveVideoPath = os.path.join(self.savePath, startTimeStr)
 				if not os.path.isdir(self.saveVideoPath):
 					os.makedirs(self.saveVideoPath)
-
-				self.trial.startTrial(now=now)
+				'''
+				#self.trial.startTrial(now=now)
 								
 				# start a background thread
 				thread = threading.Thread(target=self.recordVideoThread, args=())
 				thread.daemon = True							# Daemonize thread
 				thread.start()									# Start the execution
 			else:
-				self.trial.stopTrial()
+				#self.trial.stopTrial()
+				# thread will fall out of loop on self.state=='idle'
+				pass
 			return onoff
 		else:
 			return False
@@ -101,6 +104,15 @@ class bCamera:
 		self.camera.framerate = self.fps
 		self.camera.start_preview()
 
+		self.trial.startTrial(now=time.time())
+
+		now = time.time()
+		startTime = datetime.now()
+		startTimeStr = startTime.strftime('%Y%m%d')
+		self.saveVideoPath = os.path.join(self.savePath, startTimeStr)
+		if not os.path.isdir(self.saveVideoPath):
+			os.makedirs(self.saveVideoPath)
+
 		self.lastStillTime = 0 # seconds
 		currentRepeat = 1
 		numberOfRepeats = float('Inf') if self.recordInfinity else self.numberOfRepeats
@@ -109,19 +121,13 @@ class bCamera:
 			startTime = datetime.now()
 			startTimeStr = startTime.strftime('%Y%m%d_%H%M%S')
 
-			#the file we are about to record/save
-			self.currentFile = startTimeStr + '.h264'
-			
-			# save into date folder
-			dateStr = startTime.strftime('%Y%m%d')
-			saveVideoPath = os.path.join(self.savePath, dateStr)
-			if not os.path.isdir(saveVideoPath):
-				os.makedirs(saveVideoPath)
+			self.trial.newEpoch(now)
 
-			videoFilePath = os.path.join(saveVideoPath, self.currentFile)
+			#the file we are about to record/save
+			self.currentFile = startTimeStr + '_t' + str(self.trial.trialNum) + '_r' + str(self.trial.currentEpoch) + '.h264'
+			videoFilePath = os.path.join(self.saveVideoPath, self.currentFile)
 			logger.debug('Start video file:' + videoFilePath + ' dur:' + str(self.recordDuration) + ' fps:' + str(self.fps))
 
-			self.trial.newEpoch(now)
 			self.trial.newEvent('recordVideo', videoFilePath, now=now)			
 
 			self.camera.start_recording(videoFilePath)
