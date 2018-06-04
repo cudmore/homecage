@@ -86,7 +86,10 @@ class bTrial:
 	def saveTrial(self):
 		delim = ','
 		eol = '\n'
-		saveFile = self.trial['startTimeStr'] + '_t' + str(self.trialNum) + '.txt'
+		animalID_str = ''
+		if self.trial['animalID']:
+			animalID_str = '_id' + self.trial['animalID']
+		saveFile = self.trial['startTimeStr'] +animalID_str + '_t' + str(self.trialNum) + '.txt'
 		savePath = os.path.join('/home/pi/video', self.trial['dateStr'])
 		saveFilePath = os.path.join(savePath, saveFile)
 		if not os.path.exists(savePath):
@@ -99,6 +102,7 @@ class bTrial:
 			headerLine = 'date=' + self.trial['dateStr'] + ';' \
 							'time=' + self.trial['timeStr'] + ';' \
 							'startTimeSeconds=' + str(self.trial['startTimeSeconds']) + ';' \
+							'id=' + self.trial['animalID'] + ';' \
 							'trialNum=' + str(self.trial['trialNum']) + ';' \
 							'numRepeats=' + str(self.trial['currentEpoch']) + eol
 			file.write(headerLine)
