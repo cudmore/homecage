@@ -115,9 +115,11 @@ Browse to the homecage_app website
 
 ### 5.1) Install uv4l for live video streaming (optional)
 
-If you run into trouble, then follow [this tutorial][5]. If you don't do this, homecage should work but you won't be able to stream.
+If you run into trouble, then follow [this tutorial][5]. If you don't do this, homecage will work but you won't be able to stream.
 
+Because uv4l is complicated, **this will only work in Raspian Stretch**
 ```
+# at a comman prompt, type
 curl http://www.linux-projects.org/listing/uv4l_repo/lrkey.asc | sudo apt-key add -
 
 # edit /etc/apt/sources.list
@@ -130,16 +132,12 @@ deb http://www.linux-projects.org/listing/uv4l_repo/raspbian/stretch stretch mai
 stretch_install='deb http://www.linux-projects.org/listing/uv4l_repo/raspbian/stretch stretch main'
 echo $stretch_install | sudo tee -a /etc/apt/sources.list
 
-# or append without using pico
-#jessie_install='deb http://www.linux-projects.org/listing/uv4l_repo/raspbian/ jessie main'
-#echo $jessie_install | sudo tee -a /etc/apt/sources.list
-
-
-
-# update and install uv4l
+# update system and install uv4l
 sudo apt-get update
-sudo apt-get install uv4l uv4l-raspicam
+sudo apt-get install uv4l uv4l-server uv4l-raspicam
 ```
+
+If streaming does not work, see [troubleshooting][troubleshooting]
 
 ### 5.2) Install avconv to convert videos from .h264 to .mp4 (optional)
 
@@ -152,24 +150,6 @@ Video files will be saved to `/home/pi/video`. If your going to save a lot of vi
 
 
 
-# Troubleshooting
-
-As of May 2018, pip version 10 seems to be broken. Uninstall and then install pip version 9
-
-	# uninstall pip
-	python -m pip uninstall pip
-	
-	# install pip 9
-	python -m pip install -U "pip<10"
-	
-If virtualenv is not available (16.0.0)
-
-	sudo /usr/bin/easy_install virtualenv
-
-If you edit the config.json file it needs the correct sytax. Check the syntax with the following command. It will output the json if correct and an error otherwise.
-
-	cat config.json | python -m json.tool
-
 
 [0]: http://blog.cudmore.io/post/2017/11/22/raspian-stretch/
 [1]: http://wiringpi.com/
@@ -180,6 +160,7 @@ If you edit the config.json file it needs the correct sytax. Check the syntax wi
 [8]: command-line.md
 [9]: web-interface.md
 [10]: rest-interface.md
+[troubleshooting]: troubleshooting.md
 [11]: http://blog.cudmore.io/post/2017/11/01/libav-for-ffmpeg/
 [12]: http://blog.cudmore.io/post/2015/05/05/mounting-a-usb-drive-at-boot/
 [13]: http://blog.cudmore.io/post/2017/11/01/libav-for-ffmpeg/

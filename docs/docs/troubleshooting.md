@@ -1,6 +1,6 @@
 ## Video recording
 
-Manually capture a single image
+Manually capture a single image using built in raspistill. The following command will take an image and save it into test.jpg
 
 ```
 raspistill -o test.jpg
@@ -16,7 +16,7 @@ Check version of uv4l
 	# returns
 	Userspace Video4Linux
 	Copyright (C) Luca Risolia <luca.risolia@linux-projects.org>
-	Version 1.9.12 built on Aug 15 2017
+	Version 1.9.16 built on Jan 28 2018
 
 
 Run uv4l by hand
@@ -28,7 +28,7 @@ uv4l --driver raspicam --auto-video_nr --encoding h264 --width 640 --height 480 
 Browse the live stream at
 
 ```
-http://[IP]:8080
+http://[your_ip]:8080
 ```
 
 Stop uv4l (make sure all browser windows are closed)
@@ -36,6 +36,28 @@ Stop uv4l (make sure all browser windows are closed)
 ```
 sudo pkill uv4l
 ```
+
+## Problems with pip
+
+Sometimes pip version 10 seems to be broken. Uninstall and then install pip version 9
+
+	# uninstall pip
+	python -m pip uninstall pip
+	
+	# install pip 9
+	python -m pip install -U "pip<10"
+	
+## Problems with virtualenv
+
+If virtualenv is not available (16.0.0)
+
+	sudo /usr/bin/easy_install virtualenv
+
+## Manually configuring config.json
+
+If you edit the config.json file it needs the correct sytax. Check the syntax with the following command. It will output the json if correct and an error otherwise.
+
+	cat config.json | python -m json.tool
 
 ## socket.error: [Errno 98] Address already in use
 

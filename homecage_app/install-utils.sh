@@ -10,7 +10,7 @@
 # install uv4l
 printf '\n=== 1/5 downloading apt-key with curl\n'
 
-curl http://www.linux-projects.org/listing/uv4l_repo/lrkey.asc | sudo apt-key add -
+curl http://www.linux-projects.org/listing/uv4l_repo/lpkey.asc | sudo apt-key add -
 
 # check if stretch_install is already n file /etc/apt/sources.list
 printf '\n=== 2/5 checking you are running either jessie or stretch\n'
@@ -47,7 +47,7 @@ fi
 
 printf '\n=== 4/5 installing uv4l (please wait)\n'
 sudo apt-get -qq update
-sudo apt-get -qq install uv4l uv4l-raspicam
+sudo apt-get -qq install uv4l uv4l-server uv4l-raspicam
 
 #
 # install avconv
