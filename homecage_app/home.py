@@ -275,6 +275,9 @@ class home:
 		# set
 		self.config[one][two] = value
 		
+		# important
+		self.config = self.convertConfig_(self.config)
+		
 		# IMPORTANT: update camera config parameters
 		self.camera.setConfig(self.config) 
 		
@@ -327,8 +330,8 @@ class home:
 		We need to manually convert some values back to float/int
 		'''
 		config['video']['fileDuration'] = float(config['video']['fileDuration'])
-		config['video']['numberOfRepeats'] = float(config['video']['numberOfRepeats'])
-		config['video']['fps'] = float(config['video']['fps'])
+		config['video']['numberOfRepeats'] = int(config['video']['numberOfRepeats'])
+		config['video']['fps'] = int(config['video']['fps'])
 		config['video']['stillInterval'] = float(config['video']['stillInterval'])
 	
 		config['lights']['sunset'] = float(config['lights']['sunset'])
