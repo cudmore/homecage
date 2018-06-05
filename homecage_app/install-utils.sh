@@ -36,7 +36,7 @@ printf '\n=== 3/5 checking /etc/apt/sources.list\n'
 if grep -xq "$uv4l_deb" /etc/apt/sources.list
 then
 	# found
-	echo 'warning: /etc/apt/sources.list already has the line'
+	echo 'OK: /etc/apt/sources.list already has the line'
 	echo '   ' $uv4l_deb
 else
 	# not found
@@ -47,7 +47,7 @@ fi
 
 printf '\n=== 4/5 installing uv4l (please wait)\n'
 sudo apt-get -qq update
-sudo apt-get -qq install uv4l uv4l-raspicam
+sudo apt-get -qq --allow-unauthenticated install uv4l uv4l-server uv4l-raspicam
 
 #
 # install avconv
