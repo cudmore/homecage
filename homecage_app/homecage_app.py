@@ -175,6 +175,7 @@ def whiteLED(onoff):
 
 @app.route('/set/<paramName>/<value>')
 def setParam(paramName, value):
+	app.logger.debug(paramName + "'" + value + "'")
 	home.setParam(paramName, value)
 	config = home.getConfig()
 	return jsonify(config)

@@ -43,6 +43,8 @@ class bCamera:
 		self.streamWidth = 640
 		self.streamHeight = 480
 		
+		self.lastResponse = ''
+		
 	def setConfig(self, config):
 		''' this is shitty, set config from original config.json file '''
 		self.width = int(config['video']['resolution'].split(',')[0])
@@ -98,7 +100,15 @@ class bCamera:
 	def recordVideoThread(self):
 		# record individual video files in background thread
 		logging.info('recordVideoThread start')
-		self.camera = picamera.PiCamera()
+		try:
+			self.camera = picamera.PiCamera()
+		except (picamera.exc.PiCameraMMALError) as e:
+			logger.error('picamera exception: ' + str(e))
+			self.lastResponse = str(e)
+			#self.record(False)
+			self.state = 'idle'
+			raise
+			
 		self.camera.led = False
 		self.camera.resolution = (self.width, self.height)
 		self.camera.framerate = self.fps
@@ -169,17 +179,22 @@ class bCamera:
 					out = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
 					self.lastResponse = 'Streaming is on'
 				except subprocess.CalledProcessError as e:
-					print('e:', e)
-					print('e.returncode:', e.returncode) # 1 is failure, 0 is sucess
-					print('e.output:', e.output)
+					error = e.output.decode('utf-8')
+					logger.error('stream on exception: ' + error)
+					self.lastResponse = error
+					#self.stream(False)
+					self.state = 'idle'
+					raise
 			else:
 				cmd = ["./stream", "stop"]
 				try:
 					out = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+					self.lastResponse = 'Streaming is off'
 				except subprocess.CalledProcessError as e:
-					print('e:', e)
-					print('e.returncode:', e.returncode) # 1 is failure, 0 is sucess
-					print('e.output:', e.output)
+					error = e.output.decode('utf-8')
+					logger.error('stream off exception: ' + error)
+					self.lastResponse = error
+					raise
 			
 	def arm(self, onoff):
 		''' start and stop arm '''
@@ -336,62 +351,64 @@ class bCamera:
 		try:
 			out = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
 			self.lastResponse = 'Converted video to mp4'
-		except subprocess.CalledProcessError as e:
-			print('e:', e)
-			print('e.returncode:', e.returncode) # 1 is failure, 0 is sucess
-			print('e.output:', e.output)
-			self.lastResponse = e.output
-
+		except (subprocess.CalledProcessError, OSError) as e:
+			#print('e:', e)
+			#print('e.returncode:', e.returncode) # 1 is failure, 0 is sucess
+			#print('e.output:', e.output)
+			logger.error('convert_video exception: ' + str(e))
+			pass
+			
+		''' hold off on this as avprobe is switching what it returns causing problems'''
 		# append to dict and save in file
 		dirname = os.path.dirname(videoFilePath) 
 		mp4File = os.path.basename(videoFilePath).split('.')[0] + '.mp4'
 		mp4Path = os.path.join(dirname, mp4File)
-		#print('mp4Path:', mp4Path)
-		#todo: also include .h264 (if we are not converting to .mp4)
-		command = "avprobe -show_format -show_streams -loglevel 'quiet' " + str(mp4Path) + ' -of json'
-		#command = "avprobe -show_format -show_streams " + str(mp4Path) + ' -of json'
-		#print(command)
-		child = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
-		data, err = child.communicate()
-		data = data.decode('utf-8') # python 3
-		data = json.loads((data))
-		#print data
-		fd = {}
-		fd['path'] = mp4Path
-		fd['file'] = mp4File
-		if 'format' in data:
-			fd['duration'] =  math.floor(float(data['format']['duration'])*100)/100
-		else:
-			fd['duration'] =  '?'
-		if 'streams' in data:
-			fd['width'] =  data['streams'][0]['width']
-			fd['height'] =  data['streams'][0]['height']
-			#stretch
-			#fd['fps'] = data['streams'][0]['avg_frame_rate'].split('/')[0] # parsing 25/1
-			#jessie
-			#fd['fps'] = data['streams'][0]['r_frame_rate'].split('/')[0] # parsing 25/1
-			fd['fps'] = fps
-		else:
-			fd['width'] =  '?'
-			fd['height'] =  '?'
-			fd['fps'] = '?'
-		
-		# load existing database (list of dict)
-		folder = os.path.dirname(videoFilePath)
-		dbFile = os.path.join(folder,'db.txt')
-		#print('dbFile:', dbFile)
-		db = []
-		if os.path.isfile(dbFile):
-			db = json.load(open(dbFile))
-			#print 'loaded db:', db
-		# append
-		db.append(fd)
-		# save
-		txt = json.dumps(db)
-		f = open(dbFile,"w")
-		f.write(txt)
-		f.close()
+		if not os.path.isfile(mp4Path):
+			mp4File = os.path.basename(videoFilePath).split('.')[0] + '.h264'
+			mp4Path = os.path.join(dirname, mp4File)
+		if not os.path.isfile(mp4Path):
+			logger.error('did not find h264 or mp4 file: ' + mp4Path)
+			return
 
+		cmd = ['./avprobe_video.sh', mp4Path]
+		try:
+			data = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+			data = data.decode('utf-8') # python 3
+			data = json.loads((data))
+		except OSError as e:
+			logger.error('avprobe_video.sh exception: ' + str(e))
+		else:
+			try:			
+				fd = {}
+				fd['path'] = mp4Path
+				fd['file'] = mp4File
+				if 'streams' in data:
+					fd['duration'] =  round(float(data['streams'][0]['duration']), 2)
+					fd['width'] =  data['streams'][0]['width']
+					fd['height'] =  data['streams'][0]['height']
+					fd['fps'] = fps
+				else:
+					fd['duration'] =  '?'
+					fd['width'] =  '?'
+					fd['height'] =  '?'
+					fd['fps'] = '?'
+			except (KeyError, IndexError) as e:
+				logger.error('avprobe_video.sh result exception: ' + str(e))
+			# load existing database (list of dict)
+			folder = os.path.dirname(videoFilePath)
+			dbFile = os.path.join(folder,'db.txt')
+			#print('dbFile:', dbFile)
+			db = []
+			if os.path.isfile(dbFile):
+				db = json.load(open(dbFile))
+				#print 'loaded db:', db
+			# append
+			db.append(fd)
+			# save
+			txt = json.dumps(db)
+			f = open(dbFile,"w")
+			f.write(txt)
+			f.close()
 			
 if __name__ == '__main__':
 	logger = logging.getLogger()

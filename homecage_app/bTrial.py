@@ -131,7 +131,7 @@ class bTrial:
 		folder = os.path.dirname(saveFilePath)
 		dbFile = os.path.join(folder,'db.txt')
 		db = []
-		print('saveTrial() looking for dbFile:', dbFile)
+		#print('saveTrial() looking for dbFile:', dbFile)
 		if os.path.isfile(dbFile):
 			db = json.load(open(dbFile))
 		# append

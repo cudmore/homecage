@@ -1,6 +1,6 @@
 {
     "server": {
-    	"animalID": "xxx"
+    	"animalID": ""
     },
     "hardware": {
         "triggerIn": {

@@ -230,7 +230,7 @@ class home:
 	# Config, loaded from and saved to config.json
 	##########################################
 	def setParam(self, param, value):
-		logger.debug(param + ' ' + str(value))
+		logger.debug(param + " '" + str(value) + "'")
 		one, two = param.split('.')
 		if one not in self.config:
 			# error
@@ -241,6 +241,7 @@ class home:
 			print('ERROR: setParam() did not find', two, 'in self.config["', one, '"]')
 			return
 			
+		'''
 		theType = type(self.config[one][two])
 		if theType == str:
 			value = str(value)
@@ -255,6 +256,15 @@ class home:
 			if value == 'true':
 				value = True
 			value = bool(value)
+		'''
+		if value == 'false':
+			value = False
+		if value == 'true':
+			value = True
+		
+		if value == 'emptyValueCludge':
+			value = ''
+			
 		# set
 		self.config[one][two] = value
 		
@@ -366,24 +376,37 @@ class home:
 			self.lastResponse = 'Idle'
 			
 	def record(self, onoff):
-		self.camera.record(onoff)
-		if self.isState('recording'):
-			myThread = threading.Thread(target = self.lightsThread)
-			myThread.daemon = True
-			myThread.start()
-
+		try:
+			self.camera.record(onoff)
+			self.lastResponse = self.camera.lastResponse
+			if self.isState('recording'):
+				myThread = threading.Thread(target = self.lightsThread)
+				myThread.daemon = True
+				myThread.start()
+		except:
+			self.lastResponse = self.camera.lastResponse
+			raise
+		'''
 		if self.isState('recording'):
 			self.lastResponse = 'Started recording'
 		elif self.isState('idle'):
 			self.lastResponse = 'Stopped recording'
-
+		'''
+		
 	def stream(self, onoff):
-		self.camera.stream(onoff)
+		try:
+			self.camera.stream(onoff)
+			self.lastResponse = self.camera.lastResponse
+		except:
+			self.lastResponse = self.camera.lastResponse
+			raise
+		'''
 		if self.isState('streaming'):
 			self.lastResponse = 'Started streaming'
 		elif self.isState('idle'):
 			self.lastResponse = 'Stopped streaming'
-
+		'''
+		
 	def arm(self, onoff):
 		self.camera.arm(onoff)
 		if self.isState('armed'):
