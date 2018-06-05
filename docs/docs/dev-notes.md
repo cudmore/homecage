@@ -88,7 +88,7 @@ Exit virtual environment
 	
 ## mkDocs
 
-We use [mkdocs][mkdocs] to generate the documentation website from markdown files.
+We use [mkdocs][mkdocs] to generate the documentation website from markdown files. On the Raspberry, mkdocs will only install into Python 3.x
 
 Install
 
