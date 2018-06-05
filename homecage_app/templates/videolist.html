@@ -53,24 +53,26 @@
 	<table class="videoTable">
 		<tr>
 		<th>File</th>
+		<!--
 		<th>Width</th>
 		<th>Height</th>
 		<th>FPS</th>
 		<th>Duration (sec)</th>
+		-->
+		<th>Size</th>
 		</tr>
 		{% for file in files %}
 			<tr>
 		
-			{% if file.isfile %}
-				<td><a href="/videolist{{ file.path }}">{{ file.file }}</a></td>
-			{% else %}
-				<td><strike>{{ file.file }}</strike></td>
-			{% endif %}
+			<td><a href="/videolist{{ file.path }}">{{ file.file }}</a></td>
 			
+			<!--
 			<td> {{ file.width }}</td>
 			<td> {{ file.height }}</td>
 			<td> {{ file.fps }}</td>
 			<td> {{ file.duration }}</td>
+			-->
+			<td> {{ file.size }}</td>
 		
 			</tr>
 		{% endfor %}

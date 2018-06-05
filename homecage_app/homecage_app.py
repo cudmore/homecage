@@ -218,21 +218,35 @@ def videolist(req_path=''):
 		response.headers["Content-Type"] = mimetypes.guess_type(os.path.basename(abs_path))
 		return response
 		'''
-		print('videolist() is serving file:', abs_path)
+		app.logger.debug(('videolist() is serving file:', abs_path))
 		return send_file(abs_path)
 
 	# Show directory contents
 	files = []
 	for f in os.listdir(abs_path):
-		if f == '.AppleDouble':
+		if f in ['.AppleDouble', '.DS_Store']:
 			continue
 		f2 = f
 		f = os.path.join(abs_path, f)
-		fd = {'path':f, 'file':f2, 'isfile':True}
+		
+		# get file size in either MB or KB (if <1 MB)
+		unitStr = 'MB'
+		size = os.path.getsize(f)
+		sizeMB = size/(1024*1024.0) # mb
+		if sizeMB < 0.1:
+			unitStr = 'bytes'
+			sizeMB = size
+		sizeStr = "%0.1f %s" % (sizeMB, unitStr)
+		
+		fd = {'path':f, 'file':f2, 'isfile':True, 'size':sizeStr}
+		files.append(fd)
+		'''
 		if not os.path.isfile(f):
 			files.append(fd)
+		'''
 		
 	# load from db file
+	'''
 	dbFile = os.path.join(abs_path,'db.txt') 
 	if os.path.isfile(dbFile):
 		files2 = json.load(open(dbFile))
@@ -242,6 +256,7 @@ def videolist(req_path=''):
 			else:
 				file3['isfile'] = False
 			files.append(file3)
+	'''
 	
 	# sort the list
 	files = sorted(files, key=lambda k: k['file']) 

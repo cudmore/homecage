@@ -12,6 +12,8 @@ class bTrial:
 	def __init__(self):
 		self.trialNum = 0
 		
+		self.lastResponse = ''
+		
 		self.trial = OrderedDict()
 		self.trial['isRunning'] = False
 		self.trial['startTimeSeconds'] = None
@@ -124,6 +126,7 @@ class bTrial:
 
 		#
 		# append to db.txt for folder, see bCamera.convertVideo()
+		'''
 		fd = {}
 		fd['path'] = saveFilePath
 		fd['file'] = saveFile
@@ -141,6 +144,7 @@ class bTrial:
 		f = open(dbFile,"w")
 		f.write(txt)
 		f.close()
+		'''
 		
 	@property
 	def isRunning(self):

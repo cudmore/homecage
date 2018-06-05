@@ -29,7 +29,7 @@ class bCamera:
 		
 		# still image during recording
 		self.captureStill = True
-		self.stillInterval = 2 # seconds
+		self.stillInterval = 2.0 # seconds
 		self.lastStillTime = 0
 		self.stillPath = os.path.join(os.path.dirname(__file__), 'static/still.jpg')
 		
@@ -43,7 +43,7 @@ class bCamera:
 		self.streamWidth = 640
 		self.streamHeight = 480
 		
-		self.lastResponse = ''
+		#self.lastResponse = ''
 		
 	def setConfig(self, config):
 		''' this is shitty, set config from original config.json file '''
@@ -67,7 +67,21 @@ class bCamera:
 		
 	def isState(self, thisState):
 		return self.state == thisState
-		
+	
+	@property
+	def lastResponse(self):
+		if self.trial:
+			return self.trial.lastResponse
+		else:
+			return 'camera has no trial'
+	
+	@lastResponse.setter
+	def lastResponse(self, str):
+		if self.trial:
+			self.trial.lastResponse = str
+		else:
+			print('error: lastResponse.setter did not find trial')
+			
 	def record(self, onoff):
 		okGo = self.state in ['idle'] if onoff else self.state in ['recording']
 		logger.debug('record onoff:' + str(onoff) + ' okGo:' + str(okGo))
@@ -117,8 +131,11 @@ class bCamera:
 		self.trial.startTrial(now=time.time())
 
 		now = time.time()
+		startTimeStr = time.strftime('%Y%m%d', time.localtime(now)) 
+		'''
 		startTime = datetime.now()
 		startTimeStr = startTime.strftime('%Y%m%d')
+		'''
 		self.saveVideoPath = os.path.join(self.savePath, startTimeStr)
 		if not os.path.isdir(self.saveVideoPath):
 			os.makedirs(self.saveVideoPath)
@@ -128,9 +145,12 @@ class bCamera:
 		numberOfRepeats = float('Inf') if self.recordInfinity else self.numberOfRepeats
 		while self.isState('recording') and (currentRepeat <= numberOfRepeats):
 			now = time.time()
+			startTimeStr = time.strftime('%Y%m%d_%H%M%S', time.localtime(now)) 
+			'''
 			startTime = datetime.now()
 			startTimeStr = startTime.strftime('%Y%m%d_%H%M%S')
-
+			'''
+			
 			self.trial.newEpoch(now)
 
 			#the file we are about to record/save
@@ -143,10 +163,18 @@ class bCamera:
 
 			self.trial.newEvent('recordVideo', videoFilePath, now=now)			
 
-			self.camera.start_recording(videoFilePath)
-			while self.isState('recording') and (time.time() < (now + self.recordDuration)):
+			try:
+				self.camera.start_recording(videoFilePath)
+			except (IOError) as e:
+				logger.error('start recording:' + str(e))
+				self.camera.close()
+				self.lastResponse = str(e)
+				self.state = 'idle'
+				raise
+				
+			while self.isState('recording') and (time.time() < (now + float(self.recordDuration))):
 				self.camera.wait_recording()
-				if self.captureStill and time.time() > (self.lastStillTime + self.stillInterval):
+				if self.captureStill and time.time() > (self.lastStillTime + float(self.stillInterval)):
 					self.camera.capture(self.stillPath, use_video_port=True)
 					self.lastStillTime = time.time()
 					'''
@@ -218,6 +246,7 @@ class bCamera:
 					thread.daemon = True							# Daemonize thread
 					thread.start()									# Start the execution
 
+					self.lastResponse = 'Armed and waiting for trigger'
 			else:
 				if self.camera:
 					# stop background task with video loop
@@ -226,17 +255,20 @@ class bCamera:
 						self.camera.close()
 					except picamera.exc.PiCameraNotRecording:
 						logger.error('PiCameraNotRecording')
+					self.lastResponse = self.state
 						
 	def startArmVideo(self, now=time.time()):
 		if self.isState('armed'):
 			logger.debug('startArmVideo()')
 			self.state = 'armedrecording'
+			self.lastResponse = 'Trigger in at ' + time.strftime('%H:%M:%s', time.localtime(now)) 
 			
 	def stopArmVideo(self):
 		if self.isState('armedrecording'):
+			now=time.time()
 			logger.debug('stopArmVideo()')
 			self.state = 'armed'
-
+			self.lastResponse = 'Stopped armed video recording at ' + time.strftime('%H:%M:%s', time.localtime(now)) 
 	def armVideoThread(self, saveVideoPath):
 		'''
 		Arm the camera by starting a circular stream
@@ -265,8 +297,13 @@ class bCamera:
 				if self.isState('armedrecording'):
 					#todo: log time when trigger in is received
 					now = time.time()
+					startTimeStr = time.strftime('%Y%m%d_%H%M%S', time.localtime(now)) 
+					'''
 					startTime = datetime.now()
 					startTimeStr = startTime.strftime('%Y%m%d_%H%M%S')
+					'''
+					
+					#self.lastResponse = 'Trigger in at'
 					
 					self.trial.startTrial(now=now)
 
@@ -293,11 +330,11 @@ class bCamera:
 				
 					# for now, record ONE video file per start trigger
 					recordDuration = self.recordDuration
-					stopOnTrigger = 0 #todo: make this global and set on pin
-					while self.isState('armedrecording') and not stopOnTrigger and (time.time()<(now + recordDuration)):
+					stopOnTrigger = False #todo: make this global and set on pin
+					while self.isState('armedrecording') and not stopOnTrigger and (time.time()<(now + float(recordDuration))):
 						self.camera.wait_recording() # seconds
 
-						if self.captureStill and time.time() > (lastStill + self.stillInterval):
+						if self.captureStill and time.time() > (lastStill + float(self.stillInterval)):
 							self.camera.capture(self.stillPath, use_video_port=True)
 							lastStill = time.time()
 						
@@ -308,7 +345,8 @@ class bCamera:
 					self.trial.stopTrial()
 
 					self.state = 'armed'
-					
+					self.lastResponse = 'Stopped trial at xxx'
+										
 					# convert to mp4
 					if self.converttomp4:
 						# before
@@ -359,6 +397,7 @@ class bCamera:
 			pass
 			
 		''' hold off on this as avprobe is switching what it returns causing problems'''
+		'''
 		# append to dict and save in file
 		dirname = os.path.dirname(videoFilePath) 
 		mp4File = os.path.basename(videoFilePath).split('.')[0] + '.mp4'
@@ -409,7 +448,8 @@ class bCamera:
 			f = open(dbFile,"w")
 			f.write(txt)
 			f.close()
-			
+		'''
+		
 if __name__ == '__main__':
 	logger = logging.getLogger()
 	handler = logging.StreamHandler()
