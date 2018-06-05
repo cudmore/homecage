@@ -48,6 +48,7 @@ werkzeugLogger = logging.getLogger('werkzeug')
 werkzeugLogger.setLevel(logging.ERROR)
 
 #
+import bUtil
 from home import home
 home = home()
 
@@ -82,6 +83,7 @@ def page_not_found(e):
 @app.route('/')
 def hello_world():
 	#app.logger.debug('/')
+	home.getSystemInfo() # update cpu temp, disk space, ip
 	return render_template('index.html')
 
 @app.route('/log')
@@ -173,6 +175,7 @@ def whiteLED(onoff):
 
 @app.route('/set/<paramName>/<value>')
 def setParam(paramName, value):
+	app.logger.debug(paramName + "'" + value + "'")
 	home.setParam(paramName, value)
 	config = home.getConfig()
 	return jsonify(config)
@@ -215,21 +218,35 @@ def videolist(req_path=''):
 		response.headers["Content-Type"] = mimetypes.guess_type(os.path.basename(abs_path))
 		return response
 		'''
-		print('videolist() is serving file:', abs_path)
+		app.logger.debug(('videolist() is serving file:', abs_path))
 		return send_file(abs_path)
 
 	# Show directory contents
 	files = []
 	for f in os.listdir(abs_path):
-		if f == '.AppleDouble':
+		if f in ['.AppleDouble', '.DS_Store']:
 			continue
 		f2 = f
 		f = os.path.join(abs_path, f)
-		fd = {'path':f, 'file':f2, 'isfile':True}
+		
+		# get file size in either MB or KB (if <1 MB)
+		unitStr = 'MB'
+		size = os.path.getsize(f)
+		sizeMB = size/(1024*1024.0) # mb
+		if sizeMB < 0.1:
+			unitStr = 'bytes'
+			sizeMB = size
+		sizeStr = "%0.1f %s" % (sizeMB, unitStr)
+		
+		fd = {'path':f, 'file':f2, 'isfile':True, 'size':sizeStr}
+		files.append(fd)
+		'''
 		if not os.path.isfile(f):
 			files.append(fd)
+		'''
 		
 	# load from db file
+	'''
 	dbFile = os.path.join(abs_path,'db.txt') 
 	if os.path.isfile(dbFile):
 		files2 = json.load(open(dbFile))
@@ -239,6 +256,7 @@ def videolist(req_path=''):
 			else:
 				file3['isfile'] = False
 			files.append(file3)
+	'''
 	
 	# sort the list
 	files = sorted(files, key=lambda k: k['file']) 
@@ -260,10 +278,21 @@ def whatismyip():
 	return ips
 
 if __name__ == '__main__':	
-	myip = whatismyip()
+	#myip = whatismyip()
+	myip = bUtil.whatismyip_safe()
+	
+	debug = False
+	if len(sys.argv) == 2:
+		if sys.argv[1] == 'debug':
+			debug = True
+	app.logger.debug('Running flask server with debug = ' + str(debug))
+		
 	app.logger.debug('Flask server is running at: ' + 'http://' + str(myip) + ':5000')
-	debug = True
-	app.run(host=myip, port=5000, debug=debug, threaded=True)
+	
+	# 0.0.0.0 will reun on external ip and needed to start at boot with systemctl
+	# before we get a valid ip from whatismyip()
+	
+	app.run(host='0.0.0.0', port=5000, debug=debug, threaded=True)
 	
 	
 	

@@ -46,7 +46,7 @@ class home:
 
 	def init(self):
 		logger.debug('start home.init()')
-		
+				
 		self.config = self.loadConfigFile()
 				
 		self.trial = bTrial()
@@ -115,7 +115,11 @@ class home:
 			pull_up_down = self.config['hardware']['triggerIn']['pull_up_down'] # up or down
 			pull_up_down = home.pullUpDownDict[pull_up_down]
 			GPIO.setup(pin, GPIO.IN, pull_up_down=pull_up_down)
-			GPIO.add_event_detect(pin, polarity, callback=self.triggerIn_Callback, bouncetime=200) # ms
+			try:
+				GPIO.add_event_detect(pin, polarity, callback=self.triggerIn_Callback, bouncetime=200) # ms
+			except (RuntimeError) as e:
+				logger.warning('triggerIn add_event_detect: ' + str(e))
+				pass
 			#logger.info('gpio configured:' + str(self.config['hardware']['triggerIn']))
 		else:
 			pin = self.config['hardware']['triggerIn']['pin']
@@ -143,8 +147,11 @@ class home:
 					cb = lambda x, arg1=name, arg2=enabled, arg3=pin: self.eventIn_Callback(x,arg1, arg1,arg2, arg3)
 					# as long as each event is different pin, polarity can be different
 					polarity = home.polarityDict_[eventIn['polarity']]
-					GPIO.add_event_detect(pin, polarity, callback=cb, bouncetime=200) # ms
-					#print('   ', idx, 'name:', name, 'pin:', pin, 'polarity:', polarity)
+					try:
+						GPIO.add_event_detect(pin, polarity, callback=cb, bouncetime=200) # ms
+					except (RuntimeError) as e:
+						logger.warning('eventIn add_event_detect: ' + str(e))
+						pass
 				else:
 					try:
 						GPIO.remove_event_detect(pin)
@@ -174,7 +181,9 @@ class home:
 		if pin is None:
 			# called by user, look up event in list by ['name']
 			dictList = self.config['hardware']['eventIn']
-			thisItem = (item for item in dictList if item["name"] == name).next()
+			# having lots of problems b/w python 2/3 with g.next() versus next(g)
+			#thisItem = (item for item in dictList if item["name"] == name).next()
+			thisItem = next(item for item in dictList if item["name"] == name)
 			if thisItem is None:
 				#error
 				pass
@@ -186,7 +195,7 @@ class home:
 
 			if name == 'frame':
 				if self.trial.isRunning:
-					self.trial.numFrames += 1
+					#self.trial.numFrames += 1 # can't do this, no setter
 					self.trial.newEvent('frame', self.trial.numFrames, now=now)
 					if self.camera:
 						self.camera.annotate(self.trial.numFrames)
@@ -196,7 +205,7 @@ class home:
 	def triggerIn_Callback(self, pin):
 		now = time.time()
 		self.camera.startArmVideo(now=now)
-		#logger.debug("triggerIn_Callback finished trial:" + str(self.trial['frameNum']))
+		self.lastResponse = self.camera.lastResponse
 				
 	##########################################
 	# Output pins on/off
@@ -205,7 +214,9 @@ class home:
 		''' turn output pins on/off '''
 		dictList = self.config['hardware']['eventOut'] # list of event out(s)
 		try:
-			thisItem = (item for item in dictList if item["name"] == name).next()
+			# having lots of problems b/w python 2/3 with g.next() versus next(g)
+			#thisItem = (item for item in dictList if item["name"] == name).next()
+			thisItem = next(item for item in dictList if item["name"] == name)
 		except StopIteration:
 			thisItem = None
 		if thisItem is None:
@@ -226,7 +237,7 @@ class home:
 	# Config, loaded from and saved to config.json
 	##########################################
 	def setParam(self, param, value):
-		logger.debug(param + ' ' + str(value))
+		logger.debug(param + " '" + str(value) + "'")
 		one, two = param.split('.')
 		if one not in self.config:
 			# error
@@ -237,6 +248,7 @@ class home:
 			print('ERROR: setParam() did not find', two, 'in self.config["', one, '"]')
 			return
 			
+		'''
 		theType = type(self.config[one][two])
 		if theType == str:
 			value = str(value)
@@ -251,11 +263,23 @@ class home:
 			if value == 'true':
 				value = True
 			value = bool(value)
+		'''
+		if value == 'false':
+			value = False
+		if value == 'true':
+			value = True
+		
+		if value == 'emptyValueCludge':
+			value = ''
+			
 		# set
 		self.config[one][two] = value
 		
 		# IMPORTANT: update camera config parameters
 		self.camera.setConfig(self.config) 
+		
+		# important
+		self.trial.setAnimalID(self.config['server']['animalID'])
 		
 		self.lastResponse = one + ' ' + two + ' is now ' + str(value)
 		
@@ -264,6 +288,7 @@ class home:
 		with open('config_defaults.json') as configFile:
 			try:
 				config = json.load(configFile, object_pairs_hook=OrderedDict)
+				config = self.convertConfig_(config)
 			except ValueError as e:
 				logger.error('config_defaults.json ValueError: ' + str(e))
 				self.lastResponse = 'Error loading default options file: ' + str(e)
@@ -279,6 +304,7 @@ class home:
 		with open('config.json') as configFile:
 			try:
 				config = json.load(configFile, object_pairs_hook=OrderedDict)
+				config = self.convertConfig_(config)
 			except ValueError as e:
 				logger.error('config.json ValueError: ' + str(e))
 				sys.exit(1)
@@ -294,6 +320,21 @@ class home:
 	def getConfig(self):
 		# parameters that can be set by user
 		return self.config
+	
+	def convertConfig_(self, config):
+		'''
+		This is shitty, saving json is converting everything to string.
+		We need to manually convert some values back to float/int
+		'''
+		config['video']['fileDuration'] = float(config['video']['fileDuration'])
+		config['video']['numberOfRepeats'] = float(config['video']['numberOfRepeats'])
+		config['video']['fps'] = float(config['video']['fps'])
+		config['video']['stillInterval'] = float(config['video']['stillInterval'])
+	
+		config['lights']['sunset'] = float(config['lights']['sunset'])
+		config['lights']['sunrise'] = float(config['lights']['sunrise'])
+
+		return config
 		
 	##########################################
 	# Status, real-time
@@ -307,6 +348,7 @@ class home:
 		status = OrderedDict()
 		
 		status['server'] = OrderedDict()
+		status['server']['animalID'] = self.config['server']['animalID']
 		status['server']['state'] = self.camera.state
 		status['server']['currentFile'] = self.camera.currentFile
 		status['server']['lastResponse'] = self.lastResponse # filled in by each route
@@ -321,6 +363,8 @@ class home:
 		status['server']['trialElapsedSec'] = self.trial.timeElapsed
 		status['server']['epochElapsedSec'] = self.trial.epochTimeElapsed
 		status['server']['currentEpoch'] = self.trial.currentEpoch
+		status['server']['trialNum'] = self.trial.trialNum
+		status['server']['fileDuration'] = self.config['video']['fileDuration']
 		
 		# temperature and humidity
 		status['server']['environment'] = OrderedDict()
@@ -338,6 +382,13 @@ class home:
 
 		return status
 
+	def getSystemInfo(self):
+		'''
+		Assume this is expensive, don't call often.
+		Fetches system information like cpu temperature, hard drive space remaining, ip, etc.
+		'''
+		self.systemInfo = bUtil.getSystemInfo()
+
 	##########################################
 	# Start and stop video, stream, arm
 	##########################################
@@ -347,39 +398,50 @@ class home:
 		self.stream(0)
 		self.stopArmVideo()
 		self.trial.stopTrial()
-		if self.isState('idle'):
-			self.lastResponse = 'Idle'
+		self.lastResponse = self.state
 			
 	def record(self, onoff):
-		self.camera.record(onoff)
-		if self.isState('recording'):
-			myThread = threading.Thread(target = self.lightsThread)
-			myThread.daemon = True
-			myThread.start()
-
+		try:
+			self.camera.record(onoff)
+			self.lastResponse = self.camera.lastResponse
+			if self.isState('recording'):
+				myThread = threading.Thread(target = self.lightsThread)
+				myThread.daemon = True
+				myThread.start()
+		except:
+			self.lastResponse = self.camera.lastResponse
+			raise
+		'''
 		if self.isState('recording'):
 			self.lastResponse = 'Started recording'
 		elif self.isState('idle'):
 			self.lastResponse = 'Stopped recording'
-
+		'''
+		
 	def stream(self, onoff):
-		self.camera.stream(onoff)
+		try:
+			self.camera.stream(onoff)
+			self.lastResponse = self.camera.lastResponse
+		except:
+			self.lastResponse = self.camera.lastResponse
+			raise
+		'''
 		if self.isState('streaming'):
 			self.lastResponse = 'Started streaming'
 		elif self.isState('idle'):
 			self.lastResponse = 'Stopped streaming'
-
+		'''
+		
 	def arm(self, onoff):
 		self.camera.arm(onoff)
 		if self.isState('armed'):
-			self.lastResponse = 'Started arm, waiting for trigger in'
+			self.lastResponse = self.camera.lastResponse
 		elif self.isState('idle'):
-			self.lastResponse = 'Stopped arm'
+			self.lastResponse = self.camera.lastResponse
 
 	def startArmVideo(self, now=time.time()):
 		self.camera.startArmVideo(now=now)
-		if self.isState('armedrecording'):
-			self.lastResponse = 'Started armed video recording'
+		self.lastResponse = self.camera.lastResponse
 		
 	def stopArmVideo(self):
 		self.camera.stopArmVideo()
@@ -394,7 +456,7 @@ class home:
 		# control lights during recording
 		if self.config['lights']['auto']:
 			now = datetime.now()
-			isDaytime = now.hour > self.config['lights']['sunrise'] and now.hour < self.config['lights']['sunset']
+			isDaytime = now.hour > float(self.config['lights']['sunrise']) and now.hour < float(self.config['lights']['sunset'])
 			if isDaytime:
 				self.eventOut('whiteLED', True)
 				self.eventOut('irLED', False)

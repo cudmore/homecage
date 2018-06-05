@@ -99,7 +99,7 @@
 		</span>
 		<BR>
 		<span ng-show="isState('recording') || isState('armedrecording')">
-			Repeat {{status.server.currentEpoch}} elapsed (sec): {{status.server.epochElapsedSec}}
+			Trial {{status.server.trialNum}}, repeat {{status.server.currentEpoch}} : {{status.server.epochElapsedSec}} of {{status.server.fileDuration}} (sec)
 		</span>
 		</td>
 	</tr>
@@ -232,21 +232,34 @@
 	<span ng-show="showOptions">		
 
 		<div class="indent">
-		
+
+		   <form ng-submit="mySubmit('server.animalID',config.server.animalID)">
+		   <label>Animal ID
+		   <input style="width: 5em" 
+		   	type="text" 
+		   	ng-model="config.server.animalID" 
+		   	ng-disabled="! allowEditeOptions()" 
+		   	ng-required="false"
+		   	/>
+		   	</label>
+		   	</form>
+
 		<b>Video</b>
 		
 		<div class="indent2">
 
-		<!-- <form ng-submit="mySubmit('video.fileDuration',config.video.fileDuration)"> -->
-		   Recording Duration (sec)
+		   <form name="myForm" ng-submit="mySubmit('video.fileDuration',config.video.fileDuration)">
+		   <label>Recording Duration (sec)
 		   <input style="width: 5em" 
 		   	type="number" 
 		   	ng-model="config.video.fileDuration" 
 		   	ng-disabled="! allowEditeOptions()" 
-		   	ng-change="mySubmit('video.fileDuration',config.video.fileDuration)"
+		   	min="0.5"
+		   	step="0.1"
+		   	required
 		   	/>
-		   	<BR>
-		<!-- </form> -->
+		   	</label>
+		   	</form>
 
 		<input type="checkbox" 
 			ng-model="config.video.recordInfinity" 
@@ -256,26 +269,32 @@
 		Record indefinitely
 		<BR>
 
-		   Number of repeats
+		   <form name="myForm2" ng-submit="mySubmit('video.numberOfRepeats',config.video.numberOfRepeats)">
+		   <label>Number of repeats
 		   <input style="width: 5em" 
 		   	type="number" 
 		   	ng-model="config.video.numberOfRepeats" 
 		   	ng-disabled="! allowEditeOptions()" 
-		   	ng-change="mySubmit('video.numberOfRepeats',config.video.numberOfRepeats)"
+		   	min="1"
+		   	step="1"
+		   	required
 		   	/>
-		   	<BR>
-
+		   	</label>
+		   	</form>
 				
-		<!-- <form ng-submit="mySubmit('video.fps',config.video.fps)"> -->
-		   Frames Per Second
+		   <form name="myForm3" ng-submit="mySubmit('video.fps',config.video.fps)">
+		   <label>Frames per second
 		   <input style="width: 3em" 
 		   	type="number" 
 		   	ng-model="config.video.fps"
 		   	ng-disabled="! allowEditeOptions()" 
-		   	ng-change="mySubmit('video.fps',config.video.fps)"
+		   	min="5"
+		   	max="90"
+		   	step="1"
+		   	required
 		   	/>
-		   	<BR>
-		<!-- </form> -->
+		   	</label>
+		   	</form>
 
 		Video Size 
 		<select name="" 
@@ -290,21 +309,25 @@
 		</select>
 
 		<BR>
+			
+		   <form name="myForm4" ng-submit="mySubmit('video.stillInterval',config.video.stillInterval)">
 		<input type="checkbox" 
 			ng-model="config.video.captureStill" 
 			ng-change="mySubmit('video.captureStill',config.video.captureStill)" 
 		   	ng-disabled="! allowEditeOptions()" 
 			/>		
-			
-		   Capture still image at interval (sec)
+		   <label>Capture still image at interval (sec)
 		   <input style="width: 3em" 
 		   	type="number" 
 		   	ng-model="config.video.stillInterval" 
 		   	ng-disabled="! allowEditeOptions()" 
-		   	ng-change="mySubmit('video.stillInterval',config.video.stillInterval)"
+		   	min=".1"
+		   	step=".1"
+		   	required
 		   	/>
+		   	</label>
+		   	</form>
 
-		<BR>
 		<input type="checkbox" 
 			ng-model="config.video.converttomp4"
 			ng-change="mySubmit('video.converttomp4',config.video.converttomp4)" 
@@ -327,24 +350,33 @@
 		Automatically turn lights on and off 
 		
 		<BR>
-		<!-- <form style="display: inline-block;" ng-submit="mySubmit('lights.sunrise',config.lights.sunrise)"> -->
-		   Sunrise (24h)
+		   <form name="myForm5" ng-submit="mySubmit('lights.sunrise',config.lights.sunrise)">
+		   <label>Sunrise (24h)
 		   <input style="width: 3em" 
 		   type="number" 
 		   ng-model="config.lights.sunrise"
-		   	ng-disabled="! allowEditeOptions()" 
-		   ng-change="mySubmit('lights.sunrise',config.lights.sunrise)"
+		   ng-disabled="! allowEditeOptions()" 
+		   min="0"
+		   max="24"
+		   step=".1"
+		   required
 		   />
-		<!-- </form> -->
-		<!-- <form style="display: inline-block;" ng-submit="mySubmit('lights.sunset',config.lights.sunset)"> -->
-		   Sunset (24h)
+		   	</label>
+		   	</form>
+
+		   <form name="myForm6" ng-submit="mySubmit('lights.sunset',config.lights.sunset)">
+		   <label>Sunset (24h)
 		   <input style="width: 3em" 
 		   type="number" 
 		   ng-model="config.lights.sunset" 
-		   	ng-disabled="! allowEditeOptions()" 
-		   ng-change="mySubmit('lights.sunset',config.lights.sunset)"
+		   ng-disabled="! allowEditeOptions()" 
+		   min="0"
+		   max="24"
+		   step=".1"
+		   required
 		   />
-		<!-- </form> -->
+		   	</label>
+		   	</form>
 
 		</div>
 		
@@ -385,50 +417,28 @@
 
 	<span>Server status</span>
 	<span ng-show="showStatus">	
-		<table class="myTable-small indent">
-		<tr>
-		
-		<td style="vertical-align:top">
-		<table class="myTable-small" style="border: 1px solid black" ng-repeat="(x,y) in status">
-		  <tr>
-		  <td>
-		  <b>{{ x }}</b>
-		  </td>
-		  <td></td>
-		  </tr>
-		  <tr ng-repeat="(x,y) in y">
+		<A HREF="{{myUrl}}log" target="_blank" style="color: #000000;"><i class="fa fa-list-alt" aria-hidden="true"></i></a>
+		<table class="indent">
+		  <tr style="vertical-align:top">
+		  <td ng-repeat="(x,y) in status">
+		  <table class="myTable-small" style="border: 1px solid black">
+		  	<tr>
+		  	<td>
+		  	<b>{{ x }}</b>
+		  	</td>
+		  	<td></td>
+		  	</tr>
+		  
+		  	<tr ng-repeat="(x,y) in y">
 				<td>{{ x }}</td>
 				<td>{{ y }}</td>
+		  	</tr>
+		  </table>
 		  </tr>
 		</table>
-		</td>
-		
-		
-		<!--
-		<td style="vertical-align:top">
-		<table class="myTable-small indent" style="border: 1px solid black" ng-repeat="(x,y) in config">
-		  <tr>
-		  <td>
-		  <b>{{ x }}</b>
-		  </td>
-		  <td></td>
-		  </tr>
-		  <tr ng-repeat="(x,y) in y">
-				<td>{{ x }}</td>
-				<td>{{ y }}</td>
-		  </tr>
-		</table>
-		</td>
-		-->
-		
-		</tr>
-		</table>
-		
-		<!--
-		<p class="indent">
-		file list: {{ videofilelist }}
-		</p>
-		-->
+
+
+
 		
 	</span> <!-- ng-show="showStatus" -->
 	

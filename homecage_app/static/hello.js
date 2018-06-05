@@ -199,7 +199,10 @@ angular.module('demo', ['uiSwitch'])
 	
 	$scope.mySubmit = function (param,val) {
 		//when checkbox is submitted, val is boolean, convert all value to int
-		console.log("mySubmit() " + param + " " + val);
+		if (param=='server.animalID' && val == '') {
+			val = 'emptyValueCludge'
+		}
+		console.log("mySubmit() " + param + " '" + val + "'");
 		console.log(typeof val)
 		$http.get($scope.myUrl + 'set/' + param + '/' + val).
         	then(function(response) {

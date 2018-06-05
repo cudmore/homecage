@@ -1,4 +1,7 @@
 {
+    "server": {
+        "animalID": ""
+    }, 
     "hardware": {
         "triggerIn": {
             "enabled": true, 
@@ -51,18 +54,18 @@
     }, 
     "lights": {
         "auto": false, 
-        "sunset": 18, 
-        "sunrise": 6
+        "sunset": "18", 
+        "sunrise": "6"
     }, 
     "video": {
-        "fileDuration": 7, 
+        "fileDuration": 4.0, 
         "recordInfinity": true, 
-        "numberOfRepeats": 3, 
+        "numberOfRepeats": 4.0, 
         "converttomp4": true, 
         "captureStill": true, 
         "savepath": "/home/pi/video", 
-        "fps": 30, 
-        "stillInterval": 2, 
+        "fps": 30.0, 
+        "stillInterval": 2.1, 
         "resolution": "1024,768", 
         "bufferSeconds": 5, 
         "streamResolution": "640,480"

@@ -1,5 +1,6 @@
 *.pyc 
 /docs/docs/sites
+/docs/site
 
 #
 # osx ignores
