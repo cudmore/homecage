@@ -576,48 +576,76 @@ pico config.json
 </code></pre>
 <p>The default <a href="https://github.com/cudmore/homecage/blob/master/homecage_app/config.json">config.json</a> file is:</p>
 <pre><code class="json">{
+    &quot;server&quot;: {
+        &quot;animalID&quot;: &quot;&quot;
+    },
     &quot;hardware&quot;: {
-        &quot;whiteLightPin&quot;: 2, 
-        &quot;irLightPin&quot;: 3, 
-        &quot;readtemperature&quot;: true, 
-        &quot;temperatureInterval&quot;: 20, 
-        &quot;temperatureSensor&quot;: 4
-    }, 
-    &quot;lights&quot;: {
-        &quot;auto&quot;: false, 
-        &quot;sunset&quot;: 18, 
-        &quot;sunrise&quot;: 6
-    }, 
-    &quot;video&quot;: {
-        &quot;fileDuration&quot;: 5, 
-        &quot;converttomp4&quot;: true, 
-        &quot;captureStill&quot;: true, 
-        &quot;savepath&quot;: &quot;/home/pi/video&quot;, 
-        &quot;fps&quot;: 30, 
-        &quot;stillInterval&quot;: 2, 
-        &quot;resolution&quot;: &quot;1024,768&quot;
-    }, 
-    &quot;stream&quot;: {
-        &quot;resolution&quot;: &quot;640,480&quot;
-    }, 
-    &quot;scope&quot;: {
-        &quot;autoArm&quot;: false, 
-        &quot;bufferSeconds&quot;: 5, 
-        &quot;frameIn&quot;: {
-            &quot;enabled&quot;: true, 
-            &quot;pin&quot;: 18, 
-            &quot;polarity&quot;: &quot;rising&quot;
-        }, 
         &quot;triggerIn&quot;: {
-            &quot;enabled&quot;: true, 
-            &quot;pin&quot;: 20, 
-            &quot;polarity&quot;: &quot;rising&quot;
-        }, 
+            &quot;enabled&quot;: true,
+            &quot;pin&quot;: 21,
+            &quot;polarity&quot;: &quot;rising&quot;,
+            &quot;pull_up_down&quot;: &quot;down&quot;
+        },
         &quot;triggerOut&quot;: {
-            &quot;enabled&quot;: true, 
-            &quot;pin&quot;: 31, 
+            &quot;enabled&quot;: true,
+            &quot;pin&quot;: 31,
             &quot;polarity&quot;: &quot;rising&quot;
-        }
+        },
+        &quot;eventIn&quot;: [
+            {
+                &quot;enabled&quot;: true,
+                &quot;name&quot;: &quot;frame&quot;,
+                &quot;pin&quot;: 12,
+                &quot;polarity&quot;: &quot;rising&quot;,
+                &quot;pull_up_down&quot;: &quot;down&quot;
+            },
+            {
+                &quot;enabled&quot;: false,
+                &quot;name&quot;: &quot;otherEvent&quot;,
+                &quot;pin&quot;: 13,
+                &quot;polarity&quot;: &quot;rising&quot;,
+                &quot;pull_up_down&quot;: &quot;down&quot;
+            }
+        ],
+        &quot;eventOut&quot;: [
+            {
+                &quot;enabled&quot;: true,
+                &quot;name&quot;: &quot;whiteLED&quot;,
+                &quot;pin&quot;: 2,
+                &quot;defaultValue&quot;: false,
+                &quot;state&quot;: false,
+                &quot;idx&quot;: 0
+            },
+            {
+                &quot;enabled&quot;: true,
+                &quot;name&quot;: &quot;irLED&quot;,
+                &quot;pin&quot;: 3,
+                &quot;defaultValue&quot;: false,
+                &quot;state&quot;: false,
+                &quot;idx&quot;: 1
+            }
+        ],
+        &quot;readtemperature&quot;: false,
+        &quot;temperatureInterval&quot;: 60,
+        &quot;temperatureSensor&quot;: 4
+    },
+    &quot;lights&quot;: {
+        &quot;auto&quot;: false,
+        &quot;sunset&quot;: 18.0,
+        &quot;sunrise&quot;: 6.0
+    },
+    &quot;video&quot;: {
+        &quot;fileDuration&quot;: &quot;4.1&quot;,
+        &quot;recordInfinity&quot;: true,
+        &quot;numberOfRepeats&quot;: 4.0,
+        &quot;converttomp4&quot;: true,
+        &quot;captureStill&quot;: true,
+        &quot;savepath&quot;: &quot;/home/pi/video&quot;,
+        &quot;fps&quot;: 30.0,
+        &quot;stillInterval&quot;: 2.1,
+        &quot;resolution&quot;: &quot;1024,768&quot;,
+        &quot;bufferSeconds&quot;: 5,
+        &quot;streamResolution&quot;: &quot;640,480&quot;
     }
 }
 </code></pre>
