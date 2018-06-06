@@ -1,4 +1,5 @@
 *.pyc 
+/env
 /docs/docs/sites
 /docs/site
 /homecage_app/log.log
