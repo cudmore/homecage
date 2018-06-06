@@ -2,8 +2,11 @@
 
 # Author: Robert H Cudmore
 # Date: 20180419
-
+#
 # asssuming $homecage_path has been set-up in install-homecage.sh
+#
+# this is an older script to try and make starting stopping homecage
+# it has been trumped by homecage.service
 
 function usage(){
     echo "homecage - Illegal parameters"

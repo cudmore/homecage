@@ -1,6 +1,6 @@
 ## Video recording
 
-Manually capture a single image
+Manually capture a single image using the built in `raspistill` command. This will take an image and save it to `test.jpg`.
 
 ```
 raspistill -o test.jpg
@@ -16,8 +16,7 @@ Check version of uv4l
 	# returns
 	Userspace Video4Linux
 	Copyright (C) Luca Risolia <luca.risolia@linux-projects.org>
-	Version 1.9.12 built on Aug 15 2017
-
+	Version 1.9.16 built on Jan 28 2018
 
 Run uv4l by hand
 
@@ -31,7 +30,7 @@ Browse the live stream at
 http://[IP]:8080
 ```
 
-Stop uv4l (make sure all browser windows are closed)
+Manually stop uv4l (make sure all browser windows are closed)
 
 ```
 sudo pkill uv4l
@@ -55,10 +54,11 @@ pi       12606  0.0  0.3   6080  3036 pts/2    S+   17:57   0:00 grep --color=au
 #Using those 5 digit numbers, kill all homecage_app processes
 kill -9 12553
 kill -9 12445
+```
 
 ## Converting h264 to mp4
 
-We use avconv to convert h264 to mp4 and then avprobe to check the parameters of the output mp4 file.
+We use `avconv` to convert h264 to mp4.
 
 Check the version of avconv
 
@@ -66,9 +66,8 @@ Check the version of avconv
 	avconv -version
 
 	# returns
-	ffmpeg version 3.2.9-1~deb9u1 Copyright (c) 2000-2017 the FFmpeg developers
+	ffmpeg version 3.2.10-1~deb9u1+rpt1 Copyright (c) 2000-2018 the FFmpeg developers
 	built with gcc 6.3.0 (Raspbian 6.3.0-18+rpi1) 20170516
-	configuration: --prefix=/usr --extra-version='1~deb9u1' --toolchain=hardened --libdir=/usr/lib/arm-linux-gnueabihf --incdir=/usr/include/arm-linux-gnueabihf --enable-gpl --disable-stripping --enable-avresample --enable-avisynth --enable-gnutls --enable-ladspa --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libebur128 --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libmp3lame --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwavpack --enable-libwebp --enable-libx265 --enable-libxvid --enable-libzmq --enable-libzvbi --enable-omx --enable-openal --enable-opengl --enable-sdl2 --enable-libdc1394 --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libopencv --enable-libx264 --enable-shared
 	libavutil      55. 34.101 / 55. 34.101
 	libavcodec     57. 64.101 / 57. 64.101
 	libavformat    57. 56.101 / 57. 56.101
@@ -78,21 +77,6 @@ Check the version of avconv
 	libswscale      4.  2.100 /  4.  2.100
 	libswresample   2.  3.100 /  2.  3.100
 	libpostproc    54.  1.100 / 54.  1.100
-
-
-Check the version of avprobe which is used to read converted .mp4 files to make sure we get the correct parameters. It seems the Jessie version has frames-per-second in avg_frame_rate and the Stretch version has it in r_frame_rate (or maybe the other way around). Thus, we are hard coding fps based on user options. There is a fear that the call to convert h264 to mp4 could change in the future and we might get fps wrong.  Please verify your frames-per-second are as expected.
-
-	avprobe -v
-
-Raspian Jessie gives
-
-avprobe version 11.12-6:11.12-1~deb8u1+rpi1, Copyright (c) 2007-2018 the Libav developers
-  built on Feb 21 2018 04:51:45 with gcc 4.9.2 (Raspbian 4.9.2-10+deb8u1)
-
-Raspian Stetch gives
-
-ffprobe version 3.2.9-1~deb9u1 Copyright (c) 2007-2017 the FFmpeg developers
-  built with gcc 6.3.0 (Raspbian 6.3.0-18+rpi1) 20170516
 
 ## Manually converting h264 files to mp4
 
@@ -140,8 +124,29 @@ for file in $(find . -iname '*.h264') ; do
 done
 ```
 
-See [this blog post][6]
+For more info on avconv and ffmpeg, see [this blog post][6].
 
+## Problems with pip
+
+Sometimes pip version 10 seems to be broken. Uninstall and then install pip version 9
+
+	# uninstall pip
+	python -m pip uninstall pip
+	
+	# install pip 9
+	python -m pip install -U "pip<10"
+	
+## Problems with virtualenv
+
+If virtualenv is not available (16.0.0)
+
+	sudo /usr/bin/easy_install virtualenv
+
+## Editing the config.json file manually
+
+If you edit the config.json file it needs the correct sytax. Check the syntax with the following command. It will output the json if correct and an error otherwise.
+
+	cat config.json | python -m json.tool
 
 
 

@@ -4,7 +4,7 @@ We will assume you have a functioning Raspberry Pi. To get started setting up a 
 
 ## 1) Check your system
 
-Homecage runs best on a Raspberry 2/3 and Debian stretch. **Do not run it on Raspberry Model B, it is too slow**.
+Homecage runs best on a Raspberry 2/3 and Debian Stretch. **Do not run it on Raspberry Model B, it is too slow**.
 
 Check which version of the Raspberry Pi you have.
 
@@ -16,30 +16,40 @@ cat /proc/device-tree/model
 Raspberry Pi 3 Model B Rev 1.2
 ```
 
-Check which version of the Debian operating system you have. You should have a Debian Stretch
+Check which version of the Debian operating system you have. You should use Debian Stretch if possible
 
 ```
 #at a command prompt, type
 cat /etc/os-release
 
 #you should get something like this
-PRETTY_NAME="Raspbian GNU/Linux 8 (jessie)"
+PRETTY_NAME="Raspbian GNU/Linux 9 (stretch)"
 NAME="Raspbian GNU/Linux"
-VERSION_ID="8"
-VERSION="8 (jessie)"
+VERSION_ID="9"
+VERSION="9 (stretch)"
 ```
 
 
 ## 2) Clone the homecage repository
 
-This will make a folder `homecage` in your root directory. You can always return to your root directory with `cd` or `cd ~`.
+This will make a folder `homecage` in your root directory. You can always return to your root directory with `cd`.
 
     # if you don't already have git installed
     sudo apt-get install git
 
 	git clone --depth=1 https://github.com/cudmore/homecage.git
 
-## 3.1) Either install python packages globally
+## 3) Install homecage with our install script
+
+	# at a command prompt, type
+	cd homecage/homecage_app
+	./install.sh
+	
+If everything goes well, all the software should be ready to go. Point your browser to
+
+	http://[your_ip]:5000
+	
+## 3.1) Or manually install python packages globally
 
 	# if you don't already have pip installed (see troubleshooting)
 	sudo apt-get install python-pip
@@ -47,9 +57,20 @@ This will make a folder `homecage` in your root directory. You can always return
 	cd ~/homecage/homecage_app
 	pip install -r requirements.txt
 
-## 3.2) Or install in a virtual environment
+Run homecage_app.py
 
-Make a clean virtual environment that does not depend on current installed Python packages
+	cd ~/homecage/homecage_app
+	python homecage_app.py
+
+Browse to the homecage_app website
+
+	http://[yourip]:5000
+
+## 3.2) Or manually install in a virtual environment
+
+Installing into a Python virtual environment is a good idea as it isolates the installation of home cage from your system.
+
+Make a clean virtual environment that does not depend on current installed Python packages.
 
 	# if you don't already have pip installed (see troubleshooting)
 	sudo apt-get install python-pip
@@ -58,10 +79,10 @@ Make a clean virtual environment that does not depend on current installed Pytho
 	pip install virtualenv
 	
 	# if you still can't use virtualenv, then install like this
-	# sudo /usr/bin/easy_install virtualenv
+	sudo /usr/bin/easy_install virtualenv
 	
 	# make a folder to hold the virtual environment
-	cd
+	cd ~/homecage
 	mkdir env	
 	
 	# either make a python 2 environment in the folder 'env'
@@ -72,16 +93,7 @@ Make a clean virtual environment that does not depend on current installed Pytho
 
 Activate the environment. Once activated, the command prompt will begin with '(env)'
 
-	cd
 	source env/bin/activate
-
-Check your python version
-
-	python -V
-	
-Make sure python command is running in the virtual environment
-
-	which python
 
 Install homecage_app dependencies
 
@@ -97,23 +109,15 @@ Browse to the homecage_app website
 
 	http://[yourip]:5000
 	
-Exit virtual environment
+To exit the virtual Python environment
 
 	deactivate
 
-## 4) Running homecage_app.py
+## 4) Manually install uv4l and avconv
 
-	cd ~/homecage/homecage_app
-	python homecage_app.py
+Homecage uses uv4l to stream video to the web and avconv to convert h264 video files to mp4.
 
-Browse to the homecage_app website
-
-	http://[yourip]:5000
-
-
-## 5) Install uv4l and avconv
-
-### 5.1) Install uv4l for live video streaming (optional)
+### 4.1) Manually install uv4l for live video streaming (optional)
 
 If you run into trouble, then follow [this tutorial][5]. If you don't do this, homecage should work but you won't be able to stream.
 
@@ -134,14 +138,12 @@ echo $stretch_install | sudo tee -a /etc/apt/sources.list
 #jessie_install='deb http://www.linux-projects.org/listing/uv4l_repo/raspbian/ jessie main'
 #echo $jessie_install | sudo tee -a /etc/apt/sources.list
 
-
-
 # update and install uv4l
 sudo apt-get update
 sudo apt-get install uv4l uv4l-raspicam
 ```
 
-### 5.2) Install avconv to convert videos from .h264 to .mp4 (optional)
+### 4.2) Manually install avconv to convert videos from .h264 to .mp4 (optional)
 
 If you run into trouble, then see [this blog post][13]. If you don't do this, make sure you turn off the 'Convert video from h264 to mp4' option.
 
@@ -149,26 +151,6 @@ If you run into trouble, then see [this blog post][13]. If you don't do this, ma
 	sudo apt-get install libav-tools
 
 Video files will be saved to `/home/pi/video`. If your going to save a lot of video, please [mount a usb key][12] and save videos there.
-
-
-
-# Troubleshooting
-
-As of May 2018, pip version 10 seems to be broken. Uninstall and then install pip version 9
-
-	# uninstall pip
-	python -m pip uninstall pip
-	
-	# install pip 9
-	python -m pip install -U "pip<10"
-	
-If virtualenv is not available (16.0.0)
-
-	sudo /usr/bin/easy_install virtualenv
-
-If you edit the config.json file it needs the correct sytax. Check the syntax with the following command. It will output the json if correct and an error otherwise.
-
-	cat config.json | python -m json.tool
 
 
 [0]: http://blog.cudmore.io/post/2017/11/22/raspian-stretch/
