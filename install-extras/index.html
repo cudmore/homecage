@@ -89,7 +89,7 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="drawer"></label>
     
-      <a href="#start-homecage_app-at-boot-optional" tabindex="1" class="md-skip">
+      <a href="#file-server" tabindex="1" class="md-skip">
         Skip to content
       </a>
     
@@ -277,13 +277,6 @@
   
     <label class="md-nav__title" for="toc">Table of contents</label>
     <ul class="md-nav__list" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#start-homecage_app-at-boot-optional" title="Start homecage_app at boot (optional)" class="md-nav__link">
-    Start homecage_app at boot (optional)
-  </a>
-  
-</li>
       
         <li class="md-nav__item">
   <a href="#file-server" title="File Server" class="md-nav__link">
@@ -522,13 +515,6 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#start-homecage_app-at-boot-optional" title="Start homecage_app at boot (optional)" class="md-nav__link">
-    Start homecage_app at boot (optional)
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#file-server" title="File Server" class="md-nav__link">
     File Server
   </a>
@@ -624,28 +610,7 @@
                 
                   <h1>Install extras</h1>
                 
-                <h2 id="start-homecage_app-at-boot-optional">Start homecage_app at boot (optional)</h2>
-<p>Edit crontab</p>
-<pre><code>crontab -e
-</code></pre>
-<p>Add the following line to the end of the file (make sure it is one line)</p>
-<pre><code>@reboot (sleep 10; cd /home/pi/homecage/homecage_app &amp;&amp; /usr/bin/python /home/pi/homecage/homecage_app/homecage_app.py)
-</code></pre>
-
-<p>If you do this it is important to be able to find the running homecage_app, in case you want to force it to quit.</p>
-<pre><code># at a command prompt, type this
-ps -aux | grep homecage_app
-
-# and you will get something like this
-pi       12445  9.5  2.2  41572 20200 pts/2    Sl   17:14   0:01 python homecage_app.py
-pi       12468 13.4  2.3  51032 20508 pts/2    Sl   17:14   0:01 /usr/bin/python homecage_app.py
-
-# kill both processes running homecage_app
-kill -9 12455
-kill -9 12468
-</code></pre>
-
-<h2 id="file-server">File Server</h2>
+                <h2 id="file-server">File Server</h2>
 <p>It is easy to make the Raspberry Pi a file server. Once either Apple-File-protocol (afp) or Samba (smb) are installed you can mount the Raspberry Pi like any other file server.</p>
 <h3 id="macos">MacOS</h3>
 <p>The Pi can be manually mounted from MacOS by going to <code>Go - Connect To Server...</code> and entering <code>afp://IP</code> where IP is the IP address of your Pi.</p>
