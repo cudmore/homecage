@@ -402,8 +402,29 @@
     socket.error: [Errno 98] Address already in use
   </a>
   
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#converting-h264-to-mp4" title="Converting h264 to mp4" class="md-nav__link">
+    Converting h264 to mp4
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#manually-converting-h264-files-to-mp4" title="Manually converting h264 files to mp4" class="md-nav__link">
+    Manually converting h264 files to mp4
+  </a>
+  
     <nav class="md-nav">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-avconv" title="Using avconv" class="md-nav__link">
+    Using avconv
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#using-ffmpeg" title="Using ffmpeg" class="md-nav__link">
@@ -414,6 +435,27 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#problems-with-pip_1" title="Problems with pip" class="md-nav__link">
+    Problems with pip
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#problems-with-virtualenv_1" title="Problems with virtualenv" class="md-nav__link">
+    Problems with virtualenv
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#editing-the-configjson-file-manually" title="Editing the config.json file manually" class="md-nav__link">
+    Editing the config.json file manually
+  </a>
   
 </li>
       
@@ -534,8 +576,29 @@
     socket.error: [Errno 98] Address already in use
   </a>
   
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#converting-h264-to-mp4" title="Converting h264 to mp4" class="md-nav__link">
+    Converting h264 to mp4
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#manually-converting-h264-files-to-mp4" title="Manually converting h264 files to mp4" class="md-nav__link">
+    Manually converting h264 files to mp4
+  </a>
+  
     <nav class="md-nav">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-avconv" title="Using avconv" class="md-nav__link">
+    Using avconv
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#using-ffmpeg" title="Using ffmpeg" class="md-nav__link">
@@ -546,6 +609,27 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#problems-with-pip_1" title="Problems with pip" class="md-nav__link">
+    Problems with pip
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#problems-with-virtualenv_1" title="Problems with virtualenv" class="md-nav__link">
+    Problems with virtualenv
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#editing-the-configjson-file-manually" title="Editing the config.json file manually" class="md-nav__link">
+    Editing the config.json file manually
+  </a>
   
 </li>
       
@@ -571,7 +655,7 @@
                   <h1>Troubleshooting</h1>
                 
                 <h2 id="video-recording">Video recording</h2>
-<p>Manually capture a single image using built in raspistill. The following command will take an image and save it into test.jpg</p>
+<p>Manually capture a single image using the built in <code>raspistill</code> command. This will take an image and save it to <code>test.jpg</code>.</p>
 <pre><code>raspistill -o test.jpg
 </code></pre>
 
@@ -593,7 +677,7 @@ Version 1.9.16 built on Jan 28 2018
 <pre><code>http://[your_ip]:8080
 </code></pre>
 
-<p>Stop uv4l (make sure all browser windows are closed)</p>
+<p>Manually stop uv4l (make sure all browser windows are closed)</p>
 <pre><code>sudo pkill uv4l
 </code></pre>
 
@@ -627,55 +711,32 @@ pi       12606  0.0  0.3   6080  3036 pts/2    S+   17:57   0:00 grep --color=au
 #Using those 5 digit numbers, kill all homecage_app processes
 kill -9 12553
 kill -9 12445
+</code></pre>
 
-## Converting h264 to mp4
+<h2 id="converting-h264-to-mp4">Converting h264 to mp4</h2>
+<p>We use <code>avconv</code> to convert h264 to mp4.</p>
+<p>Check the version of avconv</p>
+<pre><code># type
+avconv -version
 
-We use avconv to convert h264 to mp4 and then avprobe to check the parameters of the output mp4 file.
-
-Check the version of avconv
-
-    # type
-    avconv -version
-
-    # returns
-    ffmpeg version 3.2.9-1~deb9u1 Copyright (c) 2000-2017 the FFmpeg developers
-    built with gcc 6.3.0 (Raspbian 6.3.0-18+rpi1) 20170516
-    configuration: --prefix=/usr --extra-version='1~deb9u1' --toolchain=hardened --libdir=/usr/lib/arm-linux-gnueabihf --incdir=/usr/include/arm-linux-gnueabihf --enable-gpl --disable-stripping --enable-avresample --enable-avisynth --enable-gnutls --enable-ladspa --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libebur128 --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libmp3lame --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvorbis --enable-libvpx --enable-libwavpack --enable-libwebp --enable-libx265 --enable-libxvid --enable-libzmq --enable-libzvbi --enable-omx --enable-openal --enable-opengl --enable-sdl2 --enable-libdc1394 --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libopencv --enable-libx264 --enable-shared
-    libavutil      55. 34.101 / 55. 34.101
-    libavcodec     57. 64.101 / 57. 64.101
-    libavformat    57. 56.101 / 57. 56.101
-    libavdevice    57.  1.100 / 57.  1.100
-    libavfilter     6. 65.100 /  6. 65.100
-    libavresample   3.  1.  0 /  3.  1.  0
-    libswscale      4.  2.100 /  4.  2.100
-    libswresample   2.  3.100 /  2.  3.100
-    libpostproc    54.  1.100 / 54.  1.100
-
-
-Check the version of avprobe which is used to read converted .mp4 files to make sure we get the correct parameters. It seems the Jessie version has frames-per-second in avg_frame_rate and the Stretch version has it in r_frame_rate (or maybe the other way around). Thus, we are hard coding fps based on user options. There is a fear that the call to convert h264 to mp4 could change in the future and we might get fps wrong.  Please verify your frames-per-second are as expected.
-
-    avprobe -v
-
-Raspian Jessie gives
-
-avprobe version 11.12-6:11.12-1~deb8u1+rpi1, Copyright (c) 2007-2018 the Libav developers
-  built on Feb 21 2018 04:51:45 with gcc 4.9.2 (Raspbian 4.9.2-10+deb8u1)
-
-Raspian Stetch gives
-
-ffprobe version 3.2.9-1~deb9u1 Copyright (c) 2007-2017 the FFmpeg developers
-  built with gcc 6.3.0 (Raspbian 6.3.0-18+rpi1) 20170516
-
-## Manually converting h264 files to mp4
-
-The Raspberry camera saves .h264 video files. This format is very efficient and creates small files (10 MB per 5 minutes) but does require conversion to mp4 to impose a time.
-
-### Using avconv
-
-This will convert all .h264 files in **a folder** into .mp4 files with 15 fps.
-
-```bash
-#!/bin/bash
+# returns
+ffmpeg version 3.2.10-1~deb9u1+rpt1 Copyright (c) 2000-2018 the FFmpeg developers
+built with gcc 6.3.0 (Raspbian 6.3.0-18+rpi1) 20170516
+libavutil      55. 34.101 / 55. 34.101
+libavcodec     57. 64.101 / 57. 64.101
+libavformat    57. 56.101 / 57. 56.101
+libavdevice    57.  1.100 / 57.  1.100
+libavfilter     6. 65.100 /  6. 65.100
+libavresample   3.  1.  0 /  3.  1.  0
+libswscale      4.  2.100 /  4.  2.100
+libswresample   2.  3.100 /  2.  3.100
+libpostproc    54.  1.100 / 54.  1.100
+</code></pre>
+<h2 id="manually-converting-h264-files-to-mp4">Manually converting h264 files to mp4</h2>
+<p>The Raspberry camera saves .h264 video files. This format is very efficient and creates small files (10 MB per 5 minutes) but does require conversion to mp4 to impose a time.</p>
+<h3 id="using-avconv">Using avconv</h3>
+<p>This will convert all .h264 files in <strong>a folder</strong> into .mp4 files with 15 fps.</p>
+<pre><code class="bash">#!/bin/bash
 fps=15
 for file in *.h264 ; do
    filename=&quot;${file%.*}&quot;
@@ -707,7 +768,23 @@ for file in $(find . -iname '*.h264') ; do
 done
 </code></pre>
 
-<p>See <a href="http://blog.cudmore.io/post/2017/11/01/libav-for-ffmpeg/">this blog post</a></p>
+<p>For more info on avconv and ffmpeg, see <a href="http://blog.cudmore.io/post/2017/11/01/libav-for-ffmpeg/">this blog post</a>.</p>
+<h2 id="problems-with-pip_1">Problems with pip</h2>
+<p>Sometimes pip version 10 seems to be broken. Uninstall and then install pip version 9</p>
+<pre><code># uninstall pip
+python -m pip uninstall pip
+
+# install pip 9
+python -m pip install -U "pip&lt;10"
+</code></pre>
+<h2 id="problems-with-virtualenv_1">Problems with virtualenv</h2>
+<p>If virtualenv is not available (16.0.0)</p>
+<pre><code>sudo /usr/bin/easy_install virtualenv
+</code></pre>
+<h2 id="editing-the-configjson-file-manually">Editing the config.json file manually</h2>
+<p>If you edit the config.json file it needs the correct sytax. Check the syntax with the following command. It will output the json if correct and an error otherwise.</p>
+<pre><code>cat config.json | python -m json.tool
+</code></pre>
                 
                   
                 

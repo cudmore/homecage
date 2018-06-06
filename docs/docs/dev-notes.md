@@ -153,6 +153,101 @@ sudo kill -- -PID
 
     sudo apt-get remove uv4l-raspicam-extras
     
+## nginx+uwsgi+flask
+
+Follow [this](https://iotbytes.wordpress.com/python-flask-web-application-on-raspberry-pi-with-nginx-and-uwsgi/).
+
+and [my blog post](http://blog.cudmore.io/post/2018/01/14/nginx+flask+uwsgi+rest/)
+
+- install nginx and uwsgi
+
+```
+sudo apt-get install nginx
+sudo pip install uwsgi
+```
+
+- start and stop nginx
+
+    sudo service nginx start
+
+- change group (not user) of folder
+
+    sudo chown -R pi:www-data /home/pi/homecage/homecage_app
+
+- not sure if this is necessary but won't hurt and should not break
+
+	sudo usermod -aG www-data pi
+
+- contents of homecage/homecage_app/uwsgi_config.ini
+
+Because we are using GPIO callbacks, we can't have more than 1 process and 1 thread.
+
+```
+[uwsgi]
+
+chdir = /home/pi/homecage/homecage_app
+module = homecage_app:app
+
+master = true
+processes = 1
+threads = 1
+
+#uid = www-data 
+#gid = www-data
+
+#uid = pi 
+#gid = pi
+
+socket = /tmp/homecage_app.sock
+chmod-socket = 660
+vacuum = true
+
+die-on-term = true
+```
+
+- run uwsgi and check it creates /tmp/homecage_app.sock
+
+    uwsgi --ini /home/pi/homecage/homecage_app/uwsgi_config.ini
+
+- make uwsgi run at boot
+
+    sudo pico /etc/rc.local
+    
+    #append to end of file before 'exit 0'
+    /usr/local/bin/uwsgi --ini /home/pi/homecage/homecage_app/uwsgi_config.ini --uid pi --gid www-data --daemonize /var/log/uwsgi.log
+
+- configure nginx routing
+
+    # remove default
+    sudo rm /etc/nginx/sites-enabled/default
+
+	# create our own
+	sudo pico /etc/nginx/sites-available/homecage_app_proxy
+	
+	# make `homecage_app_proxy` look like this
+
+```
+server {
+  listen 80;
+  server_name localhost;
+
+  location / {
+    include uwsgi_params;
+    uwsgi_pass unix:///tmp/homecage_app.sock;
+  }
+}
+```
+
+- link `homecage_app_proxy` into `sites-enabled` folder
+
+    sudo ln -s /etc/nginx/sites-available/homecage_app_proxy /etc/nginx/sites-enabled
+    
+- restart nginx
+
+    sudo service nginx restart
+
+- good to go at http://[IP]
+
 ## Change Log
 
 #### 20171111
@@ -173,7 +268,6 @@ sudo kill -- -PID
     - added documentation to install avconv
  - now saving into date folder
  
-[mkdocs]: http://www.mkdocs.org/
 
 #### 20180520
 
@@ -197,9 +291,19 @@ sudo kill -- -PID
 	- Added checks in bash scripts to exit nicely if uv4l and avconv are not installed
 	- Added script for avprobe (so we can fail niely when not installed)
 	- Added option to record x number of files (set to one when on scope and using triggerIn)
-	
+
+#### 20180601
+
+	- now using logger throughout (no more print)
+	- removed use of avprobe to get video file params, just report file size in file browser
+	- now using systemctl and homecage.service to easily start, stop, and run at boot
+	- ./install.sh 
+	- finalized html forms to set params. be careful of conversions between javascript, python, and json dictionaries. For example unexpected conversions between float, int, string
+	- starting to think about running nginx-	
+
 ### Setup
 
 homecage2 is b8:27:eb:88:33:07
-
 cudmore_pib is b8:27:eb:aa:51:6d
+
+[mkdocs]: http://www.mkdocs.org/
