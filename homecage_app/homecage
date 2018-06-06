@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# Author: Robert H Cudmore
+# Date: 20180505
+#
+# provide a simple nterface to interact with systemctl and homecage.service
+
+function usage(){
+    echo "homecage - Illegal parameters"
+    echo "Usage:"
+    echo "   homecage start"
+    echo "   homecage stop"
+    echo "   homecage restart"
+    echo "   homecage status"
+    echo "   homecage enable    - enable homecage at boot"
+    echo "   homecage disable   - disable homecage at boot"
+}
+
+myip=`hostname -I | xargs`
+
+case "$1" in
+	start) sudo systemctl start homecage.service 
+		echo "homecage server running at http://$myip:5000"
+		;;
+	stop) sudo systemctl stop homecage.service 
+		echo "homecage server stopped"
+		;;
+	restart) sudo systemctl restart homecage.service 
+		echo "homecage server restarted"
+		;;
+	status) 
+		echo "press 'q' to quit"
+		sudo systemctl status homecage.service 
+		;;
+	enable) sudo systemctl enable homecage.service 
+		echo "homecage will run at boot"
+		;;
+	disable) sudo systemctl disable homecage.service 
+		echo "homecage will not run at boot"
+		;;
+	*) usage
+		;;
+esac
+
+exit 0
