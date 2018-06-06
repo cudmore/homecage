@@ -111,7 +111,7 @@ class bTrial:
 			# column header for event data
 			columnHeader = 'date' + delim + 'time' + delim + 'seconds' + delim + 'event' + delim + 'value' + eol
 			file.write(columnHeader)
-			# one line per frame
+			# one line per event
 			for idx, eventTime in enumerate(self.trial['eventTimes']):
 				# convert epoch seconds to date/time str 
 				dateStr = time.strftime('%Y%m%d', time.localtime(eventTime))
@@ -124,28 +124,6 @@ class bTrial:
 							str(self.trial['eventValues'][idx]) + eol
 				file.write(frameLine)
 
-		#
-		# append to db.txt for folder, see bCamera.convertVideo()
-		'''
-		fd = {}
-		fd['path'] = saveFilePath
-		fd['file'] = saveFile
-		# load existing database (list of dict)
-		folder = os.path.dirname(saveFilePath)
-		dbFile = os.path.join(folder,'db.txt')
-		db = []
-		#print('saveTrial() looking for dbFile:', dbFile)
-		if os.path.isfile(dbFile):
-			db = json.load(open(dbFile))
-		# append
-		db.append(fd)
-		# save
-		txt = json.dumps(db)
-		f = open(dbFile,"w")
-		f.write(txt)
-		f.close()
-		'''
-		
 	@property
 	def isRunning(self):
 		return self.trial['isRunning']

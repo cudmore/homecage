@@ -96,15 +96,7 @@ class home:
 		
 	def initGPIO_(self):
 		''' init gpio pins '''
-		# not sure if this is a good idea
-		'''
-		try:
-			GPIO.cleanup()
-		except RuntimeWarning:
-			print('xxxzzz')
-			pass
-		'''
-			
+
 		GPIO.setmode(GPIO.BCM)
 		GPIO.setwarnings(False)
 
@@ -248,27 +240,11 @@ class home:
 			print('ERROR: setParam() did not find', two, 'in self.config["', one, '"]')
 			return
 			
-		'''
-		theType = type(self.config[one][two])
-		if theType == str:
-			value = str(value)
-		if theType == int:
-			if value == 'null':
-				# we are getting empty values as user types
-				return
-			value = int(value)
-		if theType == bool:
-			if value == 'false':
-				value = False
-			if value == 'true':
-				value = True
-			value = bool(value)
-		'''
+		# transorm some special cases
 		if value == 'false':
 			value = False
 		if value == 'true':
 			value = True
-		
 		if value == 'emptyValueCludge':
 			value = ''
 			
@@ -326,7 +302,7 @@ class home:
 	
 	def convertConfig_(self, config):
 		'''
-		This is shitty, saving json is converting everything to string.
+		This is shitty, saving json is converting everything to string (sometimes).
 		We need to manually convert some values back to float/int
 		'''
 		config['video']['fileDuration'] = float(config['video']['fileDuration'])
@@ -407,6 +383,8 @@ class home:
 		try:
 			self.camera.record(onoff)
 			self.lastResponse = self.camera.lastResponse
+			
+			# start a background thread to control the lights
 			if self.isState('recording'):
 				myThread = threading.Thread(target = self.lightsThread)
 				myThread.daemon = True
@@ -500,14 +478,3 @@ class home:
 						print('readTemperature() exception reading temperature/humidity')
 			time.sleep(0.5)
 		logger.info('tempThread() stop')
-
-	'''
-	# generate a file list of video files
-	def make_tree(self, path):
-		filelist = []
-		for root, dirs, files in os.walk(path):
-			for file in files:
-				if file.endswith('.h264'):
-					filelist.append(file)
-		return filelist
-	'''

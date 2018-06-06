@@ -88,17 +88,6 @@ class bCamera:
 		if okGo:
 			self.state = 'recording' if onoff else 'idle'
 			if onoff:
-				# set output path
-				'''
-				now = time.time()
-				startTime = datetime.now()
-				startTimeStr = startTime.strftime('%Y%m%d')
-				self.saveVideoPath = os.path.join(self.savePath, startTimeStr)
-				if not os.path.isdir(self.saveVideoPath):
-					os.makedirs(self.saveVideoPath)
-				'''
-				#self.trial.startTrial(now=now)
-								
 				# start a background thread
 				thread = threading.Thread(target=self.recordVideoThread, args=())
 				thread.daemon = True							# Daemonize thread
@@ -132,10 +121,7 @@ class bCamera:
 
 		now = time.time()
 		startTimeStr = time.strftime('%Y%m%d', time.localtime(now)) 
-		'''
-		startTime = datetime.now()
-		startTimeStr = startTime.strftime('%Y%m%d')
-		'''
+
 		self.saveVideoPath = os.path.join(self.savePath, startTimeStr)
 		if not os.path.isdir(self.saveVideoPath):
 			os.makedirs(self.saveVideoPath)
@@ -146,10 +132,6 @@ class bCamera:
 		while self.isState('recording') and (currentRepeat <= numberOfRepeats):
 			now = time.time()
 			startTimeStr = time.strftime('%Y%m%d_%H%M%S', time.localtime(now)) 
-			'''
-			startTime = datetime.now()
-			startTimeStr = startTime.strftime('%Y%m%d_%H%M%S')
-			'''
 			
 			self.trial.newEpoch(now)
 
@@ -298,10 +280,6 @@ class bCamera:
 					#todo: log time when trigger in is received
 					now = time.time()
 					startTimeStr = time.strftime('%Y%m%d_%H%M%S', time.localtime(now)) 
-					'''
-					startTime = datetime.now()
-					startTimeStr = startTime.strftime('%Y%m%d_%H%M%S')
-					'''
 					
 					#self.lastResponse = 'Trigger in at'
 					
@@ -395,61 +373,7 @@ class bCamera:
 			#print('e.output:', e.output)
 			logger.error('bin/convert_video exception: ' + str(e))
 			pass
-			
-		''' hold off on this as avprobe is switching what it returns causing problems'''
-		'''
-		# append to dict and save in file
-		dirname = os.path.dirname(videoFilePath) 
-		mp4File = os.path.basename(videoFilePath).split('.')[0] + '.mp4'
-		mp4Path = os.path.join(dirname, mp4File)
-		if not os.path.isfile(mp4Path):
-			mp4File = os.path.basename(videoFilePath).split('.')[0] + '.h264'
-			mp4Path = os.path.join(dirname, mp4File)
-		if not os.path.isfile(mp4Path):
-			logger.error('did not find h264 or mp4 file: ' + mp4Path)
-			return
-
-		cmd = ['./avprobe_video.sh', mp4Path]
-		try:
-			data = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-			data = data.decode('utf-8') # python 3
-			data = json.loads((data))
-		except OSError as e:
-			logger.error('avprobe_video.sh exception: ' + str(e))
-		else:
-			try:			
-				fd = {}
-				fd['path'] = mp4Path
-				fd['file'] = mp4File
-				if 'streams' in data:
-					fd['duration'] =  round(float(data['streams'][0]['duration']), 2)
-					fd['width'] =  data['streams'][0]['width']
-					fd['height'] =  data['streams'][0]['height']
-					fd['fps'] = fps
-				else:
-					fd['duration'] =  '?'
-					fd['width'] =  '?'
-					fd['height'] =  '?'
-					fd['fps'] = '?'
-			except (KeyError, IndexError) as e:
-				logger.error('avprobe_video.sh result exception: ' + str(e))
-			# load existing database (list of dict)
-			folder = os.path.dirname(videoFilePath)
-			dbFile = os.path.join(folder,'db.txt')
-			#print('dbFile:', dbFile)
-			db = []
-			if os.path.isfile(dbFile):
-				db = json.load(open(dbFile))
-				#print 'loaded db:', db
-			# append
-			db.append(fd)
-			# save
-			txt = json.dumps(db)
-			f = open(dbFile,"w")
-			f.write(txt)
-			f.close()
-		'''
-		
+					
 if __name__ == '__main__':
 	logger = logging.getLogger()
 	handler = logging.StreamHandler()

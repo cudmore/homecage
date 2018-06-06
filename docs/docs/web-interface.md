@@ -54,48 +54,76 @@ The default [config.json][1] file is:
 
 ```json
 {
+    "server": {
+        "animalID": ""
+    },
     "hardware": {
-        "whiteLightPin": 2, 
-        "irLightPin": 3, 
-        "readtemperature": true, 
-        "temperatureInterval": 20, 
-        "temperatureSensor": 4
-    }, 
-    "lights": {
-        "auto": false, 
-        "sunset": 18, 
-        "sunrise": 6
-    }, 
-    "video": {
-        "fileDuration": 5, 
-        "converttomp4": true, 
-        "captureStill": true, 
-        "savepath": "/home/pi/video", 
-        "fps": 30, 
-        "stillInterval": 2, 
-        "resolution": "1024,768"
-    }, 
-    "stream": {
-        "resolution": "640,480"
-    }, 
-    "scope": {
-        "autoArm": false, 
-        "bufferSeconds": 5, 
-        "frameIn": {
-            "enabled": true, 
-            "pin": 18, 
-            "polarity": "rising"
-        }, 
         "triggerIn": {
-            "enabled": true, 
-            "pin": 20, 
-            "polarity": "rising"
-        }, 
+            "enabled": true,
+            "pin": 21,
+            "polarity": "rising",
+            "pull_up_down": "down"
+        },
         "triggerOut": {
-            "enabled": true, 
-            "pin": 31, 
+            "enabled": true,
+            "pin": 31,
             "polarity": "rising"
-        }
+        },
+        "eventIn": [
+            {
+                "enabled": true,
+                "name": "frame",
+                "pin": 12,
+                "polarity": "rising",
+                "pull_up_down": "down"
+            },
+            {
+                "enabled": false,
+                "name": "otherEvent",
+                "pin": 13,
+                "polarity": "rising",
+                "pull_up_down": "down"
+            }
+        ],
+        "eventOut": [
+            {
+                "enabled": true,
+                "name": "whiteLED",
+                "pin": 2,
+                "defaultValue": false,
+                "state": false,
+                "idx": 0
+            },
+            {
+                "enabled": true,
+                "name": "irLED",
+                "pin": 3,
+                "defaultValue": false,
+                "state": false,
+                "idx": 1
+            }
+        ],
+        "readtemperature": false,
+        "temperatureInterval": 60,
+        "temperatureSensor": 4
+    },
+    "lights": {
+        "auto": false,
+        "sunset": 18.0,
+        "sunrise": 6.0
+    },
+    "video": {
+        "fileDuration": "4.1",
+        "recordInfinity": true,
+        "numberOfRepeats": 4.0,
+        "converttomp4": true,
+        "captureStill": true,
+        "savepath": "/home/pi/video",
+        "fps": 30.0,
+        "stillInterval": 2.1,
+        "resolution": "1024,768",
+        "bufferSeconds": 5,
+        "streamResolution": "640,480"
     }
 }
 ``` 

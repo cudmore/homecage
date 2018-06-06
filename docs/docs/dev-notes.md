@@ -159,26 +159,26 @@ Follow [this](https://iotbytes.wordpress.com/python-flask-web-application-on-ras
 
 and [my blog post](http://blog.cudmore.io/post/2018/01/14/nginx+flask+uwsgi+rest/)
 
-- install nginx and uwsgi
+- Install nginx and uwsgi
 
 ```
 sudo apt-get install nginx
 sudo pip install uwsgi
 ```
 
-- start and stop nginx
+- Start and stop nginx
 
     sudo service nginx start
 
-- change group (not user) of folder
+- Change group (not user) of folder
 
     sudo chown -R pi:www-data /home/pi/homecage/homecage_app
 
-- not sure if this is necessary but won't hurt and should not break
+- Not sure if this is necessary but won't hurt and should not break
 
 	sudo usermod -aG www-data pi
 
-- contents of homecage/homecage_app/uwsgi_config.ini
+- Contents of homecage/homecage_app/uwsgi_config.ini
 
 Because we are using GPIO callbacks, we can't have more than 1 process and 1 thread.
 
@@ -205,26 +205,32 @@ vacuum = true
 die-on-term = true
 ```
 
-- run uwsgi and check it creates /tmp/homecage_app.sock
+- Run uwsgi and check it creates /tmp/homecage_app.sock
 
-    uwsgi --ini /home/pi/homecage/homecage_app/uwsgi_config.ini
+```
+uwsgi --ini /home/pi/homecage/homecage_app/uwsgi_config.ini
+```
 
-- make uwsgi run at boot
+- Make uwsgi run at boot
 
-    sudo pico /etc/rc.local
+```
+sudo pico /etc/rc.local
     
-    #append to end of file before 'exit 0'
-    /usr/local/bin/uwsgi --ini /home/pi/homecage/homecage_app/uwsgi_config.ini --uid pi --gid www-data --daemonize /var/log/uwsgi.log
+#append to end of file before 'exit 0'
+/usr/local/bin/uwsgi --ini /home/pi/homecage/homecage_app/uwsgi_config.ini --uid pi --gid www-data --daemonize /var/log/uwsgi.log
+```
 
-- configure nginx routing
+- Configure nginx routing
 
-    # remove default
-    sudo rm /etc/nginx/sites-enabled/default
+```
+# remove default
+sudo rm /etc/nginx/sites-enabled/default
 
-	# create our own
-	sudo pico /etc/nginx/sites-available/homecage_app_proxy
+# create our own
+sudo pico /etc/nginx/sites-available/homecage_app_proxy
+```
 	
-	# make `homecage_app_proxy` look like this
+Make `homecage_app_proxy` look like this
 
 ```
 server {
@@ -238,36 +244,36 @@ server {
 }
 ```
 
-- link `homecage_app_proxy` into `sites-enabled` folder
+- Link `homecage_app_proxy` into `sites-enabled` folder
 
-    sudo ln -s /etc/nginx/sites-available/homecage_app_proxy /etc/nginx/sites-enabled
+```
+sudo ln -s /etc/nginx/sites-available/homecage_app_proxy /etc/nginx/sites-enabled
+```
     
-- restart nginx
+- Restart nginx
 
-    sudo service nginx restart
+```
+sudo service nginx restart
+```
 
-- good to go at http://[IP]
+- Good to go at http://[IP]
 
 ## Change Log
 
-#### 20171111
+#### 20180601
 
- - finish index.html interface, mostly adding interface to change self.config
- - split self.config (from config.json) and self.status (runtime variables)
- - add in dht sensor code
- - add in white and ir sensor code
+- now using logger throughout (no more print)
+- removed use of avprobe to get video file params, just report file size in file browser
+- now using systemctl and homecage.service to easily start, stop, and run at boot
+- ./install.sh 
+- finalized html forms to set params. be careful of conversions between javascript, python, and json dictionaries. For example unexpected conversions between float, int, string
+- starting to think about running nginx-	
 
-#### 20171201
+#### 20180520
 
- - Added dialog when stopping video
- - added 'videolist.html' page to display list of video and play on click !
- - now converting .h264 to .mp4
-    - added to config.json
-    - added bash script convert_video.sh
-    - call bash script when video is done (in thread)
-    - added documentation to install avconv
- - now saving into date folder
- 
+- Added checks in bash scripts to exit nicely if uv4l and avconv are not installed
+- Added script for avprobe (so we can fail niely when not installed)
+- Added option to record x number of files (set to one when on scope and using triggerIn)
 
 #### 20180520
 
@@ -285,23 +291,27 @@ server {
     - Fix background text on frame watermark
     - Save trial information to a trial .txt file
     - Revamp .log to include trial information
-    
-#### 20180520
 
-	- Added checks in bash scripts to exit nicely if uv4l and avconv are not installed
-	- Added script for avprobe (so we can fail niely when not installed)
-	- Added option to record x number of files (set to one when on scope and using triggerIn)
+#### 20171201
 
-#### 20180601
+ - Added dialog when stopping video
+ - added 'videolist.html' page to display list of video and play on click !
+ - now converting .h264 to .mp4
+    - added to config.json
+    - added bash script convert_video.sh
+    - call bash script when video is done (in thread)
+    - added documentation to install avconv
+ - now saving into date folder
 
-	- now using logger throughout (no more print)
-	- removed use of avprobe to get video file params, just report file size in file browser
-	- now using systemctl and homecage.service to easily start, stop, and run at boot
-	- ./install.sh 
-	- finalized html forms to set params. be careful of conversions between javascript, python, and json dictionaries. For example unexpected conversions between float, int, string
-	- starting to think about running nginx-	
+#### 20171111
 
-### Setup
+ - finish index.html interface, mostly adding interface to change self.config
+ - split self.config (from config.json) and self.status (runtime variables)
+ - add in dht sensor code
+ - add in white and ir sensor code
+
+
+### Setup in the lab
 
 homecage2 is b8:27:eb:88:33:07
 cudmore_pib is b8:27:eb:aa:51:6d
