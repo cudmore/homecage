@@ -8,65 +8,60 @@
 #	3) add homecage_app/bin to path
 #
 # Usage:
-#	source install-homecage.sh
+#	./install-homecage.sh
 #
 # Once this is all done, homecage server can be used as follows
-# homecage start
-# homecage start debug
-# homecage stop
-# homecage restart
-# homecage status
+# sudo systemctl start homecage.service
+# sudo systemctl stop homecage.service
+# sudo systemctl restart homecage.service
+# sudo systemctl enable homecage.service
+# sudo systemctl disable homecage.service
 
+# wow this looks fancy
+ip=`ifconfig eth0 | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
 
-printf '\n === 1/5: mkdir env \n'
-mkdir env
+echo '==='
+echo "=== 1/5: Installing pip"
+echo '==='
+sudo apt-get install python-pip
 
-printf '\n === 2/5: virtualenv -p python3 --no-site-packages env \n'
+echo '==='
+echo "=== 2/5: Installing virtualenv"
+echo '==='
+sudo /usr/bin/easy_install virtualenv
+
+echo '==='
+echo "=== 3/5: Making Python 3 virtual environment in $PWD/env"
+echo '==='
+if [ ! -d "env/" ]; then
+	mkdir env
+fi
+
 virtualenv -p python3 --no-site-packages env
-
-printf '\n === 3/5: source env/bin/activate \n'
 source env/bin/activate
 
-printf '\n === 4/5: pip install -r requirements.txt \n'
+echo ' '
+echo '==='
+echo '=== 4/5: Installing homecage Python requirements with pip'
+echo '==='
 pip install -r requirements.txt
 
 deactivate
 
-#
-# append to .bashrc if neccessary
-bash_append='export PATH='"$PWD/bin"':$PATH'
-
-printf '\n === 5/5 Updating $PATH \n'
-
-if [[ ":$PATH:" == *":$PWD/bin:"* ]]; then
-  echo "   OK: Your path already contains $PWD/bin"
-else
-  echo '   Your $PATH is missing '"$PWD"'/bin, appending to '"$HOME"'/.bashrc'
-	echo '      '$bash_append
-	echo $bash_append | tee -a $HOME/.bashrc
-fi
-
-#
-# make a homecage_dir variable so bin/homecage knows where it is installed
-printf "\n === 6/6: Checking that homecage_path=$PWD \n"
-if [[ "$homecage_path" == "$PWD" ]]; then
-  echo "   OK: Your homecage_path is already set to $PWD"
-else
-	echo "   Appending to $HOME/.bashrc"
-	tmp='export homecage_path="'"$PWD"'"'
-	echo '      '$tmp
-	echo $tmp | tee -a $HOME/.bashrc
-fi
-
-source $HOME/.bashrc
-
 # copy 
-printf '\n 7/7: Configuring systemctl homecage.service \n'
-sudo cp homecage.service /etc/systemd/system/homecage.service
+echo ' '
+echo '==='
+echo '=== 5/5: Configuring systemctl in /etc/systemd/system/homecage.service'
+echo '==='
+sudo cp bin/homecage.service /etc/systemd/system/homecage.service
 sudo chmod 664 /etc/systemd/system/homecage.service
 sudo systemctl daemon-reload
 sudo systemctl enable homecage.service
 sudo systemctl start homecage.service
-sudo systemctl status homecage.service
+#sudo systemctl status homecage.service
 
-printf 'Done installing homecage server.'
+echo ' '
+echo 'Done installing homecage server. The homecage server is running and will run at boot.'
+echo 'Remember to install uv4l and avconv with ./install-extras.sh'
+echo 'To use the server, point your browser to:'
+echo "    http://$ip:5000"

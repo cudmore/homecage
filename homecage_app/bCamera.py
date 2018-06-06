@@ -201,7 +201,7 @@ class bCamera:
 		if okGo:
 			self.state = 'streaming' if onoff else 'idle'
 			if onoff:
-				cmd = ["./stream", "start", str(self.streamWidth), str(self.streamHeight)]
+				cmd = ["./bin/stream", "start", str(self.streamWidth), str(self.streamHeight)]
 				logger.info(cmd)
 				try:
 					out = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
@@ -214,7 +214,7 @@ class bCamera:
 					self.state = 'idle'
 					raise
 			else:
-				cmd = ["./stream", "stop"]
+				cmd = ["./bin/stream", "stop"]
 				try:
 					out = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
 					self.lastResponse = 'Streaming is off'
@@ -385,7 +385,7 @@ class bCamera:
 	def convertVideo(self, videoFilePath, fps):
 		# at end of video recording, convert h264 to mp4
 		logger.debug('converting video:' + videoFilePath + ' fps:' + str(fps))
-		cmd = ["./convert_video.sh", videoFilePath, str(fps)]
+		cmd = ["./bin/convert_video.sh", videoFilePath, str(fps)]
 		try:
 			out = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
 			self.lastResponse = 'Converted video to mp4'
@@ -393,7 +393,7 @@ class bCamera:
 			#print('e:', e)
 			#print('e.returncode:', e.returncode) # 1 is failure, 0 is sucess
 			#print('e.output:', e.output)
-			logger.error('convert_video exception: ' + str(e))
+			logger.error('bin/convert_video exception: ' + str(e))
 			pass
 			
 		''' hold off on this as avprobe is switching what it returns causing problems'''

@@ -1,32 +1,4 @@
-
-## Start homecage_app at boot (optional)
-
-Edit crontab
-
-    crontab -e
-    
-Add the following line to the end of the file (make sure it is one line)
-
-```
-@reboot (sleep 10; cd /home/pi/homecage/homecage_app && /usr/bin/python /home/pi/homecage/homecage_app/homecage_app.py)
-```
-
-If you do this it is important to be able to find the running homecage_app, in case you want to force it to quit.
-
-```
-# at a command prompt, type this
-ps -aux | grep homecage_app
-
-# and you will get something like this
-pi       12445  9.5  2.2  41572 20200 pts/2    Sl   17:14   0:01 python homecage_app.py
-pi       12468 13.4  2.3  51032 20508 pts/2    Sl   17:14   0:01 /usr/bin/python homecage_app.py
-
-# kill both processes running homecage_app
-kill -9 12455
-kill -9 12468
-```
-
-##File Server
+## File Server
 
 It is easy to make the Raspberry Pi a file server. Once either Apple-File-protocol (afp) or Samba (smb) are installed you can mount the Raspberry Pi like any other file server.
 

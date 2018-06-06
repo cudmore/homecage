@@ -54,18 +54,18 @@
     },
     "lights": {
         "auto": false,
-        "sunset": 18.1,
-        "sunrise": 6.1
+        "sunset": 18.0,
+        "sunrise": 6.0
     },
     "video": {
-        "fileDuration": 4.1,
-        "recordInfinity": false,
-        "numberOfRepeats": 3,
+        "fileDuration": "4.1",
+        "recordInfinity": true,
+        "numberOfRepeats": 4.0,
         "converttomp4": true,
         "captureStill": true,
         "savepath": "/home/pi/video",
-        "fps": 30,
-        "stillInterval": 1.1,
+        "fps": 30.0,
+        "stillInterval": 2.1,
         "resolution": "1024,768",
         "bufferSeconds": 5,
         "streamResolution": "640,480"

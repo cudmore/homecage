@@ -28,4 +28,3 @@ python homecage_app.py
 echo "   Browse to the server at http://"$myip":5000"
 
 exit 0
-
