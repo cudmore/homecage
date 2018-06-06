@@ -1,0 +1,9 @@
+# 20180606
+# Robert Cudmore
+
+# given a file with a list of machines ip addresses and a script
+# use ssh to run the script on each machine
+#
+# Usage:
+#	./swarm ip.list script.sh
+
