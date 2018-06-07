@@ -38,13 +38,13 @@ while IFS='' read -r line || [[ -n "$line" ]]; do
 	#ssh pi@$line "$gitCloneCommand" 
 
 	# on each remote, run homecage install script
-	installCmd="cd homecage/homecage_app; ./install-homecage.sh;"
+	#installCmd="cd homecage/homecage_app; ./install-homecage.sh;"
 	#installCmd="cd homecage/homecage_app; ./install.sh;"
-	ssh pi@$line "$installCmd" 
+	#ssh pi@$line "$installCmd" 
 	
 	# on each remote, update homecage
-	#updateCmd="sudo systemctl stop homecage.service; cd homecage; git pull; sudo systemctl start homecage.service;"
-	#ssh pi@$line "$updateCmd" 
+	updateCmd="sudo systemctl stop homecage.service; cd homecage; git pull; sudo systemctl start homecage.service;"
+	ssh pi@$line "$updateCmd" 
 	
 	# start/stop/restart homecage server on each remote
 	#restartCmd="sudo systemctl start homecage.service;"

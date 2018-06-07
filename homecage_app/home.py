@@ -47,6 +47,8 @@ class home:
 	def init(self):
 		logger.debug('start home.init()')
 				
+		self.version = '20180606'
+		
 		self.config = self.loadConfigFile()
 				
 		self.trial = bTrial()
@@ -327,6 +329,8 @@ class home:
 		status = OrderedDict()
 		
 		status['server'] = OrderedDict()
+		status['server']['version'] = self.version
+		
 		status['server']['animalID'] = self.config['server']['animalID']
 		status['server']['state'] = self.camera.state
 		status['server']['currentFile'] = self.camera.currentFile

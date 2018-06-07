@@ -15,7 +15,9 @@
 	cd ~/homecage.git/homecage
 	git pull
 	
-    # in general, never push from this commander github server
+    # then run script to pull from commander homecage.git
+	
+    # in general, never push to github from this commander git server
 	
 ## Then, from a pi in the videowall, synch with (pull from the) commander git repo
 
@@ -24,7 +26,25 @@
 	
     updateCmd="sudo systemctl stop homecage.service; cd homecage; git pull; sudo systemctl start homecage.service;"
     #ssh pi@$line "$updateCmd" 
-    
+
+## Misc github
+
+View remote repositories
+
+	git remote -v
+
+Add a remote
+
+	# github
+	git remote add origin https://github.com/cudmore/homecage.git
+	
+	# my git server on commander pi
+	git remote add origin ssh://pi@192.168.1.3/~/homecage.git/homecage
+	
+Remove remote repositories (the link/connection to them)
+
+	git remote rm origin
+  
 # Synch 2 machines with ssh-key
 
 ## 1) create a key on a local machine
