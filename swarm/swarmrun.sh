@@ -48,8 +48,9 @@ while IFS='' read -r line || [[ -n "$line" ]]; do
 	
 	# start/stop/restart homecage server on each remote
 	#restartCmd="sudo systemctl start homecage.service;"
-	#restartCmd="sudo systemctl stop homecage.service;"
-	restartCmd="sudo systemctl restart homecage.service;"
+	restartCmd="sudo systemctl stop homecage.service;"
+	echo $restartCmd
+	#restartCmd="sudo systemctl restart homecage.service;"
 	ssh pi@$line "$restartCmd" 
 
 done < "$1"
