@@ -1,4 +1,31 @@
-# synch 2 machines with ssh-key
+# Set up a git server
+
+## Set up a git server on commander machine
+
+    mkdir homecage.git
+    cd homecage.git
+    git init --bare
+        
+    # clone homecage from github
+    # I will edit and push to this github repo from ~/homecage
+    # each time I do this, i have to pull from *here
+    git clone https://github.com/cudmore/homecage.git
+    
+    # when i have new version of github homecage, pull here
+	cd ~/homecage.git/homecage
+	git pull
+	
+    # in general, never push from this commander github server
+	
+## Then, from a pi in the videowall, synch with (pull from the) commander git repo
+
+    # git pull will work because we previously cloned with
+    #gitCloneCommand="git clone ssh://pi@$commanderIP/~/homecage.git/homecage;"
+	
+    updateCmd="sudo systemctl stop homecage.service; cd homecage; git pull; sudo systemctl start homecage.service;"
+    #ssh pi@$line "$updateCmd" 
+    
+# Synch 2 machines with ssh-key
 
 ## 1) create a key on a local machine
 
