@@ -106,12 +106,17 @@ class bCamera:
 		try:
 			self.camera = picamera.PiCamera()
 		except (picamera.exc.PiCameraMMALError) as e:
-			logger.error('picamera exception: ' + str(e))
+			logger.error('picamera PiCameraMMALError: ' + str(e))
 			self.lastResponse = str(e)
 			#self.record(False)
 			self.state = 'idle'
 			raise
-			
+		except (picamera.exc.PiCameraError) as e:
+			logger.error('picamera PiCameraError: ' + str(e))
+			self.lastResponse = str(e)
+			#self.record(False)
+			self.state = 'idle'
+			raise
 		self.camera.led = False
 		self.camera.resolution = (self.width, self.height)
 		self.camera.framerate = self.fps
