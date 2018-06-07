@@ -76,7 +76,7 @@ class home:
 		if self.config['hardware']['readtemperature']:
 			if g_dhtLoaded:
 				logger.debug('Initialized DHT temperature sensor')
-				GPIO.setup(self.config['hardware']['temperatureSensor'], GPIO.IN)
+				#GPIO.setup(self.config['hardware']['temperatureSensor'], GPIO.IN)
 				myThread = threading.Thread(target = self.tempThread)
 				myThread.daemon = True
 				myThread.start()

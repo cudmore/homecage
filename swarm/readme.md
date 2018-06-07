@@ -15,8 +15,6 @@
 	cd ~/homecage.git/homecage
 	git pull
 	
-    # then run script to pull from commander homecage.git
-	
     # in general, never push to github from this commander git server
 	
 ## Then, from a pi in the videowall, synch with (pull from the) commander git repo
@@ -45,6 +43,12 @@ Remove remote repositories (the link/connection to them)
 
 	git remote rm origin
   
+# Do this manually
+
+- set each machines domain name
+- configure afp to use domain name (e.g. mirror it like homecage4, homecage5)
+- generate ssh-keygen and send to commander computer
+
 # Synch 2 machines with ssh-key
 
 ## 1) create a key on a local machine
@@ -95,4 +99,31 @@ systemctl start homecage.service
 
 ## To Do
 
-- modify startup mailer to include MAC address
+### 1) Modify startup mailer to include MAC address
+
+### 2) Set the hostname
+
+Just do this? I can script this from swarmrun
+
+	sudo hostnamectl set-hostname homecage3
+
+And then check with this
+
+	sudo hostnamectl status
+
+
+Or modify 2x files
+
+```
+pi@homecage3:~/homecage/homecage_app $ more /etc/hostname 
+homecage3
+pi@homecage3:~/homecage/homecage_app $ more /etc/hosts
+127.0.0.1	localhost
+::1		localhost ip6-localhost ip6-loopback
+ff02::1		ip6-allnodes
+ff02::2		ip6-allrouters
+
+127.0.1.1	homecage3
+```
+
+### 3) change name in afp using sed
