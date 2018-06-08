@@ -34,6 +34,7 @@ except:
 import bUtil # to get system info and drive space
 from bTrial import bTrial
 from bCamera import bCamera
+from version import __version__
 
 #########################################################################
 class home:
@@ -47,12 +48,21 @@ class home:
 	def init(self):
 		logger.debug('start home.init()')
 				
-		self.version = '20180606'
+		self.version = __version__
+		logger.debug('homecage version:' + self.version)
+
 		self.startTime = time.time()
 		
 		self.config = self.loadConfigFile()
 				
+		#
+		# system information
+		self.systemInfo = bUtil.getSystemInfo()
+
 		self.trial = bTrial()
+		self.trial.setHostname(self.systemInfo['hostname'])
+		
+		# important
 		self.camera = bCamera(self.trial)
 		# set parameters of camera from config file, be sure to call again when they change
 		self.camera.setConfig(self.config) 
@@ -83,10 +93,6 @@ class home:
 				myThread.start()
 			else:
 				logger.debug('Did not load DHT temperature sensor')
-			
-		#
-		# system information
-		self.systemInfo = bUtil.getSystemInfo()
 		
 	@property
 	def state(self):
@@ -262,6 +268,7 @@ class home:
 		
 		# important
 		self.trial.setAnimalID(self.config['server']['animalID'])
+		self.trial.setConditionID(self.config['server']['conditionID'])
 		
 		self.lastResponse = one + ' ' + two + ' is now ' + str(value)
 		
@@ -333,8 +340,10 @@ class home:
 		status['server']['version'] = self.version
 		
 		status['server']['animalID'] = self.config['server']['animalID']
+		status['server']['conditionID'] = self.config['server']['conditionID']
 		status['server']['state'] = self.camera.state
 		status['server']['currentFile'] = self.camera.currentFile
+		status['server']['lastStillTime'] = self.camera.lastStillTime
 		status['server']['lastResponse'] = self.lastResponse # filled in by each route
 
 		status['server']['uptime'] = str(timedelta(seconds = time.time() - self.startTime)).split('.')[0]

@@ -42,7 +42,8 @@ span.mysmall {
 //.myTable td:nth-child(2){ width:100px; }
 //.myTable td:nth-child(3){ width:100px; }
 //.myTable td:nth-child(4){ width:100px; }
-.myTable td:nth-child(10){ width:250px; }
+
+.myTable td:nth-child(12){ width:250px; }
 
 .myTable tr:hover {background-color: #ddd;}
 

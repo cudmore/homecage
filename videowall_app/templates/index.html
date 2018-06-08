@@ -41,15 +41,17 @@
 
 		<table class="myTable" >
 		<tr>
-			<th>ip</th>
-			<th>hostname</th>
-			<th>state</th>
-			<th>record</th>
-			<th>auto lights</th>
-			<th>ir</th>
-			<th>white</th>
-			<th>duration (sec)</th>
+			<th>IP</th>
+			<th>Hostname</th>
+			<th>State</th>
+			<th>Record</th>
+			<th>Auto lights</th>
+			<th>IR</th>
+			<th>White</th>
+			<th>Elapsed (sec)</th>
+			<th>File Duration (sec)</th>
 			<th>ID</th>
+			<th>Condition</th>
 			<th>file</th>
 		<tr>
 		<tr ng-repeat="server in serverList track by $index">
@@ -88,20 +90,26 @@
 			</span>
 		</td>
 
+		<td>{{ videoArray[$index].config.lights.auto && "On" || "Off"}}</td>
+		<!--
 		<td>
 		<span>
 		<input type="checkbox" 
 			ng-model="videoArray[$index].config.lights.auto" 
 			ng-change="mySubmit($index, 'lights.auto',videoArray[$index].config.lights.auto)" 
-			ng-disabled="isState($index,'recording') && videoArray[$index].config.lights.auto"/>		
+			ng-disabled="isState($index,'recording') && videoArray[$index].config.lights.auto"
+		/>		
 		Auto
 		</span>
 		</td>
+		-->
 		
-		<td>{{ videoArray[$index].status.server.eventOut.irLED }}</td>
-		<td>{{ videoArray[$index].status.server.eventOut.whiteLED }}</td>
-		<td>{{ videoArray[$index].status.server.trialElapsedSec }} sec</td>
+		<td>{{ videoArray[$index].status.server.eventOut.irLED && "On" || "Off"}}</td>
+		<td>{{ videoArray[$index].status.server.eventOut.whiteLED && "On" || "Off"}}</td>
+		<td>{{ videoArray[$index].status.server.epochElapsedSec }}</td>
+		<td>{{ videoArray[$index].status.server.fileDuration }}</td>
 		<td>{{ videoArray[$index].status.server.animalID }}</td>
+		<td>{{ videoArray[$index].status.server.conditionID }}</td>
 		<td>
 			<A HREF="{{ videoArray[$index].config.url }}videolist" target="_blank" style="color: #000000;"><i class="fa fa-hdd-o" aria-hidden="true"></i></a>
 			{{ videoArray[$index].status.server.currentFile }}

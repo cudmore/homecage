@@ -6,6 +6,11 @@
 #	1) install uv4l for video streaming
 #	2) install avconv to convert .h264 video files to .mp4
 
+if [ $(id -u) = 0 ]; then
+   echo "Do not run with sudo. Try again without sudo"
+   exit 1
+fi
+
 echo '==='
 echo '=== 1/3 Configuring source repositories for uv4l'
 echo '==='

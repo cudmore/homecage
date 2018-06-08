@@ -51,6 +51,35 @@
 	<table class="myTable">
 	
 	<tr>
+		<td>Identifiers</td>
+		<td>
+		   <form ng-submit="mySubmit('server.animalID',config.server.animalID)">
+		   <label>ID
+		   <input style="width: 5em" 
+		   	type="text" 
+		   	ng-model="config.server.animalID" 
+		   	ng-disabled="! allowEditeOptions()" 
+		   	ng-required="false"
+		   	/>
+		   	</label>
+		   	</form>
+		</td>
+		
+		<td>
+		   <form ng-submit="mySubmit('server.conditionID',config.server.conditionID)">
+		   <label>Condition
+		   <input style="width: 5em" 
+		   	type="text" 
+		   	ng-model="config.server.conditionID" 
+		   	ng-disabled="! allowEditeOptions()" 
+		   	ng-required="false"
+		   	/>
+		   	</label>
+		   	</form>
+		</td>
+	</tr>
+	
+	<tr>
 		<td>Lights</td>
 		<td style="width:120px;">
 		IR
@@ -232,17 +261,6 @@
 	<span ng-show="showOptions">		
 
 		<div class="indent">
-
-		   <form ng-submit="mySubmit('server.animalID',config.server.animalID)">
-		   <label>Animal ID
-		   <input style="width: 5em" 
-		   	type="text" 
-		   	ng-model="config.server.animalID" 
-		   	ng-disabled="! allowEditeOptions()" 
-		   	ng-required="false"
-		   	/>
-		   	</label>
-		   	</form>
 
 		<b>Video</b>
 		

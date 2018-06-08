@@ -80,13 +80,30 @@ Test the server from another machine on the network. On a windows machine, mount
 ## Install DHT temperature sensor (optional)
 
 You can acquire reasonably accurate temperature and humidity readings with an inexpensive temperature sensort like the [DHT-Temperature Sensor][dht]. If you run into trouble then go to [this tutorial][7]. If you don't do this, homecage should work but you won't be able to read the temperature and humidity.
-    
+
+The code for the DHT is installed system wide.
+
+### System wide, Python
+ 
     cd
-    mkdir tmp
-    cd tmp
     git clone https://github.com/adafruit/Adafruit_Python_DHT.git
     cd Adafruit_Python_DHT
-    sudo python setup.py install
+    python setup.py install
+
+### Using the homecage Python 3 virtual environment 'env'
+
+```
+source ~/homecage/homecage_app/env/bin/activate
+sudo apt-get install python3-dev
+cd
+if [ -d "Adafruit_Python_DHT" ]; then
+  rm -Rf Adafruit_Python_DHT
+fi
+git clone https://github.com/adafruit/Adafruit_Python_DHT.git
+cd Adafruit_Python_DHT
+python setup.py install
+deactivate
+```
 
 ## Startup tweet
 

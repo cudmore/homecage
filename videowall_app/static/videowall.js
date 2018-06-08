@@ -137,7 +137,7 @@ angular.module('videowall', ['uiSwitch'])
 					//text
 					context.font = "18px Arial";
 					context.fillStyle = "red";
-					var myStr = $scope.videoArray[this.myIdx].status.trial.lastStillTime
+					var myStr = $scope.videoArray[this.myIdx].status.lastStillTime
 					context.fillText(myStr,5,20);
 					
 					//if ($scope.videoArray[this.myIdx].status.isRecording == false) {
@@ -190,8 +190,8 @@ angular.module('videowall', ['uiSwitch'])
         	    $scope.videoArray[i].config = response.data;
         	    $scope.videoArray[i].config.url = url;
 
-				var tmpWidth = parseInt($scope.videoArray[i].config.stream.resolution.split(',')[0],10)
-				var tmpHeight = parseInt($scope.videoArray[i].config.stream.resolution.split(',')[1],10)
+				var tmpWidth = parseInt($scope.videoArray[i].config.video.streamResolution.split(',')[0],10)
+				var tmpHeight = parseInt($scope.videoArray[i].config.video.streamResolution.split(',')[1],10)
 				//console.log('tmpWidth:', tmpWidth)
 				//console.log('tmpHeight:', tmpHeight)
 				$scope.videoArray[i].streamWidth = tmpWidth + (tmpWidth * 0.03)
@@ -257,9 +257,9 @@ angular.module('videowall', ['uiSwitch'])
 		console.log(typeof val)
 		
 		valInt = (val) ? 1 : 0
-		
+
 		if (param == 'oneVideo.status.lights.irLED') {
-			url = $scope.videoArray[idx].restUrl + 'irLED/' + valInt
+			url = $scope.videoArray[idx].restUrl + 'api/eventOut/irLED/' + valInt
 			$http.get(url).
         		then(function(response) {
 					$scope.videoArray[idx].status = response.data;
@@ -269,7 +269,7 @@ angular.module('videowall', ['uiSwitch'])
         		});
 		}
 		if (param == 'oneVideo.status.lights.whiteLED') {
-			url = $scope.videoArray[idx].restUrl + 'whiteLED/' + valInt
+			url = $scope.videoArray[idx].restUrl + 'api/eventOut/whiteLED/' + valInt
 			$http.get(url).
         		then(function(response) {
 					$scope.videoArray[idx].status = response.data;

@@ -17,6 +17,11 @@
 # sudo systemctl enable homecage.service
 # sudo systemctl disable homecage.service
 
+if [ $(id -u) = 0 ]; then
+   echo "Do not run with sudo. Try again without sudo"
+   exit 1
+fi
+
 ip=`hostname -I | xargs`
 
 echo '==='

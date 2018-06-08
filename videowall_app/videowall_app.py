@@ -3,7 +3,7 @@
 
 from __future__ import print_function    # (at top of module)
 
-import subprocess
+import sys, subprocess
 import json
 
 from flask import Flask, render_template, send_file, jsonify, abort#, redirect, make_response
@@ -62,6 +62,20 @@ def whatismyip():
 	return ips
 
 if __name__ == '__main__':
-	print('videoserver.py is running Flask server at:', 'http://' + whatismyip() + ':8000')
-	debug = True
-	app.run(host=whatismyip(), port=8000, debug=debug, threaded=True)
+	myip = whatismyip()
+	
+	debug = False
+	if len(sys.argv) == 2:
+		if sys.argv[1] == 'debug':
+			debug = True
+	app.logger.debug('Running flask server with debug = ' + str(debug))
+		
+	responseStr = 'Flask server is running at: ' + 'http://' + str(myip) + ':8000'
+	print(responseStr)
+	app.logger.debug(responseStr)
+	
+	# 0.0.0.0 will run on external ip and needed to start at boot with systemctl
+	# before we get a valid ip from whatismyip()
+	
+	app.run(host='0.0.0.0', port=8000, debug=debug, threaded=True)
+

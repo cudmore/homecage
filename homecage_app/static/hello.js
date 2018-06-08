@@ -202,6 +202,9 @@ angular.module('demo', ['uiSwitch'])
 		if (param=='server.animalID' && val == '') {
 			val = 'emptyValueCludge'
 		}
+		if (param=='server.conditionID' && val == '') {
+			val = 'emptyValueCludge'
+		}
 		console.log("mySubmit() " + param + " '" + val + "'");
 		console.log(typeof val)
 		$http.get($scope.myUrl + 'set/' + param + '/' + val).

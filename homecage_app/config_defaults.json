@@ -1,6 +1,7 @@
 {
     "server": {
-        "animalID": ""
+        "animalID": "",
+        "conditionID": ""
     },
     "hardware": {
         "allowArming": false,

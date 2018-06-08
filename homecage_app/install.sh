@@ -1,3 +1,8 @@
+if [ $(id -u) = 0 ]; then
+   echo "Do not run with sudo. Try again without sudo"
+   exit 1
+fi
+
 ./install-homecage.sh
 ./install-extras.sh
 

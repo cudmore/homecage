@@ -66,7 +66,7 @@ def myBeforeRequest():
 @app.after_request
 def myAfterRequest(response):
 	#print('after_request()')
-	if request.endpoint is None or request.endpoint in ["status", "lastimage", "log"]:
+	if request.endpoint is None or request.endpoint in ["status", "lastimage", "log", "config"]:
 		# ignore
 		pass
 	else:
@@ -157,22 +157,6 @@ def eventOut(name, onoff):
 	home.eventOut(name, True if onoff else False)
 	return jsonify(getStatus())
 	
-'''
-@app.route('/irLED/<int:onoff>')
-def irLED(onoff):
-	#print('irLED() onoff:', onoff)
-	home.irLED(True if onoff else False)
-	status = getStatus()
-	return jsonify(status)
-	
-@app.route('/whiteLED/<int:onoff>')
-def whiteLED(onoff):
-	#print('whiteLED() onoff:', onoff)
-	home.whiteLED(True if onoff else False)
-	status = getStatus()
-	return jsonify(status)
-'''
-
 @app.route('/set/<paramName>/<value>')
 def setParam(paramName, value):
 	app.logger.debug(paramName + "'" + value + "'")
@@ -192,7 +176,6 @@ def loadConfig():
 	status = getStatus()
 	return jsonify(status)
 	
-#see: https://stackoverflow.com/questions/23718236/python-flask-browsing-through-directory-with-files
 @app.route('/videolist')
 @app.route('/videolist/<path:req_path>')
 def videolist(req_path=''):
@@ -212,12 +195,6 @@ def videolist(req_path=''):
 	
 	# Check if path is a file and serve
 	if os.path.isfile(abs_path):
-		'''
-		response = make_response("")
-		response.headers["X-Accel-Redirect"] = abs_path
-		response.headers["Content-Type"] = mimetypes.guess_type(os.path.basename(abs_path))
-		return response
-		'''
 		app.logger.debug(('videolist() is serving file:', abs_path))
 		return send_file(abs_path)
 
@@ -240,45 +217,13 @@ def videolist(req_path=''):
 		
 		fd = {'path':f, 'file':f2, 'isfile':True, 'size':sizeStr}
 		files.append(fd)
-		'''
-		if not os.path.isfile(f):
-			files.append(fd)
-		'''
 		
-	# load from db file
-	'''
-	dbFile = os.path.join(abs_path,'db.txt') 
-	if os.path.isfile(dbFile):
-		files2 = json.load(open(dbFile))
-		for file3 in files2:
-			if os.path.isfile(file3['path']):
-				file3['isfile'] = True
-			else:
-				file3['isfile'] = False
-			files.append(file3)
-	'''
-	
 	# sort the list
 	files = sorted(files, key=lambda k: k['file']) 
 
 	return render_template('videolist.html', files=files, abs_path=abs_path, systemInfo=home.systemInfo)
 
-'''
-@app.route('/restart')
-def restartserver():
-	cmd = ['./homecage', 'restart']
-	child = subprocess.Popen(cmd, shell=True) #, stdout=subprocess.PIPE)
-	#out, err = child.communicate() # out is something like 'Raspberry Pi 2 Model B Rev 1.1'
-	return 'flask server is restarting'
-'''
-	
-def whatismyip():
-	ips = check_output(['hostname', '--all-ip-addresses'])
-	ips = ips.decode('utf-8').strip()
-	return ips
-
 if __name__ == '__main__':	
-	#myip = whatismyip()
 	myip = bUtil.whatismyip_safe()
 	
 	debug = False
@@ -287,9 +232,11 @@ if __name__ == '__main__':
 			debug = True
 	app.logger.debug('Running flask server with debug = ' + str(debug))
 		
-	app.logger.debug('Flask server is running at: ' + 'http://' + str(myip) + ':5000')
+	responseStr = 'Flask server is running at: ' + 'http://' + str(myip) + ':5000'
+	print(responseStr)
+	app.logger.debug(responseStr)
 	
-	# 0.0.0.0 will reun on external ip and needed to start at boot with systemctl
+	# 0.0.0.0 will run on external ip and needed to start at boot with systemctl
 	# before we get a valid ip from whatismyip()
 	
 	app.run(host='0.0.0.0', port=5000, debug=debug, threaded=True)

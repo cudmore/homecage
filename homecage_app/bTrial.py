@@ -33,10 +33,18 @@ class bTrial:
 		self.trial['currentFile'] = ''
 		self.trial['lastStillTime'] = None
 
+		self.trial['hostnameID'] = ''
 		self.trial['animalID'] = ''
+		self.trial['conditionID'] = ''
+		
+	def setHostname(self, hostnameID):
+		self.trial['hostnameID'] = hostnameID
 		
 	def setAnimalID(self, animalID):
 		self.trial['animalID'] = animalID
+		
+	def setConditionID(self, conditionID):
+		self.trial['conditionID'] = conditionID
 		
 	def startTrial(self, now=time.time()):
 		logger.debug('startTrial now:' + str(now))
@@ -85,13 +93,30 @@ class bTrial:
 			self.trial['lastEpochSeconds'] = now
 			self.newEvent('newRepeat', self.currentEpoch, now=now)
 		
-	def saveTrial(self):
-		delim = ','
-		eol = '\n'
+	def getFilename(self, withRepeat=False):
+		'''
+		Get a base filename from trial
+		Caller isresponsible for appending proper filetype extension
+		'''
+		hostnameID_str = ''
+		if self.trial['hostnameID']:
+			hostnameID_str = '_' + self.trial['hostnameID']
 		animalID_str = ''
 		if self.trial['animalID']:
 			animalID_str = '_id' + self.trial['animalID']
-		saveFile = self.trial['startTimeStr'] +animalID_str + '_t' + str(self.trialNum) + '.txt'
+		conditionID_str = ''
+		if self.trial['conditionID']:
+			conditionID_str = '_c' + self.trial['conditionID']
+		# file names will always have (hostname, animal, condition, trial)
+		filename = self.trial['startTimeStr'] + hostnameID_str + animalID_str + conditionID_str + '_t' + str(self.trialNum)
+		if withRepeat:
+			filename += '_r' + str(self.currentEpoch)
+		return filename
+		
+	def saveTrial(self):
+		delim = ','
+		eol = '\n'
+		saveFile = self.getFilename() + '.txt'
 		savePath = os.path.join('/home/pi/video', self.trial['dateStr'])
 		saveFilePath = os.path.join(savePath, saveFile)
 		if not os.path.exists(savePath):
@@ -104,7 +129,9 @@ class bTrial:
 			headerLine = 'date=' + self.trial['dateStr'] + ';' \
 							'time=' + self.trial['timeStr'] + ';' \
 							'startTimeSeconds=' + str(self.trial['startTimeSeconds']) + ';' \
+							'hostname=' + self.trial['hostnameID'] + ';' \
 							'id=' + self.trial['animalID'] + ';' \
+							'condition=' + self.trial['conditionID'] + ';' \
 							'trialNum=' + str(self.trial['trialNum']) + ';' \
 							'numRepeats=' + str(self.trial['currentEpoch']) + eol
 			file.write(headerLine)
@@ -157,8 +184,16 @@ class bTrial:
 		return self.trial['startTimeSeconds'] # can be None
 
 	@property
+	def hostnameID(self):
+		return self.trial['hostnameID'] # can be None
+
+	@property
 	def animalID(self):
 		return self.trial['animalID'] # can be None
+
+	@property
+	def conditionID(self):
+		return self.trial['conditionID'] # can be None
 
 if __name__ == '__main__':
 	logger = logging.getLogger()
