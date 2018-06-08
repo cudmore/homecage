@@ -13,11 +13,21 @@ angular.module('videowall', ['uiSwitch'])
 	//
 	// manager server list
 	//
-	$scope.showServerConfig = false
+	$scope.showServerPanel = false
+	$scope.showServerConfig = true
+	$scope.showServerConfig2 = false
 	$scope.doDebug = false
 	
+	$scope.toggleVideoPanels = function () {
+		$scope.showServerPanel = ! $scope.showServerPanel
+	}
+
 	$scope.toggleServerConfig = function () {
 		$scope.showServerConfig = ! $scope.showServerConfig
+	}
+	
+	$scope.toggleshowServerConfig2 = function () {
+		$scope.showServerConfig2 = ! $scope.showServerConfig2
 	}
 	
 	$scope.addServer = function() {
@@ -28,10 +38,13 @@ angular.module('videowall', ['uiSwitch'])
 	}
 
 	$scope.removeServer = function(idx) {
-		$scope.numServers -= 1
-		$scope.serverList.splice(idx,1)
-		initVideoWall()
-		$scope.$apply();
+		removeOK = $window.confirm('Are you sure you want to remove server "' + $scope.serverList[idx] + '"?');
+		if (removeOK) {
+			$scope.numServers -= 1
+			$scope.serverList.splice(idx,1)
+			initVideoWall()
+			$scope.$apply();
+		}
 	}
 
 	$scope.setServer = function(idx, str) {

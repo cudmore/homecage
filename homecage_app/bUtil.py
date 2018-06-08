@@ -6,7 +6,7 @@ from __future__ import print_function	# (at top of module)
 import os, subprocess
 import platform, socket
 from collections import OrderedDict
-from datetime import datetime
+from datetime import datetime, timedelta
 
 def getSystemInfo():
 	ret = OrderedDict()
@@ -25,6 +25,7 @@ def getSystemInfo():
 	ret['raspberryModel'] = raspberrymodel()
 	ret['debianVersion'] = debianversion()
 	ret['pythonVersion'] = pythonversion()
+	ret['systemUptime'] = systemUptime()
 	
 	return ret
 	
@@ -94,3 +95,11 @@ def debianversion():
 	
 def pythonversion():
 	return platform.python_version()
+	
+def systemUptime():
+	uptime_string = ''
+	with open('/proc/uptime', 'r') as f:
+	    uptime_seconds = float(f.readline().split('.')[0])
+	    uptime_string = str(timedelta(seconds = uptime_seconds))
+	return uptime_string
+		

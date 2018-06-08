@@ -3,6 +3,7 @@
         "animalID": ""
     },
     "hardware": {
+        "allowArming": false,
         "triggerIn": {
             "enabled": true,
             "pin": 21,

@@ -261,7 +261,7 @@ def videolist(req_path=''):
 	# sort the list
 	files = sorted(files, key=lambda k: k['file']) 
 
-	return render_template('videolist.html', files=files, abs_path=abs_path)
+	return render_template('videolist.html', files=files, abs_path=abs_path, systemInfo=home.systemInfo)
 
 '''
 @app.route('/restart')

@@ -26,19 +26,33 @@ span.mysmall {
 
 .myTable {
     border-collapse: collapse;
-    width: 75%;
+    width: 100%;
+    border: 2px solid #ddd;
     //table-layout: fixed;
 }
 
-.myTable td {
-    border: 0px solid #ddd;
-    padding: 4px;
+.myTable td, .myTable th {
+    border: 1px solid #ddd;
+    padding: 8px;
 }
 
-.myTable td:nth-child(1){ width:100px; }
-.myTable td:nth-child(2){ width:100px; }
-.myTable td:nth-child(3){ width:100px; }
+.myTable tr:nth-child(even){background-color: #f2f2f2;}
+
+//.myTable td:nth-child(1){ width:100px; }
+//.myTable td:nth-child(2){ width:100px; }
+//.myTable td:nth-child(3){ width:100px; }
 //.myTable td:nth-child(4){ width:100px; }
+.myTable td:nth-child(10){ width:250px; }
+
+.myTable tr:hover {background-color: #ddd;}
+
+.myTable th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: center;
+    background-color: #bbb;
+    color: #111;
+}
 
 .myTable-small{
 	font-size: 12px;

@@ -26,13 +26,138 @@
 {% raw %}
 	<div ng-controller="videowall">
 
-		
-	<div class="container-fluid">
-  	<div class="row">
-
-	<!-- <table class="videoWallTable"> -->
-	<!-- <tr> -->
+	<!-- configure video wall -->
+	<span ng-if="showServerConfig==0">
+		<button ng-click="toggleServerConfig()" class="btn btn-default btn-sm"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+	</span>
+	<span ng-if="showServerConfig==1">
+		<button ng-click="toggleServerConfig()" class="btn btn-default btn-sm"><i class="fa fa-chevron-down" aria-hidden="true"></i></button>
+	</span>
 	
+	Video Wall Servers
+		
+	<div ng-show="showServerConfig">
+	<div class="videowall_indent2">
+
+		<table class="myTable" >
+		<tr>
+			<th>ip</th>
+			<th>hostname</th>
+			<th>state</th>
+			<th>record</th>
+			<th>auto lights</th>
+			<th>ir</th>
+			<th>white</th>
+			<th>duration (sec)</th>
+			<th>ID</th>
+			<th>file</th>
+		<tr>
+		<tr ng-repeat="server in serverList track by $index">
+		<td>
+			<form class="form-inline" ng-submit="setServer($index,server)">
+				<button type="button" class="btn btn-danger btn-sm" ng-click="removeServer($index)">
+				<i class="fa fa-minus fa-1x" aria-hidden="true"></i>
+				</button>
+
+				<input style="width: 10em" 
+		   		type="string" 
+		   		ng-model="server"
+		   		/>
+			</form>
+		</td>
+		
+		<td>
+			<A HREF="{{ videoArray[$index].config.url }}" target="_blank" style="color: #000000;">{{ videoArray[$index].status.system.hostname }}</a>
+		</td>
+		<td>{{ videoArray[$index].status.server.state }}</td>
+
+
+		<td>
+			<span ng-if="isState($index,'idle')">
+				<button type="button" 
+					class="btn btn-success btn-sm" 
+					ng-click="startstoprecord($index, 1)" 
+					ng-disabled="isState($index,'streaming')">
+				<i class="fa fa-play fa-1x" aria-hidden="true"></i> Start
+				</button>
+			</span>
+			<span ng-if="isState($index,'recording')">
+				<button type="button" class="btn btn-danger btn-sm" ng-click="startstoprecord($index, 0)">
+				<i class="fa fa-stop fa-1x" aria-hidden="true"></i> Stop
+				</button>
+			</span>
+		</td>
+
+		<td>
+		<span>
+		<input type="checkbox" 
+			ng-model="videoArray[$index].config.lights.auto" 
+			ng-change="mySubmit($index, 'lights.auto',videoArray[$index].config.lights.auto)" 
+			ng-disabled="isState($index,'recording') && videoArray[$index].config.lights.auto"/>		
+		Auto
+		</span>
+		</td>
+		
+		<td>{{ videoArray[$index].status.server.eventOut.irLED }}</td>
+		<td>{{ videoArray[$index].status.server.eventOut.whiteLED }}</td>
+		<td>{{ videoArray[$index].status.server.trialElapsedSec }} sec</td>
+		<td>{{ videoArray[$index].status.server.animalID }}</td>
+		<td>
+			<A HREF="{{ videoArray[$index].config.url }}videolist" target="_blank" style="color: #000000;"><i class="fa fa-hdd-o" aria-hidden="true"></i></a>
+			{{ videoArray[$index].status.server.currentFile }}
+		</td>
+		
+		</tr>
+		</table>
+		
+		
+	</div>
+	</div>
+
+
+<span ng-if="showServerConfig2==0">
+	<button ng-click="toggleshowServerConfig2()" class="btn btn-default btn-sm"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+</span>
+<span ng-if="showServerConfig2==1">
+	<button ng-click="toggleshowServerConfig2()" class="btn btn-default btn-sm"><i class="fa fa-chevron-down" aria-hidden="true"></i></button>
+</span>
+
+Configure
+
+<div class="videowall_indent2">
+
+<div ng-show="showServerConfig2">
+		<button type="button" class="btn btn-success btn-sm" ng-click="addServer()">
+		Add Server <i class="fa fa-plus fa-1x" aria-hidden="true"></i>
+		</button>
+
+		<button type="button" class="btn btn-success btn-sm" ng-click="saveServers()">
+		Save Servers <i class="fa fa-save fa-1x" aria-hidden="true"></i>
+		</button>
+
+		<!--
+		<input type="checkbox" ng-model="doDebug" ng-change="changeDebug(doDebug)"/>
+		Show Config		
+		-->
+</div>
+</div>
+
+
+<!-- -->
+	<BR>
+	<div class="container-fluid">
+
+	<span ng-if="showServerPanel==0">
+		<button ng-click="toggleVideoPanels()" class="btn btn-default btn-sm"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+	</span>
+	<span ng-if="showServerPanel==1">
+		<button ng-click="toggleVideoPanels()" class="btn btn-default btn-sm"><i class="fa fa-chevron-down" aria-hidden="true"></i></button>
+	</span>
+	
+	Video Wall
+
+  	<div class="row" ng-show="showServerPanel" >
+
 	<div class="col-lg-6" ng-repeat="oneVideo in videoArray track by $index">
 	<div class="myborder"> 
 	<!-- <td ng-repeat="oneVideo in videoArray track by $index"> -->
@@ -129,6 +254,7 @@
 		</span>
 		</div>
 		
+
 		<!-- server status and config -->
 	<div class="videowall_indent">
 	<span ng-if="doDebug">
@@ -185,54 +311,6 @@
 	</div>
 	<!-- </tr> -->
 	<!-- </table> -->
-
-
-
-	<BR>
-	
-	<!-- configure video wall -->
-	<span ng-if="showServerConfig==0">
-		<button ng-click="toggleServerConfig()" class="btn btn-default btn-sm"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
-	</span>
-	<span ng-if="showServerConfig==1">
-		<button ng-click="toggleServerConfig()" class="btn btn-default btn-sm"><i class="fa fa-chevron-down" aria-hidden="true"></i></button>
-	</span>
-	
-	Video Wall Servers
-		
-	<div ng-show="showServerConfig">
-	<div class="videowall_indent2">
-		<button type="button" class="btn btn-success btn-sm" ng-click="addServer()">
-		Add Server <i class="fa fa-plus fa-1x" aria-hidden="true"></i>
-		</button>
-
-		<button type="button" class="btn btn-success btn-sm" ng-click="saveServers()">
-		Save Servers <i class="fa fa-save fa-1x" aria-hidden="true"></i>
-		</button>
-
-	   	<BR>
-		<table class="myTable" ng-repeat="server in serverList track by $index">
-		<tr>
-		<td>
-			<form ng-submit="setServer($index,server)">
-				<input style="width: 15em" 
-		   		type="string" 
-		   		ng-model="server"
-		   		/>
-
-				<button type="button" class="btn btn-success btn-sm" ng-click="removeServer($index)">
-				<i class="fa fa-minus fa-1x" aria-hidden="true"></i>
-				</button>
-			</form>
-		</td>
-		</tr>
-		</table>
-		
-		<input type="checkbox" ng-model="doDebug" ng-change="changeDebug(doDebug)"/>
-		Show Config		
-		
-	</div>
-	</div>
 
 
 	</div> <!-- ng-controller -->

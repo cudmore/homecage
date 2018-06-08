@@ -1,56 +1,39 @@
 #  20180419
 
 function usage(){
-    echo "videowall - Illegal parameters"
-    echo "Usage:"
+    echo "videowall - Usage"
     echo "   videowall start"
     echo "   videowall stop"
     echo "   videowall restart"
+    echo "   videowall status"
+    echo "   videowall enable	- start at boot"
+    echo "   videowall disable	- do not start at boot"
 }
-
-videowallPID=`pgrep -f videowall_app.py`
 
 myip=`hostname -I | xargs`
 
-function start() {
-	if [ -n "$videowallPID" ]; then
-		echo "videowall server is running, use 'videowall stop' to stop."
-		echo "   http://"$myip":8000"
-		exit 1
-	else
-		echo "starting videowall server"
-		#rm homecage_app.log
-		#python homecage_app.py | tee homecage_app.log 2>&1 &
-		python videowall_app.py > videowall_app.log 2>&1 &
-		#echo "   log file is in videowall_app.log"
-		echo "   http://"$myip":8000"
-	fi
-}
-
-function stop() {
-	if [ -n "$videowallPID" ]; then
-		echo "stopping videowall server ..."
-		kill -- -$videowallPID 2> /dev/null
-		echo "videowall server is now stopped"
-	else
-		echo "videowall server is not running, use 'videowall start' to start."
-		#exit 1
-	fi
-}
-
-function restart() {
-	#echo "stopping"
-	stop
-	#echo "starting"
-	start
-}
-
 case "$1" in
-	start) start
+	start) 
+		sudo systemctl start videowall.service
+		echo "video wall started, http://$myip:8000"
 		;;
-	stop) stop
+	stop) 
+		sudo systemctl stop videowall.service
+		echo "video wall stopped"
 		;;
-	restart) restart
+	restart) 
+		sudo systemctl restart videowall.service
+		;;
+	status) 
+		sudo systemctl status videowall.service
+		;;
+	enable)
+		sudo systemctl enable videowall.service
+		echo "videowall will start at boot"
+		;;
+	disable) 
+		sudo systemctl disable videowall.service
+		echo "videowall will not start at boot"
 		;;
 	*) usage
 		;;

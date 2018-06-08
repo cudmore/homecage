@@ -124,7 +124,7 @@
 		</td>
 	</tr>
 
-	<tr>
+	<tr ng-if="config.hardware.allowArming">
 		<td>Armed</td>
 		<td>
 		<span ng-bind="isState('armed') ? 'On' : 'Off'"></span>
@@ -165,7 +165,7 @@
 			</span>
 			
 		</td>
-	</tr>
+	</span>
 	</table>
 
 

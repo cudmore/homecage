@@ -2,10 +2,10 @@
 
 # Author: Robert H Cudmore
 # Date: 20180603
-# Purpose: Bash script to
+# Purpose: Bash script to install homecage
 #	1) create a python3 virtual environment
 #	2) install homecage_app/requirements.txt
-#	3) add homecage_app/bin to path
+#	3) install a systemctl service homecage.service
 #
 # Usage:
 #	./install-homecage.sh
@@ -17,8 +17,7 @@
 # sudo systemctl enable homecage.service
 # sudo systemctl disable homecage.service
 
-# wow this looks fancy
-ip=`ifconfig eth0 | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
+ip=`hostname -I | xargs`
 
 echo '==='
 echo "=== 1/5: Installing pip"

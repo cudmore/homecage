@@ -12,7 +12,7 @@ from __future__ import print_function    # (at top of module)
 import os, sys, time, math, io
 import subprocess
 import threading
-from datetime import datetime
+from datetime import datetime, timedelta
 from collections import OrderedDict
 import json
 
@@ -48,6 +48,7 @@ class home:
 		logger.debug('start home.init()')
 				
 		self.version = '20180606'
+		self.startTime = time.time()
 		
 		self.config = self.loadConfigFile()
 				
@@ -336,6 +337,8 @@ class home:
 		status['server']['currentFile'] = self.camera.currentFile
 		status['server']['lastResponse'] = self.lastResponse # filled in by each route
 
+		status['server']['uptime'] = str(timedelta(seconds = time.time() - self.startTime)).split('.')[0]
+		
 		# need to make a dict so javascript can read off which eventOut is on/off
 		status['server']['eventOut'] = OrderedDict()
 		for eventOut in self.config['hardware']['eventOut']:
