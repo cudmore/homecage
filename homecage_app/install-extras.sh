@@ -12,12 +12,12 @@ if [ $(id -u) = 0 ]; then
 fi
 
 echo '==='
-echo '=== 1/3 Configuring source repositories for uv4l'
+echo '=== Configuring source repositories for uv4l'
 echo '==='
 
 curl http://www.linux-projects.org/listing/uv4l_repo/lrkey.asc | sudo apt-key add -
 
-# check if stretch_install is already n file /etc/apt/sources.list
+# check if stretch_install is already in file /etc/apt/sources.list
 if cat /etc/os-release | grep -q "stretch"
 then
 	echo 'Good, you are running Raspian Stretch'
@@ -52,7 +52,7 @@ else
 	fi
 
 	echo '==='
-	echo '=== 2/3 Installing uv4l (please wait)'
+	echo '=== Installing uv4l (please wait)'
 	echo '==='
 	sudo apt-get -qq update
 	sudo apt-get -qq --allow-unauthenticated install uv4l uv4l-server uv4l-raspicam
@@ -61,7 +61,7 @@ fi
 
 echo ' '
 echo '==='
-echo '=== 3/3 installing libav-tools (e.g. avconv)'
+echo '=== Installing libav-tools (e.g. avconv)'
 echo '==='
 sudo apt-get -qq install libav-tools
 

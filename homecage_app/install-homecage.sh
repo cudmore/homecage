@@ -24,29 +24,39 @@ fi
 
 ip=`hostname -I | xargs`
 
-echo '==='
-echo "=== 1/5: Installing pip"
-echo '==='
-sudo apt-get install python-pip
+#if systemctl is-active --quiet homecage.service; then
+#	echo 'service is active'
+#fi
 
-echo '==='
-echo "=== 2/5: Installing virtualenv"
-echo '==='
-sudo /usr/bin/easy_install virtualenv
+sudo systemctl stop homecage.service
 
-echo '==='
-echo "=== 3/5: Making Python 3 virtual environment in $PWD/env"
-echo '==='
-if [ ! -d "env/" ]; then
-	mkdir env
+if ! type "pip" > /dev/null; then
+	echo '==='
+	echo "=== Installing pip"
+	echo '==='
+	sudo apt-get -y install python-pip
 fi
 
-virtualenv -p python3 --no-site-packages env
+if ! type "virtualenv" > /dev/null; then
+	echo '==='
+	echo "=== Installing virtualenv"
+	echo '==='
+	sudo /usr/bin/easy_install virtualenv
+fi
+
+if [ ! -d "env/" ]; then
+	echo '==='
+	echo "=== Making Python 3 virtual environment in $PWD/env"
+	echo '==='
+	mkdir env
+	virtualenv -p python3 --no-site-packages env
+fi
+
 source env/bin/activate
 
 echo ' '
 echo '==='
-echo '=== 4/5: Installing homecage Python requirements with pip'
+echo '=== Installing homecage Python requirements with pip'
 echo '==='
 pip install -r requirements.txt
 
@@ -55,13 +65,13 @@ deactivate
 # copy 
 echo ' '
 echo '==='
-echo '=== 5/5: Configuring systemctl in /etc/systemd/system/homecage.service'
+echo '=== Configuring systemctl in /etc/systemd/system/homecage.service'
 echo '==='
 sudo cp bin/homecage.service /etc/systemd/system/homecage.service
 sudo chmod 664 /etc/systemd/system/homecage.service
 sudo systemctl daemon-reload
-sudo systemctl enable homecage.service
 sudo systemctl start homecage.service
+sudo systemctl enable homecage.service
 #sudo systemctl status homecage.service
 
 echo ' '

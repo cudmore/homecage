@@ -339,8 +339,8 @@ class home:
 		status['server'] = OrderedDict()
 		status['server']['version'] = self.version
 		
-		status['server']['animalID'] = self.config['server']['animalID']
-		status['server']['conditionID'] = self.config['server']['conditionID']
+		#status['server']['animalID'] = self.config['server']['animalID']
+		#status['server']['conditionID'] = self.config['server']['conditionID']
 		status['server']['state'] = self.camera.state
 		status['server']['currentFile'] = self.camera.currentFile
 		status['server']['lastStillTime'] = self.camera.lastStillTime

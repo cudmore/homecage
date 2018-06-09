@@ -163,9 +163,10 @@ angular.module('videowall', ['uiSwitch'])
 	}
 		
 	$scope.isState = function(idx, thisState) {
-		if (idx > 0) {
-			console.log(idx)
-		}
+		//if (idx > 0) {
+		//	console.log(idx)
+		//}
+		//console.log('$scope.videoArray[idx].status:', $scope.videoArray[idx].status)
 		return $scope.videoArray[idx].status.server.state == thisState
 	}
 
@@ -287,6 +288,40 @@ angular.module('videowall', ['uiSwitch'])
         		}, function errorCallback(response) {
         			console.log('mySubmit() error url:', url)
         		});
+		}
+		if (param == 'server.animalID') {
+			if (val == '') {
+				val = 'emptyValueCludge'
+			}
+			url = $scope.videoArray[idx].restUrl + 'set/' + param + '/' + val
+			console.log("mySubmit() " + url + ' ' + param + " '" + val + "'");
+			console.log(typeof val)
+			$http.get(url).
+				then(function(response) {
+					$scope.videoArray[idx].config = response.data;
+					$scope.videoArray[idx].config.url = url;
+					//convertConfig()
+					console.log('$scope.videoArray[i].config', $scope.videoArray[idx].config)
+				}, function errorCallback(response) {
+					console.log('mySubmit() error', url, idx)
+				});		
+		}
+		if (param == 'server.conditionID') {
+			if (val == '') {
+				val = 'emptyValueCludge'
+			}
+			url = $scope.videoArray[idx].restUrl + 'set/' + param + '/' + val
+			console.log("mySubmit() " + url + ' ' + param + " '" + val + "'");
+			console.log(typeof val)
+			$http.get(url).
+				then(function(response) {
+					$scope.videoArray[idx].config = response.data;
+					$scope.videoArray[idx].config.url = url;
+					//convertConfig()
+					console.log('$scope.videoArray[i].config', $scope.videoArray[idx].config)
+				}, function errorCallback(response) {
+					console.log('mySubmit() error', url, idx)
+				});		
 		}
 	}
 

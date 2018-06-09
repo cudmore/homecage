@@ -17,31 +17,42 @@
 # sudo systemctl enable videowall.service
 # sudo systemctl disable videowall.service
 
+if [ $(id -u) = 0 ]; then
+   echo "Do not run with sudo. Try again without sudo"
+   exit 1
+fi
+
 ip=`hostname -I | xargs`
 
-echo '==='
-echo "=== 1/5: Installing pip"
-echo '==='
-sudo apt-get install python-pip
+sudo systemctl stop videowall.service
+
+if ! type "pip" > /dev/null; then
+	echo '==='
+	echo "=== Installing pip"
+	echo '==='
+	sudo apt-get -y install python-pip
+fi
+
+if ! type "virtualenv" > /dev/null; then
+	echo '==='
+	echo "=== Installing virtualenv"
+	echo '==='
+	sudo /usr/bin/easy_install virtualenv
+fi
 
 echo '==='
-echo "=== 2/5: Installing virtualenv"
-echo '==='
-sudo /usr/bin/easy_install virtualenv
-
-echo '==='
-echo "=== 3/5: Making Python 3 virtual environment in $PWD/env"
+echo "=== Making Python 3 virtual environment in $PWD/env"
 echo '==='
 if [ ! -d "env/" ]; then
 	mkdir env
+	virtualenv -p python3 --no-site-packages env
 fi
 
-virtualenv -p python3 --no-site-packages env
 source env/bin/activate
 
 echo ' '
 echo '==='
-echo '=== 4/5: Installing videowall Python requirements with pip'
+echo '=== Installing videowall Python requirements with pip'
 echo '==='
 pip install -r requirements.txt
 
@@ -50,14 +61,13 @@ deactivate
 # copy 
 echo ' '
 echo '==='
-echo '=== 5/5: Configuring systemctl in /etc/systemd/system/videowall.service'
+echo '=== Configuring systemctl in /etc/systemd/system/videowall.service'
 echo '==='
 sudo cp bin/videowall.service /etc/systemd/system/videowall.service
 sudo chmod 664 /etc/systemd/system/videowall.service
 sudo systemctl daemon-reload
-sudo systemctl enable videowall.service
 sudo systemctl start videowall.service
-#sudo systemctl status homecage.service
+sudo systemctl enable videowall.service
 
 echo ' '
 echo 'Done installing videowall server. The videowall server is running and will run at boot.'

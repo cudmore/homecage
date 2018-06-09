@@ -71,6 +71,7 @@
 		<td>
 			<A HREF="{{ videoArray[$index].config.url }}" target="_blank" style="color: #000000;">{{ videoArray[$index].status.system.hostname }}</a>
 		</td>
+		
 		<td>{{ videoArray[$index].status.server.state }}</td>
 
 
@@ -108,8 +109,31 @@
 		<td>{{ videoArray[$index].status.server.eventOut.whiteLED && "On" || "Off"}}</td>
 		<td>{{ videoArray[$index].status.server.epochElapsedSec }}</td>
 		<td>{{ videoArray[$index].status.server.fileDuration }}</td>
-		<td>{{ videoArray[$index].status.server.animalID }}</td>
-		<td>{{ videoArray[$index].status.server.conditionID }}</td>
+
+		<!-- <td>{{ videoArray[$index].status.server.animalID }}</td> -->
+		<td>
+		   <form ng-submit="mySubmit($index, 'server.animalID',videoArray[$index].config.server.animalID)">
+		   <input style="width: 5em" 
+		   	type="text" 
+		   	ng-model="videoArray[$index].config.server.animalID" 
+		   	ng-required="false"
+		   	/>
+		   	</form>
+		</td>
+		
+
+		<!-- <td>{{ videoArray[$index].status.server.conditionID }}</td> -->
+		<td>
+		   <form ng-submit="mySubmit($index, 'server.conditionID',videoArray[$index].config.server.conditionID)">
+		   <input style="width: 5em" 
+		   	type="text" 
+		   	ng-model="videoArray[$index].config.server.conditionID" 
+		   	ng-required="false"
+		   	/>
+		   	</form>
+		</td>
+
+		
 		<td>
 			<A HREF="{{ videoArray[$index].config.url }}videolist" target="_blank" style="color: #000000;"><i class="fa fa-hdd-o" aria-hidden="true"></i></a>
 			{{ videoArray[$index].status.server.currentFile }}

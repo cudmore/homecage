@@ -8,7 +8,7 @@ import platform, socket
 from collections import OrderedDict
 from datetime import datetime, timedelta
 
-def getSystemInfo():
+def getSystemInfo(path='/home/pi/video'):
 	ret = OrderedDict()
 	
 	now = datetime.now()
@@ -20,7 +20,7 @@ def getSystemInfo():
 	
 	ret['cpuTemperature'] = cpuTemperature()
 	
-	ret['gbRemaining'], ret['gbSize'] = drivespaceremaining()
+	ret['gbRemaining'], ret['gbSize'] = drivespaceremaining(path)
 	
 	ret['raspberryModel'] = raspberrymodel()
 	ret['debianVersion'] = debianversion()
@@ -51,22 +51,25 @@ def cpuTemperature():
 	cpuTemperature = res.replace("temp=","").replace("'C\n","")
 	return cpuTemperature
 	
-def drivespaceremaining():
+def drivespaceremaining(path):
 	#see: http://stackoverflow.com/questions/51658/cross-platform-space-remaining-on-volume-using-python
-	statvfs = os.statvfs('/home/pi/video')
+	if os.path.exists(path):
+		statvfs = os.statvfs(path)
 	
-	#http://www.stealthcopter.com/blog/2009/09/python-diskspace/
-	capacity = statvfs.f_bsize * statvfs.f_blocks
-	available = statvfs.f_bsize * statvfs.f_bavail
-	used = statvfs.f_bsize * (statvfs.f_blocks - statvfs.f_bavail) 
-	#print 'drivespaceremaining()', used/1.073741824e9, available/1.073741824e9, capacity/1.073741824e9
-	gbRemaining = available/1.073741824e9
-	gbSize = capacity/1.073741824e9
-
-	#round to 2 decimal places
-	gbRemaining = "{0:.2f}".format(gbRemaining)
-	gbSize = "{0:.2f}".format(gbSize)
-
+		#http://www.stealthcopter.com/blog/2009/09/python-diskspace/
+		capacity = statvfs.f_bsize * statvfs.f_blocks
+		available = statvfs.f_bsize * statvfs.f_bavail
+		used = statvfs.f_bsize * (statvfs.f_blocks - statvfs.f_bavail) 
+		#print 'drivespaceremaining()', used/1.073741824e9, available/1.073741824e9, capacity/1.073741824e9
+		gbRemaining = available/1.073741824e9
+		gbSize = capacity/1.073741824e9
+	
+		#round to 2 decimal places
+		gbRemaining = "{0:.2f}".format(gbRemaining)
+		gbSize = "{0:.2f}".format(gbSize)
+	else:
+		gbRemaining = 'n/a'
+		gbSize = 'n/a'
 	return gbRemaining, gbSize
 	
 def raspberrymodel():

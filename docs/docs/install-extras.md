@@ -41,7 +41,7 @@ In the following `the_name_you_want` should be changed to the name you want.
     # restart netatalk
     sudo /etc/init.d/netatalk start
 
-When in pico, you can search for a string with control+w and you can exit with control+x.
+When in pico, you can search for a string with control+w and you can exit and save with control+x.
 
 ## Install Samba (smb)
 
@@ -83,14 +83,9 @@ You can acquire reasonably accurate temperature and humidity readings with an in
 
 The code for the DHT is installed system wide.
 
-### System wide, Python
- 
-    cd
-    git clone https://github.com/adafruit/Adafruit_Python_DHT.git
-    cd Adafruit_Python_DHT
-    python setup.py install
-
 ### Using the homecage Python 3 virtual environment 'env'
+
+This assumes you have installed homecage with `homecage/homecage_app/install-homecage.sh`
 
 ```
 source ~/homecage/homecage_app/env/bin/activate
