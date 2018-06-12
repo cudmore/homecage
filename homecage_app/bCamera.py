@@ -108,13 +108,11 @@ class bCamera:
 		except (picamera.exc.PiCameraMMALError) as e:
 			logger.error('picamera PiCameraMMALError: ' + str(e))
 			self.lastResponse = str(e)
-			#self.record(False)
 			self.state = 'idle'
 			raise
 		except (picamera.exc.PiCameraError) as e:
 			logger.error('picamera PiCameraError: ' + str(e))
 			self.lastResponse = str(e)
-			#self.record(False)
 			self.state = 'idle'
 			raise
 		self.camera.led = False
@@ -122,12 +120,20 @@ class bCamera:
 		self.camera.framerate = self.fps
 		self.camera.start_preview()
 
-		self.trial.startTrial(now=time.time())
-
 		now = time.time()
-		startTimeStr = time.strftime('%Y%m%d', time.localtime(now)) 
 
-		self.saveVideoPath = os.path.join(self.savePath, startTimeStr)
+		# fps, resolution, duration, repeats, recordInfinity
+		headerStr = 'video_fps=' + str(self.fps) + ';' \
+					'video_resolution=' '"' + str(self.width) + ',' + str(self.height) + '"' + ';' \
+					'video_duration=' + str(self.recordDuration) + ';' \
+					'video_repeats=' + str(self.numberOfRepeats) + ';' \
+					'video.continuous=' + '"' + str(self.recordInfinity) + '"' + ';' \
+					
+		self.trial.startTrial(headerStr=headerStr)
+
+		startDateStr = time.strftime('%Y%m%d', time.localtime(now)) 
+
+		self.saveVideoPath = os.path.join(self.savePath, startDateStr)
 		if not os.path.isdir(self.saveVideoPath):
 			os.makedirs(self.saveVideoPath)
 
@@ -135,19 +141,16 @@ class bCamera:
 		currentRepeat = 1
 		numberOfRepeats = float('Inf') if self.recordInfinity else self.numberOfRepeats
 		while self.isState('recording') and (currentRepeat <= numberOfRepeats):
-			now = time.time()
-			startTimeStr = time.strftime('%Y%m%d_%H%M%S', time.localtime(now)) 
 			
-			self.trial.newEpoch(now)
+			self.trial.newEpoch()
 
 			#the file we are about to record/save
-			self.currentFile = self.trial.getFilename(withRepeat=True) + '.h264'
-			print('currentFile:', self.currentFile)
+			self.currentFile = self.trial.getFilename(withRepeat=True) + '.h264' # time stamp is based on trial.newEpoch()
 			videoFilePath = os.path.join(self.saveVideoPath, self.currentFile)
 			logger.debug('Start video file:' + videoFilePath + ' dur:' + str(self.recordDuration) + ' fps:' + str(self.fps))
+			self.trial.newEvent('recordVideo', currentRepeat, str=videoFilePath)		 # paired with stopVideo	
 
-			self.trial.newEvent('recordVideo', videoFilePath, now=now)			
-
+			startRecordSeconds = time.time()
 			try:
 				self.camera.start_recording(videoFilePath)
 			except (IOError) as e:
@@ -157,15 +160,20 @@ class bCamera:
 				self.state = 'idle'
 				raise
 				
-			while self.isState('recording') and (time.time() < (now + float(self.recordDuration))):
+			# record until duration or we receive stop signal
+			while self.isState('recording') and (time.time() <= (startRecordSeconds + float(self.recordDuration))):
 				self.camera.wait_recording()
 				if self.captureStill and time.time() > (self.lastStillTime + float(self.stillInterval)):
 					self.camera.capture(self.stillPath, use_video_port=True)
 					self.lastStillTime = time.time()
 					'''
 					self.trial['lastStillTime'] = datetime.now().strftime('%Y%m%d %H:%M:%S')
-					'''
+					'''			
 			self.camera.stop_recording()
+
+			logger.debug('Stop video file:' + videoFilePath)
+			self.trial.newEvent('stopVideo', currentRepeat, str=videoFilePath) # paired with startVideo			
+
 			currentRepeat += 1
 
 			# convert to mp4
@@ -242,7 +250,9 @@ class bCamera:
 						logger.error('PiCameraNotRecording')
 					self.lastResponse = self.state
 						
-	def startArmVideo(self, now=time.time()):
+	def startArmVideo(self, now=None):
+		if now is None:
+			now = time.time()
 		if self.isState('armed'):
 			logger.debug('startArmVideo()')
 			self.state = 'armedrecording'
@@ -280,6 +290,8 @@ class bCamera:
 				self.camera.wait_recording()
 				#if self.isState('armedrecording') and (currentRepeat <= numberOfRepeats):
 				if self.isState('armedrecording'):
+					currentRepeat = 1 #important: for now we will just do one repeat
+					
 					#todo: log time when trigger in is received
 					now = time.time()
 					startTimeStr = time.strftime('%Y%m%d_%H%M%S', time.localtime(now)) 
@@ -294,8 +306,8 @@ class bCamera:
 					afterfilepath = os.path.join(saveVideoPath, afterfilename)
 
 					self.trial.newEpoch(now)
-					self.trial.newEvent('beforefilepath', beforefilepath, now=now)
-					self.trial.newEvent('afterfilepath', afterfilepath, now=now)
+					self.trial.newEvent('beforefilepath', currentRepeat, str=beforefilepath, now=now)
+					self.trial.newEvent('afterfilepath', currentRepeat, str=afterfilepath, now=now)
 
 					#currentRepeat = 1
 

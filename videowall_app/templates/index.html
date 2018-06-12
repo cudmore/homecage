@@ -34,14 +34,17 @@
 		<button ng-click="toggleServerConfig()" class="btn btn-default btn-sm"><i class="fa fa-chevron-down" aria-hidden="true"></i></button>
 	</span>
 	
-	Video Wall Servers
-		
-	<div ng-show="showServerConfig">
-	<div class="videowall_indent2">
+	<span>Video Wall Servers</span>
+
+<!-- i am cheating, this will fail when there are no servers -->
+	<span style="float:right">{{ videoArray[0].status.system.date}} {{ videoArray[0].status.system.time}}</span>
+	
+	<span ng-show="showServerConfig">
+		<button ng-click="refreshConfigButton()" class="btn btn-default btn-sm"><i class="fa fa-refresh fa-1x" aria-hidden="true"></i></button>
 
 		<table class="myTable" >
 		<tr>
-			<th>IP</th>
+			<th ng-show="editIPList">IP</th>
 			<th>Hostname</th>
 			<th>State</th>
 			<th>Record</th>
@@ -52,15 +55,20 @@
 			<th>File Duration (sec)</th>
 			<th>ID</th>
 			<th>Condition</th>
-			<th>file</th>
+			<th>Trial</th>
+			<th>Repeat</th>
+			<th>File</th>
 		<tr>
+
 		<tr ng-repeat="server in serverList track by $index">
-		<td>
+		<td ng-show="editIPList">
 			<form class="form-inline" ng-submit="setServer($index,server)">
+				<span ng-show="editIPList">
 				<button type="button" class="btn btn-danger btn-sm" ng-click="removeServer($index)">
 				<i class="fa fa-minus fa-1x" aria-hidden="true"></i>
 				</button>
-
+				</span>
+				
 				<input style="width: 10em" 
 		   		type="string" 
 		   		ng-model="server"
@@ -68,10 +76,13 @@
 			</form>
 		</td>
 		
-		<td>
-			<A HREF="{{ videoArray[$index].config.url }}" target="_blank" style="color: #000000;">{{ videoArray[$index].status.system.hostname }}</a>
-		</td>
-		
+			<td ng-if="! videoArray[$index].status.isAlive" style="background-color:#FF0000">
+				<A HREF="{{ videoArray[$index].restUrl }}" target="_{{videoArray[$index].status.system.hostname}}" style="color: #000000;">{{ videoArray[$index].status.system.hostname }}</a>
+			</td>
+			<td ng-if="videoArray[$index].status.isAlive">
+				<A HREF="{{ videoArray[$index].restUrl }}" target="_{{videoArray[$index].status.system.hostname}}" style="color: #000000;">{{ videoArray[$index].status.system.hostname }}</a>
+			</td>
+				
 		<td>{{ videoArray[$index].status.server.state }}</td>
 
 
@@ -91,23 +102,27 @@
 			</span>
 		</td>
 
-		<td>{{ videoArray[$index].config.lights.auto && "On" || "Off"}}</td>
-		<!--
+		<!-- <td>{{ videoArray[$index].config.lights.auto && "On" || "Off"}}</td> -->
 		<td>
 		<span>
 		<input type="checkbox" 
+			ng-disabled="true" 
 			ng-model="videoArray[$index].config.lights.auto" 
 			ng-change="mySubmit($index, 'lights.auto',videoArray[$index].config.lights.auto)" 
-			ng-disabled="isState($index,'recording') && videoArray[$index].config.lights.auto"
 		/>		
-		Auto
-		</span>
 		</td>
-		-->
 		
-		<td>{{ videoArray[$index].status.server.eventOut.irLED && "On" || "Off"}}</td>
+		<td>{{ videoArray[$index].status.server.eventOut.irLED && "On" || "Off"}}
+		  <!--
+		  <span class="fa-stack fa-lg">
+		  <i class="fa fa-lightbulb-o fa-stack-1x"></i>
+		  <i class="fa fa-times fa-stack-2x"></i>
+		  </span>
+		  -->
+		</td>
 		<td>{{ videoArray[$index].status.server.eventOut.whiteLED && "On" || "Off"}}</td>
-		<td>{{ videoArray[$index].status.server.epochElapsedSec }}</td>
+		
+		<td>{{ videoArray[$index].status.server.epochElapsedSec | number:0 }}</td>
 		<td>{{ videoArray[$index].status.server.fileDuration }}</td>
 
 		<!-- <td>{{ videoArray[$index].status.server.animalID }}</td> -->
@@ -133,27 +148,28 @@
 		   	</form>
 		</td>
 
+		<td>{{ videoArray[$index].status.server.trialNum }}</td>
+		<td>{{ videoArray[$index].status.server.currentEpoch }}</td>
 		
 		<td>
-			<A HREF="{{ videoArray[$index].config.url }}videolist" target="_blank" style="color: #000000;"><i class="fa fa-hdd-o" aria-hidden="true"></i></a>
+			<A HREF="{{ videoArray[$index].restUrl }}videolist" target="_{{ videoArray[$index].restUrl }}" style="color: #000000;"><i class="fa fa-hdd-o" aria-hidden="true"></i></a>
+			
 			{{ videoArray[$index].status.server.currentFile }}
 		</td>
 		
 		</tr>
 		</table>
 		
-		
-	</div>
-	</div>
+	</span> <!-- showServerConfig -->
 
 
+<!-- -->
 <span ng-if="showServerConfig2==0">
 	<button ng-click="toggleshowServerConfig2()" class="btn btn-default btn-sm"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
 </span>
 <span ng-if="showServerConfig2==1">
 	<button ng-click="toggleshowServerConfig2()" class="btn btn-default btn-sm"><i class="fa fa-chevron-down" aria-hidden="true"></i></button>
 </span>
-
 Configure
 
 <div class="videowall_indent2">
@@ -167,18 +183,16 @@ Configure
 		Save Servers <i class="fa fa-save fa-1x" aria-hidden="true"></i>
 		</button>
 
-		<!--
-		<input type="checkbox" ng-model="doDebug" ng-change="changeDebug(doDebug)"/>
-		Show Config		
-		-->
+		<input type="checkbox" ng-model="$scope.editIPList" ng-change="toggleEditIPList()"/>
+		<!-- <input type="checkbox" ng-model="doDebug" ng-change="changeDebug(doDebug)"/> -->
+		Edit server list
+
 </div>
 </div>
 
 
-<!-- -->
-	<BR>
-	<div class="container-fluid">
 
+<!-- original video wall -->
 	<span ng-if="showServerPanel==0">
 		<button ng-click="toggleVideoPanels()" class="btn btn-default btn-sm"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
 	</span>
@@ -188,6 +202,7 @@ Configure
 	
 	Video Wall
 
+	<div class="container-fluid">
   	<div class="row" ng-show="showServerPanel" >
 
 	<div class="col-lg-6" ng-repeat="oneVideo in videoArray track by $index">
@@ -210,7 +225,8 @@ Configure
 
 
 		<div class="videowall_indent">
-			{{oneVideo.status.system.hostname}} <A HREF="{{oneVideo.config.url}}" target="_blank">{{oneVideo.status.system.ip}}</A> {{oneVideo.status.system.time}}<BR>
+			{{oneVideo.status.system.hostname}} <A HREF="{{oneVideo.restUrl}}" target="_blank">{{oneVideo.status.system.ip}}</A> 
+			{{oneVideo.status.system.time}}<BR>
 		</div>
 		
 		<!-- lights -->
@@ -344,6 +360,88 @@ Configure
 	<!-- </tr> -->
 	<!-- </table> -->
 
+<!-- SWARM status -->
+<span ng-if="showSwarmStatus==0">
+	<button ng-click="toggleshowSwarmStatus()" class="btn btn-default btn-sm"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+</span>
+<span ng-if="showSwarmStatus==1">
+	<button ng-click="toggleshowSwarmStatus()" class="btn btn-default btn-sm"><i class="fa fa-chevron-down" aria-hidden="true"></i></button>
+</span>
+Swarm Status
+
+<!-- complete status of all servers -->
+<!-- {{ videoArray[0] }} -->
+
+<div ng-show="showSwarmStatus">
+<table class="myTable" style='font-family:"Courier New", Courier, monospace; font-size:80%'>
+	<tr>
+	<!-- system -->
+	<th>ip</th>
+	<th>hostname</th>
+	<th>Debian Version</th>
+	<th>system uptime</th>
+	<th>GB Remaining</th>
+	<th>GB Size</th>
+	<!-- server -->
+	<th>python version</th>
+	<th>server version</th>
+	<th>server uptime</th>
+
+	<th>state</th>
+	<th>animalID</th>
+	<th>conditionID</th>
+	<th>Trial Num</th>
+
+	<th>Auto lights</th>
+	<th>Sunrise (h)</th>
+	<th>Sunset (h)</th>
+	<th>IR</th>
+	<th>White</th>
+
+	<th>video resolution</th>
+	<th>fps</th>
+	<th>convert to mp4</th>
+
+	<th>File Duration (s)</th>
+	
+	<th>recordInfinity</th>
+	<th>numberOfRepeats</th>
+	</tr>
+	<tr ng-repeat="server in serverList track by $index">
+		<!-- system -->
+		<td>{{ videoArray[$index].status.system.ip }}</td>
+		<td>{{ videoArray[$index].status.system.hostname }}</td>
+		<td>{{ videoArray[$index].status.system.debianVersion }}</td>
+		<td>{{ videoArray[$index].status.system.systemUptime }}</td>
+		<td>{{ videoArray[$index].status.system.gbRemaining }}</td>
+		<td>{{ videoArray[$index].status.system.gbSize }}</td>
+		<!-- server -->
+		<td>{{ videoArray[$index].status.system.pythonVersion }}</td>
+		<td>{{ videoArray[$index].status.server.version }}</td> <!-- server version -->
+		<td>{{ videoArray[$index].status.server.uptime }}</td>
+
+		<td>{{ videoArray[$index].status.server.state }}</td> <!-- status -->
+		<td>{{ videoArray[$index].config.server.animalID }}</td>
+		<td>{{ videoArray[$index].config.server.conditionID }}</td>
+		<td>{{ videoArray[$index].status.server.trialNum }}</td> <!-- status -->
+
+		<td>{{ videoArray[$index].config.lights.auto }}</td> <!-- config -->
+		<td>{{ videoArray[$index].config.lights.sunrise }}</td> <!-- config -->
+		<td>{{ videoArray[$index].config.lights.sunset }}</td> <!-- config -->
+		<td>{{ videoArray[$index].status.server.eventOut.irLED }}</td>
+		<td>{{ videoArray[$index].status.server.eventOut.whiteLED }}</td>
+
+		<td>{{ videoArray[$index].config.video.resolution }}</td>
+		<td>{{ videoArray[$index].config.video.fps }}</td>
+		<td>{{ videoArray[$index].config.video.converttomp4 }}</td>
+
+		<td>{{ videoArray[$index].status.server.fileDuration }}</td>
+		
+		<td>{{ videoArray[$index].config.video.recordInfinity }}</td>
+		<td>{{ videoArray[$index].config.video.numberOfRepeats }}</td>
+	</tr>
+</table>
+</div>
 
 	</div> <!-- ng-controller -->
 {% endraw %}

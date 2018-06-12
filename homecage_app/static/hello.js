@@ -38,6 +38,8 @@ angular.module('demo', ['uiSwitch'])
 		$http.get($scope.myUrl + 'status').
         	then(function(response) {
         	    $scope.status = response.data;
+
+        	    document.title = $scope.status.system.hostname
         	    //
         	    // remove video file list from $scope.status
         	    //$scope.videofilelist = $scope.status.videofilelist
@@ -52,6 +54,8 @@ angular.module('demo', ['uiSwitch'])
         	then(function(response) {
         	    $scope.config = response.data;
         	    convertConfig()
+        	    
+
         	    console.log('$scope.config', $scope.config)
         	});
 	};

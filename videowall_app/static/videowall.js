@@ -1,6 +1,8 @@
 angular.module('videowall', ['uiSwitch'])
 .controller('videowall', function($scope, $window, $http, $location, $interval, $sce, $timeout, $document) {
 	
+	document.title = 'Video Wall'
+	
 	console.log('angular.version:', angular.version)
 	
 	//url of page we loaded
@@ -16,6 +18,8 @@ angular.module('videowall', ['uiSwitch'])
 	$scope.showServerPanel = false
 	$scope.showServerConfig = true
 	$scope.showServerConfig2 = false
+	$scope.showSwarmStatus = false
+	$scope.editIPList = false
 	$scope.doDebug = false
 	
 	$scope.toggleVideoPanels = function () {
@@ -28,6 +32,14 @@ angular.module('videowall', ['uiSwitch'])
 	
 	$scope.toggleshowServerConfig2 = function () {
 		$scope.showServerConfig2 = ! $scope.showServerConfig2
+	}
+	
+	$scope.toggleEditIPList = function () {
+		$scope.editIPList = ! $scope.editIPList
+	}
+	
+	$scope.toggleshowSwarmStatus = function () {
+		$scope.showSwarmStatus = ! $scope.showSwarmStatus
 	}
 	
 	$scope.addServer = function() {
@@ -107,6 +119,10 @@ angular.module('videowall', ['uiSwitch'])
 			
 			$scope.videoArray[i].restUrl = "http://" + $scope.serverList[i] + ":5000/"
 			
+			getConfig(i)
+			//$scope.videoArray[i].animalID = ''
+			//$scope.videoArray[i].conditionID = ''
+
 			myStreamUrl = "http://" + $scope.serverList[i] + ":8080/stream"
 			$scope.videoArray[i].streamUrl = $sce.trustAsResourceUrl(myStreamUrl)
 			$scope.videoArray[i].myStreamUrl = $sce.trustAsResourceUrl(myStreamUrl);
@@ -167,7 +183,11 @@ angular.module('videowall', ['uiSwitch'])
 		//	console.log(idx)
 		//}
 		//console.log('$scope.videoArray[idx].status:', $scope.videoArray[idx].status)
-		return $scope.videoArray[idx].status.server.state == thisState
+		if ($scope.videoArray && $scope.videoArray[idx].status) {
+			return $scope.videoArray[idx].status.server.state == thisState
+		} else {
+			return false
+		}
 	}
 
 	$scope.toggleConfig = function(idx) {
@@ -180,16 +200,20 @@ angular.module('videowall', ['uiSwitch'])
 		$http.get(url + 'status').
         	then(function(response) {
         	    $scope.videoArray[i].status = response.data;
+        	    $scope.videoArray[i].status.isAlive = true;
         	}, function errorCallback(response) {
         		console.log('getStatus() error', url, i)
+        	    $scope.videoArray[i].status.isAlive = false;
         	});
 	};
 
-    function getConfig(url, i) {
+    function getConfig(i) {
+		url = $scope.videoArray[i].restUrl
 		$http.get(url + 'config').
         	then(function successCallback(response) {
         	    $scope.videoArray[i].config = response.data;
-        	    $scope.videoArray[i].config.url = url;
+        	    console.log($scope.videoArray[i])
+        	    //$scope.videoArray[i].config.url = url;
 
 				var tmpWidth = parseInt($scope.videoArray[i].config.video.streamResolution.split(',')[0],10)
 				var tmpHeight = parseInt($scope.videoArray[i].config.video.streamResolution.split(',')[1],10)
@@ -202,6 +226,13 @@ angular.module('videowall', ['uiSwitch'])
         	});
 	};
 
+	$scope.refreshConfigButton = function() {
+		for (i=0; i<$scope.numServers; i+=1) {
+			getConfig(i)
+		}
+		console.log($scope.videoArray)
+	}
+	
 	//
 	// RECORDING
 	$scope.startstoprecord = function (idx, startstop) {
@@ -211,7 +242,6 @@ angular.module('videowall', ['uiSwitch'])
 			stopOK = $window.confirm('Are you sure you want to stop the recording?');
 		}
 		if (stopOK) {
-		
 			url = $scope.videoArray[idx].restUrl + 'record/' + startstop
 			console.log(url)
 			$http.get(url).
@@ -299,7 +329,7 @@ angular.module('videowall', ['uiSwitch'])
 			$http.get(url).
 				then(function(response) {
 					$scope.videoArray[idx].config = response.data;
-					$scope.videoArray[idx].config.url = url;
+					//$scope.videoArray[idx].config.url = url;
 					//convertConfig()
 					console.log('$scope.videoArray[i].config', $scope.videoArray[idx].config)
 				}, function errorCallback(response) {
@@ -316,7 +346,7 @@ angular.module('videowall', ['uiSwitch'])
 			$http.get(url).
 				then(function(response) {
 					$scope.videoArray[idx].config = response.data;
-					$scope.videoArray[idx].config.url = url;
+					//$scope.videoArray[idx].config.url = url;
 					//convertConfig()
 					console.log('$scope.videoArray[i].config', $scope.videoArray[idx].config)
 				}, function errorCallback(response) {
@@ -342,7 +372,7 @@ angular.module('videowall', ['uiSwitch'])
 	$scope.getLastImage = function () {
 		for (i=0; i<$scope.numServers; i+=1) {
 			getStatus($scope.videoArray[i].restUrl, i)
-			getConfig($scope.videoArray[i].restUrl, i)
+			//getConfig($scope.videoArray[i].restUrl, i)
 			
 			//$scope.videoArray[i].image.src = urlList[i] + 'lastimage' + '?' + new Date().getTime()
 			$scope.videoArray[i].image.src = $scope.videoArray[i].restUrl + 'lastimage' + '?' + new Date().getTime()

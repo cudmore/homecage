@@ -27,6 +27,7 @@ g_dhtLoaded = 0
 try:
 	import Adafruit_DHT 
 	g_dhtLoaded = 1
+	logger.debug('Succesfully loaded Adafruit_DHT')
 except:
 	g_dhtLoaded = 0
 	logger.warning('Did not load Adafruit_DHT')
@@ -51,8 +52,10 @@ class home:
 		self.version = __version__
 		logger.debug('homecage version:' + self.version)
 
-		self.startTime = time.time()
+		self.startTime = time.time() # server start time
 		
+		#
+		# config
 		self.config = self.loadConfigFile()
 				
 		#
@@ -61,6 +64,8 @@ class home:
 
 		self.trial = bTrial()
 		self.trial.setHostname(self.systemInfo['hostname'])
+		self.trial.setAnimalID(self.config['server']['animalID'])
+		self.trial.setConditionID(self.config['server']['conditionID'])
 		
 		# important
 		self.camera = bCamera(self.trial)
@@ -78,6 +83,11 @@ class home:
 					
 		self.lastResponse = ''
 				
+		# start a background thread to control the lights
+		self.lightsThread = threading.Thread(target = self.lightsThread)
+		self.lightsThread.daemon = True
+		self.lightsThread.start()
+
 		#
 		# temperature and humidity
 		self.lastTemperatureTime = 0
@@ -87,7 +97,7 @@ class home:
 		if self.config['hardware']['readtemperature']:
 			if g_dhtLoaded:
 				logger.debug('Initialized DHT temperature sensor')
-				#GPIO.setup(self.config['hardware']['temperatureSensor'], GPIO.IN)
+				GPIO.setup(self.config['hardware']['temperatureSensor'], GPIO.IN)
 				myThread = threading.Thread(target = self.tempThread)
 				myThread.daemon = True
 				myThread.start()
@@ -400,11 +410,13 @@ class home:
 			self.camera.record(onoff)
 			self.lastResponse = self.camera.lastResponse
 			
+			'''
 			# start a background thread to control the lights
 			if self.isState('recording'):
 				myThread = threading.Thread(target = self.lightsThread)
 				myThread.daemon = True
 				myThread.start()
+			'''
 		except:
 			self.lastResponse = self.camera.lastResponse
 			raise
@@ -436,7 +448,9 @@ class home:
 		elif self.isState('idle'):
 			self.lastResponse = self.camera.lastResponse
 
-	def startArmVideo(self, now=time.time()):
+	def startArmVideo(self, now=None):
+		if now is None:
+			now = time.time()
 		self.camera.startArmVideo(now=now)
 		self.lastResponse = self.camera.lastResponse
 		
@@ -448,24 +462,20 @@ class home:
 	##########################################
 	# Background threads
 	##########################################
-	# todo: merge into lightsThread() function
-	def controlLights(self):
-		# control lights during recording
-		if self.config['lights']['auto']:
-			now = datetime.now()
-			isDaytime = now.hour > float(self.config['lights']['sunrise']) and now.hour < float(self.config['lights']['sunset'])
-			if isDaytime:
-				self.eventOut('whiteLED', True)
-				self.eventOut('irLED', False)
-			else:
-				self.eventOut('whiteLED', False)
-				self.eventOut('irLED', True)
-
 	def lightsThread(self):
 		logger.debug('lightsThread start')
-		while self.isState('recording'):
-			self.controlLights()
-			time.sleep(.05)
+		while True:
+			if self.config['lights']['auto']:
+				now = datetime.now()
+				isDaytime = now.hour > float(self.config['lights']['sunrise']) and now.hour < float(self.config['lights']['sunset'])
+				if isDaytime:
+					self.eventOut('whiteLED', True)
+					self.eventOut('irLED', False)
+				else:
+					self.eventOut('whiteLED', False)
+					self.eventOut('irLED', True)
+
+			time.sleep(.5)
 		logger.debug('lightsThread stop')
 
 	def tempThread(self):
@@ -478,19 +488,20 @@ class home:
 			if g_dhtLoaded:
 				if time.time() > self.lastTemperatureTime + temperatureInterval:
 					try:
-						humidity, temperature = Adafruit_DHT.read(Adafruit_DHT.DHT22, pin)
+						humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT22, pin)
 						if humidity is not None and temperature is not None:
-							self.lastTemperature = math.floor(temperature * 100) / 100
-							self.lastHumidity = math.floor(humidity * 100) / 100
+							self.lastTemperature = round(temperature, 2)
+							self.lastHumidity = round(humidity, 2)
 							# log this to a file
 							self.trial.newEvent('temperature', self.lastTemperature, now=time.time())
 							self.trial.newEvent('humidity', self.lastHumidity, now=time.time())
-							logger.debug('temperature/humidity ' + str(self.lastTemperature) + '/' + + str(self.lastHumidity))
+							logger.debug('temperature/humidity ' + str(self.lastTemperature) + '/' + str(self.lastHumidity))
 						else:
 							logger.warning('temperature/humidity error')
 						# set even on fail, this way we do not immediately hit it again
 						self.lastTemperatureTime = time.time()
 					except:
-						print('readTemperature() exception reading temperature/humidity')
-			time.sleep(0.5)
+						logger.error('exception reading temp/hum')
+						raise
+			time.sleep(5)
 		logger.info('tempThread() stop')

@@ -1,7 +1,6 @@
 <!doctype html>
 <html ng-app="demo">
 	<head>
-		<title>Home Cage Surveillance</title>
 
 		<link rel="stylesheet" href="static/hello.css">
 		<link rel="stylesheet" href="static/bootstrap/css/bootstrap.min.css">
@@ -51,7 +50,7 @@
 	<table class="myTable">
 	
 	<tr>
-		<td>Identifiers</td>
+		<td>Trial {{status.server.trialNum}}</td>
 		<td>
 		   <form ng-submit="mySubmit('server.animalID',config.server.animalID)">
 		   <label>ID

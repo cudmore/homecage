@@ -38,7 +38,7 @@ span.mysmall {
 
 .myTable tr:nth-child(even){background-color: #f2f2f2;}
 
-.myTable td:nth-child(12){ width:250px; }
+.myTable td:nth-child(14){ width:350px; }
 
 .myTable tr:hover {background-color: #ddd;}
 

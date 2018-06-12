@@ -28,10 +28,12 @@ def getStatus():
 def hello_world():
 	return render_template('index.html')
 
+##################################
+# Config
+##################################
 @app.route('/saveconfig/<configfile>')
 def saveconfig(configfile):
-	print('saveconfig()')
-	print('   configfile:', configfile)
+	print('saveconfig() configfile:', configfile)
 	with open('config_videowall.json', 'w') as outfile:
 		json.dump(configfile, outfile, indent=4)
 	return 'saved'
@@ -45,17 +47,27 @@ def loadconfig():
 	print('configfile:', configfile)
 	#return jsonify(configfile)
 	return configfile
-	
-'''
-def whatismyip():
-	arg='ip route list'
-	p=subprocess.Popen(arg,shell=True,stdout=subprocess.PIPE)
-	data = p.communicate()
-	split_data = data[0].split()
-	ipaddr = split_data[split_data.index('src')+1]
-	return ipaddr
-'''
 
+##################################
+# Reports
+##################################
+"""
+@app.route('/api/report/config')
+def report_config():
+	'''
+	# load config_videowall.json
+	with open('config_videowall.json') as file:
+		print(file)
+	# for machine in machineList
+	#	call rest interface /config
+	#	append row to text table
+	#	hostname, ip, uptime, software uptime, software version, gbsize, gbremain
+	#		record dur, trial, 
+	return jsonify(file)
+	'''
+	return 'not done'
+"""
+	
 def whatismyip():
 	ips = check_output(['hostname', '--all-ip-addresses'])
 	ips = ips.decode('utf-8').strip()

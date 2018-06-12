@@ -1,6 +1,6 @@
 from __future__ import print_function	# (at top of module)
 
-import os, sys, json
+import os, sys, time, json
 from datetime import datetime
 from subprocess import check_output
 
@@ -201,10 +201,16 @@ def videolist(req_path=''):
 	# Show directory contents
 	files = []
 	for f in os.listdir(abs_path):
-		if f in ['.AppleDouble', '.DS_Store']:
+		if f.startswith('.') or f in ['Network Trash Folder', 'Temporary Items']:
 			continue
 		f2 = f
 		f = os.path.join(abs_path, f)
+		
+		fileDict = {}
+		
+		isTrialFile = f.endswith('.txt') # big assumption, should parse '_r%d.txt'
+		if isTrialFile:
+			fileDict = home.trial.loadTrialFile(f)
 		
 		# get file size in either MB or KB (if <1 MB)
 		unitStr = 'MB'
@@ -215,8 +221,14 @@ def videolist(req_path=''):
 			sizeMB = size
 		sizeStr = "%0.1f %s" % (sizeMB, unitStr)
 		
-		fd = {'path':f, 'file':f2, 'isfile':True, 'size':sizeStr}
-		files.append(fd)
+		#fd = {'path':f, 'file':f2, 'isfile':True, 'size':sizeStr}
+		fileDict['path'] = f
+		fileDict['file'] = f2
+		fileDict['isFile'] = True
+		fileDict['size'] = sizeStr
+		fileDict['cTime'] = time.strftime('%Y%m%d %H%M%S', time.localtime(os.path.getctime(f)))
+		fileDict['mTime'] = time.strftime('%Y%m%d %H%M%S', time.localtime(os.path.getmtime(f)))
+		files.append(fileDict)
 		
 	# sort the list
 	files = sorted(files, key=lambda k: k['file']) 
@@ -233,7 +245,6 @@ if __name__ == '__main__':
 	app.logger.debug('Running flask server with debug = ' + str(debug))
 		
 	responseStr = 'Flask server is running at: ' + 'http://' + str(myip) + ':5000'
-	print(responseStr)
 	app.logger.debug(responseStr)
 	
 	# 0.0.0.0 will run on external ip and needed to start at boot with systemctl

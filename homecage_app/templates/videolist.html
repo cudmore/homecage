@@ -1,7 +1,8 @@
 <!doctype html>
 <html ng-app="demo">
 	<head>
-		<title>Home Cage File Server</title>
+
+	<title>{% block title %}{{ systemInfo.hostname }} files{% endblock %}</title>
 
 		<link rel="stylesheet" href="/static/hello.css">
 		<link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
@@ -46,8 +47,7 @@
 	</video>
 	-->
 	
-	{{ systemInfo.ip }} {{ abs_path }}
-	<BR>
+	{{ systemInfo.hostname }} {{ systemInfo.ip }} {{ abs_path }}
 	<BR>
 		
 	<table class="videoTable">
@@ -61,7 +61,13 @@
 		-->
 		<th>Size</th>
 		</tr>
-		{% for file in files %}
+		{% for file in files %}			
+			<!--
+			<tr>
+				{{ file }}
+			</tr>
+			-->
+			
 			<tr>
 		
 			<td><a href="/videolist{{ file.path }}">{{ file.file }}</a></td>
