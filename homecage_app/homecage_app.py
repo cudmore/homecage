@@ -111,8 +111,10 @@ def config():
 @app.route('/lastimage')
 def lastimage():
 	myImage = 'static/still.jpg'
-	return send_file(myImage)
-	
+	if os.path.isfile(myImage):
+		return send_file(myImage)
+	else:
+		return ''
 @app.route('/record/<int:onoff>')
 def record(onoff):
 	#turn recording on/off
