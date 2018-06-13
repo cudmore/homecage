@@ -388,7 +388,8 @@ class bCamera:
 			#print('e.output:', e.output)
 			logger.error('bin/convert_video exception: ' + str(e))
 			pass
-					
+		except:
+			raise		
 if __name__ == '__main__':
 	logger = logging.getLogger()
 	handler = logging.StreamHandler()

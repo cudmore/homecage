@@ -162,7 +162,7 @@ class bTrial:
 			
 			file.write(headerLine)
 			# column header for event data is (date, time, sconds, event, value, str
-			columnHeader = 'date' + delim + 'time' + delim + 'seconds' + delim + 'event' + delim + 'value' +  +delim + 'str' + eol
+			columnHeader = 'date' + delim + 'time' + delim + 'seconds' + delim + 'event' + delim + 'value' + delim + 'str' + eol
 			file.write(columnHeader)
 			# one line per event
 			for idx, eventTime in enumerate(self.trial['eventTimes']):
