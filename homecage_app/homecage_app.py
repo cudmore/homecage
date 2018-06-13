@@ -211,8 +211,10 @@ def videolist(req_path=''):
 		fileDict = {}
 		
 		isTrialFile = f.endswith('.txt') # big assumption, should parse '_r%d.txt'
+		'''
 		if isTrialFile:
 			fileDict = home.trial.loadTrialFile(f)
+		'''
 		
 		# get file size in either MB or KB (if <1 MB)
 		unitStr = 'MB'
