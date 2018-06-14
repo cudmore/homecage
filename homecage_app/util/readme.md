@@ -7,3 +7,6 @@ Bash script to detect and permanently mount an external USB drive. Assumes drive
 ## sethostname.sh
 
 Bash script to set (i) hostname and (ii) afp mount point
+
+sudo hostnamectl set-hostname hc0
+

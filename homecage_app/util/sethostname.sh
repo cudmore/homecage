@@ -35,7 +35,7 @@ sudo hostnamectl set-hostname "$1"
 # 2) set afp mount point
 #
 
-sudo /etc/init.d/netatalk stop;
+#sudo /etc/init.d/netatalk stop;
 
 #myhostname="swarmcommander"
 # search in /etc/netatalk/AppleVolumes.default
