@@ -1,15 +1,19 @@
 # 20180609
 # Robert Cudmore
-
+#
 # bash script to set
 #	1) hostname
 #	2) afp mount point
 #
 # Usage:
 #	./sethostname "newhostname"
-
 #
-# 1) set the hostname
+#
+# This assumes /etc/netatalk/AppleVolumes.default
+# already has 2x lines I appended by hand
+#
+#		~/ "hc1" #homecage_home
+#		/home/pi/video "hc1_video" #homecage_video
 #
 
 if [ $(id -u) = 0 ]; then
@@ -24,6 +28,7 @@ then
 	exit 1
 fi
 
+echo "setting hostname to '$1'. Reboot required"
 sudo hostnamectl set-hostname "$1"
 
 #
@@ -37,19 +42,21 @@ sudo /etc/init.d/netatalk stop;
 # for the line '~/ "'
 # and replace it with '~/ "hc1"'
 #sudo sed -i "s/.*~\/.*/~\/ \"$myhostname\"/" /etc/netatalk/AppleVolumes.default
+# replace line containing '~/'
 sudo sed -i "s/.*~\/.*/~\/ \"$1\"/" /etc/netatalk/AppleVolumes.default
 
-#
-# THIS IS REALLY BAD. EACH TIME SCRIPT IS RUN WE ARE APPENDING
-#
-
-# to make a video mountpoint
+# make a video mountpoint (escaping / with \ for sed)
+videofolder='\/home\/pi\/video'
 videomount="/home/pi/video \"$1_video\""
-echo $videomount
+echo "video mount point: $videomount"
+# remove line containing $
+sudo sed -i "s/.*$videofolder.*//" /etc/netatalk/AppleVolumes.default
+
+# append
 echo $videomount | sudo tee -a /etc/netatalk/AppleVolumes.default
 
 sudo /etc/init.d/netatalk start
 
-echo "Done"
+echo "Done: Hostname and afp are now: $1 --- REBOOT REQUIRED"
 
 exit 0

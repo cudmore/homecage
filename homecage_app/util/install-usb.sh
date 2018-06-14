@@ -49,9 +49,15 @@ then
     exit 0
 else
     # not found
+    # remove lines containing $myfolder, /home/pi/video
+	echo "ok: removing line containing $myfolder"
+	sudo sed -i "s/.*$myfolder.*//" /etc/fstab
+    
+    # append
     mynewline="UUID=$uuid $myfolder    vfat    rw,umask=0      0       0"
-    echo "ok: appending entry to fstab: "$mynewline
+    echo "ok: appending line to fstab: "$mynewline
     echo $mynewline | sudo tee -a /etc/fstab
+    echo "remounting all volumes with 'sudo mount -a"
     sudo mount -a
 fi
 
