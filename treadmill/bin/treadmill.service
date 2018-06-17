@@ -1,0 +1,13 @@
+[Unit]
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Environment=treadmill_path=/home/pi/homecage/treadmill
+ExecStart=/bin/bash /home/pi/homecage/treadmill/bin/treadmill_service.sh
+Restart=always
+User=pi
+
+[Install]
+WantedBy=default.target
+
