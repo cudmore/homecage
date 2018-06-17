@@ -1,0 +1,9 @@
+[2018-06-17 11:14:40,560] {bHome.py <module>:33} WARNING - Did not load Adafruit_DHT
+[2018-06-17 11:14:40,590] {bHome.py init:50} DEBUG - start home.init()
+[2018-06-17 11:14:40,591] {bHome.py init:53} DEBUG - homecage version:20180610
+[2018-06-17 11:14:40,592] {bHome.py loadConfigFile:302} DEBUG - loadConfigFile
+[2018-06-17 11:14:40,655] {bHome.py lightsThread:449} DEBUG - lightsThread start
+[2018-06-17 11:14:40,656] {bHome.py init:105} DEBUG - Did not load DHT temperature sensor
+[2018-06-17 11:14:40,658] {bHome.py eventOut:245} DEBUG - eventOut whiteLED True
+[2018-06-17 11:14:40,673] {treadmill_app.py <module>:72} DEBUG - Running flask server with debug = False
+[2018-06-17 11:14:40,674] {treadmill_app.py <module>:75} DEBUG - Flask server is running at: http://192.168.1.4:5010

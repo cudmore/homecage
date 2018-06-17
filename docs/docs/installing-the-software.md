@@ -39,11 +39,13 @@ This will make a folder `homecage` in your root directory. You can always return
 
 	git clone --depth=1 https://github.com/cudmore/homecage.git
 
-## 3) Install homecage with our install script
+## 3) Install homecage with our install scripts
 
-	# at a command prompt, type
 	cd homecage/homecage_app
-	./install.sh
+	./install-homecage.sh
+
+	# install uv4l and avconv (for streaming and video conversion)
+	./install-extras.sh
 	
 If everything goes well, all the software should be ready to go. Point your browser to
 
@@ -60,7 +62,7 @@ If everything goes well, all the software should be ready to go. Point your brow
 Run homecage_app.py
 
 	cd ~/homecage/homecage_app
-	python homecage_app.py
+	python myhomecage_app.py
 
 Browse to the homecage_app website
 
@@ -103,7 +105,7 @@ Install homecage_app dependencies
 Run homecage_app.py
 
 	cd ~/homecage/homecage_app
-	python homecage_app.py
+	python myhomecage_app.py
 
 Browse to the homecage_app website
 

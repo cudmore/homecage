@@ -11,11 +11,13 @@
 #	./install-homecage.sh
 #
 # Once this is all done, homecage server can be used as follows
-# sudo systemctl start homecage.service
-# sudo systemctl stop homecage.service
-# sudo systemctl restart homecage.service
-# sudo systemctl enable homecage.service
-# sudo systemctl disable homecage.service
+#	cd homecage/homecage_app
+#	./homecage start
+#	./homecage stop
+#	./homecage restart
+#	./homecage status
+#	./homecage enable		# start homecage server at boot
+#	./homecage disable		# do not start homecage server at boot
 
 if [ $(id -u) = 0 ]; then
    echo "Do not run with sudo. Try again without sudo"

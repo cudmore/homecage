@@ -5,6 +5,11 @@
 #
 # provide a simple nterface to interact with systemctl and homecage.service
 
+if [ $(id -u) = 0 ]; then
+   echo "Do not run with sudo. Try again without sudo"
+   exit 1
+fi
+
 function usage(){
     echo "homecage - Illegal parameters"
     echo "Usage:"

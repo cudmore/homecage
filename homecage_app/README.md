@@ -18,7 +18,7 @@ These instructions assume you have a functioning Raspberry Pi 2/3 with Raspian S
 ## 3) Install homecage with our install script
 
 	cd homecage/homecage_app
-	./install.sh
+	./install-homecage.sh
 	
 If everything goes well, all the software should be ready to go. Point your browser to
 

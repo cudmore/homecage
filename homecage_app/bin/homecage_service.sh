@@ -23,7 +23,7 @@ python -V
 
 echo "calling 'python homecage_app.py'"
 #python homecage_app.py $1 > homecage_app.log 2>&1
-python homecage_app.py 
+python myhomecage_app.py 
 
 echo "   Browse to the server at http://"$myip":5000"
 

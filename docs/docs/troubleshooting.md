@@ -10,7 +10,6 @@ raspistill -o test.jpg
 
 Check version of uv4l
 
-	# type
 	uv4l -i
 	
 	# returns
@@ -58,22 +57,25 @@ If you edit the config.json file it needs the correct sytax. Check the syntax wi
 
 	cat config.json | python -m json.tool
 
-## socket.error: [Errno 98] Address already in use
+## [Errno 98] Address already in use
+	
+Sometimes you will get an error when you run the homecage server with either `./homecage start` or `python myhomecage_app.py`. This means there is already a process using the web address. You can only run one version of the homecage server at a time.
 
-Sometimes you will get an error when you run `python homecage_app.py`. This means there is already a prcoess using the web socket, usually :5000
+Make sure the homecage server is stopped
 
-Use `ps -aux | grep homecage_app` to find the process and kill it
+	./homecage stop
+	
+Make sure you are not running a `python myhomecage_app.py` version of the server
 
 ```
 # type this
-ps -aux | grep homecage_app
+ps -aux | grep myhomecage_app
 
 # will yield something like this
-pi       12445  0.1  2.2  41572 20204 pts/2    Sl   17:14   0:04 python homecage_app.py
-pi       12553  2.3  2.3  51032 20328 pts/2    Sl   17:50   0:08 /usr/bin/python homecage_app.py
-pi       12606  0.0  0.3   6080  3036 pts/2    S+   17:57   0:00 grep --color=auto homecage_app
+pi       12445  0.1  2.2  41572 20204 pts/2    Sl   17:14   0:04 python myhomecage_app.py
+pi       12553  2.3  2.3  51032 20328 pts/2    Sl   17:50   0:08 /usr/bin/python myhomecage_app.py
 
-#Using those 5 digit numbers, kill all homecage_app processes
+#Using those 5 digit numbers, kill all myhomecage_app processes
 kill -9 12553
 kill -9 12445
 ```

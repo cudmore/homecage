@@ -1,9 +1,9 @@
 # 20170817
 # Robert Cudmore
 
-import subprocess
+import os, sys, subprocess
 
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
 from flask_cors import CORS
 
 import logging
@@ -50,9 +50,13 @@ treadmill = treadmill()
 @app.route('/')
 def hello_world():
 	#app.logger.debug('/')
-	home.getSystemInfo() # update cpu temp, disk space, ip
+	treadmill.home.getSystemInfo() # update cpu temp, disk space, ip
 	return render_template('index.html')
 
+@app.route('/systeminfo')
+def systeminfo():
+	return jsonify(treadmill.home.systemInfo)
+	
 def whatismyip():
 	ips = subprocess.check_output(['hostname', '--all-ip-addresses'])
 	ips = ips.decode('utf-8').strip()
@@ -67,8 +71,8 @@ if __name__ == '__main__':
 			debug = True
 	app.logger.debug('Running flask server with debug = ' + str(debug))
 		
-	responseStr = 'Flask server is running at: ' + 'http://' + str(myip) + ':6000'
+	responseStr = 'Flask server is running at: ' + 'http://' + str(myip) + ':5010'
 	app.logger.debug(responseStr)
 	
 	# 0.0.0.0 will run on external ip	
-	app.run(host='0.0.0.0', port=6000, debug=debug, threaded=True)
+	app.run(host='0.0.0.0', port=5010, debug=debug, threaded=True)
