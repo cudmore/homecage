@@ -6,6 +6,8 @@
 /homecage_app/log.log
 /videowall_app/env
 
+/treadmill/env
+
 #
 # osx ignores
 #
