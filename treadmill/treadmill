@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# Author: Robert H Cudmore
+# Date: 20180505
+#
+# provide a simple nterface to interact with systemctl and treadmill.service
+
+if [ $(id -u) = 0 ]; then
+   echo "Do not run with sudo. Try again without sudo"
+   exit 1
+fi
+
+function usage(){
+    echo "treadmill - Illegal parameters"
+    echo "Usage:"
+    echo "   treadmill start"
+    echo "   treadmill stop"
+    echo "   treadmill restart"
+    echo "   treadmill status"
+    echo "   treadmill enable    - enable treadmill at boot"
+    echo "   treadmill disable   - disable treadmill at boot"
+}
+
+myip=`hostname -I | xargs`
+
+case "$1" in
+	start) sudo systemctl start treadmill.service 
+		echo "treadmill server running at http://$myip:5010"
+		;;
+	stop) sudo systemctl stop treadmill.service 
+		echo "treadmill server stopped"
+		;;
+	restart) sudo systemctl restart treadmill.service 
+		echo "treadmill server restarted"
+		;;
+	status) 
+		echo "press 'q' to quit"
+		sudo systemctl status treadmill.service 
+		;;
+	enable) sudo systemctl enable treadmill.service 
+		echo "treadmill will run at boot"
+		;;
+	disable) sudo systemctl disable treadmill.service 
+		echo "treadmill will not run at boot"
+		;;
+	*) usage
+		;;
+esac
+
+exit 0
