@@ -29,6 +29,7 @@ then
 fi
 
 echo "setting hostname to '$1'. Reboot required"
+echo "warning: This does not work, still need to edit 'sudo pico /etc/hosts'"
 sudo hostnamectl set-hostname "$1"
 
 #
@@ -58,5 +59,6 @@ echo $videomount | sudo tee -a /etc/netatalk/AppleVolumes.default
 sudo /etc/init.d/netatalk start
 
 echo "Done: Hostname and afp are now: $1 --- REBOOT REQUIRED"
+echo "warning: Still need to edit 'sudo pico /etc/hosts'"
 
 exit 0

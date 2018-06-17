@@ -1,5 +1,17 @@
 Assorted setup and utility scripts
 
+## startup_mailer.py - required gmail_auth.secret
+## startup_tweeter.py - requires twitter_auth.secret
+
+Contents of `gmail_auth.secret,json`
+
+```
+{
+	"gmail_user": "your_user_name@gmail.com",
+	"gmail_password": "your_password"
+}
+```
+
 ## convert_video.sh
 
 bash script called by home.py to convert .h264 video to .mp4, uses system wide avconv

@@ -2,7 +2,7 @@ from __future__ import print_function	# (at top of module)
 
 import os, sys, time, json
 from datetime import datetime
-from subprocess import check_output
+import subprocess
 
 #import mimetypes # to send files to ios
 
@@ -80,6 +80,18 @@ def page_not_found(e):
 	#return render_template('404.html'), 404
 	return 'Error 404: File not found. This happens when you manually delete video files.'
 		
+@app.route('/restarthomecage')
+def restarthomecage():
+	out = subprocess.check_output(['./homecage', 'restart'])
+	print('restarthomecage:', out)
+	return ''
+	
+@app.route('/rebootsystem')
+def rebootsystem():
+	out = subprocess.check_output(['sudo', 'reboot'])
+	print('rebootsystem:', out)
+	return ''
+	
 @app.route('/')
 def hello_world():
 	#app.logger.debug('/')

@@ -22,7 +22,7 @@
     # git pull will work because we previously cloned with
     #gitCloneCommand="git clone ssh://pi@$commanderIP/~/homecage.git/homecage;"
 	
-    updateCmd="sudo systemctl stop homecage.service; cd homecage; git pull; sudo systemctl start homecage.service;"
+    updateCmd="sudo systemctl stop homecage.service; cd ~/homecage; git pull; sudo systemctl start homecage.service;"
     #ssh pi@$line "$updateCmd" 
 
 ## Misc github
@@ -89,7 +89,7 @@ cd homecage/homecage_app
 systemctl stop homecage.service
 
 #2 synch with git (make sure password works!)
-cd homecage/homecage_app
+cd ~/homecage/homecage_app
 git checkout master
 git pull
 

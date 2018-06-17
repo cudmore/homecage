@@ -300,6 +300,9 @@ class home:
 
 	def loadConfigFile(self):
 		logger.debug('loadConfigFile')
+		# full path to folder *this file lives in
+		#mypath = os.path.abspath(os.path.dirname(__file__)) # full path to *this file
+		#print('mypath:', mypath)
 		with open('config.json') as configFile:
 			try:
 				config = json.load(configFile, object_pairs_hook=OrderedDict)
@@ -409,23 +412,9 @@ class home:
 		try:
 			self.camera.record(onoff)
 			self.lastResponse = self.camera.lastResponse
-			
-			'''
-			# start a background thread to control the lights
-			if self.isState('recording'):
-				myThread = threading.Thread(target = self.lightsThread)
-				myThread.daemon = True
-				myThread.start()
-			'''
 		except:
 			self.lastResponse = self.camera.lastResponse
 			raise
-		'''
-		if self.isState('recording'):
-			self.lastResponse = 'Started recording'
-		elif self.isState('idle'):
-			self.lastResponse = 'Stopped recording'
-		'''
 		
 	def stream(self, onoff):
 		try:
@@ -434,12 +423,6 @@ class home:
 		except:
 			self.lastResponse = self.camera.lastResponse
 			raise
-		'''
-		if self.isState('streaming'):
-			self.lastResponse = 'Started streaming'
-		elif self.isState('idle'):
-			self.lastResponse = 'Stopped streaming'
-		'''
 		
 	def arm(self, onoff):
 		self.camera.arm(onoff)

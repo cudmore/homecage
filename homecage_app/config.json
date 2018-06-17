@@ -20,7 +20,7 @@
             {
                 "enabled": true,
                 "name": "frame",
-                "pin": 12,
+                "pin": 3,
                 "polarity": "rising",
                 "pull_up_down": "down"
             },
@@ -36,7 +36,7 @@
             {
                 "enabled": true,
                 "name": "whiteLED",
-                "pin": 2,
+                "pin": 16,
                 "defaultValue": false,
                 "state": true,
                 "idx": 0
@@ -44,7 +44,7 @@
             {
                 "enabled": true,
                 "name": "irLED",
-                "pin": 3,
+                "pin": 12,
                 "defaultValue": false,
                 "state": false,
                 "idx": 1
