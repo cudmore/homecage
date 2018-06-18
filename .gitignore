@@ -7,6 +7,7 @@
 /videowall_app/env
 
 /treadmill/env
+/treadmill/static/still.jpg
 
 #
 # osx ignores
