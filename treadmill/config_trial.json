@@ -1,0 +1,76 @@
+{
+    "server": {
+        "animalID": "",
+        "conditionID": ""
+    },
+    "hardware": {
+        "allowArming": false,
+        "triggerIn": {
+            "enabled": true,
+            "pin": 21,
+            "polarity": "rising",
+            "pull_up_down": "down"
+        },
+        "triggerOut": {
+            "enabled": true,
+            "pin": 26,
+            "polarity": "rising"
+        },
+        "eventIn": [
+            {
+                "enabled": true,
+                "name": "frame",
+                "pin": 13,
+                "polarity": "rising",
+                "pull_up_down": "down"
+            },
+            {
+                "enabled": false,
+                "name": "otherEvent",
+                "pin": 6,
+                "polarity": "rising",
+                "pull_up_down": "down"
+            }
+        ],
+        "eventOut": [
+            {
+                "enabled": true,
+                "name": "whiteLED",
+                "pin": 12,
+                "defaultValue": false,
+                "state": false,
+                "idx": 0
+            },
+            {
+                "enabled": true,
+                "name": "irLED",
+                "pin": 16,
+                "defaultValue": false,
+                "state": false,
+                "idx": 1
+            }
+        ],
+        "readtemperature": false,
+        "temperatureInterval": 60,
+        "temperatureSensor": 14
+    },
+    "lights": {
+        "auto": false,
+        "sunset": 18.0,
+        "sunrise": 6.0
+    },
+    "video": {
+        "useCamera": true,
+        "fileDuration": 10.0,
+        "recordInfinity": false,
+        "numberOfRepeats": 3,
+        "converttomp4": true,
+        "captureStill": true,
+        "savepath": "/home/pi/video",
+        "fps": 30,
+        "stillInterval": 2.1,
+        "resolution": "1024,768",
+        "bufferSeconds": 5,
+        "streamResolution": "640,480"
+    }
+}
