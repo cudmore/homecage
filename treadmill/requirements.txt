@@ -2,3 +2,4 @@ flask
 flask-cors
 RPi.GPIO
 picamera
+serial

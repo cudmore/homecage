@@ -1,7 +1,7 @@
 {
     "server": {
-        "animalID": "animal",
-        "conditionID": "condition"
+        "animalID": "",
+        "conditionID": ""
     },
     "hardware": {
         "allowArming": false,
@@ -20,7 +20,7 @@
             {
                 "enabled": true,
                 "name": "frame",
-                "pin": 3,
+                "pin": 12,
                 "polarity": "rising",
                 "pull_up_down": "down"
             },
@@ -36,31 +36,31 @@
             {
                 "enabled": true,
                 "name": "whiteLED",
-                "pin": 16,
+                "pin": 2,
                 "defaultValue": false,
-                "state": true,
+                "state": false,
                 "idx": 0
             },
             {
                 "enabled": true,
                 "name": "irLED",
-                "pin": 12,
+                "pin": 3,
                 "defaultValue": false,
                 "state": false,
                 "idx": 1
             }
         ],
-        "readtemperature": true,
-        "temperatureInterval": 300,
-        "temperatureSensor": 14
+        "readtemperature": false,
+        "temperatureInterval": 60,
+        "temperatureSensor": 4
     },
     "lights": {
-        "auto": true,
+        "auto": false,
         "sunset": 18.0,
         "sunrise": 6.0
     },
     "video": {
-        "fileDuration": 5.0,
+        "fileDuration": 2.0,
         "recordInfinity": true,
         "numberOfRepeats": 4,
         "converttomp4": true,
@@ -68,7 +68,7 @@
         "savepath": "/home/pi/video",
         "fps": 30,
         "stillInterval": 2.1,
-        "resolution": "640,480",
+        "resolution": "1024,768",
         "bufferSeconds": 5,
         "streamResolution": "640,480"
     }

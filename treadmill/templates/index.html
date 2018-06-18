@@ -1,1 +1,299 @@
-this is treadmill.html
+<!doctype html>
+<html ng-app="demo">
+	<head>
+
+		<link rel="stylesheet" href="static/treadmill.css">
+		<link rel="stylesheet" href="static/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" href="static/font-awesome-4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="static/angular-ui-switch.min.css">
+
+		<script src="static/angular/angular.min.js"></script>
+		<script src="static/bootstrap/js/bootstrap.min.js"></script>
+		<script src="static/angular-ui-switch.min.js"></script>
+  
+      	<script src="static/treadmill.js"></script>
+
+	    <!-- <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.6.6/angular-material.min.js"></script> -->
+	    <!-- <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.5.0.js"></script> -->
+
+		<script src="static/plotly/plotly-1.38.3.min.js"></script>
+		
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	</head>
+
+<style>
+input.ng-invalid {
+    background-color:pink;
+}
+
+.table td, .table th {
+    border: none;
+}
+
+table.table.table-condensed {
+    border: 1px solid black;
+}
+
+table tr{
+   line-height: 10px;
+   min-height: 10px;
+   height: 10px;
+}
+</style>
+
+
+<body>
+{% raw %}
+	<div ng-controller="treadmill">
+	
+	
+	<div class="table-responsive">
+	<table class="table" style="width: auto;">
+	<tr>
+	<td>State:{{ status.trial.trial.cameraState }}</td>
+	<td>Trial:{{ status.trial.trial.trialNum }}</td>
+	<td>Repeat:{{ status.trial.trial.currentEpoch }}</td>
+	<td>{{ status.trial.trial.currentDate }} {{ status.trial.trial.currentTime }}</td>
+	</tr>
+	</table>
+	</div>
+	
+
+	<div class="table-responsive">
+	<table class="table" style="width: auto;">
+
+	<tr>
+		<td>
+		<span ng-if="! isState('recording')">
+		<button type="button"
+			class="btn btn-success btn-sm"
+			ng-click="buttonCallback('startTrial')"
+			ng-disabled="! isState('idle')">
+			Start Trial
+		</button>
+		</span>
+	
+		<span ng-if="isState('recording')">
+		<button type="button"
+			class="btn btn-danger btn-sm"
+			ng-click="buttonCallback('stopTrial')"
+			ng-disabled="! isState('recording')">
+			Stop Trial
+		</button>
+		</span>
+		</td>
+	</tr>
+		
+	<tr>
+	
+		<td>
+		<span ng-if="! isState('armed')">
+		<button type="button"
+			class="btn btn-success btn-sm"
+			ng-click="buttonCallback('startArm')"
+			ng-disabled="! isState('idle')">
+			Start Arm
+		</button>
+		</span>
+		
+		<span ng-if="isState('armed')">
+		<button type="button"
+			class="btn btn-danger btn-sm"
+			ng-click="buttonCallback('stopArm')"
+			ng-disabled="! isState('armed')">
+			Stop Arm
+		</button>
+		</span>
+		</td>	
+	</tr>
+	</table>
+
+<!-- arduino form -->
+	<ng-form name="arduinoForm" ng-controller="arduinoFormController">
+	<div class="table-responsive">
+	<table class="table table-bordered" style="width: auto;">
+<tr>
+<td>Motor Parameters</td>
+<td>
+		
+		<button type="button"
+			class="btn btn-primary btn-sm"
+			ng-disabled="arduinoForm.numberofrepeats.$invalid"
+			ng-click="submitForm()">
+			Upload to Arduino</i>
+		</button>
+</td>
+</tr>
+
+<tr>
+<td>
+		<label>Repeats
+		<input style="width: 5em" 
+			name = "numberofrepeats"
+			type="number"
+			ng-model="data.numberofrepeats"
+			min="1"
+			step="1"
+			required>
+		</label>
+</td>
+<td>		
+		<label>Repeat Duration (ms)
+		<input style="width: 6em" 
+			type="number"
+			ng-model="data.repeatduration"
+			min="1"
+			step=".01"
+			required>
+		</label>
+				
+</td>
+</tr>
+
+<tr>
+<td>
+		
+		<label>Motor Delay (ms)
+		<input style="width: 5em" 
+			type="number"
+			ng-model="data.motorDelay"
+			min="0"
+			step="1"
+			required>
+		</label>
+</td>
+<td>		
+		<label>Duration (ms)
+		<input style="width: 5em" 
+			type="number"
+			ng-model="data.motorDuration"
+			min="0"
+			step="1"
+			required>
+		</label>
+				
+</td>
+</tr>
+
+<tr>
+<td>
+
+		<label>Speed (au)
+		<input style="width: 5em" 
+			type="number"
+			ng-model="data.motorSpeed"
+			min="1"
+			step="1"
+			max="700"
+			required>
+		</label>
+</td>
+<td>		
+		<label>Direction (0/1)
+		<input style="width: 5em" 
+			type="number"
+			ng-model="data.motorDirection"
+			min="0"
+			step="1"
+			max="1"
+			required>
+		</label>
+
+</td>
+</tr>
+
+<tr>
+<td colspan=2>
+		<div id="test_plotly" ng-controller="arduinoFormController"></div>
+
+</td>
+</tr>
+
+</table>
+	</form> <!-- motor parameters -->
+
+<!-- PLOTLY -->
+<!-- <div id="test_plotly" style="width:600px;height:250px;" ng-controller="arduinoFormController"></div> -->
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-10">
+	</div>
+  </div>
+</div>
+  	
+<!-- server status -->
+	<span ng-if="showConfig">
+		<button type="button"
+			class="btn btn-primary btn-sm"
+			ng-click="buttonCallback('toggleConfig')">
+			<i class="fa fa-chevron-down" aria-hidden="true"></i>
+		</button>
+	</span>
+	<span ng-if="! showConfig">
+		<button type="button"
+			class="btn btn-primary btn-sm"
+			ng-click="buttonCallback('toggleConfig')">
+			<i class="fa fa-chevron-right" aria-hidden="true"></i>
+		</button>
+	</span>
+	Config
+	
+
+<span ng-if="showConfig">
+
+	<!-- status.trial.trial -->
+	<table class="myTable-small" style="border: 1px solid #ddd;">
+	<tr>
+	<th>status.trial.trial</th>
+	<th></th>
+	</tr>
+	<tr ng-repeat="(x,y) in status.trial.trial">
+		<td>{{ x }}</td>
+		<td>{{ y }}</td>
+	</tr>
+	</table>
+
+	<!-- status.trial.config -->
+	<table class="myTable-small" style="border: 1px solid #ddd;">
+	<tr>
+	<th>status.trial.config</th>
+	<th></th>
+	</tr>
+	<tr ng-repeat="(x,y) in status.trial.config">
+	<td>
+		<table>
+			<tr>
+			<th>
+			<b>{{ x }}</b>
+			</th>
+			<th></th>
+			</tr>
+			
+		  	<tr ng-repeat="(x,y) in y">
+				<td>{{ x }}</td>
+				<td>{{ y }}</td>
+		  	</tr>
+		</table>
+	</td>
+	</tr>
+	</table>
+	
+	<!-- status.systemInfo -->
+	<table class="myTable-small" style="border: 1px solid #ddd;">
+	<tr>
+	<th>status.systemInfo</th>
+	<th></th>
+	</tr>
+	<tr ng-repeat="(x,y) in status.systemInfo">	
+		<td>{{ x }}</td>
+		<td>{{ y }}</td>
+	</tr>
+	</table>
+</span> <!-- showConfig -->
+
+
+	</div> <!-- ng-controller -->
+{% endraw %}
+</body>
+</html>

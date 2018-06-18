@@ -1,9 +1,14 @@
-[2018-06-17 11:14:40,560] {bHome.py <module>:33} WARNING - Did not load Adafruit_DHT
-[2018-06-17 11:14:40,590] {bHome.py init:50} DEBUG - start home.init()
-[2018-06-17 11:14:40,591] {bHome.py init:53} DEBUG - homecage version:20180610
-[2018-06-17 11:14:40,592] {bHome.py loadConfigFile:302} DEBUG - loadConfigFile
-[2018-06-17 11:14:40,655] {bHome.py lightsThread:449} DEBUG - lightsThread start
-[2018-06-17 11:14:40,656] {bHome.py init:105} DEBUG - Did not load DHT temperature sensor
-[2018-06-17 11:14:40,658] {bHome.py eventOut:245} DEBUG - eventOut whiteLED True
-[2018-06-17 11:14:40,673] {treadmill_app.py <module>:72} DEBUG - Running flask server with debug = False
-[2018-06-17 11:14:40,674] {treadmill_app.py <module>:75} DEBUG - Flask server is running at: http://192.168.1.4:5010
+[2018-06-18 11:04:24,609] {bTrial.py loadConfigFile:224} DEBUG - loadConfigFile
+[2018-06-18 11:04:24,673] {treadmill_app.py <module>:130} DEBUG - Running flask server with debug = True
+[2018-06-18 11:04:24,675] {treadmill_app.py <module>:133} DEBUG - Flask server is running at: http://192.168.1.4:5010
+[2018-06-18 11:04:28,647] {treadmill_app.py myAfterRequest:60} DEBUG - after /
+[2018-06-18 11:04:28,702] {treadmill_app.py myAfterRequest:60} DEBUG - after /static/bootstrap/css/bootstrap.min.css
+[2018-06-18 11:04:28,708] {treadmill_app.py myAfterRequest:60} DEBUG - after /static/angular-ui-switch.min.css
+[2018-06-18 11:04:28,712] {treadmill_app.py myAfterRequest:60} DEBUG - after /static/font-awesome-4.7.0/css/font-awesome.min.css
+[2018-06-18 11:04:28,713] {treadmill_app.py myAfterRequest:60} DEBUG - after /static/treadmill.css
+[2018-06-18 11:04:28,717] {treadmill_app.py myAfterRequest:60} DEBUG - after /static/angular/angular.min.js
+[2018-06-18 11:04:28,719] {treadmill_app.py myAfterRequest:60} DEBUG - after /static/bootstrap/js/bootstrap.min.js
+[2018-06-18 11:04:28,748] {treadmill_app.py myAfterRequest:60} DEBUG - after /static/angular-ui-switch.min.js
+[2018-06-18 11:04:28,750] {treadmill_app.py myAfterRequest:60} DEBUG - after /static/treadmill.js
+[2018-06-18 11:04:28,760] {treadmill_app.py myAfterRequest:60} DEBUG - after /static/plotly/plotly-1.38.3.min.js
+[2018-06-18 11:04:29,312] {treadmill_app.py myAfterRequest:60} DEBUG - after /static/font-awesome-4.7.0/fonts/fontawesome-webfont.woff2
