@@ -1,0 +1,92 @@
+{
+    "trial": {
+        "animalID": "myAnimalID",
+        "conditionID": "myConditionID",
+        "repeatDuration": 5,
+        "repeatInfinity": false,
+        "numberOfRepeats": 1,
+        "savePath": "/home/pi/video"
+    },
+    "motor": {
+    	"useMotor": true,
+    	"motorNumberofRepeats": 3,
+    	"motorRepeatDuration": 1000,
+    	"motorDel": 50,
+    	"motorDur": 100,
+    	"motorSpeed": 100,
+    	"motorDirection": "Forward"
+    },
+    "hardware": {
+        "allowArming": false,
+        "triggerIn": {
+            "enabled": true,
+            "pin": 21,
+            "polarity": "rising",
+            "pull_up_down": "down"
+        },
+        "triggerOut": {
+            "enabled": true,
+            "pin": 26,
+            "polarity": "rising"
+        },
+        "eventIn": [
+            {
+                "enabled": true,
+                "name": "frame",
+                "pin": 13,
+                "polarity": "rising",
+                "pull_up_down": "down"
+            },
+            {
+                "enabled": false,
+                "name": "otherEvent",
+                "pin": 6,
+                "polarity": "rising",
+                "pull_up_down": "down"
+            }
+        ],
+        "eventOut": [
+            {
+                "enabled": true,
+                "name": "whiteLED",
+                "pin": 12,
+                "defaultValue": false,
+                "state": false,
+                "idx": 0
+            },
+            {
+                "enabled": true,
+                "name": "irLED",
+                "pin": 16,
+                "defaultValue": false,
+                "state": false,
+                "idx": 1
+            }
+        ],
+        "dhtsensor": {
+        	"readtemperature": false,
+        	"temperatureInterval": 60,
+        	"temperatureSensor": 14
+        },
+        "serial": {
+            "port": "/dev/ttyACM0",
+            "baud": 115200
+        }
+    },
+    "lights": {
+        "auto": false,
+        "sunset": 18.0,
+        "sunrise": 6.0
+    },
+    "video": {
+        "useCamera": true,
+        "led": true,
+        "converttomp4": true,
+        "captureStill": true,
+        "stillInterval": 2.1,
+        "fps": 30,
+        "resolution": "1024,768",
+        "bufferSeconds": 10,
+        "streamResolution": "640,480"
+    }
+}
