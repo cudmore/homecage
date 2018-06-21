@@ -36,9 +36,9 @@ table.table.table-condensed {
 }
 
 table tr{
-   line-height: 10px;
-   min-height: 10px;
-   height: 10px;
+   line-height: 20px;
+   min-height: 20px;
+   height: 20px;
 }
 </style>
 
@@ -47,200 +47,516 @@ table tr{
 {% raw %}
 	<div ng-controller="treadmill">
 	
-	
 	<div class="table-responsive">
 	<table class="table" style="width: auto;">
+
 	<tr>
-	<td>State:{{ status.trial.trial.cameraState }}</td>
-	<td>Trial:{{ status.trial.trial.trialNum }}</td>
-	<td>Repeat:{{ status.trial.trial.currentEpoch }}</td>
-	<td>{{ status.trial.trial.currentDate }} {{ status.trial.trial.currentTime }}</td>
+	<td>
+	{{ status.trial.trial.currentDate }} {{ status.trial.trial.currentTime }}
+	</td>
 	</tr>
+
 	</table>
 	</div>
+
+<!-- ** ** -->
+
+	<ng-form name="animalForm" ng-controller="configFormController">
+	<div class="table-responsive">
+	<table class="table" style="width: auto;">
+	<tr>
+	<td>
+		<label>ID
+		<input style="width: 5em" 
+			name = "animalID"
+			type="text"
+			ng-model="configData.trial.config.trial.animalID"
+			ng-change="animalParamChange(animalForm.$valid)"
+			ng-disabled="! allowParamEdit()" 
+			>
+		</label>
+	</td>
+	<td>
+		<label>Condition
+		<input style="width: 5em" 
+			name = "conditionID"
+			type="text"
+			ng-model="configData.trial.config.trial.conditionID"
+			ng-change="animalParamChange(animalForm.$valid)"
+			ng-disabled="! allowParamEdit()" 
+			>
+		</label>
+	</td>
+<!--
+	<td>
+		<button type="button"
+			class="btn btn-primary btn-sm"
+			ng-disabled="animalForm.$invalid || ! allowParamEdit()"
+			ng-click="submitConfigForm()"
+			>
+			Submit
+		</button>
+	</td>
+-->
+	</tr> 
+	
+	</table>
+	</div>
+	</ng-form>
+	
+<!-- ** ** -->
 	
 
 	<div class="table-responsive">
 	<table class="table" style="width: auto;">
 
 	<tr>
+		<td>Recording</td>
 		<td>
 		<span ng-if="! isState('recording')">
 		<button type="button"
 			class="btn btn-success btn-sm"
-			ng-click="buttonCallback('startTrial')"
+			ng-click="buttonCallback('startRecord')"
 			ng-disabled="! isState('idle')">
-			Start Trial
+			Start Recording
 		</button>
 		</span>
 	
 		<span ng-if="isState('recording')">
 		<button type="button"
 			class="btn btn-danger btn-sm"
-			ng-click="buttonCallback('stopTrial')"
-			ng-disabled="! isState('recording')">
+			ng-click="buttonCallback('stopRecord')">
+			Stop Recording
+		</button>
+		</span>
+		</td>
+		
+		<td rowspan=3 style="border: 1px solid black;">
+		State: {{ status.trial.trial.cameraState }}<BR>
+		Trial: {{ status.trial.trial.trialNum }}<BR>
+		Repeat: {{ status.trial.trial.currentEpoch }} of {{ status.trial.config.trial.numberOfRepeats }}<BR>
+		Elapsed (sec): {{ status.trial.trial.secondsElapsedStr }} of {{ status.trial.config.trial.repeatDuration }}
+		</td>
+		
+	</tr>
+		
+	<tr>
+		<td>Streaming</td>
+		<td>
+		<span ng-if="! isState('streaming')">
+		<button type="button"
+			class="btn btn-success btn-sm"
+			ng-click="buttonCallback('startStream')"
+			ng-disabled="! isState('idle')">
+			Start Streaming
+		</button>
+		</span>
+	
+		<span ng-if="isState('streaming')">
+		<button type="button"
+			class="btn btn-danger btn-sm"
+			ng-click="buttonCallback('stopStream')">
+			Stop Streaming
+		</button>
+		</span>
+		</td>
+		<td></td>		
+	</tr>
+	
+	<tr>
+		<td>
+		<label>
+		<input type="checkbox" 
+			ng-model="isArmed" 
+			ng-change="buttonCallback('toggleArm')" 
+			ng-disabled="isState('recording') || isState('streaming') || isState('armedrecording')" 
+			/>		
+		Arm</label>
+		</td>
+
+		<td>
+		<span ng-if="! isState('armedrecording')">
+		<button type="button"
+			class="btn btn-success btn-sm"
+			ng-click="buttonCallback('startTrial')"
+			ng-disabled="! isState('armed')">
+			Start Trial
+		</button>
+		</span>
+
+		<span ng-if="isState('armedrecording')">
+		<button type="button"
+			class="btn btn-danger btn-sm"
+			ng-click="buttonCallback('stopTrial')">
 			Stop Trial
 		</button>
 		</span>
 		</td>
-	</tr>
 		
-	<tr>
-	
-		<td>
-		<span ng-if="! isState('armed')">
-		<button type="button"
-			class="btn btn-success btn-sm"
-			ng-click="buttonCallback('startArm')"
-			ng-disabled="! isState('idle')">
-			Start Arm
-		</button>
-		</span>
-		
-		<span ng-if="isState('armed')">
-		<button type="button"
-			class="btn btn-danger btn-sm"
-			ng-click="buttonCallback('stopArm')"
-			ng-disabled="! isState('armed')">
-			Stop Arm
-		</button>
-		</span>
-		</td>	
 	</tr>
 	</table>
 
-<!-- arduino form -->
-	<ng-form name="arduinoForm" ng-controller="arduinoFormController">
-	<div class="table-responsive">
-	<table class="table table-bordered" style="width: auto;">
-<tr>
-<td>Motor Parameters</td>
-<td>
-		
-		<button type="button"
-			class="btn btn-primary btn-sm"
-			ng-disabled="arduinoForm.numberofrepeats.$invalid"
-			ng-click="submitForm()">
-			Upload to Arduino</i>
-		</button>
-</td>
-</tr>
+<!-- streaming -->
+<span ng-if="isState('streaming')">
+<iframe ng-src="{{myStreamUrl}}" width="{{streamWidth}}" height="{{streamHeight}}"></iframe>
+</span>
 
-<tr>
-<td>
-		<label>Repeats
-		<input style="width: 5em" 
-			name = "numberofrepeats"
-			type="number"
-			ng-model="data.numberofrepeats"
-			min="1"
-			step="1"
-			required>
-		</label>
-</td>
-<td>		
-		<label>Repeat Duration (ms)
-		<input style="width: 6em" 
-			type="number"
-			ng-model="data.repeatduration"
-			min="1"
-			step=".01"
-			required>
-		</label>
-				
-</td>
-</tr>
-
-<tr>
-<td>
-		
-		<label>Motor Delay (ms)
-		<input style="width: 5em" 
-			type="number"
-			ng-model="data.motorDelay"
-			min="0"
-			step="1"
-			required>
-		</label>
-</td>
-<td>		
-		<label>Duration (ms)
-		<input style="width: 5em" 
-			type="number"
-			ng-model="data.motorDuration"
-			min="0"
-			step="1"
-			required>
-		</label>
-				
-</td>
-</tr>
-
-<tr>
-<td>
-
-		<label>Speed (au)
-		<input style="width: 5em" 
-			type="number"
-			ng-model="data.motorSpeed"
-			min="1"
-			step="1"
-			max="700"
-			required>
-		</label>
-</td>
-<td>		
-		<label>Direction (0/1)
-		<input style="width: 5em" 
-			type="number"
-			ng-model="data.motorDirection"
-			min="0"
-			step="1"
-			max="1"
-			required>
-		</label>
-
-</td>
-</tr>
-
-<tr>
-<td colspan=2>
-		<div id="test_plotly" ng-controller="arduinoFormController"></div>
-
-</td>
-</tr>
-
-</table>
-	</form> <!-- motor parameters -->
-
-<!-- PLOTLY -->
-<!-- <div id="test_plotly" style="width:600px;height:250px;" ng-controller="arduinoFormController"></div> -->
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-md-10">
-	</div>
-  </div>
-</div>
-  	
-<!-- server status -->
+<!-- config form -->
 	<span ng-if="showConfig">
 		<button type="button"
-			class="btn btn-primary btn-sm"
+			class="btn btn-link btn-sm"
 			ng-click="buttonCallback('toggleConfig')">
 			<i class="fa fa-chevron-down" aria-hidden="true"></i>
 		</button>
 	</span>
 	<span ng-if="! showConfig">
 		<button type="button"
-			class="btn btn-primary btn-sm"
+			class="btn btn-link btn-sm"
 			ng-click="buttonCallback('toggleConfig')">
 			<i class="fa fa-chevron-right" aria-hidden="true"></i>
 		</button>
 	</span>
-	Config
+	Configure
 	
 
 <span ng-if="showConfig">
+<ng-form name="configForm" ng-controller="configFormController">
+
+<!--
+		<button type="button"
+			class="btn btn-primary btn-sm"
+			ng-disabled="configForm.$invalid || ! allowParamEdit()"
+			ng-click="submitConfigForm()">
+			Submit
+		</button>
+-->
+
+		<button type="button"
+			class="btn btn-primary btn-sm"
+			ng-disabled="configForm.$invalid || ! allowParamEdit()"
+			ng-click="saveConfig()">
+			Save
+		</button>
+
+	<div class="table-responsive">
+	<table class="table table-bordered" style="width: auto;">
+<!--
+	<tr>
+	<td>
+		<button type="button"
+			class="btn btn-primary btn-sm"
+			ng-disabled="configForm.$invalid || ! allowParamEdit()"
+			ng-click="submitConfigForm()">
+			Submit
+		</button>
+	</td>
+	<td></td>
+	<td></td>
+	</tr>
+-->
+
+	<tr>
+	<td>
+		<label>
+		<input type="checkbox" 
+			ng-model="configData.trial.config.trial.repeatInfinity" 
+			ng-change="configParamChange(configForm.$valid)" 
+			ng-disabled="! allowParamEdit()">		
+		Repeat Forever</label>
+	</td>
+	<td>
+		<label>Number of Repeats
+		<input style="width: 5em" 
+			name = "numberofrepeats"
+			type="number"
+			ng-model="configData.trial.config.trial.numberOfRepeats"
+			ng-change="configParamChange(configForm.$valid)"
+			ng-disabled="! allowParamEdit() || configData.trial.config.trial.repeatInfinity" 
+			min="1"
+			step="1"
+			required>
+		</label>
+	</td>
+	<td>
+		<label>Repeat Duration (sec)
+		<input style="width: 5em" 
+			name = "numberofrepeats"
+			type="number"
+			ng-model="configData.trial.config.trial.repeatDuration"
+			ng-change="configParamChange(configForm.$valid)"
+			ng-disabled="! allowParamEdit()" 
+			min="1"
+			step=".001"
+			required>
+		</label>
+	</td>
+	</tr>
+
+	<tr>
+	<td>
+		<label>
+		<input type="checkbox" 
+			ng-model="configData.trial.config.lights.auto" 
+			ng-change="configParamChange(configForm.$valid)" 
+			ng-disabled="! allowParamEdit()">		
+		Auto Lights</label>
+	</td>
+	<td>
+		<label>Sunrise
+		<input style="width: 5em" 
+			type="number"
+			ng-model="configData.trial.config.lights.sunrise"
+			ng-change="configParamChange(configForm.$valid)"
+			ng-disabled="! allowParamEdit()" 
+			min="1"
+			step="1"
+			max="24"
+			required>
+		</label>
+	</td>
+	<td>
+		<label>Sunset
+		<input style="width: 5em" 
+			type="number"
+			ng-model="configData.trial.config.lights.sunset"
+			ng-change="configParamChange(configForm.$valid)"
+			ng-disabled="! allowParamEdit()" 
+			min="1"
+			step="1"
+			max="24"
+			required>
+		</label>
+	</td>
+	</tr>
+
+	<tr>
+	<td>
+		<label>FPS
+		<input style="width: 5em" 
+			type="number"
+			ng-model="configData.trial.config.video.fps"
+			ng-change="configParamChange(configForm.$valid)"
+			ng-disabled="! allowParamEdit()" 
+			min="1"
+			step="1"
+			max="90"
+			required>
+		</label>
+	</td>
+	<td>		
+		<label>Resolution
+		<select name="" 
+			ng-init="configData.trial.config.video.resolution" 
+			ng-model="configData.trial.config.video.resolution" 
+			ng-Change="configParamChange(configForm.$valid)" 
+			ng-disabled="! allowParamEdit()" 
+			>
+		  <option value="640,480">640 x 480</option>
+		  <option value="1024,768">1024 x 768</option>
+		  <option value="1296,972">1296 x 972</option>
+		</select>
+		</label>
+	</td>
+	<td></td>
+	</tr>
+
+	<tr>
+	<td>
+		<label>Pre Trigger Buffer (sec)
+		<input style="width: 5em" 
+			type="number"
+			ng-model="configData.trial.config.video.bufferSeconds"
+			ng-change="configParamChange(configForm.$valid)"
+			ng-disabled="! allowParamEdit()" 
+			min="1"
+			step="1"
+			required>
+		</label>
+	</td>
+
+	<td>		
+		<label>Stream Resolution
+		<select name="" 
+			ng-init="configData.trial.config.video.streamResolution" 
+			ng-model="configData.trial.config.video.streamResolution" 
+			ng-Change="configParamChange(configForm.$valid)" 
+			ng-disabled="! allowParamEdit()" 
+			>
+		  <option value="640,480">640 x 480</option>
+		  <option value="1024,768">1024 x 768</option>
+		  <option value="1296,972">1296 x 972</option>
+		</select>
+		</label>
+	</td>
+
+	<td></td>
+
+	</tr>
+
+	</table>
+	</div>
+</ng-form> <!-- name="configForm" ng-controller="configFormController" -->
+</span> <!-- config form -->
+	
+<!-- arduino motor form -->
+<BR>
+	<span ng-if="showMotor">
+		<button type="button"
+			class="btn btn-link btn-sm"
+			ng-click="buttonCallback('toggleMotor')">
+			<i class="fa fa-chevron-down" aria-hidden="true"></i>
+		</button>
+	</span>
+	<span ng-if="! showMotor">
+		<button type="button"
+			class="btn btn-link btn-sm"
+			ng-click="buttonCallback('toggleMotor')">
+			<i class="fa fa-chevron-right" aria-hidden="true"></i>
+		</button>
+	</span>
+	Motor
+	
+
+<span ng-if="showMotor">
+	<ng-form name="arduinoForm" ng-controller="arduinoFormController">
+
+		<button type="button"
+			class="btn btn-primary btn-sm"
+			ng-disabled="arduinoForm.$invalid"
+			ng-click="submitForm()">
+			Upload to Arduino
+		</button>
+
+	<div class="table-responsive">
+	<table class="table table-bordered" style="width: auto;">
+<!--
+	<tr>
+	<td>Motor Parameters</td>
+	<td>
+		
+		<button type="button"
+			class="btn btn-primary btn-sm"
+			ng-disabled="arduinoForm.$invalid"
+			ng-click="submitForm()">
+			Upload to Arduino
+		</button>
+	</td>
+	</tr>
+-->
+	<tr>
+	<td>
+		<label>Repeats
+		<input style="width: 5em" 
+			name = "numberofrepeats"
+			type="number"
+			ng-model="data.motorNumberofRepeats"
+			ng-change="motorParamChange()"
+			min="1"
+			step="1"
+			required>
+		</label>
+	</td>
+	<td>		
+		<label>Repeat Duration (ms)
+		<input style="width: 6em" 
+			type="number"
+			ng-model="data.motorRepeatDuration"
+			ng-change="motorParamChange()"
+			min="1"
+			step="1"
+			required>
+		</label>
+				
+	</td>
+	</tr>
+
+	<tr>
+	<td>
+		
+		<label>Delay (ms)
+		<input style="width: 5em" 
+			type="number"
+			ng-model="data.motorDel"
+			ng-change="motorParamChange()"
+			min="0"
+			step="1"
+			required>
+		</label>
+	</td>
+	<td>		
+		<label>Duration (ms)
+		<input style="width: 5em" 
+			type="number"
+			ng-model="data.motorDur"
+			ng-change="motorParamChange()"
+			min="0"
+			step="1"
+			required>
+		</label>
+				
+	</td>
+	</tr>
+
+	<tr>
+	<td>
+
+		<label>Speed (au)
+		<input style="width: 5em" 
+			type="number"
+			ng-model="data.motorSpeed"
+			ng-change="motorParamChange()"
+			min="1"
+			step="1"
+			max="700"
+			required>
+		</label>
+	</td>
+	<td>		
+		<label>Direction
+		<select name="" 
+			ng-init="data.motorDirection" 
+			ng-model="data.motorDirection" 
+			ng-Change="motorParamChange()" 
+			>
+		  <option value="Forward">Forward</option>
+		  <option value="Reverse">Reverse</option>
+		</select>
+		</label>
+  
+	</td>
+	</tr>
+
+	<!-- PLOTLY -->
+	<tr>
+	<td colspan=2>
+		<div id="test_plotly" ng-controller="arduinoFormController"></div>
+	</td>
+	</tr>
+
+	</table>
+	</ng-form> <!-- motor parameters -->
+
+</span> <!-- showMotor -->
+
+<!-- server status -->
+	<span ng-if="showConfigTable">
+		<button type="button"
+			class="btn btn-link btn-sm"
+			ng-click="buttonCallback('toggleConfigTable')">
+			<i class="fa fa-chevron-down" aria-hidden="true"></i>
+		</button>
+	</span>
+	<span ng-if="! showConfigTable">
+		<button type="button"
+			class="btn btn-link btn-sm"
+			ng-click="buttonCallback('toggleConfigTable')">
+			<i class="fa fa-chevron-right" aria-hidden="true"></i>
+		</button>
+	</span>
+	Config Tables
+	
+
+<span ng-if="showConfigTable">
 
 	<!-- status.trial.trial -->
 	<table class="myTable-small" style="border: 1px solid #ddd;">

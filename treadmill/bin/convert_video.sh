@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# RObert Cudmore
+# 20180720
+#
+# Usage:
+#		./convert_video.sh h264_path, fps, [delete]
+#
+#		Will convert a .h264 file to .mp4
+#		If [delete]==delete then delete original .h264 file
+
 # avconv -i 20171201_091431.h264 -r 30 -vcodec copy mp4/20171201_091431.mp4
 
 #todo: we are now saving in same directory
@@ -25,5 +34,11 @@ type avconv >/dev/null 2>&1 || { echo >&2 "avconv not installed"; exit 1; }
 cmd="avconv -loglevel error -framerate $2 -i $1 -vcodec copy $dstfile"
 echo $cmd
 $cmd
+
+if [ "$#" -eq 3 ]; then
+	if [ $3 = "delete" ]; then
+		rm $1
+	fi
+fi
 
 exit 0

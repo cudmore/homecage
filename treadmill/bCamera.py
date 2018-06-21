@@ -3,10 +3,11 @@
 
 import os, io, time, math, json
 from datetime import datetime
-import threading
-import subprocess
+from collections import OrderedDict
+import threading, subprocess, queue
 
 import picamera
+import bTrial
 
 import logging
 logger = logging.getLogger('flask.app')
@@ -14,73 +15,35 @@ logger = logging.getLogger('flask.app')
 class bCamera:
 	def __init__(self, trial=None):
 		self.camera = None
+
 		self.state = 'idle'
-		self.trial = trial # a bTrial class
 		
-		self.width = 640
-		self.height = 480
-		self.fps = 30
+		if trial is None:
+			self.trial = bTrial()
+		else:
+			self.trial = trial # a bTrial class
 		
-		self.recordDuration = 5 # seconds
-		self.recordInfinity = False
-		self.numberOfRepeats = 2
-		
-		self.currentFile = ''
+		self.currentFile = '' # actually part of trial
+		self.secondsElapsedStr = ''
 		
 		# still image during recording
-		self.captureStill = True
-		self.stillInterval = 2.0 # seconds
 		self.lastStillTime = 0
 		self.stillPath = os.path.join(os.path.dirname(__file__), 'static/still.jpg')
 		
-		self.savePath = '/home/pi/video'
-		
-		self.converttomp4 = True
-		
-		self.circulario = None
-		self.bufferSeconds = 5 # sec
-		
-		self.streamWidth = 640
-		self.streamHeight = 480
-		
-		#self.lastResponse = ''
-		
-	def setConfig(self, config):
-		''' this is shitty, set config from original config.json file '''
-		self.width = int(config['video']['resolution'].split(',')[0])
-		self.height = int(config['video']['resolution'].split(',')[1])
-		self.fps = config['video']['fps']
-
-		self.recordDuration = config['video']['fileDuration']
-		self.recordInfinity = config['video']['recordInfinity']
-		self.numberOfRepeats = config['video']['numberOfRepeats']
-
-		self.captureStill = config['video']['captureStill']
-		self.stillInterval = config['video']['stillInterval']
-		
-		self.converttomp4 = config['video']['converttomp4']
-
-		self.bufferSeconds = config['video']['bufferSeconds']
-
-		self.streamWidth = int(config['video']['streamResolution'].split(',')[0])
-		self.streamHeight = int(config['video']['streamResolution'].split(',')[1])
+		self.convertErrorQueue = queue.Queue() # queue is infinite length
+		self.convertFileQueue = queue.Queue()
+		self.startConvertThread()
 		
 	def isState(self, thisState):
 		return self.state == thisState
 	
 	@property
 	def lastResponse(self):
-		if self.trial:
-			return self.trial.lastResponse
-		else:
-			return 'camera has no trial'
+		self.trial.lastResponse
 	
 	@lastResponse.setter
 	def lastResponse(self, str):
-		if self.trial:
-			self.trial.lastResponse = str
-		else:
-			print('error: lastResponse.setter did not find trial')
+		self.trial.lastResponse = str
 			
 	def record(self, onoff):
 		okGo = self.state in ['idle'] if onoff else self.state in ['recording']
@@ -100,18 +63,9 @@ class bCamera:
 		else:
 			return False
 				
-	def getHeaderStr(self):
-		headerStr = 'video_fps=' + str(self.fps) + ';' \
-					'video_resolution=' '"' + str(self.width) + ',' + str(self.height) + '"' + ';' \
-					'video_duration=' + str(self.recordDuration) + ';' \
-					'video_repeats=' + str(self.numberOfRepeats) + ';' \
-					'video_continuous=' + '"' + str(self.recordInfinity) + '"' + ';'
-					
-		return headerStr
+	def initCamera(self):
+		ret = OrderedDict()
 		
-	def recordVideoThread(self):
-		# record individual video files in background thread
-		logging.info('recordVideoThread start')
 		try:
 			self.camera = picamera.PiCamera()
 		except (picamera.exc.PiCameraMMALError) as e:
@@ -124,76 +78,115 @@ class bCamera:
 			self.lastResponse = str(e)
 			self.state = 'idle'
 			raise
-		self.camera.led = False
-		self.camera.resolution = (self.width, self.height)
-		self.camera.framerate = self.fps
+
+		ret['led'] = self.trial.getConfig('video', 'led')
+		#print("ret['led']:", ret['led'])
+		self.camera.led = ret['led']
+
+		resolution = self.trial.getConfig('video', 'resolution')
+		width = int(resolution.split(',')[0])
+		height = int(resolution.split(',')[1])
+		self.camera.resolution = (width, height)
+		
+		ret['fps'] = self.trial.getConfig('video', 'fps')
+		self.camera.framerate = ret['fps']
+		
+		# package trial config into a struct
+		ret['repeatDuration'] = self.trial.getConfig('trial', 'repeatDuration') # different key names
+		ret['repeatInfinity'] = self.trial.getConfig('trial', 'repeatInfinity')
+		ret['numberOfRepeats'] = self.trial.getConfig('trial', 'numberOfRepeats')
+		ret['savePath'] = self.trial.getConfig('trial', 'savePath')
+		
+		ret['captureStill'] = self.trial.getConfig('video', 'captureStill')
+		ret['stillInterval'] = self.trial.getConfig('video', 'stillInterval')
+		ret['converttomp4'] = self.trial.getConfig('video', 'converttomp4')
+		ret['bufferSeconds'] = self.trial.getConfig('video', 'bufferSeconds')
+
+		return ret
+		
+	def recordVideoThread(self):
+		# record individual video files in background thread
+		logging.info('recordVideoThread start')
+		
+		#
+		# grab configuration from trial
+		thisCamera = self.initCamera()
+		repeatDuration = thisCamera['repeatDuration']
+		repeatInfinity = thisCamera['repeatInfinity']
+		numberOfRepeats = thisCamera['numberOfRepeats']
+		fps = thisCamera['fps']
+		captureStill = thisCamera['captureStill']
+		stillInterval = thisCamera['stillInterval']
+		converttomp4 = thisCamera['converttomp4']
+		savePath = thisCamera['savePath']
+		# tweek numberOfRepeats
+		numberOfRepeats = float('Inf') if repeatInfinity else float(numberOfRepeats)
+		
+		#
 		self.camera.start_preview()
 
 		now = time.time()
 
-		# removed for treadmill
-		'''
-		# fps, resolution, duration, repeats, recordInfinity
-		headerStr = 'video_fps=' + str(self.fps) + ';' \
-					'video_resolution=' '"' + str(self.width) + ',' + str(self.height) + '"' + ';' \
-					'video_duration=' + str(self.recordDuration) + ';' \
-					'video_repeats=' + str(self.numberOfRepeats) + ';' \
-					'video.continuous=' + '"' + str(self.recordInfinity) + '"' + ';' \
-					
-		self.trial.startTrial(headerStr=headerStr)
-		'''
+		self.trial.startTrial()
 		
 		startDateStr = time.strftime('%Y%m%d', time.localtime(now)) 
-
-		self.saveVideoPath = os.path.join(self.savePath, startDateStr)
-		if not os.path.isdir(self.saveVideoPath):
-			os.makedirs(self.saveVideoPath)
+		saveVideoPath = os.path.join(savePath, startDateStr)
+		if not os.path.isdir(saveVideoPath):
+			os.makedirs(saveVideoPath)
 
 		self.lastStillTime = 0 # seconds
 		currentRepeat = 1
-		numberOfRepeats = float('Inf') if self.recordInfinity else self.numberOfRepeats
 		while self.isState('recording') and (currentRepeat <= numberOfRepeats):
 			
 			self.trial.newEpoch()
 
 			#the file we are about to record/save
 			self.currentFile = self.trial.getFilename(withRepeat=True) + '.h264' # time stamp is based on trial.newEpoch()
-			videoFilePath = os.path.join(self.saveVideoPath, self.currentFile)
-			logger.debug('Start video file:' + videoFilePath + ' dur:' + str(self.recordDuration) + ' fps:' + str(self.fps))
+			self.secondsElapsedStr = '0'
+			videoFilePath = os.path.join(saveVideoPath, self.currentFile)
+			logger.debug('Start video file:' + videoFilePath + ' dur:' + str(repeatDuration) + ' fps:' + str(fps))
 			self.trial.newEvent('recordVideo', currentRepeat, str=videoFilePath)		 # paired with stopVideo	
 
-			startRecordSeconds = time.time()
 			try:
 				self.camera.start_recording(videoFilePath)
+				self.lastResponse = 'camera recording file ' + self.currentFile
 			except (IOError) as e:
 				logger.error('start recording:' + str(e))
 				self.camera.close()
 				self.lastResponse = str(e)
 				self.state = 'idle'
 				raise
+
+			startRecordSeconds = time.time()
 				
 			# record until duration or we receive stop signal
-			while self.isState('recording') and (time.time() <= (startRecordSeconds + float(self.recordDuration))):
+			while self.isState('recording') and (time.time() <= (startRecordSeconds + float(repeatDuration))):
 				self.camera.wait_recording()
-				if self.captureStill and time.time() > (self.lastStillTime + float(self.stillInterval)):
+				if captureStill and time.time() > (self.lastStillTime + float(stillInterval)):
 					self.camera.capture(self.stillPath, use_video_port=True)
 					self.lastStillTime = time.time()
 					'''
 					self.trial['lastStillTime'] = datetime.now().strftime('%Y%m%d %H:%M:%S')
-					'''			
+					'''
+				self.secondsElapsedStr = str(round(time.time() - startRecordSeconds, 1))
+					
 			self.camera.stop_recording()
 
 			logger.debug('Stop video file:' + videoFilePath)
 			self.trial.newEvent('stopVideo', currentRepeat, str=videoFilePath) # paired with startVideo			
-
+			
 			currentRepeat += 1
 
 			# convert to mp4
-			if self.converttomp4:
-				self.convertVideo(videoFilePath, self.fps)
+			if converttomp4:
+				self.convertVideo(videoFilePath, fps)
+
+		self.lastResponse = 'camera stopped'
 			
 		self.state = 'idle'
 		self.currentFile = ''
+		self.secondsElapsedStr = 'n/a'
+		
 		self.trial.stopTrial()
 		self.camera.close()
 		logging.debug('recordVideoThread end')
@@ -206,7 +199,10 @@ class bCamera:
 		if okGo:
 			self.state = 'streaming' if onoff else 'idle'
 			if onoff:
-				cmd = ["./bin/stream", "start", str(self.streamWidth), str(self.streamHeight)]
+				streamResolution = self.trial.getConfig('video', 'streamResolution')
+				streamWidth = streamResolution.split(',')[0] #str is ok here
+				streamHeight = streamResolution.split(',')[1]
+				cmd = ["./bin/stream", "start", str(streamWidth), str(streamHeight)]
 				logger.info(cmd)
 				try:
 					out = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
@@ -241,9 +237,10 @@ class bCamera:
 				if 1:
 
 					# save into date folder
+					savePath = self.trial.getConfig('trial', 'savePath')
 					startTime = datetime.now()
 					startTimeStr = startTime.strftime('%Y%m%d')
-					saveVideoPath = os.path.join(self.savePath, startTimeStr)
+					saveVideoPath = os.path.join(savePath, startTimeStr)
 					if not os.path.isdir(saveVideoPath):
 						os.makedirs(saveVideoPath)
 
@@ -275,28 +272,37 @@ class bCamera:
 			now=time.time()
 			logger.debug('stopArmVideo()')
 			self.state = 'armed'
-			self.lastResponse = 'Stopped armed video recording at ' + time.strftime('%H:%M:%s', time.localtime(now)) 
+			self.lastResponse = 'Stopped armed video recording at ' + time.strftime('%H:%M:%s', time.localtime(now))
+
 	def armVideoThread(self, saveVideoPath):
 		'''
 		Arm the camera by starting a circular stream
 		
 		Start recording from circular stream in response to trigger.
-		This will record until (i) recordDuration or (ii) stop trigger
+		This will record until (i) repeatDuration or (ii) stop trigger
 		'''
 		if 1: #self.camera:
 			lastStill = 0
-			numberOfRepeats = float('Inf') if self.recordInfinity else self.numberOfRepeats
 			
-			logger.debug('Initializing camera')
-			self.camera = picamera.PiCamera()
-			self.camera.resolution = (self.width, self.height)
-			self.camera.led = 0
-			self.camera.framerate = self.fps
+			#
+			thisCamera = self.initCamera()
+			repeatDuration = thisCamera['repeatDuration']
+			repeatInfinity = thisCamera['repeatInfinity']
+			numberOfRepeats = thisCamera['numberOfRepeats']
+			fps = thisCamera['fps']
+			captureStill = thisCamera['captureStill']
+			stillInterval = thisCamera['stillInterval']
+			converttomp4 = thisCamera['converttomp4']
+			savePath = thisCamera['savePath']
+			bufferSeconds = thisCamera['bufferSeconds'] # for video loop
+			# tweek numberOfRepeats
+			#numberOfRepeats = float('Inf') if repeatInfinity else float(numberOfRepeats)
+			
 			self.camera.start_preview()
 
-			logger.debug('Starting circular stream, bufferSeconds:' + str(self.bufferSeconds))
-			self.circulario = picamera.PiCameraCircularIO(self.camera, seconds=self.bufferSeconds)
-			self.camera.start_recording(self.circulario, format='h264')
+			logger.debug('Starting circular stream, bufferSeconds:' + str(bufferSeconds))
+			circulario = picamera.PiCameraCircularIO(self.camera, seconds=bufferSeconds)
+			self.camera.start_recording(circulario, format='h264')
 
 			while self.isState('armed') or self.isState('armedrecording'):
 				self.camera.wait_recording()
@@ -305,22 +311,24 @@ class bCamera:
 					currentRepeat = 1 #important: for now we will just do one repeat
 					
 					#todo: log time when trigger in is received
-					now = time.time()
-					startTimeStr = time.strftime('%Y%m%d_%H%M%S', time.localtime(now)) 
-					
+					#now = time.time()
+					#startTimeStr = time.strftime('%Y%m%d_%H%M%S', time.localtime(now)) 
 					#self.lastResponse = 'Trigger in at'
 					
-					# this is good, when we receive trigger, we need to start trial !!!
-					self.trial.startTrial(slave=True, now=now)
+					# when we receive trigger, we need to start trial !!!
+					self.trial.startTrial(startArmVideo=True)
 
-					beforefilename = startTimeStr + '_before_t' + str(self.trial.trialNum) + '.h264'
-					afterfilename = startTimeStr + '_after_t' + str(self.trial.trialNum) + '.h264'
-					beforefilepath = os.path.join(saveVideoPath, beforefilename)
+					self.trial.newEpoch()
+
+					# todo: get base file name form trial
+					filePrefix = self.trial.getFilename(withRepeat=True) # uses ['lastEpochSeconds']
+					beforefilename = filePrefix + '_before.h264'
+					afterfilename = filePrefix + '_after.h264'					
+					beforefilepath = os.path.join(saveVideoPath, beforefilename) # saveVideoPath is param to *this function
 					afterfilepath = os.path.join(saveVideoPath, afterfilename)
 
-					self.trial.newEpoch(now)
-					self.trial.newEvent('beforefilepath', currentRepeat, str=beforefilepath, now=now)
-					self.trial.newEvent('afterfilepath', currentRepeat, str=afterfilepath, now=now)
+					self.trial.newEvent('beforefilepath', currentRepeat, str=beforefilepath)
+					self.trial.newEvent('afterfilepath', currentRepeat, str=afterfilepath)
 
 					#currentRepeat = 1
 
@@ -328,24 +336,29 @@ class bCamera:
 					# record the frames "after" motion
 					self.camera.split_recording(afterfilepath)					
 					# Write the 10 seconds "before" motion to disk as well
-					self.circulario.copy_to(beforefilepath, seconds=self.bufferSeconds)
-					self.circulario.clear()
-				
+					circulario.copy_to(beforefilepath, seconds=bufferSeconds)
+					circulario.clear()
+			
+					startRecordSeconds = time.time()
+					self.secondsElapsedStr = '0'
+			
 					logger.debug('Start video file:' + afterfilename)
 					self.currentFile = afterfilename
 				
 					# for now, record ONE video file per start trigger
-					recordDuration = self.recordDuration
 					stopOnTrigger = False #todo: make this global and set on pin
-					while self.isState('armedrecording') and not stopOnTrigger and (time.time()<(now + float(recordDuration))):
+					while self.isState('armedrecording') and not stopOnTrigger and (time.time()<(startRecordSeconds + float(repeatDuration))):
 						self.camera.wait_recording() # seconds
 
-						if self.captureStill and time.time() > (lastStill + float(self.stillInterval)):
+						self.secondsElapsedStr = str(round(time.time() - startRecordSeconds, 1))
+
+						if captureStill and time.time() > (lastStill + float(stillInterval)):
 							self.camera.capture(self.stillPath, use_video_port=True)
 							lastStill = time.time()
 						
-					self.camera.split_recording(self.circulario)
-					#currentRepeat += 1
+					self.secondsElapsedStr = 'n/a'
+
+					self.camera.split_recording(circulario)
 			
 					self.currentFile = ''
 					self.trial.stopTrial()
@@ -354,41 +367,70 @@ class bCamera:
 					self.lastResponse = 'Stopped trial at xxx'
 										
 					# convert to mp4
-					if self.converttomp4:
+					if converttomp4:
 						# before
-						self.convertVideo(beforefilepath, self.fps)
+						self.convertVideo(beforefilepath, fps)
 						# after
-						self.convertVideo(afterfilepath, self.fps)
+						self.convertVideo(afterfilepath, fps)
 
-	'''
-	#called from armVideoThread()
-	def write_video_(self, stream, beforeFilePath):
-		# Write the entire content of the circular buffer to disk. No need to
-		# lock the stream here as we're definitely not writing to it simultaneously
-		with io.open(beforeFilePath, 'wb') as output:
-			for frame in stream.frames:
-				if frame.frame_type == picamera.PiVideoFrameType.sps_header:
-					stream.seek(frame.position)
-					break
-			while True:
-				buf = stream.read1()
-				if not buf:
-					break
-				output.write(buf)
-		# Wipe the circular stream once we're done
-		stream.seek(0)
-		stream.truncate()
-	'''
-	
 	def annotate(self, text):
 		''' add watermark to video '''
-		try:
-			self.camera.annotate_background = picamera.Color('black')
-			self.camera.annotate_text = str(text)
-		except picamera.exc.PiCameraClosed as e:
-			print(e)
+		if self.camera:
+			try:
+				self.camera.annotate_background = picamera.Color('black')
+				self.camera.annotate_text = str(text)
+			except picamera.exc.PiCameraClosed as e:
+				logger.error('watermark ' + str(e))
 
+	#########################################################################
+	# convert video thread
+	#########################################################################
+	# convertErrorQueue, convertFileQueue
+	def startConvertThread(self):
+		""" Call this in constructor """
+		#self.convertFileQueue = queue.Queue()
+		#self.convertErrorQueue = queue.Queue()
+		thread = threading.Thread(target=self.convertVideoThread, args=(self.convertFileQueue,self.convertErrorQueue,))
+		thread.daemon = True							# Daemonize thread
+		thread.start()									# Start the execution
+
+	def convertVideoThread(self, fileQueue, errorQueue):
+		""" A thread that will monitor fileQueue and call ./bin/convert_video.sh to convert .h264 to .mp4 """
+		#print('convertVideoThread() fileQueue:', fileQueue)
+		#print('convertVideoThread() errorQueue:', errorQueue)
+		while True:
+			try:
+				file = fileQueue.get(block=False, timeout=0)
+			except (queue.Empty) as e:
+				pass
+			else:
+				#print('queue not empty')
+				logger.debug('starting convertVideoThread:' + file['path'] + ' fps:' + str(file['fps']))
+				cmd = ["./bin/convert_video.sh", file['path'], str(file['fps']), "delete"]
+				try:
+					out = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+					#self.lastResponse = 'Converted video to mp4'
+				except (subprocess.CalledProcessError, OSError) as e:
+					logger.error('convertVideoThread ./bin/convert_video exception: ' + str(e))
+					pass
+				except:
+					raise	
+				logger.debug('finished convertVideoThread:' + file['path'] + ' fps:' + str(file['fps']))
+				
+			time.sleep(1)
+	
 	def convertVideo(self, videoFilePath, fps):
+		"""
+		Add a file/fps to the convertFile queue. convertVideoThread() will process it
+		"""
+		theDict = {}
+		theDict['path'] = videoFilePath
+		theDict['fps'] = fps
+		#print('convertVideo adding to file queue:', theDict)
+		self.convertFileQueue.put(theDict)
+		
+		'''
+		this was working
 		# at end of video recording, convert h264 to mp4
 		logger.debug('converting video:' + videoFilePath + ' fps:' + str(fps))
 		cmd = ["./bin/convert_video.sh", videoFilePath, str(fps)]
@@ -402,7 +444,10 @@ class bCamera:
 			logger.error('bin/convert_video exception: ' + str(e))
 			pass
 		except:
-			raise		
+			raise	
+		logger.debug('converting video finished')
+		'''
+			
 if __name__ == '__main__':
 	logger = logging.getLogger()
 	handler = logging.StreamHandler()

@@ -1,6 +1,15 @@
 ## Platformio
 
-See [this][blog1] blog post for getting started. Also see my bug report and the fix in the [teensy forum][teensy-forum[ and the [platformio forum][platformio-forum].
+This folder contains code to be uploaded to a teensy/arduino microcontroller. To do this from the command line, use platformio.
+
+See the [comparison chart](https://www.pjrc.com/teensy/techspecs.html), the best option is Teensy 35.
+
+The code relies on two teensy/arduino libraries
+
+ - [AccelStepper library](https://www.pjrc.com/teensy/td_libs_AccelStepper.html)
+ - [Encoder library](https://www.pjrc.com/teensy/td_libs_Encoder.html)
+ 
+See [this][blog1] blog post for getting started. Also, see a recent bug report and the fix in the [teensy forum][teensy-forum] and the [platformio forum][platformio-forum]. As always with open source, it is not good because it is free, it is good because it improves with user feedback. Please contribute.
 
 
 ## Preliminaries
@@ -9,13 +18,23 @@ Add user pi to dialout group
 
 	sudo usermod -a -G dialout pi
 
-Install udev rules so you can talk to serial ports on usb. Download '49-teensy.rules' from [here](https://www.pjrc.com/teensy/49-teensy.rules) and place its contents in
+Install udev rules so you can talk to serial ports on usb. Download [49-teensy.rules](https://www.pjrc.com/teensy/49-teensy.rules). See end of this page for a copy of its contents.
 
 	sudo pico /etc/udev/rules.d/49-teensy.rules
 
-## Install platformio
+	# reboot the raspberry pi
+	sudo reboot
 
-	cd ~/homecage/homecage_app/treadmill/platformio
+## Install (using our script)
+
+This assumes you have a Teensy 3.2/3.3
+
+	cd homecage/treadmill/platformio
+	./install-treadmill.sh
+	
+## Install platformio (manually)
+
+	cd ~/homecage/treadmill/platformio
 
 	# make a python 2 virtual environment
 	virtualenv -p python2 --no-site-packages env
@@ -23,29 +42,102 @@ Install udev rules so you can talk to serial ports on usb. Download '49-teensy.r
 	source env/bin/activate
 	
 	pip install -U platformio
-
-	# remember to run platformio with
-	#sudo env/bin/platformio
 	
-## Make a blink project
+## Upload treadmill.cpp to a teensy 2 (manually)
+
+	cd ~/homecage/treadmill/platformio/treadmill
+	sudo ../env/bin/platformio run --target upload
+	
+After a lot of output, you should see something like
+
+```
+AVAILABLE: jlink, teensy-cli, teensy-gui
+CURRENT: upload_protocol = teensy-cli
+Rebooting...
+Uploading .pioenvs/teensy31/firmware.hex
+Teensy Loader, Command Line, Version 2.1
+Read ".pioenvs/teensy31/firmware.hex": 30332 bytes, 11.6% usage
+Soft reboot performed
+Waiting for Teensy device...
+(hint: press the reset button)
+Found HalfKay Bootloader
+Read ".pioenvs/teensy31/firmware.hex": 30332 bytes, 11.6% usage
+Programming..............................
+Booting
+======================================== [SUCCESS] Took 19.42 seconds ========================================
+```
+
+# Troubleshooting
+
+## Check that platformio.ini specifies your particular board
+
+```
+more platform.ini
+```
+
+```
+[env:teensy31]
+platform = teensy
+board = teensy31
+framework = arduino
+```
+
+## Get a list of boards
+
+```
+platformio boards
+
+```
+
+```
+Platform: teensy
+--------------------------------------------------------------------------------
+ID                    MCU            Frequency  Flash   RAM    Name
+--------------------------------------------------------------------------------
+teensy20              ATMEGA32U4     16MHz     31.50KB 2.50KB Teensy 2.0
+teensy30              MK20DX128      48MHz     128KB   16KB   Teensy 3.0
+teensy31              MK20DX256      72MHz     256KB   64KB   Teensy 3.1 / 3.2
+teensy35              MK64FX512      120MHz    512KB   192KB  Teensy 3.5
+teensy36              MK66FX1M0      180MHz    1MB     256KB  Teensy 3.6
+teensylc              MKL26Z64       48MHz     62KB    8KB    Teensy LC
+teensy20pp            AT90USB1286    16MHz     127KB   8KB    Teensy++ 2.0
+```
+
+As an example, add a teensy 3.5 to platformio.ini with
+
+	platformio init --board=teensy35
+
+## Check which serial ports platformio is using
+
+```
+platformio device list
+```
+
+```
+/dev/ttyACM0
+------------
+Hardware ID: USB VID:PID=16C0:0483 SER=1756190 LOCATION=1-1.1.2:1.0
+Description: USB Serial
+
+/dev/ttyAMA0
+------------
+Hardware ID: 3f201000.serial
+Description: ttyAMA0
+```
+
+## Make a simple project to debug uploading to teensy
 
 	mkdir blink
 	cd blink
 
-	#Initialize blink project with your teensy board
-	sudo ../env/bin/platformio init --board=teensy31
+	#Initialize blink project with teensy 3.1/3.2 boards
+	# this will create file platformio.ini and 
+	# folders /src and /lib
+	../env/bin/platformio init --board=teensy31
 	
-
 Copy the following into blink/src/main.cpp
 
 	pico src/main.cpp
-
-Upload your blink project to teensy
-
-	sudo ../env/bin/platformio run --target upload
-
-	# if running into problems, try to clean and then upload again
-	sudo ../env/bin/platformio run --target clean
 
 ```
 /*
@@ -75,26 +167,22 @@ void loop()
 }
 ```
 
-
-## Useful things
-
-Get a list of boards with `platformio boards`
+Upload the blink project to teensy
 
 ```
-Platform: teensy
---------------------------------------------------------------------------------
-ID                    MCU            Frequency  Flash   RAM    Name
---------------------------------------------------------------------------------
-teensy20              ATMEGA32U4     16MHz     31.50KB 2.50KB Teensy 2.0
-teensy30              MK20DX128      48MHz     128KB   16KB   Teensy 3.0
-teensy31              MK20DX256      72MHz     256KB   64KB   Teensy 3.1 / 3.2
-teensy35              MK64FX512      120MHz    512KB   192KB  Teensy 3.5
-teensy36              MK66FX1M0      180MHz    1MB     256KB  Teensy 3.6
-teensylc              MKL26Z64       48MHz     62KB    8KB    Teensy LC
-teensy20pp            AT90USB1286    16MHz     127KB   8KB    Teensy++ 2.0
+sudo ../env/bin/platformio run --target upload
+
+# if running into problems, try to clean and then upload again
+sudo ../env/bin/platformio run --target clean
 ```
 
-Here is [https://www.pjrc.com/teensy/49-teensy.rules](https://www.pjrc.com/teensy/49-teensy.rules)
+## To sudo or not
+
+To upload to teensy you should use sudo. To create a new project you should not.
+
+## udev rules
+
+Here is the contents of [49-teensy.rules](https://www.pjrc.com/teensy/49-teensy.rules)
 
 ```
 # UDEV Rules for Teensy boards, http://www.pjrc.com/teensy/

@@ -1,14 +1,14 @@
-[2018-06-18 11:04:24,609] {bTrial.py loadConfigFile:224} DEBUG - loadConfigFile
-[2018-06-18 11:04:24,673] {treadmill_app.py <module>:130} DEBUG - Running flask server with debug = True
-[2018-06-18 11:04:24,675] {treadmill_app.py <module>:133} DEBUG - Flask server is running at: http://192.168.1.4:5010
-[2018-06-18 11:04:28,647] {treadmill_app.py myAfterRequest:60} DEBUG - after /
-[2018-06-18 11:04:28,702] {treadmill_app.py myAfterRequest:60} DEBUG - after /static/bootstrap/css/bootstrap.min.css
-[2018-06-18 11:04:28,708] {treadmill_app.py myAfterRequest:60} DEBUG - after /static/angular-ui-switch.min.css
-[2018-06-18 11:04:28,712] {treadmill_app.py myAfterRequest:60} DEBUG - after /static/font-awesome-4.7.0/css/font-awesome.min.css
-[2018-06-18 11:04:28,713] {treadmill_app.py myAfterRequest:60} DEBUG - after /static/treadmill.css
-[2018-06-18 11:04:28,717] {treadmill_app.py myAfterRequest:60} DEBUG - after /static/angular/angular.min.js
-[2018-06-18 11:04:28,719] {treadmill_app.py myAfterRequest:60} DEBUG - after /static/bootstrap/js/bootstrap.min.js
-[2018-06-18 11:04:28,748] {treadmill_app.py myAfterRequest:60} DEBUG - after /static/angular-ui-switch.min.js
-[2018-06-18 11:04:28,750] {treadmill_app.py myAfterRequest:60} DEBUG - after /static/treadmill.js
-[2018-06-18 11:04:28,760] {treadmill_app.py myAfterRequest:60} DEBUG - after /static/plotly/plotly-1.38.3.min.js
-[2018-06-18 11:04:29,312] {treadmill_app.py myAfterRequest:60} DEBUG - after /static/font-awesome-4.7.0/fonts/fontawesome-webfont.woff2
+[2018-06-21 11:21:15,759] {bTrial.py loadConfigFile:136} DEBUG - loadConfigFile
+[2018-06-21 11:21:15,789] {treadmill_app.py <module>:172} DEBUG - Running flask server with debug = True
+[2018-06-21 11:21:15,790] {treadmill_app.py <module>:175} DEBUG - Flask server is running at: http://192.168.1.4:5010
+[2018-06-21 11:21:16,804] {treadmill_app.py myAfterRequest:60} DEBUG - after /
+[2018-06-21 11:21:16,863] {treadmill_app.py myAfterRequest:60} DEBUG - after /static/angular/angular.min.js
+[2018-06-21 11:21:16,866] {treadmill_app.py myAfterRequest:60} DEBUG - after /static/angular-ui-switch.min.css
+[2018-06-21 11:21:16,869] {treadmill_app.py myAfterRequest:60} DEBUG - after /static/font-awesome-4.7.0/css/font-awesome.min.css
+[2018-06-21 11:21:16,870] {treadmill_app.py myAfterRequest:60} DEBUG - after /static/treadmill.css
+[2018-06-21 11:21:16,872] {treadmill_app.py myAfterRequest:60} DEBUG - after /static/bootstrap/css/bootstrap.min.css
+[2018-06-21 11:21:16,878] {treadmill_app.py myAfterRequest:60} DEBUG - after /static/bootstrap/js/bootstrap.min.js
+[2018-06-21 11:21:16,900] {treadmill_app.py myAfterRequest:60} DEBUG - after /static/angular-ui-switch.min.js
+[2018-06-21 11:21:16,906] {treadmill_app.py myAfterRequest:60} DEBUG - after /static/treadmill.js
+[2018-06-21 11:21:16,917] {treadmill_app.py myAfterRequest:60} DEBUG - after /static/plotly/plotly-1.38.3.min.js
+[2018-06-21 11:21:17,515] {treadmill_app.py myAfterRequest:60} DEBUG - after /static/font-awesome-4.7.0/fonts/fontawesome-webfont.woff2

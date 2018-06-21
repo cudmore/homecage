@@ -1,10 +1,10 @@
 # Robert H Cudmore
 # 20180525
 
-import os, time, json
+import os, sys, time, json
 from collections import OrderedDict
 from datetime import datetime, timedelta
-
+from pprint import pprint
 import RPi.GPIO as GPIO
 
 import logging
@@ -26,9 +26,11 @@ class bTrial:
 		
 		if self.config['video']['useCamera']:
 			self.camera = bCamera(trial=self)
+			#self.camera.setConfig(self.config)
 		else:
 			self.camera = None
-			
+		
+		
 		self.hostname = hostname()
 		
 		# GPIO
@@ -37,9 +39,7 @@ class bTrial:
 		#
 		# OLD
 		self.trialNum = 0
-		
-		self.lastResponse = ''
-		
+				
 		self.trial = OrderedDict()
 		self.trial['isRunning'] = False
 		self.trial['startTimeSeconds'] = None
@@ -60,15 +60,32 @@ class bTrial:
 		self.trial['currentFile'] = ''
 		self.trial['lastStillTime'] = None
 
+		'''
 		self.trial['animalID'] = ''
 		self.trial['conditionID'] = ''
+		'''
+		
+		self.trial['lastResponse'] = 'None'
+
+		#self.trial['secondsRemainingStr'] = ''
 		
 		# removed for treadmill
 		#self.trial['headerStr'] = ''
 		
 		# added for treadmill
-		self.trial['slave'] = False
+		#self.trial['slave'] = False
 	
+	@property
+	def lastResponse(self):
+		return self.trial['lastResponse']
+	
+	@lastResponse.setter
+	def lastResponse(self, str):
+		self.trial['lastResponse'] = str
+			
+	#########################################################################
+	# status and config
+	#########################################################################
 	def getStatus(self):
 		ret = OrderedDict()
 		ret['config'] = self.config
@@ -78,9 +95,95 @@ class bTrial:
 		ret['trial']['currentDate'] = now.strftime('%Y-%m-%d')
 		ret['trial']['currentTime'] = now.strftime('%H:%M:%S')
 
+		ret['trial']['secondsElapsedStr'] = self.camera.secondsElapsedStr
 		ret['trial']['cameraState'] = self.camera.state
 		return ret
+	
+	def updateConfig(self, configDict):
+		"""
+			Update self.config (['trial'], ['lights'], ['video'])
+			Only update the subset that can be changed by user in javascript
+			Remember, ['motor'] is saved in a different controller !!!
+		"""
+		self.config['trial'] = configDict['trial']
+		#self.config['motor'] = configDict['motor']
+		self.config['lights'] = configDict['lights']
+		self.config['video'] = configDict['video']
 		
+		print('bTrial.updateConfig()')
+		print("=== self.config['trial']:")
+		pprint(self.config['trial'])
+		
+		print("=== self.config['motor']:")
+		pprint(self.config['motor'])
+		
+		print("=== self.config['lights']:")
+		pprint(self.config['lights'])
+		
+		print("=== self.config['video']:")
+		pprint(self.config['video'])
+		
+	def updateAnimal(self, configDict):
+		"""
+			Update self.config (['trial'], ['lights'], ['video'])
+			Only update the subset that can be changed by user in javascript
+			Remember, ['motor'] is saved in a different controller !!!
+		"""
+		self.config['trial']['animalID'] = configDict['trial']['animalID']
+		self.config['trial']['conditionID'] = configDict['trial']['conditionID']
+		
+	def loadConfigFile(self):
+		logger.debug('loadConfigFile')
+		# full path to folder *this file lives in
+		mypath = os.path.abspath(os.path.dirname(__file__)) # full path to *this file
+		configpath = os.path.join(mypath, 'config_trial.json')
+		with open(configpath) as configFile:
+			try:
+				config = json.load(configFile, object_pairs_hook=OrderedDict)
+				#config = self.convertConfig_(config)
+			except ValueError as e:
+				logger.error('config.json ValueError: ' + str(e))
+				sys.exit(1)
+			else:
+				return config
+
+	'''
+	def convertConfig_(self, config):
+		"""
+		This is shitty, saving json is converting everything to string (sometimes).
+		We need to manually convert some values back to float/int
+		"""
+		config['trial']['repeatDuration'] = float(config['trial']['repeatDuration'])
+		config['trial']['numberOfRepeats'] = int(config['trial']['numberOfRepeats'])
+
+		config['video']['fps'] = int(config['video']['fps'])
+		config['video']['stillInterval'] = float(config['video']['stillInterval'])
+	
+		config['lights']['sunset'] = float(config['lights']['sunset'])
+		config['lights']['sunrise'] = float(config['lights']['sunrise'])
+
+		return config
+	'''
+	
+	def saveConfig(self):
+		""" Save self.config to a file """
+		logger.debug('saveConfig')
+		with open('config_trial.json', 'w') as outfile:
+			json.dump(self.config, outfile, indent=4)
+		self.lastResponse = 'Saved configuration in config_trial.json file'
+	
+	def getConfig(self, key1, key2):
+		""" Get a single config parameter """
+		if not key1 in self.config:
+			#error
+			raise
+		else:
+			if not key2 in self.config[key1]:
+				# error
+				raise
+			else:
+				return self.config[key1][key2]
+				
 	#########################################################################
 	# GPIO
 	#########################################################################
@@ -218,43 +321,10 @@ class bTrial:
 
 
 	#########################################################################
-	# config
-	#########################################################################
-	def loadConfigFile(self):
-		logger.debug('loadConfigFile')
-		# full path to folder *this file lives in
-		mypath = os.path.abspath(os.path.dirname(__file__)) # full path to *this file
-		configpath = os.path.join(mypath, 'config_trial.json')
-		with open(configpath) as configFile:
-			try:
-				config = json.load(configFile, object_pairs_hook=OrderedDict)
-				config = self.convertConfig_(config)
-			except ValueError as e:
-				logger.error('config.json ValueError: ' + str(e))
-				sys.exit(1)
-			else:
-				return config
-
-	def convertConfig_(self, config):
-		'''
-		This is shitty, saving json is converting everything to string (sometimes).
-		We need to manually convert some values back to float/int
-		'''
-		config['video']['fileDuration'] = float(config['video']['fileDuration'])
-		config['video']['numberOfRepeats'] = int(config['video']['numberOfRepeats'])
-		config['video']['fps'] = int(config['video']['fps'])
-		config['video']['stillInterval'] = float(config['video']['stillInterval'])
-	
-		config['lights']['sunset'] = float(config['lights']['sunset'])
-		config['lights']['sunrise'] = float(config['lights']['sunrise'])
-
-		return config
-
-	#########################################################################
 	# start/stop
 	#########################################################################
 	#def startTrial(self, headerStr='', now=None):
-	def startTrial(self, slave=False, now=None):
+	def startTrial(self, startArmVideo=False, now=None):
 		if now is None:
 			now = time.time()
 			
@@ -263,7 +333,7 @@ class bTrial:
 		# removed for treadmill
 		#self.trial['headerStr'] = headerStr
 
-		self.trial['slave'] = slave
+		self.trial['startArmVideo'] = startArmVideo
 		
 		self.trial['isRunning'] = True
 		self.trial['startTimeSeconds'] = now
@@ -284,11 +354,15 @@ class bTrial:
 		self.trial['currentFile'] = 'n/a' # video
 		self.trial['lastStillTime'] = None
 		
-		logger.debug('startTrial')
+		logger.debug('startTrial startArmVideo=' + str(startArmVideo))
 		self.newEvent('startTrial', self.trialNum, now=now)
 		
-		if not self.trial['slave'] and self.camera is not None:
-			self.camera.record(True)
+		if self.camera is not None:
+			if startArmVideo:
+				# *this function startTrial() is being called from with the startarmvideo loop
+				pass
+			else:
+				self.camera.record(True)
 		
 	def stopTrial(self):
 		# todo: finish up and close trial file
@@ -299,8 +373,13 @@ class bTrial:
 			self.trial['isRunning'] = False
 			self.saveTrial()
 
-			if not self.trial['slave'] and self.camera is not None:
-				self.camera.record(False)
+			if self.trial['startArmVideo']:
+				if self.camera is not None:
+					# *this function startTrial() is being called from with the startarmvideo loop
+					pass
+			else:
+				if self.camera is not None:
+					self.camera.record(False)
 		
 	def newEvent(self, type, val, str='', now=None):
 		if now is None:
@@ -323,15 +402,15 @@ class bTrial:
 	def getFilename(self, useStartTime=False, withRepeat=False):
 		'''
 		Get a base filename from trial
-		Caller isresponsible for appending proper filetype extension
+		Caller is responsible for appending proper filetype extension
 		'''
 		hostnameID_str = '_' + self.hostname # we always have a host name
 		animalID_str = ''
-		if self.trial['animalID']:
-			animalID_str = '_' + self.trial['animalID']
+		if self.config['trial']['animalID']:
+			animalID_str = '_' + self.config['trial']['animalID']
 		conditionID_str = ''
-		if self.trial['conditionID']:
-			conditionID_str = '_' + self.trial['conditionID']
+		if self.config['trial']['conditionID']:
+			conditionID_str = '_' + self.config['trial']['conditionID']
 		# time is the time the epoch was started
 		if useStartTime:
 			useThisTime = time.localtime(self.trial['startTimeSeconds'])
@@ -362,18 +441,26 @@ class bTrial:
 							'time=' + self.trial['timeStr'] + ';' \
 							'startTimeSeconds=' + str(self.trial['startTimeSeconds']) + ';' \
 							'hostname=' + '"' + self.hostname + '"' + ';' \
-							'id=' + '"' + self.trial['animalID'] + '"' + ';' \
-							'condition=' + '"' + self.trial['conditionID'] + '"' + ';' \
+							'id=' + '"' + self.config['trial']['animalID'] + '"' + ';' \
+							'condition=' + '"' + self.config['trial']['conditionID'] + '"' + ';' \
 							'trialNum=' + str(self.trial['trialNum']) + ';' \
-							'numRepeats=' + str(self.trial['currentEpoch']) + ';'
+							'numRepeats=' + str(self.trial['currentEpoch']) + ';' \
+							'repeatDuration=' + str(self.config['trial']['repeatDuration']) + ';' \
+							'numRepeatsRecorded=' + str(self.config['trial']['numberOfRepeats']) + ';' \
+							'repeatInfinity=' + '"' + str(self.config['trial']['repeatInfinity']) + '"' + ';'
+
 			if self.camera is not None:
-				cameraHeader = self.camera.getHeaderStr()
+				cameraHeader = 'video_fps=' + str(self.config['video']['fps']) + ';' \
+							'video_resolution=' + '"' + self.config['video']['resolution'] + '"' + ';'
 				headerLine += cameraHeader
+			
 			'''
 			if self.trial['headerStr']:
 				headerLine += self.trial['headerStr']
 			'''
 			headerLine += eol
+			
+			print(headerLine)
 			
 			file.write(headerLine)
 			# column header for event data is (date, time, sconds, event, value, str
@@ -467,14 +554,16 @@ class bTrial:
 	def startTimeSeconds(self):
 		return self.trial['startTimeSeconds'] # can be None
 
+	'''
 	@property
 	def animalID(self):
-		return self.trial['animalID'] # can be None
+		return self.config['trial']['animalID'] # can be None
 
 	@property
 	def conditionID(self):
-		return self.trial['conditionID'] # can be None
-
+		return self.config['trial']['conditionID'] # can be None
+	'''
+	
 if __name__ == '__main__':
 	logger = logging.getLogger()
 	handler = logging.StreamHandler()

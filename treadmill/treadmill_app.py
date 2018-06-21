@@ -74,6 +74,26 @@ def status():
 	return jsonify(treadmill.getStatus())
 
 #########################################################################
+@app.route('/startRecord')
+def startRecord():
+	treadmill.startRecord()
+	return jsonify(treadmill.getStatus())
+
+@app.route('/stopRecord')
+def stopRecord():
+	treadmill.stopRecord()
+	return jsonify(treadmill.getStatus())
+
+@app.route('/startStream')
+def startStream():
+	treadmill.startStream()
+	return jsonify(treadmill.getStatus())
+
+@app.route('/stopStream')
+def stopStream():
+	treadmill.stopStream()
+	return jsonify(treadmill.getStatus())
+
 @app.route('/startArm')
 def startArm():
 	treadmill.startArm()
@@ -94,11 +114,33 @@ def stopTrial():
 	treadmill.stopTrial()
 	return jsonify(treadmill.getStatus())
 
+
+#########################################################################
+@app.route('/api/submit/saveconfig')
+def saveconfig():
+	treadmill.saveConfig()
+	return jsonify(treadmill.getStatus())
+
+@app.route('/api/submit/configparams', methods=['POST'])
+def configparams():
+	post = request.get_json()
+	#print('todo: finish /api/submit/configparams')
+	treadmill.updateConfig(post)
+	return jsonify(treadmill.getStatus())
+
+@app.route('/api/submit/animalparams', methods=['POST'])
+def animalparams():
+	post = request.get_json()
+	#print('todo: finish /api/submit/configparams')
+	treadmill.updateAnimal(post)
+	return jsonify(treadmill.getStatus())
+
 #########################################################################
 @app.route('/api/submit/motorparams', methods=['POST'])
 def motorparams():
 	post = request.get_json()
-	print(post)
+	#print('/api/submit/motorparams ', post)
+	treadmill.updateMotor(post)
 	return jsonify(treadmill.getStatus())
 
 @app.route('/api/eventout/<name>/<int:onoff>')

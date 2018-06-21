@@ -19,6 +19,8 @@ function usage(){
     echo "   treadmill status"
     echo "   treadmill enable    - enable treadmill at boot"
     echo "   treadmill disable   - disable treadmill at boot"
+    echo "   -----------------"
+    echo "   treadmill debug     - run treadmill on command line"
 }
 
 myip=`hostname -I | xargs`
@@ -43,8 +45,11 @@ case "$1" in
 	disable) sudo systemctl disable treadmill.service 
 		echo "treadmill will not run at boot"
 		;;
+	debug) source env/bin/activate
+		python treadmill_app.py debug
+		;;
 	*) usage
 		;;
 esac
 
-exit 0
+#exit 0

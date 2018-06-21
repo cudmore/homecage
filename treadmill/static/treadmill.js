@@ -15,6 +15,86 @@ app.factory('statusFactory', function($http, $location, $interval) {
 });
 
 //////////////////////////////////////////////////////////////////////////////
+// change parameters in config json file
+app.controller('configFormController', function($scope, $http, statusFactory) {
+    
+    /*
+    $scope.submitAnimalForm = function() {
+        console.log('submitAnimalForm()', $scope.configData, 'valid:', $scope.configData.$valid);
+        url = $scope.myUrl + 'api/submit/configparams'
+        console.log('$scope.configData:', $scope.configData.trial.config)
+        $http.post(url, JSON.stringify($scope.configData.trial.config)).
+        	then(function(response) {
+        		//console.log('response.data:', response.data)
+        	});
+    };
+    */
+    
+    $scope.submitConfigForm = function() {
+        console.log('submitConfigForm()', $scope.configData, $scope.configData.$valid);
+        url = $scope.myUrl + 'api/submit/configparams'
+        console.log('$scope.configData:', $scope.configData.trial.config)
+        $http.post(url, JSON.stringify($scope.configData.trial.config)).
+        	then(function(response) {
+        		//console.log('response.data:', response.data)
+        	});
+    };
+    
+    $scope.submitAnimalForm = function() {
+        console.log('submitConfigForm()', $scope.configData, $scope.configData.$valid);
+        url = $scope.myUrl + 'api/submit/animalparams'
+        console.log('$scope.configData:', $scope.configData.trial.config)
+        $http.post(url, JSON.stringify($scope.configData.trial.config)).
+        	then(function(response) {
+        		//console.log('response.data:', response.data)
+        	});
+    };
+    
+    $scope.saveConfig = function() {
+        //console.log('saveConfig()', $scope.configData, $scope.configData.$valid);
+        url = $scope.myUrl + 'api/submit/saveconfig'
+        //console.log('$scope.configData:', $scope.configData.trial.config)
+        $http.get(url).
+        	then(function(response) {
+        		//console.log('response.data:', response.data)
+        	});
+    };
+    
+
+    $scope.animalParamChange = function(isValid) {
+    	// if form fields don't pass validation, they will be 'undefined'
+    	console.log('animalParamChange()', 'isValid:', isValid, $scope.configData)
+    	if (isValid) {
+    		$scope.submitAnimalForm()
+    	}
+    }
+    
+    $scope.configParamChange = function(isValid) {
+    	// if form fields don't pass validation, they will be 'undefined'
+    	console.log('configParamChange()', 'isValid:', isValid, $scope.configData)
+    	if (isValid) {
+    		$scope.submitConfigForm()
+    	}
+    }
+    
+	var  myPromise = statusFactory.getStatus()
+    myPromise.then(function(result) {
+		// this is a large layered dictionary, only change:
+		// status.trial.config.lights
+		// status.trial.config.trial
+		// status.trial.config.video
+		$scope.configData = result				
+    	console.log('configFormController $scope.configData:', $scope.configData)
+    },
+    function(data) {
+        // Handle error here
+        console.log('configFormController error in myPromise')
+	}); // mypromise.then
+	
+}); // configFormController
+
+
+//////////////////////////////////////////////////////////////////////////////
 app.controller('arduinoFormController', function($scope, $http, statusFactory) {
     
     $scope.submitForm = function() {
@@ -26,25 +106,43 @@ app.controller('arduinoFormController', function($scope, $http, statusFactory) {
         	});
     };
     
-    myPromise = statusFactory.getStatus()
+    $scope.motorParamChange = function() {
+    	// if form fields don't pass validation, they will be 'undefined'
+    	console.log('motorParamChange()', $scope.data)
+    	buildPlotly($scope.data)
+    }
+    
+    var myPromise = statusFactory.getStatus()
     myPromise.then(function(result) {
-    	$scope.status = result
-    	//console.log('xxx:', $scope.status)
+    	var status = result
+    	console.log('arduinoFormController myPromise:', status)
 
+		// motorParams
+		// remember, repeatDuration is in seconds, repeatduration is in ms
+		// todo: clean up numberofrepeats versus numberOfRepeats
 		$scope.data = {
-			numberofrepeats: 3,
-			repeatduration: 20000,
-			motorDelay: $scope.status.trial.trial.motor.delay,
-			motorDuration: $scope.status.trial.trial.motor.duration,
-			motorSpeed: $scope.status.trial.trial.motor.speed,
-			motorDirection: $scope.status.trial.trial.motor.direction
+			
+			motorNumberofRepeats: status.trial.config.motor.motorNumberofRepeats,
+			motorRepeatDuration: status.trial.config.motor.motorRepeatDuration,
+			motorDel: status.trial.config.motor.motorDel,
+			motorDur: status.trial.config.motor.motorDur,
+			motorSpeed: status.trial.config.motor.motorSpeed,
+			motorDirection: status.trial.config.motor.motorDirection
 		};
+		
 		//console.log('$scope.data:', $scope.data)
-		//console.log('delay:', $scope.status.trial.trial.motor.delay)
-		console.log('numberOfRepeats:', $scope.status.trial.config.video.numberOfRepeats)
-		console.log('fileDuration:', $scope.status.trial.config.video.fileDuration)
+		//console.log('delay:', status.motor.motorDel)
+		//console.log('numberOfRepeats:', status.trial.config.trial.numberOfRepeats)
+		//console.log('repeatDuration:', status.trial.config.trial.repeatDuration)
+		
+		buildPlotly($scope.data)
+		
+	}); // mypromise.then
 
-		var trialMS = $scope.data.numberofrepeats * $scope.data.repeatduration
+	var buildPlotly = function(motorParams){
+		var trialMS = motorParams.motorNumberofRepeats * motorParams.motorRepeatDuration
+		//console.log('buildPlotly() trialMS:', trialMS)
+		//console.log('buildPlotly() motorParams:', motorParams)
 		
 		//
 		// plotly
@@ -73,6 +171,26 @@ app.controller('arduinoFormController', function($scope, $http, statusFactory) {
 
 		var lineColor = 'rgba(100,100,100,1)'
 		
+		// make a list of rect shapes, one per repeat
+		var i
+		var shapeList = []
+		for (i=0; i<motorParams.motorNumberofRepeats; i++) {
+			thisStart = motorParams.motorRepeatDuration * i + motorParams.motorDel
+			thisStop = thisStart + motorParams.motorDur
+			thisRect = {
+				'type': 'rect',
+				'x0': thisStart,
+				'y0': 0,
+				'x1': thisStop,
+				'y1': 1,
+				'line': {
+					'color': lineColor,
+				},
+				'fillcolor': lineColor,
+			};
+			shapeList.push(thisRect)
+		}
+		
 		var layout = {
 		  showlegend: false,
 		  margin: {
@@ -98,31 +216,7 @@ app.controller('arduinoFormController', function($scope, $http, statusFactory) {
 		  },
 		  //paper_bgcolor: '#7f7f7f',
 		  //plot_bgcolor: '#c7c7c7',
-		'shapes': [
-			{
-				'type': 'rect',
-				'x0': 7000,
-				'y0': 0,
-				'x1': 7000+7000,
-				'y1': 1,
-				'line': {
-					'color': lineColor,
-				},
-				'fillcolor': lineColor,
-			},
-			{
-				'type': 'rect',
-				'x0': 20000+7000,
-				'y0': 0,
-				'x1': 20000+7000+7000,
-				'y1': 1,
-				'line': {
-					'color': lineColor,
-					'width': 2,
-				},
-				'fillcolor': lineColor,
-			},
-		]
+		'shapes': shapeList,
 		};
 		
 		var config = {
@@ -130,12 +224,16 @@ app.controller('arduinoFormController', function($scope, $http, statusFactory) {
 	    }
 
 		Plotly.plot(gd, data, layout, config)
-				window.onresize = function() {
-					Plotly.Plots.resize('test_plotly');
-				};
+		// todo: seperate new lpot from update plot
+		// this is for when we update
+		Plotly.react(gd, data, layout, config)
+		
+		window.onresize = function() {
+			Plotly.Plots.resize('test_plotly');
+		};
 
-			});
-		});
+	}; // $scope.buildPlotly
+}); // arduinoFormController
 
 //////////////////////////////////////////////////////////////////////////////
 app.controller('treadmill', function($scope, $window, $http, $location, $interval, $sce, $timeout, $document) {
@@ -144,16 +242,28 @@ app.controller('treadmill', function($scope, $window, $http, $location, $interva
 	
 	//url of page we loaded
 	$scope.myUrl = $location.absUrl(); //with port :5000
-	console.log('$scope.myUrl=', $scope.myUrl)
+
+    myStreamUrl = 'http://' + $location.host() + ':8080/stream';
+    $scope.myStreamUrl0 = myStreamUrl
+    $scope.myStreamUrl = $sce.trustAsResourceUrl(myStreamUrl);
 	
-	$scope.showConfig = false;
+	$scope.showConfigTable = false;
+	$scope.showConfig = true;
+	$scope.showMotor = false;
 	
     //read the state from homecage backend, do this at an interval
     $scope.getStatus = function () {
 		$http.get($scope.myUrl + 'status').
         	then(function(response) {
         	    $scope.status = response.data;
-				//console.log('$scope.status=', $scope.status)
+				// for armed checkbox, it needs a model
+				$scope.isArmed = $scope.isState('armed') || $scope.isState('armedrecording')
+				//for streaming
+				var tmpWidth = parseInt($scope.status.trial.config.video.streamResolution.split(',')[0],10)
+				var tmpHeight = parseInt($scope.status.trial.config.video.streamResolution.split(',')[1],10)
+				$scope.streamWidth = tmpWidth + (tmpWidth * 0.04)
+				$scope.streamHeight = tmpHeight + (tmpWidth * 0.04)
+
         	});
 	};
 
@@ -163,6 +273,58 @@ app.controller('treadmill', function($scope, $window, $http, $location, $interva
 		switch (buttonID) {
 			case 'toggleConfig':
 				$scope.showConfig = ! $scope.showConfig
+				break;
+			case 'toggleMotor':
+				$scope.showMotor = ! $scope.showMotor
+				break;
+			case 'toggleConfigTable':
+				$scope.showConfigTable = ! $scope.showConfigTable
+				break;
+				
+			case 'startRecord':
+				url = $scope.myUrl + 'startRecord'
+				$http.get(url).
+    		    		then(function(response) {
+        				    $scope.status = response.data;
+        				});
+				break;
+			case 'stopRecord':
+				url = $scope.myUrl + 'stopRecord'
+				$http.get(url).
+    		    		then(function(response) {
+        				    $scope.status = response.data;
+        				});
+				break;
+
+			case 'startStream':
+				url = $scope.myUrl + 'startStream'
+				$http.get(url).
+    		    		then(function(response) {
+        				    $scope.status = response.data;
+        				});
+				break;
+			case 'stopStream':
+				url = $scope.myUrl + 'stopStream'
+				$http.get(url).
+    		    		then(function(response) {
+        				    $scope.status = response.data;
+        				});
+				break;
+
+			case 'toggleArm':
+				if ($scope.isState('armed')) {
+					url = $scope.myUrl + 'stopArm'
+					$http.get(url).
+							then(function(response) {
+								$scope.status = response.data;
+							});
+				} else if ($scope.isState('idle')) { //safety check, index interface should handle
+					url = $scope.myUrl + 'startArm'
+					$http.get(url).
+							then(function(response) {
+								$scope.status = response.data;
+							});
+				}
 				break;
 				
 			case 'startTrial':
@@ -180,6 +342,7 @@ app.controller('treadmill', function($scope, $window, $http, $location, $interva
         				});
 				break;
 
+			/*
 			case 'startArm':
 				url = $scope.myUrl + 'startArm'
 				$http.get(url).
@@ -194,7 +357,8 @@ app.controller('treadmill', function($scope, $window, $http, $location, $interva
         				    $scope.status = response.data;
         				});
 				break;
-
+			*/
+			
 			default:
 				console.log('buttonCallback() case not taken, buttonID=',buttonID);
 				break;
@@ -208,8 +372,12 @@ app.controller('treadmill', function($scope, $window, $http, $location, $interva
 			return ''
 		}
 	}
-		
-	$interval($scope.getStatus, 1000); // no () in function call !!!	
+	
+	$scope.allowParamEdit = function() {
+		return $scope.isState('idle')
+	}
+	
+	$interval($scope.getStatus, 400); // no () in function call !!!	
 
 
 }); // treadmill controller
