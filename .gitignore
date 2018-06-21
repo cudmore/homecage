@@ -9,6 +9,9 @@
 /treadmill/env
 /treadmill/static/still.jpg
 
+/treadmill/platformio/treadmill/.pioenvs/
+/treadmill/platformio/blink/.pioenvs/
+
 #
 # osx ignores
 #
