@@ -1,7 +1,7 @@
 # Robert H Cudmore
 # 20180525
 
-import os, sys, time, json
+import os, sys, time, json, threading
 from collections import OrderedDict
 from datetime import datetime, timedelta
 from pprint import pprint
@@ -9,6 +9,16 @@ import RPi.GPIO as GPIO
 
 import logging
 logger = logging.getLogger('flask.app')
+
+# load dht temperature/humidity sensor library
+g_dhtLoaded = 0
+try:
+	import Adafruit_DHT 
+	g_dhtLoaded = 1
+	logger.debug('Succesfully loaded Adafruit_DHT')
+except:
+	g_dhtLoaded = 0
+	logger.warning('Did not load Adafruit_DHT')
 
 from bCamera import bCamera
 from bUtil import hostname
@@ -29,25 +39,21 @@ class bTrial:
 			#self.camera.setConfig(self.config)
 		else:
 			self.camera = None
-		
-		
+				
 		self.hostname = hostname()
 		
 		# GPIO
 		self.initGPIO_()
 
-		#
-		# OLD
-		self.trialNum = 0
-				
 		self.trial = OrderedDict()
+
+		self.trial['trialNum'] = 0
 		self.trial['isRunning'] = False
 		self.trial['startTimeSeconds'] = None
 		self.trial['startTimeStr'] = ''
 		self.trial['dateStr'] = ''
 		self.trial['timeStr'] = ''
 
-		self.trial['trialNum'] = None
 
 		self.trial['currentEpoch'] = None
 		self.trial['lastEpochSeconds'] = None # start time of epoch
@@ -95,6 +101,7 @@ class bTrial:
 		ret['trial']['currentDate'] = now.strftime('%Y-%m-%d')
 		ret['trial']['currentTime'] = now.strftime('%H:%M:%S')
 
+		ret['trial']['currentFile'] = self.camera.currentFile
 		ret['trial']['secondsElapsedStr'] = self.camera.secondsElapsedStr
 		ret['trial']['cameraState'] = self.camera.state
 		return ret
@@ -105,11 +112,35 @@ class bTrial:
 			Only update the subset that can be changed by user in javascript
 			Remember, ['motor'] is saved in a different controller !!!
 		"""
+		
+		'''
+		#self.config['trialNum'] = 
+		print('xxx')
+		pprint(self.trial['trialNum'])
+		print('yyy')
+		pprint(configDict)
+		'''
+		
+		self.trial['trialNum'] = configDict['trial']['trialNum']
+		
 		self.config['trial'] = configDict['trial']
 		#self.config['motor'] = configDict['motor']
 		self.config['lights'] = configDict['lights']
 		self.config['video'] = configDict['video']
 		
+		self.config['hardware']['allowArming'] = configDict['hardware']['allowArming']
+		self.config['hardware']['serial']['useSerial'] = configDict['hardware']['serial']['useSerial']
+		self.config['hardware']['serial']['port'] = configDict['hardware']['serial']['port']
+		
+		self.config['hardware']['dhtsensor']['readtemperature'] = configDict['hardware']['dhtsensor']['readtemperature']
+		self.config['hardware']['dhtsensor']['temperatureInterval'] = configDict['hardware']['dhtsensor']['temperatureInterval']
+
+		'''
+		self.config['hardware']['eventOut'][0]['state'] = configDict['hardware']['eventOut'][0]['state']
+		self.config['hardware']['eventOut'][1]['state'] = configDict['hardware']['eventOut'][1]['state']
+		'''
+		
+		"""
 		print('bTrial.updateConfig()')
 		print("=== self.config['trial']:")
 		pprint(self.config['trial'])
@@ -122,6 +153,14 @@ class bTrial:
 		
 		print("=== self.config['video']:")
 		pprint(self.config['video'])
+		"""
+		
+	def updateLED(self, configDict):
+		print('xxx')
+		print(configDict['hardware']['eventOut'][0])
+		print(configDict['hardware']['eventOut'][1])
+		self.config['hardware']['eventOut'][0]['state'] = configDict['hardware']['eventOut'][0]['state']
+		self.config['hardware']['eventOut'][1]['state'] = configDict['hardware']['eventOut'][1]['state']
 		
 	def updateAnimal(self, configDict):
 		"""
@@ -257,6 +296,21 @@ class bTrial:
 					GPIO.setup(pin, GPIO.OUT)
 					GPIO.output(pin, defaultValue)
 
+		# start a background thread to control the lights
+		self.lightsThread = threading.Thread(target = self.lightsThread)
+		self.lightsThread.daemon = True
+		self.lightsThread.start()
+
+		if self.config['hardware']['dhtsensor']['readtemperature']:
+			if g_dhtLoaded:
+				logger.debug('Initialized DHT temperature sensor')
+				GPIO.setup(self.config['hardware']['dhtsensor']['temperatureSensor'], GPIO.IN)
+				myThread = threading.Thread(target = self.tempThread)
+				myThread.daemon = True
+				myThread.start()
+			else:
+				logger.debug('Did not load DHT temperature sensor')
+
 	##########################################
 	# Input pin callbacks
 	##########################################
@@ -328,7 +382,7 @@ class bTrial:
 		if now is None:
 			now = time.time()
 			
-		self.trialNum += 1
+		self.trial['trialNum'] = self.trial['trialNum'] + 1
 		
 		# removed for treadmill
 		#self.trial['headerStr'] = headerStr
@@ -340,8 +394,6 @@ class bTrial:
 		self.trial['startTimeStr'] = time.strftime('%Y%m%d_%H%M%S', time.localtime(now)) 
 		self.trial['dateStr'] = time.strftime('%Y%m%d', time.localtime(now))
 		self.trial['timeStr'] = time.strftime('%H:%M:%S', time.localtime(now))
-
-		self.trial['trialNum'] = self.trialNum
 		
 		self.trial['currentEpoch'] = 0
 		self.trial['lastEpochSeconds'] = now
@@ -355,21 +407,21 @@ class bTrial:
 		self.trial['lastStillTime'] = None
 		
 		logger.debug('startTrial startArmVideo=' + str(startArmVideo))
-		self.newEvent('startTrial', self.trialNum, now=now)
+		self.newEvent('startTrial', self.trial['trialNum'], now=now)
 		
 		if self.camera is not None:
 			if startArmVideo:
 				# *this function startTrial() is being called from with the startarmvideo loop
 				pass
 			else:
-				self.camera.record(True)
+				self.camera.record(True, startNewTrial=False)
 		
 	def stopTrial(self):
 		# todo: finish up and close trial file
 		now = time.time()
 		if self.isRunning:
 			logger.debug('stopTrial')
-			self.newEvent('stopTrial', self.trialNum, now=now)
+			self.newEvent('stopTrial', self.trial['trialNum'], now=now)
 			self.trial['isRunning'] = False
 			self.saveTrial()
 
@@ -419,7 +471,7 @@ class bTrial:
 		timeStr = time.strftime('%Y%m%d_%H%M%S', useThisTime) 
 		
 		# file names will always have (hostname, animal, condition, trial)
-		filename = timeStr + hostnameID_str + animalID_str + conditionID_str + '_t' + str(self.trialNum)
+		filename = timeStr + hostnameID_str + animalID_str + conditionID_str + '_t' + str(self.trial['trialNum'])
 		if withRepeat:
 			filename += '_r' + str(self.currentEpoch)
 		return filename
@@ -563,6 +615,58 @@ class bTrial:
 	def conditionID(self):
 		return self.config['trial']['conditionID'] # can be None
 	'''
+
+	def lightsThread(self):
+		logger.debug('lightsThread start')
+		while True:
+			if self.config['lights']['auto']:
+				now = datetime.now()
+				isDaytime = now.hour > float(self.config['lights']['sunrise']) and now.hour < float(self.config['lights']['sunset'])
+				if isDaytime:
+					self.eventOut('whiteLED', True)
+					self.config['hardware']['eventOut'][0]['state'] = True
+					
+					self.eventOut('irLED', False)
+					self.config['hardware']['eventOut'][1]['state'] = False
+				else:
+					self.eventOut('whiteLED', False)
+					self.config['hardware']['eventOut'][0]['state'] = False
+
+					self.eventOut('irLED', True)
+					self.config['hardware']['eventOut'][1]['state'] = True
+
+				#print(self.config['hardware']['eventOut'][0]['state'], self.config['hardware']['eventOut'][1]['state'])
+				
+			time.sleep(.5)
+		logger.debug('lightsThread stop')
+
+	def tempThread(self):
+		# thread to run temperature/humidity in background
+		# dht is blocking, long delay cause delays in web interface
+		logger.info('tempThread() start')
+		temperatureInterval = self.config['hardware']['dhtsensor']['temperatureInterval'] # seconds
+		pin = self.config['hardware']['temperatureSensor']
+		while True:
+			if g_dhtLoaded:
+				if time.time() > self.lastTemperatureTime + temperatureInterval:
+					try:
+						humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT22, pin)
+						if humidity is not None and temperature is not None:
+							self.lastTemperature = round(temperature, 2)
+							self.lastHumidity = round(humidity, 2)
+							# log this to a file
+							self.trial.newEvent('temperature', self.lastTemperature, now=time.time())
+							self.trial.newEvent('humidity', self.lastHumidity, now=time.time())
+							logger.debug('temperature/humidity ' + str(self.lastTemperature) + '/' + str(self.lastHumidity))
+						else:
+							logger.warning('temperature/humidity error')
+						# set even on fail, this way we do not immediately hit it again
+						self.lastTemperatureTime = time.time()
+					except:
+						logger.error('exception reading temp/hum')
+						raise
+			time.sleep(5)
+		logger.info('tempThread() stop')
 	
 if __name__ == '__main__':
 	logger = logging.getLogger()

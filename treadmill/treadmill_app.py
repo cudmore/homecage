@@ -1,9 +1,9 @@
 # 20170817
 # Robert Cudmore
 
-import os, sys, subprocess
+import os, sys, time, subprocess
 
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, send_file, jsonify, request
 from flask_cors import CORS
 
 import logging
@@ -51,7 +51,7 @@ treadmill = treadmill()
 #########################################################################
 @app.after_request
 def myAfterRequest(response):
-	if request.endpoint is None or request.endpoint in ["status", "log"]:
+	if request.endpoint is None or request.endpoint in ["status", "log", "static"]:
 		# ignore
 		pass
 	else:
@@ -135,6 +135,13 @@ def animalparams():
 	treadmill.updateAnimal(post)
 	return jsonify(treadmill.getStatus())
 
+@app.route('/api/submit/ledparams', methods=['POST'])
+def ledparams():
+	post = request.get_json()
+	#print('todo: finish /api/submit/configparams')
+	treadmill.updateLED(post)
+	return jsonify(treadmill.getStatus())
+
 #########################################################################
 @app.route('/api/submit/motorparams', methods=['POST'])
 def motorparams():
@@ -155,6 +162,78 @@ def simulate_starttrigger():
 	tmpPin = None
 	treadmill.trial.triggerIn_Callback(tmpPin)
 	return jsonify(treadmill.getStatus())
+
+#########################################################################
+@app.route('/videolist')
+@app.route('/videolist/<path:req_path>')
+def videolist(req_path=''):
+	# serve a list of video files
+	
+	# we need to append '/' so os.path.join works???
+	savePath = treadmill.trial.config['trial']['savePath'] + '/'
+	
+	tmpStr = savePath[1:]
+	req_path2 = req_path.replace(tmpStr, '')
+	#req_path2 = req_path2.replace('/', '') # why do i need this?
+	
+	abs_path = os.path.join(savePath, req_path2)
+
+	# What the fuck happened here?
+	'''
+	print('req_path:', req_path)
+	print('savePath:', savePath)
+	print('req_path2:', req_path2)
+	print('abs_path:', abs_path)
+	'''
+	
+	# Return 404 if path doesn't exist
+	if not os.path.exists(abs_path):
+		app.logger.error('videolist() aborting with 404, abs_path: ' + abs_path)
+		return "" #abort(404)
+	
+	# Check if path is a file and serve
+	if os.path.isfile(abs_path):
+		app.logger.debug(('videolist() is serving file:', abs_path))
+		return send_file(abs_path)
+
+	# Show directory contents
+	files = []
+	for f in os.listdir(abs_path):
+		if f.startswith('.') or f in ['Network Trash Folder', 'Temporary Items']:
+			continue
+		f2 = f
+		f = os.path.join(abs_path, f)
+		
+		fileDict = {}
+		
+		isTrialFile = f.endswith('.txt') # big assumption, should parse '_r%d.txt'
+		'''
+		if isTrialFile:
+			fileDict = home.trial.loadTrialFile(f)
+		'''
+		
+		# get file size in either MB or KB (if <1 MB)
+		unitStr = 'MB'
+		size = os.path.getsize(f)
+		sizeMB = size/(1024*1024.0) # mb
+		if sizeMB < 0.1:
+			unitStr = 'bytes'
+			sizeMB = size
+		sizeStr = "%0.1f %s" % (sizeMB, unitStr)
+		
+		#fd = {'path':f, 'file':f2, 'isfile':True, 'size':sizeStr}
+		fileDict['path'] = f
+		fileDict['file'] = f2
+		fileDict['isFile'] = True
+		fileDict['size'] = sizeStr
+		fileDict['cTime'] = time.strftime('%Y%m%d %H%M%S', time.localtime(os.path.getctime(f)))
+		fileDict['mTime'] = time.strftime('%Y%m%d %H%M%S', time.localtime(os.path.getmtime(f)))
+		files.append(fileDict)
+		
+	# sort the list
+	files = sorted(files, key=lambda k: k['file']) 
+
+	return render_template('videolist.html', files=files, abs_path=abs_path, systemInfo=treadmill.systemInfo)
 
 #########################################################################
 def whatismyip():

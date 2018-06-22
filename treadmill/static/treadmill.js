@@ -16,8 +16,13 @@ app.factory('statusFactory', function($http, $location, $interval) {
 
 //////////////////////////////////////////////////////////////////////////////
 // change parameters in config json file
-app.controller('configFormController', function($scope, $http, statusFactory) {
-    
+app.controller('configFormController', function($scope, $rootScope, $http, statusFactory) {
+
+    $rootScope.$on("CallParentMethod", function() {
+        //console.log('in CallParentMethod:')
+        $scope.getPromise();
+    });
+
     /*
     $scope.submitAnimalForm = function() {
         console.log('submitAnimalForm()', $scope.configData, 'valid:', $scope.configData.$valid);
@@ -47,6 +52,7 @@ app.controller('configFormController', function($scope, $http, statusFactory) {
         $http.post(url, JSON.stringify($scope.configData.trial.config)).
         	then(function(response) {
         		//console.log('response.data:', response.data)
+        		//$scope.configData = response.data
         	});
     };
     
@@ -77,25 +83,35 @@ app.controller('configFormController', function($scope, $http, statusFactory) {
     	}
     }
     
-	var  myPromise = statusFactory.getStatus()
-    myPromise.then(function(result) {
-		// this is a large layered dictionary, only change:
-		// status.trial.config.lights
-		// status.trial.config.trial
-		// status.trial.config.video
-		$scope.configData = result				
-    	console.log('configFormController $scope.configData:', $scope.configData)
-    },
-    function(data) {
-        // Handle error here
-        console.log('configFormController error in myPromise')
-	}); // mypromise.then
+	$scope.getPromise = function() {
+		console.log('getPromise')
+		var  myPromise = statusFactory.getStatus()
+    	myPromise.then(function(result) {
+			// this is a large layered dictionary, only change:
+			// status.trial.config.lights
+			// status.trial.config.trial
+			// status.trial.config.video
+			$scope.configData = result				
+    		
+    		//$scope.userSerial = trial.config.hardware.serial.useSerial
+    		//$scope.allowArming = $scope.configData.trial.config.hardware.allowArming
+    		
+    		console.log('configFormController $scope.configData:', $scope.configData)
+    	},
+    	function(data) {
+    	    // Handle error here
+    	    console.log('configFormController error in myPromise')
+		}); // mypromise.then
+	}
+	
+	console.log('1')
+	$scope.getPromise()
 	
 }); // configFormController
 
 
 //////////////////////////////////////////////////////////////////////////////
-app.controller('arduinoFormController', function($scope, $http, statusFactory) {
+app.controller('arduinoFormController', function($scope, $rootScope, $http, statusFactory) {
     
     $scope.submitForm = function() {
         console.log("posting data....", $scope.data, $scope.data.$valid);
@@ -103,6 +119,9 @@ app.controller('arduinoFormController', function($scope, $http, statusFactory) {
         $http.post(url, JSON.stringify($scope.data)).
         	then(function(response) {
         		//console.log('response.data:', response.data)
+			    //I need to do this to update configFormController configData
+			    // call the other controller with this
+			    $rootScope.$emit("CallParentMethod", {});
         	});
     };
     
@@ -236,7 +255,7 @@ app.controller('arduinoFormController', function($scope, $http, statusFactory) {
 }); // arduinoFormController
 
 //////////////////////////////////////////////////////////////////////////////
-app.controller('treadmill', function($scope, $window, $http, $location, $interval, $sce, $timeout, $document) {
+app.controller('treadmill', function($scope, $rootScope, $window, $http, $location, $interval, $sce, $timeout, $document) {
 	
 	console.log('angular.version:', angular.version)
 	
@@ -250,6 +269,7 @@ app.controller('treadmill', function($scope, $window, $http, $location, $interva
 	$scope.showConfigTable = false;
 	$scope.showConfig = true;
 	$scope.showMotor = false;
+	//$scope.allowArming = false
 	
     //read the state from homecage backend, do this at an interval
     $scope.getStatus = function () {
@@ -266,6 +286,19 @@ app.controller('treadmill', function($scope, $window, $http, $location, $interva
 
         	});
 	};
+
+    // mixing controllers, this submits main $scope.config
+    $scope.submitLEDForm = function() {
+        console.log('submitLEDForm() $scope.status.trial.config:', $scope.status.trial.config.hardware.eventOut);
+        url = $scope.myUrl + 'api/submit/ledparams'
+        $http.post(url, JSON.stringify($scope.status.trial.config)).
+        	then(function(response) {
+        		$scope.status = response.data
+        		console.log('$scope.status:', $scope.status)
+        		//$scope.$apply();
+        	});
+    };
+    
 
 	// one button callback
 	$scope.buttonCallback = function(buttonID) {
@@ -323,6 +356,7 @@ app.controller('treadmill', function($scope, $window, $http, $location, $interva
 					$http.get(url).
 							then(function(response) {
 								$scope.status = response.data;
+								$rootScope.$emit("CallParentMethod", {});
 							});
 				}
 				break;

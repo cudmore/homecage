@@ -78,6 +78,10 @@ class treadmill():
 			self.trial.camera.stream(False)
 
 	def startArm(self):
+		# turn off repeat infinity, set num repeats = 1
+		self.trial.config['trial']['repeatInfinity'] = False
+		self.trial.config['trial']['numberOfRepeats'] = 1
+		
 		if self.trial.camera:
 			self.trial.camera.arm(True)
 		
@@ -109,6 +113,9 @@ class treadmill():
 	def updateAnimal(self, configDict):
 		self.trial.updateAnimal(configDict)
 		
+	def updateLED(self, configDict):
+		self.trial.updateLED(configDict)
+		
 	#########################################################################
 	# Serial communication with teensy/arduino
 	#########################################################################
@@ -120,8 +127,9 @@ class treadmill():
 		# motorRepeatDuration (ms) -->> fileDuration (sec)
 		newFileDuration /= 1000
 		
-		self.trial.config['trial']['repeatDuration'] = newFileDuration
+		self.trial.config['trial']['repeatInfinity'] = False
 		self.trial.config['trial']['numberOfRepeats'] = 1
+		self.trial.config['trial']['repeatDuration'] = newFileDuration
 
 		self.trial.config['motor'] = motorDict
 		# convert ['updateMotor'] to (-1, +1)

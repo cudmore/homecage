@@ -45,14 +45,14 @@ class bCamera:
 	def lastResponse(self, str):
 		self.trial.lastResponse = str
 			
-	def record(self, onoff):
+	def record(self, onoff, startNewTrial=True):
 		okGo = self.state in ['idle'] if onoff else self.state in ['recording']
 		logger.debug('record onoff:' + str(onoff) + ' okGo:' + str(okGo))
 		if okGo:
 			self.state = 'recording' if onoff else 'idle'
 			if onoff:
 				# start a background thread
-				thread = threading.Thread(target=self.recordVideoThread, args=())
+				thread = threading.Thread(target=self.recordVideoThread, args=(startNewTrial,))
 				thread.daemon = True							# Daemonize thread
 				thread.start()									# Start the execution
 			else:
@@ -104,7 +104,7 @@ class bCamera:
 
 		return ret
 		
-	def recordVideoThread(self):
+	def recordVideoThread(self, startNewTrial=True):
 		# record individual video files in background thread
 		logging.info('recordVideoThread start')
 		
@@ -127,7 +127,8 @@ class bCamera:
 
 		now = time.time()
 
-		self.trial.startTrial()
+		if startNewTrial:
+			self.trial.startTrial()
 		
 		startDateStr = time.strftime('%Y%m%d', time.localtime(now)) 
 		saveVideoPath = os.path.join(savePath, startDateStr)
@@ -405,7 +406,7 @@ class bCamera:
 				pass
 			else:
 				#print('queue not empty')
-				logger.debug('starting convertVideoThread:' + file['path'] + ' fps:' + str(file['fps']))
+				logger.info('starting convertVideoThread:' + file['path'] + ' fps:' + str(file['fps']))
 				cmd = ["./bin/convert_video.sh", file['path'], str(file['fps']), "delete"]
 				try:
 					out = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
@@ -415,7 +416,7 @@ class bCamera:
 					pass
 				except:
 					raise	
-				logger.debug('finished convertVideoThread:' + file['path'] + ' fps:' + str(file['fps']))
+				logger.info('finished convertVideoThread:' + file['path'] + ' fps:' + str(file['fps']))
 				
 			time.sleep(1)
 	

@@ -1,11 +1,12 @@
 {
     "trial": {
-        "numberOfRepeats": 2,
-        "savePath": "/home/pi/video",
-        "conditionID": "bbb",
-        "animalID": "aaa",
         "repeatInfinity": false,
-        "repeatDuration": 4.008
+        "trialNum": 2,
+        "repeatDuration": 4,
+        "numberOfRepeats": 5,
+        "conditionID": "bb",
+        "savePath": "/home/pi/video",
+        "animalID": "aa"
     },
     "motor": {
         "motorSpeed": 100,
@@ -16,7 +17,7 @@
         "motorDirection": "Forward"
     },
     "hardware": {
-        "allowArming": false,
+        "allowArming": true,
         "triggerIn": {
             "enabled": true,
             "pin": 21,
@@ -50,7 +51,7 @@
                 "name": "whiteLED",
                 "pin": 12,
                 "defaultValue": false,
-                "state": false,
+                "state": true,
                 "idx": 0
             },
             {
@@ -68,24 +69,26 @@
             "temperatureSensor": 14
         },
         "serial": {
-            "port": "/dev/ttyACM0",
-            "baud": 115200
+            "userSerial": true,
+            "port": "/dev/ttyACM00",
+            "baud": 115200,
+            "useSerial": true
         }
     },
     "lights": {
-        "sunrise": 7,
+        "auto": true,
         "sunset": 19,
-        "auto": false
+        "sunrise": 7
     },
     "video": {
         "bufferSeconds": 10,
-        "led": true,
-        "streamResolution": "640,480",
-        "captureStill": true,
-        "stillInterval": 2.1,
-        "useCamera": true,
-        "resolution": "1024,768",
         "fps": 30,
-        "converttomp4": true
+        "stillInterval": 2.1,
+        "converttomp4": true,
+        "captureStill": true,
+        "resolution": "640,480",
+        "useCamera": true,
+        "led": true,
+        "streamResolution": "640,480"
     }
 }

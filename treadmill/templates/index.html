@@ -52,7 +52,19 @@ table tr{
 
 	<tr>
 	<td>
+	{{ status.systemInfo.hostname }}
+	</td>
+	<td>
+	{{ status.systemInfo.ip }}
+	</td>
+	<td>
 	{{ status.trial.trial.currentDate }} {{ status.trial.trial.currentTime }}
+	</td>
+	<td>
+		<A HREF="{{myUrl}}videolist" target="_blank" style="color: #000000;"><i class="fa fa-hdd-o" aria-hidden="true"></i></a>
+	</td>
+	<td>
+		<A HREF="http://blog.cudmore.io/homecage" target="_blank" style="color: #000000;"><i class="fa fa-question" aria-hidden="true"></i></A>
 	</td>
 	</tr>
 
@@ -61,6 +73,34 @@ table tr{
 
 <!-- ** ** -->
 
+	<div class="table-responsive">
+	<table class="table" style="width: auto;">
+	<tr>
+
+		<td>
+		<label>
+		<input type="checkbox" 
+			ng-model="status.trial.config.hardware.eventOut[0].state" 
+			ng-change="submitLEDForm()" 
+			ng-disabled="status.trial.config.lights.auto" 
+			/>		
+		White LED</label>
+		</td>
+
+		<td>
+		<label>
+		<input type="checkbox" 
+			ng-model="status.trial.config.hardware.eventOut[1].state" 
+			ng-change="submitLEDForm()" 
+			ng-disabled="status.trial.config.lights.auto" 
+			/>		
+		IR LED</label>
+		</td>
+		
+	</tr>
+	</table>
+	</div>
+	
 	<ng-form name="animalForm" ng-controller="configFormController">
 	<div class="table-responsive">
 	<table class="table" style="width: auto;">
@@ -134,8 +174,15 @@ table tr{
 		<td rowspan=3 style="border: 1px solid black;">
 		State: {{ status.trial.trial.cameraState }}<BR>
 		Trial: {{ status.trial.trial.trialNum }}<BR>
-		Repeat: {{ status.trial.trial.currentEpoch }} of {{ status.trial.config.trial.numberOfRepeats }}<BR>
-		Elapsed (sec): {{ status.trial.trial.secondsElapsedStr }} of {{ status.trial.config.trial.repeatDuration }}
+		Repeat: {{ status.trial.trial.currentEpoch }} of 
+		<span ng-if="status.trial.config.trial.repeatInfinity">
+		Infinity<BR>
+		</span>
+		<span ng-if="! status.trial.config.trial.repeatInfinity">
+		{{ status.trial.config.trial.numberOfRepeats }}<BR>
+		</span>
+		Elapsed (sec): {{ status.trial.trial.secondsElapsedStr }} of {{ status.trial.config.trial.repeatDuration }}<BR>
+		File: {{ status.trial.trial.currentFile }}
 		</td>
 		
 	</tr>
@@ -163,7 +210,7 @@ table tr{
 		<td></td>		
 	</tr>
 	
-	<tr>
+	<tr ng-if="status.trial.config.hardware.allowArming">
 		<td>
 		<label>
 		<input type="checkbox" 
@@ -196,6 +243,7 @@ table tr{
 	</tr>
 	</table>
 
+
 <!-- streaming -->
 <span ng-if="isState('streaming')">
 <iframe ng-src="{{myStreamUrl}}" width="{{streamWidth}}" height="{{streamHeight}}"></iframe>
@@ -217,8 +265,9 @@ table tr{
 		</button>
 	</span>
 	Configure
-	
 
+<div ng-if="! showConfig">
+</div>
 <span ng-if="showConfig">
 <ng-form name="configForm" ng-controller="configFormController">
 
@@ -266,7 +315,7 @@ table tr{
 	</td>
 	<td>
 		<label>Number of Repeats
-		<input style="width: 5em" 
+		<input style="width: 3em" 
 			name = "numberofrepeats"
 			type="number"
 			ng-model="configData.trial.config.trial.numberOfRepeats"
@@ -303,7 +352,7 @@ table tr{
 	</td>
 	<td>
 		<label>Sunrise
-		<input style="width: 5em" 
+		<input style="width: 3em" 
 			type="number"
 			ng-model="configData.trial.config.lights.sunrise"
 			ng-change="configParamChange(configForm.$valid)"
@@ -316,7 +365,7 @@ table tr{
 	</td>
 	<td>
 		<label>Sunset
-		<input style="width: 5em" 
+		<input style="width: 3em" 
 			type="number"
 			ng-model="configData.trial.config.lights.sunset"
 			ng-change="configParamChange(configForm.$valid)"
@@ -332,7 +381,7 @@ table tr{
 	<tr>
 	<td>
 		<label>FPS
-		<input style="width: 5em" 
+		<input style="width: 3em" 
 			type="number"
 			ng-model="configData.trial.config.video.fps"
 			ng-change="configParamChange(configForm.$valid)"
@@ -357,24 +406,7 @@ table tr{
 		</select>
 		</label>
 	</td>
-	<td></td>
-	</tr>
-
-	<tr>
 	<td>
-		<label>Pre Trigger Buffer (sec)
-		<input style="width: 5em" 
-			type="number"
-			ng-model="configData.trial.config.video.bufferSeconds"
-			ng-change="configParamChange(configForm.$valid)"
-			ng-disabled="! allowParamEdit()" 
-			min="1"
-			step="1"
-			required>
-		</label>
-	</td>
-
-	<td>		
 		<label>Stream Resolution
 		<select name="" 
 			ng-init="configData.trial.config.video.streamResolution" 
@@ -388,8 +420,83 @@ table tr{
 		</select>
 		</label>
 	</td>
+	</tr>
 
+
+<!--
+	<tr>
+	<td>
+		<label>
+		<input type="checkbox" 
+			ng-model="configData.trial.config.hardware.dhtsensor.readtemperature" 
+			ng-change="configParamChange(configForm.$valid)" 
+			ng-disabled="! allowParamEdit()">		
+		Read Temperature</label>
+	</td>
+	<td>
+		<label>Temperature Interval (sec)
+		<input style="width: 5em" 
+			type="number"
+			ng-model="configData.trial.config.hardware.dhtsensor.temperatureInterval"
+			ng-change="configParamChange(configForm.$valid)"
+			ng-disabled="! allowParamEdit()" 
+			min="1"
+			step="1"
+			required>
+		</label>
+	</td>
+	</tr>
+-->
+	
+	<tr>
+	<td>
+		<label>
+		<input type="checkbox" 
+			ng-model="configData.trial.config.hardware.allowArming" 
+			ng-change="configParamChange(configForm.$valid)" 
+			ng-disabled="! allowParamEdit()">		
+		Allow Arming</label>
+	</td>
+
+	<td>
+		<label>
+		<input type="checkbox" 
+			ng-model="configData.trial.config.hardware.serial.useSerial" 
+			ng-change="configParamChange(configForm.$valid)" 
+			ng-disabled="! allowParamEdit()">		
+		Use Serial</label>
+	</td>
+
+	<td>
+		<label>Trial Number
+		<input style="width: 3em" 
+			type="number"
+			ng-model="configData.trial.config.trial.trialNum"
+			ng-change="configParamChange(configForm.$valid)"
+			ng-disabled="! allowParamEdit()" 
+			min="0"
+			step="1"
+			required>
+		</label>
+	</td>
+	</tr>
+	
+	<tr>
 	<td></td>
+	<td></td>
+
+	<td>
+		<label>Pre Trigger Buffer (sec)
+		<input style="width: 5em" 
+			type="number"
+			ng-model="configData.trial.config.video.bufferSeconds"
+			ng-change="configParamChange(configForm.$valid)"
+			ng-disabled="! allowParamEdit()" 
+			min="1"
+			step="1"
+			required>
+		</label>
+	</td>
 
 	</tr>
 
@@ -398,8 +505,8 @@ table tr{
 </ng-form> <!-- name="configForm" ng-controller="configFormController" -->
 </span> <!-- config form -->
 	
+<span ng-if="status.trial.config.hardware.serial.useSerial">
 <!-- arduino motor form -->
-<BR>
 	<span ng-if="showMotor">
 		<button type="button"
 			class="btn btn-link btn-sm"
@@ -445,7 +552,7 @@ table tr{
 -->
 	<tr>
 	<td>
-		<label>Repeats
+		<label>Epochs
 		<input style="width: 5em" 
 			name = "numberofrepeats"
 			type="number"
@@ -457,7 +564,7 @@ table tr{
 		</label>
 	</td>
 	<td>		
-		<label>Repeat Duration (ms)
+		<label>Epoch Duration (ms)
 		<input style="width: 6em" 
 			type="number"
 			ng-model="data.motorRepeatDuration"
@@ -537,6 +644,7 @@ table tr{
 	</ng-form> <!-- motor parameters -->
 
 </span> <!-- showMotor -->
+</span> <!-- use serial -->
 
 <!-- server status -->
 	<span ng-if="showConfigTable">
