@@ -4,7 +4,6 @@
 import os, sys, time
 from collections import OrderedDict
 from pprint import pprint
-
 import serial
 
 # eventually import from homecage
@@ -26,37 +25,45 @@ from bCamera import bCamera
 from version import __version__
 
 #########################################################################
-'''
 class treadmillTrial(bTrial):
-	def __init__(self):
+	def __init__(self, treadmill):
 		super(treadmillTrial, self).__init__()
+		
+		self.treadmill = treadmill
 		
 	def startTrial(self, startArmVideo=False, now=None):
 		super(treadmillTrial, self).startTrial(startArmVideo=startArmVideo, now=now)
 		
-		logger.debug('FIRE UP ARDUINO')
+		# sleep to allow curcular stream to really get going
+		#time.sleep(3)
+		
+		# tell arduino to start
+		self.treadmill.sendtoserial('start')
 		
 	def stopTrial(self):
 		super(treadmillTrial, self).stopTrial()
 		
-		logger.debug('SHUT DOWN ARDUINO')
-'''		
+		#
+		self.treadmill.sendtoserial('d')
+		self.treadmill.sendtoserial('stop')
 #########################################################################
 class treadmill():
 
 	def __init__(self):
 		self.systemInfo = bUtil.getSystemInfo()
 		
-		#self.trial = treadmillTrial()
-		self.trial = bTrial()
+		self.trial = treadmillTrial(self)
+		#self.trial = bTrial()
 
 		self.serial = None # serial port connection to teensy/arduino
+		self.serialError = ''
 		
 	def getStatus(self):
 		status = OrderedDict()
 		
 		status['systemInfo'] = self.systemInfo # remember to update occasionally
 		status['trial'] = self.trial.getStatus()
+		status['serialError'] = self.serialError
 		
 		return status
 		
@@ -91,16 +98,19 @@ class treadmill():
 
 	def startTrial(self):
 		''' MASTER '''
+		logger.debug('startTrial')
 		#self.trial.startTrial(startArmVideo=True) # starts the video
 		if self.trial.camera is not None:
 			self.trial.camera.startArmVideo()
-			
+					
 	def stopTrial(self):
+		logger.debug('stopTrial')
 		''' MASTER '''
 		#self.trial.stopTrial() # stops the video
 		if self.trial.camera is not None:
 			self.trial.camera.stopArmVideo()
 
+		
 	#########################################################################
 	# update config
 	#########################################################################
@@ -121,8 +131,10 @@ class treadmill():
 	#########################################################################
 	def updateMotor(self, motorDict):
 		""" todo: put this in bTrial """
-		print('updateMotor()', motorDict)
-		newFileDuration = motorDict['motorNumberofRepeats'] * motorDict['motorRepeatDuration']
+
+		self.serial_settrial2(motorDict)
+
+		newFileDuration = motorDict['motorNumEpochs'] * motorDict['motorRepeatDuration']
 				
 		# motorRepeatDuration (ms) -->> fileDuration (sec)
 		newFileDuration /= 1000
@@ -133,9 +145,9 @@ class treadmill():
 
 		self.trial.config['motor'] = motorDict
 		# convert ['updateMotor'] to (-1, +1)
-
-	def serial_settrial2(self,trialDict):
-		print('treadmill.serial_settrial2()', trialDict)
+		
+	def serial_settrial2(self,motorDict):
+		print('treadmill.serial_settrial2()', motorDict)
 
 		'''
 		if self.trialRunning:
@@ -146,16 +158,32 @@ class treadmill():
 		serialport  = self.trial.config['hardware']['serial']['port'] #'/dev/ttyACM0'
 		serialbaud = self.trial.config['hardware']['serial']['baud'] #115200
 
-		self.serial = serial.Serial(serialport, serialbaud, timeout=0.25)
-
-		for key, value in trialDict.items():
-			#print key, value
-			self.serial_settrial(key, value)
-			time.sleep(0.01)
-
-		self.serial.close()
-		self.serial = None
-			
+		try:
+			self.serial = serial.Serial(serialport, serialbaud, timeout=0.25)
+	
+			for key, value in motorDict.items():
+				#convert python based variable to arduino
+				if key == 'motorNumEpochs':
+					key = 'numEpoch'
+				if key == 'motorRepeatDuration':
+					key = 'epochDur'
+				"""
+				if key == 'motorRepeatDuration':
+					key = 'epochDur'
+				if key == 'motorRepeatDuration':
+					key = 'epochDur'
+				"""
+				self.serial_settrial(key, value)
+				time.sleep(0.01)
+	
+			self.serial.close()
+			self.serial = None
+			self.serialError = ''
+		except (serial.SerialException) as e:
+			self.serialError = 'Error opening serial port ' + serialport
+			logger.error('serial.SerialException')
+			raise
+						
 	def serial_settrial(self, key, val):
 		'''
 		set value for *this
@@ -179,7 +207,8 @@ class treadmill():
 			'''
 			serialCommand = 'settrial,' + key + ',' + str(val)
 			#serialCommand = str(serialCommand)
-			print('\ttreadmill.settrial() writing to serial "' + serialCommand + '"')
+			print('=== treadmill.settrial() writing to serial ')
+			print('send:', serialCommand)
 			serialCommand += '\n'
 			serialCommand = serialCommand.encode() # python 3, does it work in python 2 ?
 			self.serial.write(serialCommand)
@@ -188,8 +217,8 @@ class treadmill():
 			send: settrial,epochDur,1000
 			receive: trial.epochDur=1000
 			'''
-			#resp = self.serial.readline()
-			#print('resp:', resp.strip())
+			resp = self.serial.readline()
+			print('resp:', resp.strip())
 			
 			'''
 			todo: put back in, not really needed
@@ -208,6 +237,15 @@ class treadmill():
 		
 		throwout = self.emptySerial()
 		
+		if this =='start':
+			# start trial
+			self.serial.write('start\n'.encode()) # encode() for python 3.x, what about 2.x ?
+			theRet = self.emptySerial()
+		if this =='stop':
+			# start trial
+			self.serial.write('stop\n'.encode()) # encode() for python 3.x, what about 2.x ?
+			theRet = self.emptySerial()
+
 		if this == 'd': #dump trial
 			self.serial.write('d\n'.encode()) # encode() for python 3.x, what about 2.x ?
 			theRet = self.emptySerial()
@@ -217,6 +255,8 @@ class treadmill():
 		if this == 'v': #version
 			self.serial.write('v\n'.encode())
 			theRet = self.emptySerial()
+		
+		print('=== sendtoserial', this, theRet)
 		
 		#close serial
 		self.serial.close()
@@ -260,7 +300,7 @@ if __name__ == '__main__':
 	
 	[b'trialNumber=0',
 		b'trialDur=1700', # DON'T set this one, it is calculated
-		b'numEpoch=3',
+		b'motorNumEpochs=3',
 		b'epochDur=500',
 		b'preDur=100',
 		b'postDur=100',
@@ -271,7 +311,7 @@ if __name__ == '__main__':
 		b'motorMaxSpeed=1000',
 		b'versionStr=20160918']
 	'''
-	trialDict = {'epochDur': 1000, 'numEpoch': 1, 'badkey': 'badvalue'}
+	trialDict = {'epochDur': 1000, 'motorNumEpochs': 1, 'badkey': 'badvalue'}
 	t.serial_settrial2(trialDict)
 	
 	

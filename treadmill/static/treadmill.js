@@ -18,23 +18,12 @@ app.factory('statusFactory', function($http, $location, $interval) {
 // change parameters in config json file
 app.controller('configFormController', function($scope, $rootScope, $http, statusFactory) {
 
+    // call this from other controllers to update new values from server
     $rootScope.$on("CallParentMethod", function() {
         //console.log('in CallParentMethod:')
         $scope.getPromise();
     });
 
-    /*
-    $scope.submitAnimalForm = function() {
-        console.log('submitAnimalForm()', $scope.configData, 'valid:', $scope.configData.$valid);
-        url = $scope.myUrl + 'api/submit/configparams'
-        console.log('$scope.configData:', $scope.configData.trial.config)
-        $http.post(url, JSON.stringify($scope.configData.trial.config)).
-        	then(function(response) {
-        		//console.log('response.data:', response.data)
-        	});
-    };
-    */
-    
     $scope.submitConfigForm = function() {
         console.log('submitConfigForm()', $scope.configData, $scope.configData.$valid);
         url = $scope.myUrl + 'api/submit/configparams'
@@ -65,26 +54,27 @@ app.controller('configFormController', function($scope, $rootScope, $http, statu
         		//console.log('response.data:', response.data)
         	});
     };
-    
 
     $scope.animalParamChange = function(isValid) {
     	// if form fields don't pass validation, they will be 'undefined'
-    	console.log('animalParamChange()', 'isValid:', isValid, $scope.configData)
+    	//console.log('animalParamChange()', 'isValid:', isValid, $scope.configData)
     	if (isValid) {
     		$scope.submitAnimalForm()
     	}
     }
     
+    // called on each change of a config parameter (keystroke, tab, enter)
     $scope.configParamChange = function(isValid) {
     	// if form fields don't pass validation, they will be 'undefined'
-    	console.log('configParamChange()', 'isValid:', isValid, $scope.configData)
+    	//console.log('configParamChange()', 'isValid:', isValid, $scope.configData)
     	if (isValid) {
     		$scope.submitConfigForm()
     	}
     }
     
+	// get data from the server
 	$scope.getPromise = function() {
-		console.log('getPromise')
+		//console.log('getPromise')
 		var  myPromise = statusFactory.getStatus()
     	myPromise.then(function(result) {
 			// this is a large layered dictionary, only change:
@@ -96,7 +86,7 @@ app.controller('configFormController', function($scope, $rootScope, $http, statu
     		//$scope.userSerial = trial.config.hardware.serial.useSerial
     		//$scope.allowArming = $scope.configData.trial.config.hardware.allowArming
     		
-    		console.log('configFormController $scope.configData:', $scope.configData)
+    		//console.log('configFormController $scope.configData:', $scope.configData)
     	},
     	function(data) {
     	    // Handle error here
@@ -104,7 +94,6 @@ app.controller('configFormController', function($scope, $rootScope, $http, statu
 		}); // mypromise.then
 	}
 	
-	console.log('1')
 	$scope.getPromise()
 	
 }); // configFormController
@@ -113,18 +102,22 @@ app.controller('configFormController', function($scope, $rootScope, $http, statu
 //////////////////////////////////////////////////////////////////////////////
 app.controller('arduinoFormController', function($scope, $rootScope, $http, statusFactory) {
     
+    // take current params and submit
     $scope.submitForm = function() {
         console.log("posting data....", $scope.data, $scope.data.$valid);
         url = $scope.myUrl + 'api/submit/motorparams'
         $http.post(url, JSON.stringify($scope.data)).
         	then(function(response) {
-        		//console.log('response.data:', response.data)
-			    //I need to do this to update configFormController configData
 			    // call the other controller with this
+			    //This updates configFormController configData from server again
 			    $rootScope.$emit("CallParentMethod", {});
+			    
+			    // html code has ng-form arduinoForm
+			    $scope.arduinoForm.$setPristine();
         	});
     };
     
+    //rebuild plotly but do not submit
     $scope.motorParamChange = function() {
     	// if form fields don't pass validation, they will be 'undefined'
     	console.log('motorParamChange()', $scope.data)
@@ -141,7 +134,8 @@ app.controller('arduinoFormController', function($scope, $rootScope, $http, stat
 		// todo: clean up numberofrepeats versus numberOfRepeats
 		$scope.data = {
 			
-			motorNumberofRepeats: status.trial.config.motor.motorNumberofRepeats,
+			useMotor: status.trial.config.motor.useMotor,
+			motorNumEpochs: status.trial.config.motor.motorNumEpochs,
 			motorRepeatDuration: status.trial.config.motor.motorRepeatDuration,
 			motorDel: status.trial.config.motor.motorDel,
 			motorDur: status.trial.config.motor.motorDur,
@@ -159,7 +153,7 @@ app.controller('arduinoFormController', function($scope, $rootScope, $http, stat
 	}); // mypromise.then
 
 	var buildPlotly = function(motorParams){
-		var trialMS = motorParams.motorNumberofRepeats * motorParams.motorRepeatDuration
+		var trialMS = motorParams.motorNumEpochs * motorParams.motorRepeatDuration
 		//console.log('buildPlotly() trialMS:', trialMS)
 		//console.log('buildPlotly() motorParams:', motorParams)
 		
@@ -193,7 +187,7 @@ app.controller('arduinoFormController', function($scope, $rootScope, $http, stat
 		// make a list of rect shapes, one per repeat
 		var i
 		var shapeList = []
-		for (i=0; i<motorParams.motorNumberofRepeats; i++) {
+		for (i=0; i<motorParams.motorNumEpochs; i++) {
 			thisStart = motorParams.motorRepeatDuration * i + motorParams.motorDel
 			thisStop = thisStart + motorParams.motorDur
 			thisRect = {
@@ -257,18 +251,19 @@ app.controller('arduinoFormController', function($scope, $rootScope, $http, stat
 //////////////////////////////////////////////////////////////////////////////
 app.controller('treadmill', function($scope, $rootScope, $window, $http, $location, $interval, $sce, $timeout, $document) {
 	
-	console.log('angular.version:', angular.version)
+	//console.log('angular.version:', angular.version)
 	
-	//url of page we loaded
 	$scope.myUrl = $location.absUrl(); //with port :5000
-
+	console.log('$scope.myUrl:', $scope.myUrl)
+	
     myStreamUrl = 'http://' + $location.host() + ':8080/stream';
     $scope.myStreamUrl0 = myStreamUrl
     $scope.myStreamUrl = $sce.trustAsResourceUrl(myStreamUrl);
 	
-	$scope.showConfigTable = false;
-	$scope.showConfig = true;
+	$scope.showConfig = false;
 	$scope.showMotor = false;
+	$scope.showDebug = true;
+	$scope.showConfigTable = false;
 	//$scope.allowArming = false
 	
     //read the state from homecage backend, do this at an interval
@@ -289,21 +284,20 @@ app.controller('treadmill', function($scope, $rootScope, $window, $http, $locati
 
     // mixing controllers, this submits main $scope.config
     $scope.submitLEDForm = function() {
-        console.log('submitLEDForm() $scope.status.trial.config:', $scope.status.trial.config.hardware.eventOut);
+        //console.log('submitLEDForm() $scope.status.trial.config:', $scope.status.trial.config.hardware.eventOut);
         url = $scope.myUrl + 'api/submit/ledparams'
         $http.post(url, JSON.stringify($scope.status.trial.config)).
         	then(function(response) {
         		$scope.status = response.data
-        		console.log('$scope.status:', $scope.status)
-        		//$scope.$apply();
+        		//console.log('$scope.status:', $scope.status)
         	});
     };
     
-
 	// one button callback
 	$scope.buttonCallback = function(buttonID) {
 		console.log('buttonCallback() buttonID=', buttonID)
 		switch (buttonID) {
+			/*
 			case 'toggleConfig':
 				$scope.showConfig = ! $scope.showConfig
 				break;
@@ -313,7 +307,48 @@ app.controller('treadmill', function($scope, $rootScope, $window, $http, $locati
 			case 'toggleConfigTable':
 				$scope.showConfigTable = ! $scope.showConfigTable
 				break;
-				
+			*/
+			/*
+			case 'toggleDebug':
+				console.log('treadmill buttonCallback $scope.showDebug:', $scope.showDebug)
+				//$scope.$apply();
+				$scope.$applyAsync();
+				//$scope.showDebug = $scope.showDebug
+				break
+			*/
+//
+//
+			case 'startRecord':
+			case 'stopRecord':
+			case 'startStream':
+			case 'stopStream':
+			case 'startTrial':
+			case 'stopTrial':
+				url = $scope.myUrl + 'api/action/' + buttonID
+				$http.get(url).
+    		    	then(function(response) {
+        				$scope.status = response.data;
+        			});
+				break;
+			case 'toggleArm':
+				if ($scope.isState('armed')) {
+					url = $scope.myUrl + 'api/action/stopArm'
+					$http.get(url).
+							then(function(response) {
+								$scope.status = response.data;
+							});
+				} else if ($scope.isState('idle')) { //safety check, index interface should handle
+					url = $scope.myUrl + 'api/action/startArm'
+					$http.get(url).
+							then(function(response) {
+								$scope.status = response.data;
+								$rootScope.$emit("CallParentMethod", {});
+							});
+				}
+				break;
+//
+//
+/*
 			case 'startRecord':
 				url = $scope.myUrl + 'startRecord'
 				$http.get(url).
@@ -362,6 +397,7 @@ app.controller('treadmill', function($scope, $rootScope, $window, $http, $locati
 				break;
 				
 			case 'startTrial':
+				//start armed recording
 				url = $scope.myUrl + 'startTrial'
 				$http.get(url).
     		    		then(function(response) {
@@ -369,30 +405,14 @@ app.controller('treadmill', function($scope, $rootScope, $window, $http, $locati
         				});
 				break;
 			case 'stopTrial':
+				//stop armed recording
 				url = $scope.myUrl + 'stopTrial'
 				$http.get(url).
     		    		then(function(response) {
         				    $scope.status = response.data;
         				});
 				break;
-
-			/*
-			case 'startArm':
-				url = $scope.myUrl + 'startArm'
-				$http.get(url).
-    		    		then(function(response) {
-        				    $scope.status = response.data;
-        				});
-				break;
-			case 'stopArm':
-				url = $scope.myUrl + 'stopArm'
-				$http.get(url).
-    		    		then(function(response) {
-        				    $scope.status = response.data;
-        				});
-				break;
-			*/
-			
+*/
 			default:
 				console.log('buttonCallback() case not taken, buttonID=',buttonID);
 				break;

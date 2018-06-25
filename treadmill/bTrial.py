@@ -113,14 +113,6 @@ class bTrial:
 			Remember, ['motor'] is saved in a different controller !!!
 		"""
 		
-		'''
-		#self.config['trialNum'] = 
-		print('xxx')
-		pprint(self.trial['trialNum'])
-		print('yyy')
-		pprint(configDict)
-		'''
-		
 		self.trial['trialNum'] = configDict['trial']['trialNum']
 		
 		self.config['trial'] = configDict['trial']
@@ -140,25 +132,9 @@ class bTrial:
 		self.config['hardware']['eventOut'][1]['state'] = configDict['hardware']['eventOut'][1]['state']
 		'''
 		
-		"""
-		print('bTrial.updateConfig()')
-		print("=== self.config['trial']:")
-		pprint(self.config['trial'])
-		
-		print("=== self.config['motor']:")
-		pprint(self.config['motor'])
-		
-		print("=== self.config['lights']:")
-		pprint(self.config['lights'])
-		
-		print("=== self.config['video']:")
-		pprint(self.config['video'])
-		"""
-		
 	def updateLED(self, configDict):
-		print('xxx')
-		print(configDict['hardware']['eventOut'][0])
-		print(configDict['hardware']['eventOut'][1])
+		#print(configDict['hardware']['eventOut'][0])
+		#print(configDict['hardware']['eventOut'][1])
 		self.config['hardware']['eventOut'][0]['state'] = configDict['hardware']['eventOut'][0]['state']
 		self.config['hardware']['eventOut'][1]['state'] = configDict['hardware']['eventOut'][1]['state']
 		
@@ -267,12 +243,16 @@ class bTrial:
 					pull_up_down = eventIn['pull_up_down'] # up or down
 					pull_up_down = bTrial.pullUpDownDict[pull_up_down]
 					GPIO.setup(pin, GPIO.IN, pull_up_down=pull_up_down)
+
 					# pin is always passed as first argument, this is why we have undefined 'x' here
-					cb = lambda x, arg1=name, arg2=enabled, arg3=pin: self.eventIn_Callback(x,arg1, arg1,arg2, arg3)
+					cb = lambda x, name=name: self.eventIn_Callback(x,name)
+
 					# as long as each event is different pin, polarity can be different
 					polarity = bTrial.polarityDict_[eventIn['polarity']]
+
 					try:
-						GPIO.add_event_detect(pin, polarity, callback=cb, bouncetime=200) # ms
+						GPIO.add_event_detect(pin, polarity, callback=cb, bouncetime=10) # ms
+						#GPIO.add_event_detect(pin, polarity, callback=self.eventIn_Callback, bouncetime=200) # ms
 					except (RuntimeError) as e:
 						logger.warning('eventIn add_event_detect: ' + str(e))
 						pass
@@ -314,35 +294,69 @@ class bTrial:
 	##########################################
 	# Input pin callbacks
 	##########################################
-	def eventIn_Callback(self, name, enabled=None, pin=None):
-		''' Can call manually with just name '''
+	#cb = lambda x, name=name: self.eventIn_Callback(x,name)
+	def eventIn_Callback(self, pin, name=None):
+		"""
+		Can call manually with just name
+		REMEMBER: DO NOT RUN IN DEBUG MODE !!!!!!!!!!!!!
+		"""
+		
 		now = time.time()
-		if pin is None:
-			# called by user, look up event in list by ['name']
+
+		
+		if self.isRunning: # property wrapper may not work in callback
+			enabled = False
 			dictList = self.config['hardware']['eventIn']
-			# having lots of problems b/w python 2/3 with g.next() versus next(g)
-			#thisItem = (item for item in dictList if item["name"] == name).next()
-			thisItem = next(item for item in dictList if item["name"] == name)
-			if thisItem is None:
-				#error
-				pass
+			if pin is None and name is not None:
+				# called by user, look up event in list by ['name']
+				thisItem = next(item for item in dictList if item["name"] == name)
+				if thisItem is None:
+					print('ERROR: did not find pin by name:', name)
+					pass
+				else:
+					enabled = thisItem['enabled']
+					pin = thisItem['pin']
+			elif pin is not None:
+				# we received a callback with pin specified
+				# look up by pin number
+				thisItem = next(item for item in dictList if item["pin"] == pin)
+				if thisItem is None:
+					#error
+					print('ERROR: did not find pin by pin number:', pin)
+				else:
+					enabled = thisItem['enabled']
+					name = thisItem['name']
+
+			pinIsUp = GPIO.input(pin) == 1
+			print('=== RECEIVED eventIn_Callback', now, 'pin:', pin, 'name:', name, 'enabled:', enabled, 'pinIsUp:', pinIsUp)
+			
+			if enabled:
+				#print('eventIn_Callback() enabled:' + str(enabled) + ' pin:' + str(pin) + ' name:' + name)
+			
+				if name == 'frame':
+					if self.isRunning:
+						#self.numFrames += 1 # can't do this, no setter
+						self.newEvent('frame', self.numFrames, now=now)
+						if self.camera is not None:
+							self.camera.annotate(self.numFrames)
+				else:
+					# just log the name and state
+					self.newEvent(name, pinIsUp, now=now)
+					if name == 'arduinoMotor':
+						if self.camera is not None:
+							if pinIsUp:
+								self.camera.annotate('m')
+							else:
+								self.camera.annotate('')
+
 			else:
-				enabled = thisItem['enabled']
-				pin = thisItem['pin']
-		if enabled:
-			#print('eventIn_Callback() enabled:' + str(enabled) + ' pin:' + str(pin) + ' name:' + name)
-
-			if name == 'frame':
-				if self.isRunning:
-					#self.numFrames += 1 # can't do this, no setter
-					self.newEvent('frame', self.numFrames, now=now)
-					if self.camera is not None:
-						self.camera.annotate(self.numFrames)
-			if name == 'otherEvent':
-				pass
-
+				print('eventIn_Callback()', now, 'pin:', pin, 'name:', name, 'is not enabled')
+		else:
+			print('!!! Trial not running eventIn_Callback()', now, 'pin:', pin, 'name:', name, self.isRunning)
+						
 	def triggerIn_Callback(self, pin):
 		now = time.time()
+		print('\n\ntriggerIn_Callback\n\n')
 		if self.camera is not None:
 			self.camera.startArmVideo(now=now)
 			self.lastResponse = self.camera.lastResponse
@@ -511,9 +525,7 @@ class bTrial:
 				headerLine += self.trial['headerStr']
 			'''
 			headerLine += eol
-			
-			print(headerLine)
-			
+						
 			file.write(headerLine)
 			# column header for event data is (date, time, sconds, event, value, str
 			columnHeader = 'date' + delim + 'time' + delim + 'seconds' + delim + 'event' + delim + 'value' + delim + 'str' + eol

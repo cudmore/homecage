@@ -3,7 +3,7 @@
 
 import os, sys, time, subprocess
 
-from flask import Flask, render_template, send_file, jsonify, request
+from flask import Flask, render_template, send_file, jsonify, request, Response
 from flask_cors import CORS
 
 import logging
@@ -29,7 +29,7 @@ dictConfig({
 })
 
 #########################################################################
-app = Flask('homecage_app')
+app = Flask('treadmill_app')
 #app = Flask(__name__)
 CORS(app)
 
@@ -63,93 +63,72 @@ def myAfterRequest(response):
 #########################################################################
 @app.route('/')
 def hello_world():
-	return render_template('index.html')
+	return send_file('templates/index.html')
+
+@app.route('/templates/partials/<path:htmlfile>')
+def templates(htmlfile):
+	#print('htmlfile:', htmlfile)
+	return send_file('templates/partials/' + htmlfile)
 
 @app.route('/systeminfo')
 def systeminfo():
 	return jsonify(treadmill.systemInfo)
+
+@app.route('/log')
+def log():
+	with open('log.log', 'r') as f:
+		return Response(f.read(), mimetype='text/plain')
 
 @app.route('/status')
 def status():
 	return jsonify(treadmill.getStatus())
 
 #########################################################################
-@app.route('/startRecord')
-def startRecord():
-	treadmill.startRecord()
-	return jsonify(treadmill.getStatus())
+@app.route('/api/action/<string:thisAction>')
+def action(thisAction):
 
-@app.route('/stopRecord')
-def stopRecord():
-	treadmill.stopRecord()
-	return jsonify(treadmill.getStatus())
+	if thisAction == 'startRecord':
+		treadmill.startRecord()
+	if thisAction == 'stopRecord':
+		treadmill.stopRecord()
 
-@app.route('/startStream')
-def startStream():
-	treadmill.startStream()
-	return jsonify(treadmill.getStatus())
+	if thisAction == 'startStream':
+		treadmill.startStream()
+	if thisAction == 'stopStream':
+		treadmill.stopStream()
 
-@app.route('/stopStream')
-def stopStream():
-	treadmill.stopStream()
-	return jsonify(treadmill.getStatus())
+	if thisAction == 'startArm':
+		treadmill.startArm()
+	if thisAction == 'stopArm':
+		treadmill.stopArm()
 
-@app.route('/startArm')
-def startArm():
-	treadmill.startArm()
-	return jsonify(treadmill.getStatus())
+	if thisAction == 'startTrial':
+		treadmill.startTrial()
+	if thisAction == 'stopTrial':
+		treadmill.stopTrial()
 
-@app.route('/stopArm')
-def stopArm():
-	treadmill.stopArm()
-	return jsonify(treadmill.getStatus())
-
-@app.route('/startTrial')
-def startTrial():
-	treadmill.startTrial()
-	return jsonify(treadmill.getStatus())
-
-@app.route('/stopTrial')
-def stopTrial():
-	treadmill.stopTrial()
-	return jsonify(treadmill.getStatus())
-
-
-#########################################################################
-@app.route('/api/submit/saveconfig')
-def saveconfig():
-	treadmill.saveConfig()
-	return jsonify(treadmill.getStatus())
-
-@app.route('/api/submit/configparams', methods=['POST'])
-def configparams():
-	post = request.get_json()
-	#print('todo: finish /api/submit/configparams')
-	treadmill.updateConfig(post)
-	return jsonify(treadmill.getStatus())
-
-@app.route('/api/submit/animalparams', methods=['POST'])
-def animalparams():
-	post = request.get_json()
-	#print('todo: finish /api/submit/configparams')
-	treadmill.updateAnimal(post)
-	return jsonify(treadmill.getStatus())
-
-@app.route('/api/submit/ledparams', methods=['POST'])
-def ledparams():
-	post = request.get_json()
-	#print('todo: finish /api/submit/configparams')
-	treadmill.updateLED(post)
 	return jsonify(treadmill.getStatus())
 
 #########################################################################
-@app.route('/api/submit/motorparams', methods=['POST'])
-def motorparams():
+@app.route('/api/submit/<string:submitThis>', methods=['GET', 'POST'])
+def submit(submitThis):
 	post = request.get_json()
-	#print('/api/submit/motorparams ', post)
-	treadmill.updateMotor(post)
+
+	if submitThis == 'saveconfig': # GET
+		treadmill.saveConfig()
+
+	if submitThis == 'configparams':
+		treadmill.updateConfig(post)
+	if submitThis == 'animalparams':
+		treadmill.updateAnimal(post)
+	if submitThis == 'ledparams':
+		treadmill.updateLED(post)
+	if submitThis == 'motorparams':
+		treadmill.updateMotor(post)
+
 	return jsonify(treadmill.getStatus())
 
+#########################################################################
 @app.route('/api/eventout/<name>/<int:onoff>')
 def eventOut(name, onoff):
 	''' turn named output pin on/off '''

@@ -20,7 +20,8 @@ function usage(){
     echo "   treadmill enable    - enable treadmill at boot"
     echo "   treadmill disable   - disable treadmill at boot"
     echo "   -----------------"
-    echo "   treadmill debug     - run treadmill on command line"
+    echo "   treadmill run     - run treadmill on command line"
+    echo "   treadmill debug     - run treadmill on command line (debug mode)"
 }
 
 myip=`hostname -I | xargs`
@@ -47,6 +48,9 @@ case "$1" in
 		;;
 	debug) source env/bin/activate
 		python treadmill_app.py debug
+		;;
+	run) source env/bin/activate
+		python treadmill_app.py
 		;;
 	*) usage
 		;;

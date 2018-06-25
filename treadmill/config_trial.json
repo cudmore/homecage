@@ -1,20 +1,22 @@
 {
     "trial": {
-        "repeatInfinity": false,
+        "conditionID": "bbb",
         "trialNum": 2,
-        "repeatDuration": 4,
-        "numberOfRepeats": 5,
-        "conditionID": "bb",
+        "animalID": "aaa",
+        "includeHostname": true,
+        "numberOfRepeats": 1,
         "savePath": "/home/pi/video",
-        "animalID": "aa"
+        "repeatInfinity": false,
+        "repeatDuration": 9.0
     },
     "motor": {
+        "motorDel": 1000,
+        "motorRepeatDuration": 3000,
+        "useMotor": "motorOn",
+        "motorDirection": "Forward",
         "motorSpeed": 100,
-        "motorNumberofRepeats": 4,
-        "motorDur": 100,
-        "motorRepeatDuration": 1002,
-        "motorDel": 50,
-        "motorDirection": "Forward"
+        "motorNumEpochs": 3,
+        "motorDur": 1000
     },
     "hardware": {
         "allowArming": true,
@@ -38,9 +40,16 @@
                 "pull_up_down": "down"
             },
             {
-                "enabled": false,
-                "name": "otherEvent",
+                "enabled": true,
+                "name": "arduinoMotor",
                 "pin": 6,
+                "polarity": "both",
+                "pull_up_down": "down"
+            },
+            {
+                "enabled": true,
+                "name": "arduinoNewEpoch",
+                "pin": 7,
                 "polarity": "rising",
                 "pull_up_down": "down"
             }
@@ -51,7 +60,7 @@
                 "name": "whiteLED",
                 "pin": 12,
                 "defaultValue": false,
-                "state": true,
+                "state": false,
                 "idx": 0
             },
             {
@@ -70,25 +79,25 @@
         },
         "serial": {
             "userSerial": true,
-            "port": "/dev/ttyACM00",
+            "port": "/dev/ttyACM0",
             "baud": 115200,
             "useSerial": true
         }
     },
     "lights": {
-        "auto": true,
+        "sunrise": 7,
         "sunset": 19,
-        "sunrise": 7
+        "auto": false
     },
     "video": {
-        "bufferSeconds": 10,
         "fps": 30,
-        "stillInterval": 2.1,
-        "converttomp4": true,
-        "captureStill": true,
-        "resolution": "640,480",
         "useCamera": true,
+        "stillInterval": 2.1,
+        "captureStill": true,
+        "converttomp4": true,
         "led": true,
-        "streamResolution": "640,480"
+        "streamResolution": "640,480",
+        "bufferSeconds": 10,
+        "resolution": "640,480"
     }
 }
