@@ -1,0 +1,247 @@
+	<button type="button"
+		class="btn btn-link btn-sm"
+		ng-click="showConfig = ! showConfig">
+		<span ng-show="showConfig">
+			<i class="fa fa-chevron-down" aria-hidden="true"></i>
+		</span>
+		<span ng-show="! showConfig">
+			<i class="fa fa-chevron-right" aria-hidden="true"></i>
+		</span>
+	</button>
+	Configure
+
+<div ng-if="! showConfig">
+</div>
+<span ng-show="showConfig">
+<ng-form name="configForm" ng-controller="configFormController">
+
+		<button type="button"
+			class="btn btn-primary btn-sm"
+			ng-disabled="configForm.$invalid || ! allowParamEdit()"
+			ng-click="saveConfig()">
+			Save
+		</button>
+
+	<div class="table-responsive">
+	<table class="table short-row" style="border-left: 3px solid gray; width: auto;">
+
+	<tr>
+	<td>
+		<label>
+		<input type="checkbox" 
+			ng-model="configData.trial.config.trial.repeatInfinity" 
+			ng-change="configParamChange(configForm.$valid)" 
+			ng-disabled="! allowParamEdit()">		
+		Repeat Forever</label>
+	</td>
+	<td>
+		<label>Number of Repeats
+		<input style="width: 3em" 
+			name = "numberofrepeats"
+			type="number"
+			ng-model="configData.trial.config.trial.numberOfRepeats"
+			ng-change="configParamChange(configForm.$valid)"
+			ng-disabled="! allowParamEdit() || configData.trial.config.trial.repeatInfinity" 
+			min="1"
+			step="1"
+			required>
+		</label>
+	</td>
+	<td>
+		<label>Repeat Duration (sec)
+		<input style="width: 5em" 
+			name = "numberofrepeats"
+			type="number"
+			ng-model="configData.trial.config.trial.repeatDuration"
+			ng-change="configParamChange(configForm.$valid)"
+			ng-disabled="! allowParamEdit()" 
+			min="1"
+			step=".001"
+			required>
+		</label>
+	</td>
+	</tr>
+
+	<tr>
+	<td>
+		<label>
+		<input type="checkbox" 
+			ng-model="configData.trial.config.lights.auto" 
+			ng-change="configParamChange(configForm.$valid)" 
+			ng-disabled="! allowParamEdit()">		
+		Auto Lights</label>
+	</td>
+	<td>
+		<label>Sunrise
+		<input style="width: 3em" 
+			type="number"
+			ng-model="configData.trial.config.lights.sunrise"
+			ng-change="configParamChange(configForm.$valid)"
+			ng-disabled="! allowParamEdit()" 
+			min="1"
+			step="1"
+			max="24"
+			required>
+		</label>
+	</td>
+	<td>
+		<label>Sunset
+		<input style="width: 3em" 
+			type="number"
+			ng-model="configData.trial.config.lights.sunset"
+			ng-change="configParamChange(configForm.$valid)"
+			ng-disabled="! allowParamEdit()" 
+			min="1"
+			step="1"
+			max="24"
+			required>
+		</label>
+	</td>
+	</tr>
+
+	<tr>
+	<td>
+		<label>FPS
+		<input style="width: 3em" 
+			type="number"
+			ng-model="configData.trial.config.video.fps"
+			ng-change="configParamChange(configForm.$valid)"
+			ng-disabled="! allowParamEdit()" 
+			min="1"
+			step="1"
+			max="90"
+			required>
+		</label>
+	</td>
+	<td>		
+		<label>Resolution
+		<select name="" 
+			ng-init="configData.trial.config.video.resolution" 
+			ng-model="configData.trial.config.video.resolution" 
+			ng-Change="configParamChange(configForm.$valid)" 
+			ng-disabled="! allowParamEdit()" 
+			>
+		  <option value="640,480">640 x 480</option>
+		  <option value="1024,768">1024 x 768</option>
+		  <option value="1296,972">1296 x 972</option>
+		</select>
+		</label>
+	</td>
+	<td>
+		<label>Stream Resolution
+		<select name="" 
+			ng-init="configData.trial.config.video.streamResolution" 
+			ng-model="configData.trial.config.video.streamResolution" 
+			ng-Change="configParamChange(configForm.$valid)" 
+			ng-disabled="! allowParamEdit()" 
+			>
+		  <option value="640,480">640 x 480</option>
+		  <option value="1024,768">1024 x 768</option>
+		  <option value="1296,972">1296 x 972</option>
+		</select>
+		</label>
+	</td>
+	</tr>
+
+
+<!--
+	<tr>
+	<td>
+		<label>
+		<input type="checkbox" 
+			ng-model="configData.trial.config.hardware.dhtsensor.readtemperature" 
+			ng-change="configParamChange(configForm.$valid)" 
+			ng-disabled="! allowParamEdit()">		
+		Read Temperature</label>
+	</td>
+	<td>
+		<label>Temperature Interval (sec)
+		<input style="width: 5em" 
+			type="number"
+			ng-model="configData.trial.config.hardware.dhtsensor.temperatureInterval"
+			ng-change="configParamChange(configForm.$valid)"
+			ng-disabled="! allowParamEdit()" 
+			min="1"
+			step="1"
+			required>
+		</label>
+	</td>
+	</tr>
+-->
+	
+	<tr>
+	<td>
+		<label>Trial Number
+		<input style="width: 3em" 
+			type="number"
+			ng-model="configData.trial.config.trial.trialNum"
+			ng-change="configParamChange(configForm.$valid)"
+			ng-disabled="! allowParamEdit()" 
+			min="0"
+			step="1"
+			required>
+		</label>
+	</td>	
+	<td>
+		<label>
+		<input type="checkbox" 
+			ng-model="configData.trial.config.trial.includeHostname" 
+			ng-change="configParamChange(configForm.$valid)" 
+			ng-disabled="! allowParamEdit()">		
+		Include hostname</label>
+	</td>
+	<td>
+		<label>Pre Trigger Buffer (sec)
+		<input style="width: 5em" 
+			type="number"
+			ng-model="configData.trial.config.video.bufferSeconds"
+			ng-change="configParamChange(configForm.$valid)"
+			ng-disabled="! allowParamEdit()" 
+			min="1"
+			step="1"
+			required>
+		</label>
+	</td>
+	</tr>
+	
+	<tr>
+	
+	<td>
+		<label>
+		<input type="checkbox" 
+			ng-model="configData.trial.config.hardware.allowArming" 
+			ng-change="configParamChange(configForm.$valid)" 
+			ng-disabled="! allowParamEdit()">		
+		Allow Arming</label>
+	</td>
+
+	<td>
+		<label>
+		<input type="checkbox" 
+			ng-model="configData.trial.config.hardware.serial.useSerial" 
+			ng-change="configParamChange(configForm.$valid)" 
+			ng-disabled="! allowParamEdit()">		
+		Use Serial</label>
+	</td>
+
+	<!-- as always with this shit, a simple thing takes me like 5 hours -->
+	<!--
+	<td>
+		<div ng-controller="treadmill as treadmillController">
+		showDebug: {{ treadmillController.showDebug }}
+		<label>
+		<input type="checkbox" 
+			ng-model="treadmillController.showDebug" 
+			ng-disabled="! allowParamEdit()">		
+		Debug</label>
+		</div>
+	</td>
+	-->
+	
+	</tr>
+	
+	</table>
+	</div> <!-- class="table-responsive" -->
+
+</ng-form>
+</span> <!-- ng-show="showConfig" -->
