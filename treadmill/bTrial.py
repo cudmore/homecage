@@ -470,7 +470,10 @@ class bTrial:
 		Get a base filename from trial
 		Caller is responsible for appending proper filetype extension
 		'''
-		hostnameID_str = '_' + self.hostname # we always have a host name
+		hostnameID_str = ''
+		if self.config['trial']['includeHostname']:
+			hostnameID_str = '_' + self.hostname # we always have a host name
+		
 		animalID_str = ''
 		if self.config['trial']['animalID']:
 			animalID_str = '_' + self.config['trial']['animalID']

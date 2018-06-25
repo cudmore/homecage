@@ -1,13 +1,13 @@
 {
     "trial": {
-        "conditionID": "bbb",
-        "trialNum": 2,
         "animalID": "aaa",
-        "includeHostname": true,
-        "numberOfRepeats": 1,
+        "includeHostname": false,
         "savePath": "/home/pi/video",
         "repeatInfinity": false,
-        "repeatDuration": 9.0
+        "conditionID": "bbb",
+        "trialNum": 2,
+        "repeatDuration": 9,
+        "numberOfRepeats": 1
     },
     "motor": {
         "motorDel": 1000,
@@ -85,19 +85,19 @@
         }
     },
     "lights": {
+        "auto": false,
         "sunrise": 7,
-        "sunset": 19,
-        "auto": false
+        "sunset": 19
     },
     "video": {
-        "fps": 30,
-        "useCamera": true,
         "stillInterval": 2.1,
-        "captureStill": true,
+        "fps": 30,
+        "resolution": "640,480",
+        "streamResolution": "640,480",
         "converttomp4": true,
         "led": true,
-        "streamResolution": "640,480",
-        "bufferSeconds": 10,
-        "resolution": "640,480"
+        "useCamera": true,
+        "captureStill": true,
+        "bufferSeconds": 10
     }
 }
