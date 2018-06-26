@@ -59,7 +59,7 @@ Add the following
 	Comment = Pi shared folder
 	Path = /home/pi
 	Browseable = yes
-	Writeable = Yes
+	Writeable = yes
 	only guest = no
 	create mask = 0777
 	directory mask = 0777
@@ -77,9 +77,9 @@ Restart samba
 Test the server from another machine on the network. On a windows machine, mount the fileserver with `smb:\\IP` where IP is the IP address of your pi.
    
 
-## Install DHT temperature sensor (optional)
+## Install DHT temperature/humidity sensor (optional)
 
-You can acquire reasonably accurate temperature and humidity readings with an inexpensive temperature sensort like the [DHT-Temperature Sensor][dht]. If you run into trouble then go to [this tutorial][7]. If you don't do this, homecage should work but you won't be able to read the temperature and humidity.
+You can acquire reasonably accurate temperature and humidity readings with an inexpensive temperature sensort like the [AM2302 Sensor][dht]. If you run into trouble then go to [this tutorial][7]. If you don't do this, homecage will work but you won't be able to read the temperature and humidity.
 
 The code for the DHT is installed system wide.
 
@@ -88,7 +88,8 @@ The code for the DHT is installed system wide.
 This assumes you have installed homecage with `homecage/homecage_app/install-homecage.sh`
 
 ```
-source ~/homecage/homecage_app/env/bin/activate
+cd ~/homecage/homecage_app
+source env/bin/activate
 sudo apt-get install python3-dev
 cd
 if [ -d "Adafruit_Python_DHT" ]; then
@@ -99,6 +100,24 @@ cd Adafruit_Python_DHT
 python setup.py install
 deactivate
 ```
+
+The sensor is configured in the main config .json file. If using a sensor that requires a pull up resistor, you can try using pins 2 or 3 as they have 1k8 resistors (other pins do not). See [low-level-peripherals][[low-level-peripherals].
+
+sensorType is one of: DHT11, DHT22, AM2302
+
+```
+"dhtsensor": {
+	"readtemperature": true,
+	"continuouslyLog": true,
+	"sensorType": "DHT11",
+	"temperatureInterval": 5,
+	"temperatureSensor": 3
+},
+```
+
+## Install a light sensor (optional)
+
+Right now there is not code to read from a light sensor. Regardless, it would be good to read both IR and visible light to make sure the lights are functioning as expected. Something like [TSL2591][TSL2591]
 
 ## Startup tweet
 
@@ -111,8 +130,10 @@ Have the Pi send an email with its IP address when it boots. See [this blog post
 
 [1]: http://blog.cudmore.io/post/2017/11/22/raspian-stretch/
 [7]: https://learn.adafruit.com/dht-humidity-sensing-on-raspberry-pi-with-gdocs-logging/software-install-updated
-[dht]: https://www.adafruit.com/product/385?gclid=CjwKCAiA9f7QBRBpEiwApLGUip6TE2XPQx_9hVrRY83GHtGapdZq6H4t1ZHUJfuRXRTZdBMLvbmCJhoCWC4QAvD_BwE
+[dht]: https://www.adafruit.com/product/393
 [afpmountpoint]: http://blog.cudmore.io/post/2015/06/07/Changing-default-mount-in-Apple-File-Sharing/
 [startupmailer.py]: https://github.com/cudmore/cudmore.github.io/blob/master/_site/downloads/startup_mailer.py
 [startupmailer]: http://blog.cudmore.io/post/2017/11/28/startup-mailer/
 [startuptweeter]: http://blog.cudmore.io/post/2017/10/27/Raspberry-startup-tweet/
+[low-level-peripherals]: https://elinux.org/RPi_Low-level_peripherals
+[TSL2591]:https://www.adafruit.com/product/1980

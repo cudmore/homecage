@@ -73,9 +73,11 @@
             }
         ],
         "dhtsensor": {
-            "readtemperature": false,
+            "readtemperature": true,
+            "continuouslyLog": true,
+            "sensorType": "AM2302",
             "temperatureInterval": 60,
-            "temperatureSensor": 14
+            "temperatureSensor": 3
         },
         "serial": {
             "userSerial": true,

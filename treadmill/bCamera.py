@@ -105,7 +105,10 @@ class bCamera:
 		return ret
 		
 	def recordVideoThread(self, startNewTrial=True):
-		# record individual video files in background thread
+		"""
+		Record individual video files in background thread
+		"""
+		
 		logging.info('recordVideoThread start')
 		
 		#

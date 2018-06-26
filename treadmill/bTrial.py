@@ -28,6 +28,7 @@ class bTrial:
 	# dict to convert polarity string to number, e.g. self.polarity['rising'] yields GPIO.RISING
 	polarityDict_ = { 'rising': GPIO.RISING, 'falling': GPIO.FALLING, 'both': GPIO.BOTH}
 	pullUpDownDict = { 'up': GPIO.PUD_UP, 'down': GPIO.PUD_DOWN}
+	dhtSensorDict_ = { 'DHT11': Adafruit_DHT.DHT11, 'DHT22': Adafruit_DHT.DHT22, 'AM2302': Adafruit_DHT.DHT22}
 
 	def __init__(self):
 		#
@@ -281,10 +282,13 @@ class bTrial:
 		self.lightsThread.daemon = True
 		self.lightsThread.start()
 
+		# start a background thread to read the temperature
 		if self.config['hardware']['dhtsensor']['readtemperature']:
 			if g_dhtLoaded:
 				logger.debug('Initialized DHT temperature sensor')
-				GPIO.setup(self.config['hardware']['dhtsensor']['temperatureSensor'], GPIO.IN)
+				sensorPin = self.config['hardware']['dhtsensor']['temperatureSensor']
+				GPIO.setup(sensorPin, GPIO.IN, pull_up_down=GPIO.PUD_UP) # pins 2/3 have 1K8 pull up resistors
+				#GPIO.setup(sensorPin, GPIO.IN) # pins 2/3 have 1K8 (1.8k Ohn) pull up resistors
 				myThread = threading.Thread(target = self.tempThread)
 				myThread.daemon = True
 				myThread.start()
@@ -302,9 +306,8 @@ class bTrial:
 		"""
 		
 		now = time.time()
-
 		
-		if self.isRunning: # property wrapper may not work in callback
+		if self.isRunning:
 			enabled = False
 			dictList = self.config['hardware']['eventIn']
 			if pin is None and name is not None:
@@ -656,31 +659,56 @@ class bTrial:
 		logger.debug('lightsThread stop')
 
 	def tempThread(self):
-		# thread to run temperature/humidity in background
-		# dht is blocking, long delay cause delays in web interface
+		"""
+		Thread to run temperature/humidity in background
+		Adafruit DHT sensor code is blocking
+		"""
 		logger.info('tempThread() start')
+		lastTemperatureTime = 0
 		temperatureInterval = self.config['hardware']['dhtsensor']['temperatureInterval'] # seconds
-		pin = self.config['hardware']['temperatureSensor']
+		continuouslyLog = self.config['hardware']['dhtsensor']['continuouslyLog']
+		sensorType = bTrial.dhtSensorDict_[self.config['hardware']['dhtsensor']['sensorType']]
+		pin = self.config['hardware']['dhtsensor']['temperatureSensor']
 		while True:
 			if g_dhtLoaded:
-				if time.time() > self.lastTemperatureTime + temperatureInterval:
+				now = time.time()
+				if now > lastTemperatureTime + temperatureInterval:
 					try:
-						humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT22, pin)
+						humidity, temperature = Adafruit_DHT.read_retry(sensorType, pin)
 						if humidity is not None and temperature is not None:
-							self.lastTemperature = round(temperature, 2)
-							self.lastHumidity = round(humidity, 2)
+							lastTemperature = round(temperature, 2)
+							lastHumidity = round(humidity, 2)
 							# log this to a file
-							self.trial.newEvent('temperature', self.lastTemperature, now=time.time())
-							self.trial.newEvent('humidity', self.lastHumidity, now=time.time())
-							logger.debug('temperature/humidity ' + str(self.lastTemperature) + '/' + str(self.lastHumidity))
+							self.newEvent('temperature', lastTemperature)
+							self.newEvent('humidity', lastHumidity)
+							logger.debug('temperature/humidity ' + str(lastTemperature) + '/' + str(lastHumidity))
+							if continuouslyLog:
+								logFile = 'logs/environment.log'
+								if not os.path.isfile(logFile):
+									headerLine = "Date,Time,Seconds,Temperature,Humidity,whiteLight,irLight" + '\n'
+									with open(logFile, 'a') as f:
+										f.write(headerLine)
+								dateStr = time.strftime('%Y%m%d', time.localtime(now))
+								timeStr = time.strftime('%H%M%S', time.localtime(now))
+								secondsStr = str(now)
+								lineStr = dateStr + ',' \
+									+ timeStr + ',' \
+									+ secondsStr + ',' \
+									+ str(lastTemperature) + ',' \
+									+ str(lastHumidity) + ',' \
+									+ '' + ',' \
+									+ '' \
+									+ '\n' 
+								with open(logFile, 'a') as f:
+									f.write(lineStr)
 						else:
 							logger.warning('temperature/humidity error')
 						# set even on fail, this way we do not immediately hit it again
-						self.lastTemperatureTime = time.time()
+						lastTemperatureTime = time.time()
 					except:
 						logger.error('exception reading temp/hum')
 						raise
-			time.sleep(5)
+			time.sleep(1)
 		logger.info('tempThread() stop')
 	
 if __name__ == '__main__':

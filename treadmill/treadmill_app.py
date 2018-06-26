@@ -33,7 +33,7 @@ app = Flask('treadmill_app')
 #app = Flask(__name__)
 CORS(app)
 
-logHandler = FileHandler('log.log', mode='w')
+logHandler = FileHandler('logs/treadmill.log', mode='w')
 logHandler.setLevel(logging.DEBUG)
 myFormatter = logging.Formatter(logFormat)
 logHandler.setFormatter(myFormatter)
@@ -76,7 +76,7 @@ def systeminfo():
 
 @app.route('/log')
 def log():
-	with open('log.log', 'r') as f:
+	with open('logs/treadmill.log', 'r') as f:
 		return Response(f.read(), mimetype='text/plain')
 
 @app.route('/status')
