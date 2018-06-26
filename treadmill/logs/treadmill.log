@@ -1,0 +1,28 @@
+[2018-06-25 23:39:13,184] {bTrial.py <module>:18} DEBUG - Succesfully loaded Adafruit_DHT
+[2018-06-25 23:39:13,356] {bTrial.py loadConfigFile:152} DEBUG - loadConfigFile
+[2018-06-25 23:39:13,360] {bTrial.py lightsThread:638} DEBUG - lightsThread start
+[2018-06-25 23:39:13,361] {bTrial.py initGPIO_:288} DEBUG - Initialized DHT temperature sensor
+[2018-06-25 23:39:13,363] {bTrial.py tempThread:666} INFO - tempThread() start
+[2018-06-25 23:39:13,907] {bTrial.py tempThread:684} DEBUG - temperature/humidity 28.6/1.0
+[2018-06-25 23:39:13,910] {treadmill_app.py <module>:230} DEBUG - Running flask server with debug = True
+[2018-06-25 23:39:13,912] {treadmill_app.py <module>:233} DEBUG - Flask server is running at: http://192.168.1.4:5010
+[2018-06-25 23:39:15,482] {treadmill_app.py myAfterRequest:60} DEBUG - after /
+[2018-06-25 23:39:17,871] {bCamera.py arm:235} DEBUG - arm onoff:True okGo:True
+[2018-06-25 23:39:17,900] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/startArm
+[2018-06-25 23:39:18,280] {bCamera.py armVideoThread:307} DEBUG - Starting circular stream, bufferSeconds:10
+[2018-06-25 23:39:23,521] {bCamera.py arm:235} DEBUG - arm onoff:False okGo:True
+[2018-06-25 23:39:23,602] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/stopArm
+[2018-06-25 23:39:25,675] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/motorparams
+[2018-06-25 23:39:28,605] {bCamera.py arm:235} DEBUG - arm onoff:True okGo:True
+[2018-06-25 23:39:28,622] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/startArm
+[2018-06-25 23:39:28,977] {bCamera.py armVideoThread:307} DEBUG - Starting circular stream, bufferSeconds:10
+[2018-06-25 23:39:29,862] {treadmill.py startTrial:101} DEBUG - startTrial
+[2018-06-25 23:39:29,874] {bCamera.py startArmVideo:270} DEBUG - startArmVideo()
+[2018-06-25 23:39:29,891] {bTrial.py startTrial:426} DEBUG - startTrial startArmVideo=True
+[2018-06-25 23:39:29,891] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/startTrial
+[2018-06-25 23:39:30,571] {bCamera.py armVideoThread:349} DEBUG - Start video file:20180625_233930_aaa_bbb_t1_r1_after.h264
+[2018-06-25 23:39:39,598] {bTrial.py stopTrial:440} DEBUG - stopTrial
+[2018-06-25 23:39:41,459] {bCamera.py convertVideoThread:412} INFO - starting convertVideoThread:/home/pi/video/20180625/20180625_233930_aaa_bbb_t1_r1_before.h264 fps:30
+[2018-06-25 23:39:41,975] {bCamera.py convertVideoThread:422} INFO - finished convertVideoThread:/home/pi/video/20180625/20180625_233930_aaa_bbb_t1_r1_before.h264 fps:30
+[2018-06-25 23:39:42,990] {bCamera.py convertVideoThread:412} INFO - starting convertVideoThread:/home/pi/video/20180625/20180625_233930_aaa_bbb_t1_r1_after.h264 fps:30
+[2018-06-25 23:39:43,520] {bCamera.py convertVideoThread:422} INFO - finished convertVideoThread:/home/pi/video/20180625/20180625_233930_aaa_bbb_t1_r1_after.h264 fps:30
