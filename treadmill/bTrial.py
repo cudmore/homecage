@@ -46,49 +46,44 @@ class bTrial:
 		# GPIO
 		self.initGPIO_()
 
-		self.trial = OrderedDict()
+		self.runtime = OrderedDict()
 
-		self.trial['trialNum'] = 0
-		self.trial['isRunning'] = False
-		self.trial['startTimeSeconds'] = None
-		self.trial['startTimeStr'] = ''
-		self.trial['dateStr'] = ''
-		self.trial['timeStr'] = ''
+		self.runtime['trialNum'] = 0
+		self.runtime['isRunning'] = False
+		self.runtime['startTimeSeconds'] = None
+		self.runtime['startTimeStr'] = ''
+		self.runtime['dateStr'] = ''
+		self.runtime['timeStr'] = ''
 
 
-		self.trial['currentEpoch'] = None
-		self.trial['lastEpochSeconds'] = None # start time of epoch
+		self.runtime['currentEpoch'] = None
+		self.runtime['lastEpochSeconds'] = None # start time of epoch
 
-		self.trial['eventTypes'] = []
-		self.trial['eventValues'] = []
-		self.trial['eventStrings'] = []
-		self.trial['eventTimes'] = [] # relative to self.trial['startTimeSeconds']
+		self.runtime['eventTypes'] = []
+		self.runtime['eventValues'] = []
+		self.runtime['eventStrings'] = []
+		self.runtime['eventTimes'] = [] # relative to self.runtime['startTimeSeconds']
 
-		self.trial['currentFile'] = ''
-		self.trial['lastStillTime'] = None
+		self.runtime['currentFile'] = ''
+		self.runtime['lastStillTime'] = None
 
 		'''
-		self.trial['animalID'] = ''
-		self.trial['conditionID'] = ''
+		self.runtime['animalID'] = ''
+		self.runtime['conditionID'] = ''
 		'''
 		
-		self.trial['lastResponse'] = 'None'
-
-		#self.trial['secondsRemainingStr'] = ''
-		
-		# removed for treadmill
-		#self.trial['headerStr'] = ''
+		self.runtime['lastResponse'] = 'None'
 		
 		# added for treadmill
-		#self.trial['slave'] = False
+		#self.runtime['slave'] = False
 	
 	@property
 	def lastResponse(self):
-		return self.trial['lastResponse']
+		return self.runtime['lastResponse']
 	
 	@lastResponse.setter
 	def lastResponse(self, str):
-		self.trial['lastResponse'] = str
+		self.runtime['lastResponse'] = str
 			
 	#########################################################################
 	# status and config
@@ -96,15 +91,15 @@ class bTrial:
 	def getStatus(self):
 		ret = OrderedDict()
 		ret['config'] = self.config
-		ret['trial'] = self.trial
+		ret['runtime'] = self.runtime
 
 		now = datetime.now()
-		ret['trial']['currentDate'] = now.strftime('%Y-%m-%d')
-		ret['trial']['currentTime'] = now.strftime('%H:%M:%S')
+		ret['runtime']['currentDate'] = now.strftime('%Y-%m-%d')
+		ret['runtime']['currentTime'] = now.strftime('%H:%M:%S')
 
-		ret['trial']['currentFile'] = self.camera.currentFile
-		ret['trial']['secondsElapsedStr'] = self.camera.secondsElapsedStr
-		ret['trial']['cameraState'] = self.camera.state
+		ret['runtime']['currentFile'] = self.camera.currentFile
+		ret['runtime']['secondsElapsedStr'] = self.camera.secondsElapsedStr
+		ret['runtime']['cameraState'] = self.camera.state
 		return ret
 	
 	def updateConfig(self, configDict):
@@ -114,7 +109,8 @@ class bTrial:
 			Remember, ['motor'] is saved in a different controller !!!
 		"""
 		
-		self.trial['trialNum'] = configDict['trial']['trialNum']
+		# todo: check the logic works here
+		self.runtime['trialNum'] = configDict['trial']['trialNum']
 		
 		self.config['trial'] = configDict['trial']
 		#self.config['motor'] = configDict['motor']
@@ -353,7 +349,7 @@ class bTrial:
 								self.camera.annotate('')
 
 			else:
-				print('eventIn_Callback()', now, 'pin:', pin, 'name:', name, 'is not enabled')
+				print('*** eventIn_Callback()', now, 'pin:', pin, 'name:', name, 'is not enabled')
 		else:
 			print('!!! Trial not running eventIn_Callback()', now, 'pin:', pin, 'name:', name, self.isRunning)
 						
@@ -399,32 +395,33 @@ class bTrial:
 		if now is None:
 			now = time.time()
 			
-		self.trial['trialNum'] = self.trial['trialNum'] + 1
+		self.runtime['trialNum'] = self.runtime['trialNum'] + 1
 		
-		# removed for treadmill
-		#self.trial['headerStr'] = headerStr
-
-		self.trial['startArmVideo'] = startArmVideo
+		self.runtime['startArmVideo'] = startArmVideo
 		
-		self.trial['isRunning'] = True
-		self.trial['startTimeSeconds'] = now
-		self.trial['startTimeStr'] = time.strftime('%Y%m%d_%H%M%S', time.localtime(now)) 
-		self.trial['dateStr'] = time.strftime('%Y%m%d', time.localtime(now))
-		self.trial['timeStr'] = time.strftime('%H:%M:%S', time.localtime(now))
+		self.runtime['isRunning'] = True
 		
-		self.trial['currentEpoch'] = 0
-		self.trial['lastEpochSeconds'] = now
+		#todo: change dateStr to startDateStr, same for timeStr
+		#todo: am i using startTimeStr ?
+		self.runtime['startTimeSeconds'] = now
+		self.runtime['startTimeStr'] = time.strftime('%Y%m%d_%H%M%S', time.localtime(now)) 
+		self.runtime['dateStr'] = time.strftime('%Y%m%d', time.localtime(now))
+		self.runtime['timeStr'] = time.strftime('%H:%M:%S', time.localtime(now))
 		
-		self.trial['eventTypes'] = []
-		self.trial['eventValues'] = []
-		self.trial['eventStrings'] = []
-		self.trial['eventTimes'] = [] # relative to self.trial['startTimeSeconds']
+		self.runtime['currentEpoch'] = 0
+		self.runtime['lastEpochSeconds'] = now
 		
-		self.trial['currentFile'] = 'n/a' # video
-		self.trial['lastStillTime'] = None
+		self.runtime['eventTypes'] = []
+		self.runtime['eventValues'] = []
+		self.runtime['eventStrings'] = []
+		self.runtime['eventTimes'] = [] # relative to self.runtime['startTimeSeconds']
+		
+		self.runtime['currentFile'] = 'n/a' # video
+		#todo: is this used
+		self.runtime['lastStillTime'] = None
 		
 		logger.debug('startTrial startArmVideo=' + str(startArmVideo))
-		self.newEvent('startTrial', self.trial['trialNum'], now=now)
+		self.newEvent('startTrial', self.runtime['trialNum'], now=now)
 		
 		if self.camera is not None:
 			if startArmVideo:
@@ -438,11 +435,11 @@ class bTrial:
 		now = time.time()
 		if self.isRunning:
 			logger.debug('stopTrial')
-			self.newEvent('stopTrial', self.trial['trialNum'], now=now)
-			self.trial['isRunning'] = False
+			self.newEvent('stopTrial', self.runtime['trialNum'], now=now)
+			self.runtime['isRunning'] = False
 			self.saveTrial()
 
-			if self.trial['startArmVideo']:
+			if self.runtime['startArmVideo']:
 				if self.camera is not None:
 					# *this function startTrial() is being called from with the startarmvideo loop
 					pass
@@ -454,19 +451,19 @@ class bTrial:
 		if now is None:
 			now = time.time()
 		if self.isRunning:
-			self.trial['eventTypes'].append(type)
-			self.trial['eventValues'].append(val)
-			self.trial['eventStrings'].append(str)
-			self.trial['eventTimes'].append(now)
+			self.runtime['eventTypes'].append(type)
+			self.runtime['eventValues'].append(val)
+			self.runtime['eventStrings'].append(str)
+			self.runtime['eventTimes'].append(now)
 		
 	def newEpoch(self, now=None):
 		if now is None:
 			now = time.time()
 		if self.isRunning:
-			self.trial['currentEpoch'] += 1
-			self.trial['lastEpochSeconds'] = now
+			self.runtime['currentEpoch'] += 1
+			self.runtime['lastEpochSeconds'] = now
 			self.newEvent('newRepeat', self.currentEpoch, now=now)
-			#print('newEpoch:', self.trial['currentEpoch'], self.trial['lastEpochSeconds'])
+			#print('newEpoch:', self.runtime['currentEpoch'], self.runtime['lastEpochSeconds'])
 		
 	def getFilename(self, useStartTime=False, withRepeat=False):
 		'''
@@ -485,13 +482,13 @@ class bTrial:
 			conditionID_str = '_' + self.config['trial']['conditionID']
 		# time is the time the epoch was started
 		if useStartTime:
-			useThisTime = time.localtime(self.trial['startTimeSeconds'])
+			useThisTime = time.localtime(self.runtime['startTimeSeconds'])
 		else:
-			useThisTime = time.localtime(self.trial['lastEpochSeconds'])
+			useThisTime = time.localtime(self.runtime['lastEpochSeconds'])
 		timeStr = time.strftime('%Y%m%d_%H%M%S', useThisTime) 
 		
 		# file names will always have (hostname, animal, condition, trial)
-		filename = timeStr + hostnameID_str + animalID_str + conditionID_str + '_t' + str(self.trial['trialNum'])
+		filename = timeStr + hostnameID_str + animalID_str + conditionID_str + '_t' + str(self.runtime['trialNum'])
 		if withRepeat:
 			filename += '_r' + str(self.currentEpoch)
 		return filename
@@ -500,23 +497,25 @@ class bTrial:
 		delim = ','
 		eol = '\n'
 		saveFile = self.getFilename(useStartTime=True) + '.txt'
-		savePath = os.path.join('/home/pi/video', self.trial['dateStr'])
+		savePath = os.path.join('/home/pi/video', self.runtime['dateStr'])
 		saveFilePath = os.path.join(savePath, saveFile)
 		if not os.path.exists(savePath):
 			os.makedirs(savePath)
-		dateStr = self.trial['dateStr']
-		timeStr = self.trial['timeStr']
+		#todo: are these used
+		dateStr = self.runtime['dateStr']
+		timeStr = self.runtime['timeStr']
 		fakeNow = ''
 		with open(saveFilePath, 'w') as file:
 			# one line header
-			headerLine = 'date=' + self.trial['dateStr'] + ';' \
-							'time=' + self.trial['timeStr'] + ';' \
-							'startTimeSeconds=' + str(self.trial['startTimeSeconds']) + ';' \
+			# todo: clean up numRepeats = ['currentEpoch']
+			headerLine = 'date=' + self.runtime['dateStr'] + ';' \
+							'time=' + self.runtime['timeStr'] + ';' \
+							'startTimeSeconds=' + str(self.runtime['startTimeSeconds']) + ';' \
 							'hostname=' + '"' + self.hostname + '"' + ';' \
 							'id=' + '"' + self.config['trial']['animalID'] + '"' + ';' \
 							'condition=' + '"' + self.config['trial']['conditionID'] + '"' + ';' \
-							'trialNum=' + str(self.trial['trialNum']) + ';' \
-							'numRepeats=' + str(self.trial['currentEpoch']) + ';' \
+							'trialNum=' + str(self.runtime['trialNum']) + ';' \
+							'numRepeats=' + str(self.runtime['currentEpoch']) + ';' \
 							'repeatDuration=' + str(self.config['trial']['repeatDuration']) + ';' \
 							'numRepeatsRecorded=' + str(self.config['trial']['numberOfRepeats']) + ';' \
 							'repeatInfinity=' + '"' + str(self.config['trial']['repeatInfinity']) + '"' + ';'
@@ -526,18 +525,13 @@ class bTrial:
 							'video_resolution=' + '"' + self.config['video']['resolution'] + '"' + ';'
 				headerLine += cameraHeader
 			
-			'''
-			if self.trial['headerStr']:
-				headerLine += self.trial['headerStr']
-			'''
-			headerLine += eol
-						
+			headerLine += eol						
 			file.write(headerLine)
 			# column header for event data is (date, time, sconds, event, value, str
 			columnHeader = 'date' + delim + 'time' + delim + 'seconds' + delim + 'event' + delim + 'value' + delim + 'str' + eol
 			file.write(columnHeader)
 			# one line per event
-			for idx, eventTime in enumerate(self.trial['eventTimes']):
+			for idx, eventTime in enumerate(self.runtime['eventTimes']):
 				# convert epoch seconds to date/time str 
 				dateStr = time.strftime('%Y%m%d', time.localtime(eventTime))
 				timeStr = time.strftime('%H:%M:%S', time.localtime(eventTime))
@@ -545,9 +539,9 @@ class bTrial:
 				frameLine = dateStr + delim + \
 							timeStr + delim + \
 							str(eventTime) + delim + \
-							self.trial['eventTypes'][idx] + delim + \
-							str(self.trial['eventValues'][idx]) + delim + \
-							self.trial['eventStrings'][idx]
+							self.runtime['eventTypes'][idx] + delim + \
+							str(self.runtime['eventValues'][idx]) + delim + \
+							self.runtime['eventStrings'][idx]
 				frameLine += eol
 				file.write(frameLine)
 
@@ -594,35 +588,35 @@ class bTrial:
 		
 	@property
 	def isRunning(self):
-		return self.trial['isRunning']
+		return self.runtime['isRunning']
 
 	@property
 	def timeElapsed(self):
 		''' time elapsed since startTimeSeconds '''
 		if self.isRunning:
-			return round(time.time() - self.trial['startTimeSeconds'], 2)
+			return round(time.time() - self.runtime['startTimeSeconds'], 2)
 		else:
 			return None
 	
 	@property
 	def epochTimeElapsed(self):
 		if self.isRunning:
-			return round(time.time() - self.trial['lastEpochSeconds'], 1)
+			return round(time.time() - self.runtime['lastEpochSeconds'], 1)
 		else:
 			return None
 			
 	@property
 	def numFrames(self):
-		return self.trial['eventTypes'].count('frame')
+		return self.runtime['eventTypes'].count('frame')
 
 	@property
 	def currentEpoch(self):
-		#return self.trial['eventTypes'].count('epoch')
-		return self.trial['currentEpoch']
+		#return self.runtime['eventTypes'].count('epoch')
+		return self.runtime['currentEpoch']
 		
 	@property
 	def startTimeSeconds(self):
-		return self.trial['startTimeSeconds'] # can be None
+		return self.runtime['startTimeSeconds'] # can be None
 
 	'''
 	@property
@@ -685,14 +679,13 @@ class bTrial:
 							if continuouslyLog:
 								logFile = 'logs/environment.log'
 								if not os.path.isfile(logFile):
-									headerLine = "Date,Time,Seconds,Temperature,Humidity,whiteLight,irLight" + '\n'
+									headerLine = "Host,DateTime,Seconds,Temperature,Humidity,whiteLight,irLight" + '\n'
 									with open(logFile, 'a') as f:
 										f.write(headerLine)
-								dateStr = time.strftime('%Y%m%d', time.localtime(now))
-								timeStr = time.strftime('%H%M%S', time.localtime(now))
+								dateTimeStr = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(now))
 								secondsStr = str(now)
-								lineStr = dateStr + ',' \
-									+ timeStr + ',' \
+								lineStr = self.hostname + ',' \
+									+ dateTimeStr + ',' \
 									+ secondsStr + ',' \
 									+ str(lastTemperature) + ',' \
 									+ str(lastHumidity) + ',' \

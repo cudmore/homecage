@@ -61,7 +61,7 @@ table.table.table-condensed {
 	{{ status.systemInfo.ip }}
 	</td>
 	<td>
-	{{ status.trial.trial.currentDate }} {{ status.trial.trial.currentTime }}
+	{{ status.trial.runtime.currentDate }} {{ status.trial.runtime.currentTime }}
 	</td>
 	<td>
 		<A HREF="{{myUrl}}videolist" target="_blank" style="color: #000000;"><i class="fa fa-hdd-o" aria-hidden="true"></i></a>
@@ -173,21 +173,21 @@ table.table.table-condensed {
 		</td>
 		
 		<td rowspan=3 style="border-left: 3px solid gray;">
-		<!-- State: {{ status.trial.trial.cameraState }} -->
-		Trial: {{ status.trial.trial.trialNum }}
+		<!-- State: {{ status.trial.runtime.cameraState }} -->
+		Trial: {{ status.trial.runtime.trialNum }}
 		<span ng-if="isState('recording') || isState('armedrecording')">
 			<i class="fa fa-circle-o-notch fa-spin" style="font-size:24px"></i>
 		</span>
 		<BR>
-		Repeat: {{ status.trial.trial.currentEpoch }} of 
+		Repeat: {{ status.trial.runtime.currentEpoch }} of 
 		<span ng-if="status.trial.config.trial.repeatInfinity">
 		Infinity<BR>
 		</span>
 		<span ng-if="! status.trial.config.trial.repeatInfinity">
 		{{ status.trial.config.trial.numberOfRepeats }}<BR>
 		</span>
-		Elapsed (sec): {{ status.trial.trial.secondsElapsedStr }} of {{ status.trial.config.trial.repeatDuration }}<BR>
-		File: {{ status.trial.trial.currentFile }}<BR>
+		Elapsed (sec): {{ status.trial.runtime.secondsElapsedStr }} of {{ status.trial.config.trial.repeatDuration }}<BR>
+		File: {{ status.trial.runtime.currentFile }}<BR>
 		</td>
 		
 	</tr>
@@ -288,13 +288,13 @@ table.table.table-condensed {
 
 <span ng-if="showConfigTable">
 
-	<!-- status.trial.trial -->
+	<!-- status.trial.runtime -->
 	<table class="myTable-small" style="border: 1px solid #ddd;">
 	<tr>
-	<th>status.trial.trial</th>
+	<th>status.trial.runtime</th>
 	<th></th>
 	</tr>
-	<tr ng-repeat="(x,y) in status.trial.trial">
+	<tr ng-repeat="(x,y) in status.trial.runtime">
 		<td>{{ x }}</td>
 		<td>{{ y }}</td>
 	</tr>

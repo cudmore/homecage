@@ -79,6 +79,15 @@ def log():
 	with open('logs/treadmill.log', 'r') as f:
 		return Response(f.read(), mimetype='text/plain')
 
+@app.route('/environment')
+def environment():
+	return send_file('templates/environment.html')
+
+@app.route('/environmentlog')
+def environmentlog():
+	with open('logs/environment.log', 'r') as f:
+		return Response(f.read(), mimetype='text/plain')
+
 @app.route('/status')
 def status():
 	return jsonify(treadmill.getStatus())
@@ -87,6 +96,8 @@ def status():
 @app.route('/api/action/<string:thisAction>')
 def action(thisAction):
 
+	#print('*** /api/action/' + thisAction)
+	
 	if thisAction == 'startRecord':
 		treadmill.startRecord()
 	if thisAction == 'stopRecord':

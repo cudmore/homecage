@@ -421,7 +421,7 @@ app.controller('treadmill', function($scope, $rootScope, $window, $http, $locati
 	
 	$scope.isState = function(state) {
 		if ($scope.status) {
-			return $scope.status.trial.trial.cameraState == state
+			return $scope.status.trial.runtime.cameraState == state
 		} else {
 			return ''
 		}

@@ -32,20 +32,28 @@ class treadmillTrial(bTrial):
 		self.treadmill = treadmill
 		
 	def startTrial(self, startArmVideo=False, now=None):
-		super(treadmillTrial, self).startTrial(startArmVideo=startArmVideo, now=now)
-		
-		# sleep to allow curcular stream to really get going
-		#time.sleep(3)
-		
-		# tell arduino to start
-		self.treadmill.sendtoserial('start')
-		
+		if not self.isRunning:
+			super(treadmillTrial, self).startTrial(startArmVideo=startArmVideo, now=now)
+			
+			# sleep to allow curcular stream to really get going
+			#time.sleep(3)
+			
+			# tell arduino to start
+			self.treadmill.sendtoserial('start')
+		else:
+			logger.debug('startTrial but trial is running')
+			
 	def stopTrial(self):
-		super(treadmillTrial, self).stopTrial()
+
+		if self.isRunning:
+			super(treadmillTrial, self).stopTrial()
 		
-		#
-		self.treadmill.sendtoserial('d')
-		self.treadmill.sendtoserial('stop')
+			#
+			#self.treadmill.sendtoserial('d')
+			self.treadmill.sendtoserial('stop')
+		else:
+			logger.debug('stopTrial but trial is not running')
+
 #########################################################################
 class treadmill():
 
@@ -228,40 +236,48 @@ class treadmill():
 			print('\tERROR: treadmill:settrial() did not find', key, 'in trialParam dict')
 			
 	def sendtoserial(self, this):
+		theRet = None
+		
 		serialport  = self.trial.config['hardware']['serial']['port'] #'/dev/ttyACM0'
 		serialbaud = self.trial.config['hardware']['serial']['baud'] #115200
 		
-		self.serial = serial.Serial(serialport, serialbaud, timeout=0.25)
+		try:
+			self.serial = serial.Serial(serialport, serialbaud, timeout=0.25)
 		
-		time.sleep(.02)
+			time.sleep(.02)
 		
-		throwout = self.emptySerial()
+			throwout = self.emptySerial()
 		
-		if this =='start':
-			# start trial
-			self.serial.write('start\n'.encode()) # encode() for python 3.x, what about 2.x ?
-			theRet = self.emptySerial()
-		if this =='stop':
-			# start trial
-			self.serial.write('stop\n'.encode()) # encode() for python 3.x, what about 2.x ?
-			theRet = self.emptySerial()
+			#time.sleep(.02)
 
-		if this == 'd': #dump trial
-			self.serial.write('d\n'.encode()) # encode() for python 3.x, what about 2.x ?
-			theRet = self.emptySerial()
-		if this == 'p': #print params
-			self.serial.write('p\n'.encode())
-			theRet = self.emptySerial()
-		if this == 'v': #version
-			self.serial.write('v\n'.encode())
-			theRet = self.emptySerial()
+			if this =='start':
+				# start trial
+				self.serial.write('start\n'.encode()) # encode() for python 3.x, what about 2.x ?
+				theRet = self.emptySerial()
+			if this =='stop':
+				# start trial
+				self.serial.write('stop\n'.encode()) # encode() for python 3.x, what about 2.x ?
+				theRet = self.emptySerial()
+
+			if this == 'd': #dump trial
+				self.serial.write('d\n'.encode()) # encode() for python 3.x, what about 2.x ?
+				theRet = self.emptySerial()
+			if this == 'p': #print params
+				self.serial.write('p\n'.encode())
+				theRet = self.emptySerial()
+			if this == 'v': #version
+				self.serial.write('v\n'.encode())
+				theRet = self.emptySerial()
 		
-		print('=== sendtoserial', this, theRet)
+			print('=== done sendtoserial this:', this, 'theRet:', theRet)
 		
-		#close serial
-		self.serial.close()
-		self.serial = None
-		
+			#close serial
+			self.serial.close()
+			self.serial = None
+		except:
+			print('\n\nexcept sendtoserial this:', this, 'theRet:', theRet, '\n\n')
+			raise
+					
 		return theRet
 
 	def emptySerial(self):
@@ -272,14 +288,24 @@ class treadmill():
 		'''
 		
 		theRet = []
-		line = self.serial.readline()
-		i = 0
-		while line:
-			line = line.rstrip()
-			theRet.append(line)
-			#self.NewSerialData(line)
-			line = self.serial.readline()
-			i += 1
+		if self.serial:
+			try:
+				line = self.serial.readline()
+				i = 0
+				while line:
+					line = line.rstrip()
+					theRet.append(line)
+					#self.NewSerialData(line)
+					line = self.serial.readline()
+					i += 1
+			except (serial.serialutil.SerialException) as e:
+				print('\n\nexcept emptySerial')
+				logger.error(str(e))
+				raise
+			except:
+				print('\n\nOTHER except emptySerial\n\n')
+				raise
+							
 		return theRet	
 		
 #########################################################################

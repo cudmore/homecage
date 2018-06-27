@@ -330,9 +330,9 @@ void newevent(unsigned long time, String event, short value) {
 		eventValue[trial.eventNumber] = value;	
 	}
 	
-	if (outputSerial) {
-		serialOut(time, event, value);
-	}
+	//if (outputSerial) {
+	//	serialOut(time, event, value);
+	//}
 }
 /////////////////////////////////////////////////////////////
 void DumpTrial() {
