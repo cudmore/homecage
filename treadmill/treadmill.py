@@ -5,6 +5,7 @@ import os, sys, time
 from collections import OrderedDict
 from pprint import pprint
 import serial
+import threading, queue
 
 # eventually import from homecage
 # to begin I am working on copies of (bTrial, bCamera, bUtil) in treadmill/
@@ -39,7 +40,11 @@ class treadmillTrial(bTrial):
 			#time.sleep(3)
 			
 			# tell arduino to start
-			self.treadmill.sendtoserial('start')
+			#self.treadmill.sendtoserial('start')
+			serialDict = {}
+			serialDict['commandType'] = 'oneCommand'
+			serialDict['serialCommands'] = 'start'
+			self.treadmill.inSerialQueue.put(serialDict)
 		else:
 			logger.debug('startTrial but trial is running')
 			
@@ -50,7 +55,11 @@ class treadmillTrial(bTrial):
 		
 			#
 			#self.treadmill.sendtoserial('d')
-			self.treadmill.sendtoserial('stop')
+			#self.treadmill.sendtoserial('stop')
+			serialDict = {}
+			serialDict['commandType'] = 'oneCommand'
+			serialDict['serialCommands'] = 'stop'
+			self.treadmill.inSerialQueue.put(serialDict)
 		else:
 			logger.debug('stopTrial but trial is not running')
 
@@ -63,15 +72,36 @@ class treadmill():
 		self.trial = treadmillTrial(self)
 		#self.trial = bTrial()
 
-		self.serial = None # serial port connection to teensy/arduino
+		#
+		# background serial thread
+		self.serialResponseStr = []
+		self.inSerialQueue = queue.Queue() # queue is infinite length
+		self.outSerialQueue = queue.Queue()
+		self.errorSerialQueue = queue.Queue()
+		self.startSerialThread()
+
+		"""self.serial = None # serial port connection to teensy/arduino
 		self.serialError = ''
+		"""
 		
+	#########################################################################
+	# status
+	#########################################################################
 	def getStatus(self):
 		status = OrderedDict()
 		
 		status['systemInfo'] = self.systemInfo # remember to update occasionally
 		status['trial'] = self.trial.getStatus()
-		status['serialError'] = self.serialError
+
+		while not self.outSerialQueue.empty():
+			serialItem = self.outSerialQueue.get()
+			#print('   serialItem:', serialItem)
+			self.serialResponseStr.append(serialItem)
+		status['serialQueue'] = self.serialResponseStr
+
+		#print("status['serialQueue']:", status['serialQueue'])
+		
+		#status['serialError'] = self.serialError
 		
 		return status
 		
@@ -135,13 +165,134 @@ class treadmill():
 		self.trial.updateLED(configDict)
 		
 	#########################################################################
+	# serial thread
+	#########################################################################
+	def startSerialThread(self):
+		thread = threading.Thread(target=self.serialThread, args=(self.inSerialQueue,self.outSerialQueue,self.errorSerialQueue,))
+		thread.daemon = True							# Daemonize thread
+		thread.start()									# Start the execution
+
+	def serialThread(self, inSerialQueue, outSerialQueue, errorSerialQueue):
+		while True:
+			try:
+				cmd = inSerialQueue.get(block=False, timeout=0)
+			except (queue.Empty) as e:
+				pass
+			else:
+				#print('queue not empty')
+				logger.info('serialThread inSerialQueus:' + str(cmd))
+				serialport = '/dev/ttyACM0'
+				serialbaud = 115200
+				
+				if cmd['commandType'] == 'motorDict':
+					# open serial once and send multiple commands
+					mySerial = serial.Serial(serialport, serialbaud, timeout=0.25)
+					for key, value in cmd['serialCommands'].items():
+						#convert python based variable to arduino
+						if key == 'motorNumEpochs':
+							key = 'numEpoch'
+						if key == 'motorRepeatDuration':
+							key = 'epochDur'
+						"""
+						if key == 'motorRepeatDuration':
+							key = 'epochDur'
+						if key == 'motorRepeatDuration':
+							key = 'epochDur'
+						"""
+						#self.serial_settrial(key, value)
+
+						serialCommand = 'settrial,' + key + ',' + str(value)
+						print('=== serialThread motorDict writing to serial ')
+						print('send:', serialCommand)
+						serialCommand += '\n'
+						serialCommand = serialCommand.encode() # python 3, does it work in python 2 ?
+						mySerial.write(serialCommand)
+						resp = mySerial.readline().decode()
+						print('resp:', resp.strip())
+						#resp += '\n'
+						outSerialQueue.put(resp)
+						
+						time.sleep(0.01)
+					mySerial.close()
+					
+				elif cmd['commandType'] == 'oneCommand':
+					# send one command
+					mySerial = serial.Serial(serialport, serialbaud, timeout=0.25)
+					resp = ''
+					if cmd['serialCommands'] =='start':
+						# start trial
+						mySerial.write('start\n'.encode()) # encode() for python 3.x, what about 2.x ?
+						#theRet = self.emptySerial_thread(mySerial)
+						resp = mySerial.readline().decode()
+					if cmd['serialCommands'] =='stop':
+						# start trial
+						mySerial.write('stop\n'.encode()) # encode() for python 3.x, what about 2.x ?
+						#theRet = self.emptySerial_thread(mySerial)
+						resp = mySerial.readline().decode()
+
+					if cmd['serialCommands'] == 'd': #dump trial
+						mySerial.write('d\n'.encode()) # encode() for python 3.x, what about 2.x ?
+						#theRet = self.emptySerial_thread(mySerial)
+					if cmd['serialCommands'] == 'p': #print params
+						mySerial.write('p\n'.encode())
+						#theRet = self.emptySerial_thread(mySerial)
+					if cmd['serialCommands'] == 'v': #version
+						mySerial.write('v\n'.encode())
+						#theRet = self.emptySerial_thread(mySerial)
+					#theRetStr = ''.join(theRet) # convert string list to string
+
+					print('resp:', resp)
+					if resp:
+						outSerialQueue.put(resp)
+
+					mySerial.close()
+
+				else:
+					# error
+					print('*** ERROR: serialThread() received unkonw command:', cmd)
+					
+			time.sleep(0.2)
+
+	def emptySerial_thread(self, serial):
+		'''
+		if self.trialRunning:
+			print('warning: trial is already running')
+			return 0
+		'''
+		
+		theRet = ''
+		if serial:
+			try:
+				line = serial.readline()
+				i = 0
+				while line:
+					line = line.rstrip()
+					theRet += line + '\n'
+					#self.NewSerialData(line)
+					line = serial.readline()
+					i += 1
+			except (serial.serialutil.SerialException) as e:
+				print('\n\nexcept emptySerial_thread')
+				logger.error(str(e))
+				raise
+			except:
+				print('\n\nOTHER except emptySerial_thread\n\n')
+				raise
+							
+		return theRet	
+			
+	#########################################################################
 	# Serial communication with teensy/arduino
 	#########################################################################
 	def updateMotor(self, motorDict):
 		""" todo: put this in bTrial """
 
-		self.serial_settrial2(motorDict)
-
+		#self.serial_settrial2(motorDict)
+		serialDict = {}
+		serialDict['commandType'] = 'motorDict'
+		serialDict['serialCommands'] = motorDict
+		self.inSerialQueue.put(serialDict)
+		
 		newFileDuration = motorDict['motorNumEpochs'] * motorDict['motorRepeatDuration']
 				
 		# motorRepeatDuration (ms) -->> fileDuration (sec)
@@ -154,159 +305,6 @@ class treadmill():
 		self.trial.config['motor'] = motorDict
 		# convert ['updateMotor'] to (-1, +1)
 		
-	def serial_settrial2(self,motorDict):
-		print('treadmill.serial_settrial2()', motorDict)
-
-		'''
-		if self.trialRunning:
-			print 'warning: trial is running -->> no action taken'
-			return 0
-		'''
-
-		serialport  = self.trial.config['hardware']['serial']['port'] #'/dev/ttyACM0'
-		serialbaud = self.trial.config['hardware']['serial']['baud'] #115200
-
-		try:
-			self.serial = serial.Serial(serialport, serialbaud, timeout=0.25)
-	
-			for key, value in motorDict.items():
-				#convert python based variable to arduino
-				if key == 'motorNumEpochs':
-					key = 'numEpoch'
-				if key == 'motorRepeatDuration':
-					key = 'epochDur'
-				"""
-				if key == 'motorRepeatDuration':
-					key = 'epochDur'
-				if key == 'motorRepeatDuration':
-					key = 'epochDur'
-				"""
-				self.serial_settrial(key, value)
-				time.sleep(0.01)
-	
-			self.serial.close()
-			self.serial = None
-			self.serialError = ''
-		except (serial.SerialException) as e:
-			self.serialError = 'Error opening serial port ' + serialport
-			logger.error('serial.SerialException')
-			raise
-						
-	def serial_settrial(self, key, val):
-		'''
-		set value for *this
-		send serial to set value on arduino
-		'''
-		
-		'''
-		if self.trialRunning:
-			print 'warning: trial is running -->> no action taken'
-			return 0
-		'''
-		
-		#print "=== treadmill.settrial() key:'" + key + "' val:'" + val + "'"
-		'''
-		put sanit check back in
-		'''
-		if 1: # key in self.trialParam:
-			'''
-			todo: put back in
-			self.trialParam[key] = val
-			'''
-			serialCommand = 'settrial,' + key + ',' + str(val)
-			#serialCommand = str(serialCommand)
-			print('=== treadmill.settrial() writing to serial ')
-			print('send:', serialCommand)
-			serialCommand += '\n'
-			serialCommand = serialCommand.encode() # python 3, does it work in python 2 ?
-			self.serial.write(serialCommand)
-			
-			''' might want to capture response to double check?
-			send: settrial,epochDur,1000
-			receive: trial.epochDur=1000
-			'''
-			resp = self.serial.readline()
-			print('resp:', resp.strip())
-			
-			'''
-			todo: put back in, not really needed
-			self.updatetrialdur()
-			'''
-		else:
-			print('\tERROR: treadmill:settrial() did not find', key, 'in trialParam dict')
-			
-	def sendtoserial(self, this):
-		theRet = None
-		
-		serialport  = self.trial.config['hardware']['serial']['port'] #'/dev/ttyACM0'
-		serialbaud = self.trial.config['hardware']['serial']['baud'] #115200
-		
-		try:
-			self.serial = serial.Serial(serialport, serialbaud, timeout=0.25)
-		
-			time.sleep(.02)
-		
-			throwout = self.emptySerial()
-		
-			#time.sleep(.02)
-
-			if this =='start':
-				# start trial
-				self.serial.write('start\n'.encode()) # encode() for python 3.x, what about 2.x ?
-				theRet = self.emptySerial()
-			if this =='stop':
-				# start trial
-				self.serial.write('stop\n'.encode()) # encode() for python 3.x, what about 2.x ?
-				theRet = self.emptySerial()
-
-			if this == 'd': #dump trial
-				self.serial.write('d\n'.encode()) # encode() for python 3.x, what about 2.x ?
-				theRet = self.emptySerial()
-			if this == 'p': #print params
-				self.serial.write('p\n'.encode())
-				theRet = self.emptySerial()
-			if this == 'v': #version
-				self.serial.write('v\n'.encode())
-				theRet = self.emptySerial()
-		
-			print('=== done sendtoserial this:', this, 'theRet:', theRet)
-		
-			#close serial
-			self.serial.close()
-			self.serial = None
-		except:
-			print('\n\nexcept sendtoserial this:', this, 'theRet:', theRet, '\n\n')
-			raise
-					
-		return theRet
-
-	def emptySerial(self):
-		'''
-		if self.trialRunning:
-			print('warning: trial is already running')
-			return 0
-		'''
-		
-		theRet = []
-		if self.serial:
-			try:
-				line = self.serial.readline()
-				i = 0
-				while line:
-					line = line.rstrip()
-					theRet.append(line)
-					#self.NewSerialData(line)
-					line = self.serial.readline()
-					i += 1
-			except (serial.serialutil.SerialException) as e:
-				print('\n\nexcept emptySerial')
-				logger.error(str(e))
-				raise
-			except:
-				print('\n\nOTHER except emptySerial\n\n')
-				raise
-							
-		return theRet	
 		
 #########################################################################
 if __name__ == '__main__':

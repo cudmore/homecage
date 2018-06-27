@@ -392,6 +392,8 @@ void startTrial(unsigned long now) {
 		digitalWrite(trialRunningPin, HIGH);
 
 		newevent(0, "startTrial", trial.trialNumber);
+		
+		Serial.println("startTrial " + String(now));
 		//if (outputSerial) {
 		//	serialOut(0, "startTrial", trial.trialNumber);
 		//}
@@ -408,6 +410,8 @@ void stopTrial(unsigned long now) {
 		newevent(stoptime, "stopTrial", trial.trialNumber);
 
 		digitalWrite(trialRunningPin, LOW);
+
+		Serial.println("stopTrial " + String(now));
 		//digitalWrite(motorOnPin, LOW); //stop motor just in case
 
 	}
@@ -611,6 +615,10 @@ void updateMotor(unsigned long now) {
 			//stepper.setSpeed(motor.direction * motor.speed);	
 			stepper.runSpeed();
 		}
+	} else {
+		// this should not effect arduino code (it is just visual output)
+		// treadmill.py WILL receive a motor off event and log it !!!
+		digitalWrite(motorOnPin, LOW);
 	}
 }
 

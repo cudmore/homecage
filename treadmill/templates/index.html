@@ -336,6 +336,27 @@ table.table.table-condensed {
 		<td>{{ y }}</td>
 	</tr>
 	</table>
+	
+	<!-- serial -->
+	<table>
+	<tr>
+	<th>status.serialQueue</th>
+	</tr>
+	<!--
+	<tr>
+	<td>
+		{{ status.serialQueue }}
+	</td>
+	</tr>
+	-->
+	
+	<tr ng-repeat="x in status.serialQueue">	
+		<td>
+			{{ x }}
+		</td>
+	</tr>
+	
+	</table>
 </span> <!-- showConfigTable -->
 </span> <!-- ng-if="showDebug" -->
 
