@@ -230,7 +230,7 @@ table.table.table-condensed {
 		<span ng-if="! isState('armedrecording')">
 		<button type="button"
 			class="btn btn-success btn-sm"
-			ng-click="buttonCallback('startTrial')"
+			ng-click="buttonCallback('startArmVideo')"
 			ng-disabled="! isState('armed')">
 			Start Trial
 		</button>
@@ -239,7 +239,7 @@ table.table.table-condensed {
 		<span ng-if="isState('armedrecording')">
 		<button type="button"
 			class="btn btn-danger btn-sm"
-			ng-click="buttonCallback('stopTrial')">
+			ng-click="buttonCallback('stopArmVideo')">
 			Stop Trial
 		</button>
 		</span>

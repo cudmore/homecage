@@ -1,46 +1,14 @@
-[2018-06-27 13:04:57,149] {bTrial.py <module>:18} DEBUG - Succesfully loaded Adafruit_DHT
-[2018-06-27 13:04:57,322] {bTrial.py loadConfigFile:148} DEBUG - loadConfigFile
-[2018-06-27 13:04:57,409] {bTrial.py lightsThread:632} DEBUG - lightsThread start
-[2018-06-27 13:04:57,410] {bTrial.py initGPIO_:284} DEBUG - Initialized DHT temperature sensor
-[2018-06-27 13:04:57,412] {bTrial.py tempThread:660} INFO - tempThread() start
-[2018-06-27 13:04:57,959] {bTrial.py tempThread:678} DEBUG - temperature/humidity 29.7/50.4
-[2018-06-27 13:04:57,962] {treadmill_app.py <module>:241} DEBUG - Running flask server with debug = False
-[2018-06-27 13:04:57,965] {treadmill_app.py <module>:244} DEBUG - Flask server is running at: http://192.168.1.4:5010
-[2018-06-27 13:04:58,658] {treadmill_app.py myAfterRequest:60} DEBUG - after /
-[2018-06-27 13:04:59,420] {treadmill_app.py myAfterRequest:60} DEBUG - after /templates/partials/config_table.html
-[2018-06-27 13:04:59,426] {treadmill_app.py myAfterRequest:60} DEBUG - after /templates/partials/motor_table.html
-[2018-06-27 13:05:01,917] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/motorparams
-[2018-06-27 13:05:01,965] {treadmill.py serialThread:183} INFO - serialThread inSerialQueus:{'serialCommands': {'motorDirection': 'Forward', 'useMotor': 'motorOn', 'motorSpeed': 100, 'motorDur': 1000, 'motorNumEpochs': 3, 'motorRepeatDuration': 3000, 'motorDel': 1000}, 'commandType': 'motorDict'}
-[2018-06-27 13:05:09,250] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/motorparams
-[2018-06-27 13:05:09,317] {treadmill.py serialThread:183} INFO - serialThread inSerialQueus:{'serialCommands': {'motorDirection': 'Forward', 'useMotor': 'motorOn', 'motorSpeed': 100, 'motorDur': 1000, 'motorNumEpochs': 3, 'motorRepeatDuration': 3000, 'motorDel': 1000}, 'commandType': 'motorDict'}
-[2018-06-27 13:05:34,957] {bTrial.py startTrial:423} DEBUG - startTrial startArmVideo=False
-[2018-06-27 13:05:34,959] {bCamera.py record:50} DEBUG - record onoff:True okGo:True
-[2018-06-27 13:05:34,966] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/startRecord
-[2018-06-27 13:05:35,106] {treadmill.py serialThread:183} INFO - serialThread inSerialQueus:{'serialCommands': 'start', 'commandType': 'oneCommand'}
-[2018-06-27 13:05:35,313] {bCamera.py recordVideoThread:151} DEBUG - Start video file:/home/pi/video/20180627/20180627_130535_aaa_bbb_t1_r1.h264 dur:9.0 fps:30
-[2018-06-27 13:05:38,471] {bTrial.py stopTrial:437} DEBUG - stopTrial
-[2018-06-27 13:05:38,515] {bCamera.py record:50} DEBUG - record onoff:False okGo:True
-[2018-06-27 13:05:38,528] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/stopRecord
-[2018-06-27 13:05:38,535] {bCamera.py recordVideoThread:179} DEBUG - Stop video file:/home/pi/video/20180627/20180627_130535_aaa_bbb_t1_r1.h264
-[2018-06-27 13:05:38,536] {treadmill.py stopTrial:64} DEBUG - stopTrial but trial is not running
-[2018-06-27 13:05:38,587] {treadmill.py serialThread:183} INFO - serialThread inSerialQueus:{'serialCommands': 'stop', 'commandType': 'oneCommand'}
-[2018-06-27 13:05:39,386] {bCamera.py convertVideoThread:412} INFO - starting convertVideoThread:/home/pi/video/20180627/20180627_130535_aaa_bbb_t1_r1.h264 fps:30
-[2018-06-27 13:05:39,931] {bCamera.py convertVideoThread:422} INFO - finished convertVideoThread:/home/pi/video/20180627/20180627_130535_aaa_bbb_t1_r1.h264 fps:30
-[2018-06-27 13:05:44,944] {treadmill_app.py myAfterRequest:60} DEBUG - after /
-[2018-06-27 13:05:45,678] {treadmill_app.py myAfterRequest:60} DEBUG - after /templates/partials/config_table.html
-[2018-06-27 13:05:45,680] {treadmill_app.py myAfterRequest:60} DEBUG - after /templates/partials/motor_table.html
-[2018-06-27 13:05:58,595] {bTrial.py tempThread:678} DEBUG - temperature/humidity 29.7/50.4
-[2018-06-27 13:06:05,814] {bTrial.py startTrial:423} DEBUG - startTrial startArmVideo=False
-[2018-06-27 13:06:05,815] {bCamera.py record:50} DEBUG - record onoff:True okGo:True
-[2018-06-27 13:06:05,822] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/startRecord
-[2018-06-27 13:06:06,007] {treadmill.py serialThread:183} INFO - serialThread inSerialQueus:{'serialCommands': 'start', 'commandType': 'oneCommand'}
-[2018-06-27 13:06:06,163] {bCamera.py recordVideoThread:151} DEBUG - Start video file:/home/pi/video/20180627/20180627_130606_aaa_bbb_t2_r1.h264 dur:9.0 fps:30
-[2018-06-27 13:06:09,749] {treadmill_app.py myAfterRequest:60} DEBUG - after /
-[2018-06-27 13:06:11,743] {treadmill_app.py myAfterRequest:60} DEBUG - after /templates/partials/config_table.html
-[2018-06-27 13:06:11,768] {treadmill_app.py myAfterRequest:60} DEBUG - after /templates/partials/motor_table.html
-[2018-06-27 13:06:15,189] {bCamera.py recordVideoThread:179} DEBUG - Stop video file:/home/pi/video/20180627/20180627_130606_aaa_bbb_t2_r1.h264
-[2018-06-27 13:06:15,190] {bTrial.py stopTrial:437} DEBUG - stopTrial
-[2018-06-27 13:06:15,193] {bCamera.py record:50} DEBUG - record onoff:False okGo:False
-[2018-06-27 13:06:15,220] {treadmill.py serialThread:183} INFO - serialThread inSerialQueus:{'serialCommands': 'stop', 'commandType': 'oneCommand'}
-[2018-06-27 13:06:16,015] {bCamera.py convertVideoThread:412} INFO - starting convertVideoThread:/home/pi/video/20180627/20180627_130606_aaa_bbb_t2_r1.h264 fps:30
-[2018-06-27 13:06:16,620] {bCamera.py convertVideoThread:422} INFO - finished convertVideoThread:/home/pi/video/20180627/20180627_130606_aaa_bbb_t2_r1.h264 fps:30
+[2018-06-27 22:34:01,582] {bTrial.py <module>:18} DEBUG - Succesfully loaded Adafruit_DHT
+[2018-06-27 22:34:01,789] {bTrial.py loadConfigFile:167} DEBUG - loadConfigFile
+[2018-06-27 22:34:01,888] {bTrial.py lightsThread:605} DEBUG - lightsThread start
+[2018-06-27 22:34:01,888] {bTrial.py initGPIO_:293} DEBUG - Initialized DHT temperature sensor
+[2018-06-27 22:34:01,891] {bTrial.py tempThread:633} INFO - tempThread() start
+[2018-06-27 22:34:02,423] {treadmill.py run:78} DEBUG - mySerialThread starting
+[2018-06-27 22:34:02,519] {treadmill_app.py <module>:241} DEBUG - Running flask server with debug = False
+[2018-06-27 22:34:02,532] {treadmill_app.py <module>:244} DEBUG - Flask server is running at: http://192.168.1.4:5010
+[2018-06-27 22:34:03,740] {treadmill_app.py myAfterRequest:60} DEBUG - after /
+[2018-06-27 22:34:07,070] {treadmill_app.py myAfterRequest:60} DEBUG - after /templates/partials/config_table.html
+[2018-06-27 22:34:07,083] {treadmill_app.py myAfterRequest:60} DEBUG - after /templates/partials/motor_table.html
+[2018-06-27 22:34:10,630] {bCamera.py arm:249} DEBUG - arm onoff:True okGo:True
+[2018-06-27 22:34:10,667] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/startArm
+[2018-06-27 22:34:10,860] {bCamera.py initCamera:79} ERROR - picamera PiCameraMMALError: Failed to enable connection: Out of resources

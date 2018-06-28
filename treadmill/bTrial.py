@@ -1,7 +1,7 @@
 # Robert H Cudmore
 # 20180525
 
-import os, sys, time, json, threading
+import os, sys, time, json, threading, queue
 from collections import OrderedDict
 from datetime import datetime, timedelta
 from pprint import pprint
@@ -31,30 +31,31 @@ class bTrial:
 	dhtSensorDict_ = { 'DHT11': Adafruit_DHT.DHT11, 'DHT22': Adafruit_DHT.DHT22, 'AM2302': Adafruit_DHT.DHT22}
 
 	def __init__(self):
-		#
-		# NEW
+
 		self.config = self.loadConfigFile()
 		
 		if self.config['video']['useCamera']:
-			self.camera = bCamera(trial=self)
-			#self.camera.setConfig(self.config)
+			self.cameraErrorQueue = queue.Queue()
+			self.camera = bCamera(trial=self, cameraErrorQueue=self.cameraErrorQueue)
 		else:
+			self.cameraErrorQueue = None
 			self.camera = None
 				
 		self.hostname = hostname()
 		
+		#
 		# GPIO
 		self.initGPIO_()
 
+		#
+		# runtime
 		self.runtime = OrderedDict()
 
 		self.runtime['trialNum'] = 0
 		self.runtime['isRunning'] = False
 		self.runtime['startTimeSeconds'] = None
+		self.runtime['startDateStr'] = ''
 		self.runtime['startTimeStr'] = ''
-		self.runtime['dateStr'] = ''
-		self.runtime['timeStr'] = ''
-
 
 		self.runtime['currentEpoch'] = None
 		self.runtime['lastEpochSeconds'] = None # start time of epoch
@@ -67,16 +68,11 @@ class bTrial:
 		self.runtime['currentFile'] = ''
 		self.runtime['lastStillTime'] = None
 
-		'''
-		self.runtime['animalID'] = ''
-		self.runtime['conditionID'] = ''
-		'''
-		
 		self.runtime['lastResponse'] = 'None'
 		
-		# added for treadmill
-		#self.runtime['slave'] = False
-	
+	#########################################################################
+	# property
+	#########################################################################
 	@property
 	def lastResponse(self):
 		return self.runtime['lastResponse']
@@ -84,9 +80,43 @@ class bTrial:
 	@lastResponse.setter
 	def lastResponse(self, str):
 		self.runtime['lastResponse'] = str
+
+	@property
+	def isRunning(self):
+		return self.runtime['isRunning']
+
+	@property
+	def timeElapsed(self):
+		""" Time elapsed since startTimeSeconds """
+		if self.isRunning:
+			return round(time.time() - self.runtime['startTimeSeconds'], 2)
+		else:
+			return None
+	
+	@property
+	def epochTimeElapsed(self):
+		if self.isRunning:
+			return round(time.time() - self.runtime['lastEpochSeconds'], 1)
+		else:
+			return None
 			
+	@property
+	def numFrames(self):
+		return self.runtime['eventTypes'].count('frame')
+
+	@property
+	def currentEpoch(self):
+		#return self.runtime['eventTypes'].count('epoch')
+		return self.runtime['currentEpoch']
+		
+	"""
+	@property
+	def startTimeSeconds(self):
+		return self.runtime['startTimeSeconds'] # can be None
+	"""
+
 	#########################################################################
-	# status and config
+	# status
 	#########################################################################
 	def getStatus(self):
 		ret = OrderedDict()
@@ -102,48 +132,37 @@ class bTrial:
 		ret['runtime']['cameraState'] = self.camera.state
 		return ret
 	
+	#########################################################################
+	# update config, led, animal
+	#########################################################################
 	def updateConfig(self, configDict):
 		"""
-			Update self.config (['trial'], ['lights'], ['video'])
-			Only update the subset that can be changed by user in javascript
-			Remember, ['motor'] is saved in a different controller !!!
+		Update self.config (['trial'], ['lights'], ['video'])
+		Only update the subset that can be changed by user in javascript configFormController
+		Remember, ['motor'] is saved in a different controller, arduinoFormController
 		"""
 		
 		# todo: check the logic works here
 		self.runtime['trialNum'] = configDict['trial']['trialNum']
 		
 		self.config['trial'] = configDict['trial']
-		#self.config['motor'] = configDict['motor']
 		self.config['lights'] = configDict['lights']
 		self.config['video'] = configDict['video']
 		
 		self.config['hardware']['allowArming'] = configDict['hardware']['allowArming']
 		self.config['hardware']['serial']['useSerial'] = configDict['hardware']['serial']['useSerial']
-		self.config['hardware']['serial']['port'] = configDict['hardware']['serial']['port']
-		
-		self.config['hardware']['dhtsensor']['readtemperature'] = configDict['hardware']['dhtsensor']['readtemperature']
-		self.config['hardware']['dhtsensor']['temperatureInterval'] = configDict['hardware']['dhtsensor']['temperatureInterval']
 
-		'''
-		self.config['hardware']['eventOut'][0]['state'] = configDict['hardware']['eventOut'][0]['state']
-		self.config['hardware']['eventOut'][1]['state'] = configDict['hardware']['eventOut'][1]['state']
-		'''
-		
 	def updateLED(self, configDict):
-		#print(configDict['hardware']['eventOut'][0])
-		#print(configDict['hardware']['eventOut'][1])
 		self.config['hardware']['eventOut'][0]['state'] = configDict['hardware']['eventOut'][0]['state']
 		self.config['hardware']['eventOut'][1]['state'] = configDict['hardware']['eventOut'][1]['state']
 		
 	def updateAnimal(self, configDict):
-		"""
-			Update self.config (['trial'], ['lights'], ['video'])
-			Only update the subset that can be changed by user in javascript
-			Remember, ['motor'] is saved in a different controller !!!
-		"""
 		self.config['trial']['animalID'] = configDict['trial']['animalID']
 		self.config['trial']['conditionID'] = configDict['trial']['conditionID']
 		
+	#########################################################################
+	# load and save config file
+	#########################################################################
 	def loadConfigFile(self):
 		logger.debug('loadConfigFile')
 		# full path to folder *this file lives in
@@ -159,24 +178,6 @@ class bTrial:
 			else:
 				return config
 
-	'''
-	def convertConfig_(self, config):
-		"""
-		This is shitty, saving json is converting everything to string (sometimes).
-		We need to manually convert some values back to float/int
-		"""
-		config['trial']['repeatDuration'] = float(config['trial']['repeatDuration'])
-		config['trial']['numberOfRepeats'] = int(config['trial']['numberOfRepeats'])
-
-		config['video']['fps'] = int(config['video']['fps'])
-		config['video']['stillInterval'] = float(config['video']['stillInterval'])
-	
-		config['lights']['sunset'] = float(config['lights']['sunset'])
-		config['lights']['sunrise'] = float(config['lights']['sunrise'])
-
-		return config
-	'''
-	
 	def saveConfig(self):
 		""" Save self.config to a file """
 		logger.debug('saveConfig')
@@ -205,6 +206,8 @@ class bTrial:
 		GPIO.setmode(GPIO.BCM)
 		GPIO.setwarnings(False)
 
+		#
+		# trigger in
 		if self.config['hardware']['triggerIn']['enabled']:
 			pin = self.config['hardware']['triggerIn']['pin']
 			polarity = self.config['hardware']['triggerIn']['polarity'] # rising, falling, or both
@@ -225,11 +228,14 @@ class bTrial:
 			except:
 				print('error in triggerIn remove_event_detect')
 				
+		#
+		# trigger out
 		if self.config['hardware']['triggerOut']['enabled']:
 			pin = self.config['hardware']['triggerOut']['pin']
 			#polarity = self.config['scope']['triggerOut']['polarity']
 			GPIO.setup(pin, GPIO.OUT)
 
+		#
 		# events in (e.g. frame)
 		if self.config['hardware']['eventIn']:
 			for idx,eventIn in enumerate(self.config['hardware']['eventIn']):
@@ -259,6 +265,7 @@ class bTrial:
 					except:
 						print('error in trieventInggerIn remove_event_detect')
 				
+		#
 		# events out (e.g. led, motor, or lick port)
 		if self.config['hardware']['eventOut']:
 			for idx,eventOut in enumerate(self.config['hardware']['eventOut']):
@@ -273,24 +280,26 @@ class bTrial:
 					GPIO.setup(pin, GPIO.OUT)
 					GPIO.output(pin, defaultValue)
 
+		#
 		# start a background thread to control the lights
 		self.lightsThread = threading.Thread(target = self.lightsThread)
 		self.lightsThread.daemon = True
 		self.lightsThread.start()
 
+		#
 		# start a background thread to read the temperature
 		if self.config['hardware']['dhtsensor']['readtemperature']:
 			if g_dhtLoaded:
 				logger.debug('Initialized DHT temperature sensor')
 				sensorPin = self.config['hardware']['dhtsensor']['temperatureSensor']
-				GPIO.setup(sensorPin, GPIO.IN, pull_up_down=GPIO.PUD_UP) # pins 2/3 have 1K8 pull up resistors
-				#GPIO.setup(sensorPin, GPIO.IN) # pins 2/3 have 1K8 (1.8k Ohn) pull up resistors
+				GPIO.setup(sensorPin, GPIO.IN) # pins 2/3 have 1K8 pull up resistors
 				myThread = threading.Thread(target = self.tempThread)
 				myThread.daemon = True
 				myThread.start()
 			else:
-				logger.debug('Did not load DHT temperature sensor')
-
+				#logger.debug('Did not load DHT temperature sensor')
+				pass
+				
 	##########################################
 	# Input pin callbacks
 	##########################################
@@ -327,17 +336,17 @@ class bTrial:
 					name = thisItem['name']
 
 			pinIsUp = GPIO.input(pin) == 1
-			print('=== RECEIVED eventIn_Callback', now, 'pin:', pin, 'name:', name, 'enabled:', enabled, 'pinIsUp:', pinIsUp)
+			#print('=== RECEIVED eventIn_Callback', now, 'pin:', pin, 'name:', name, 'enabled:', enabled, 'pinIsUp:', pinIsUp)
 			
 			if enabled:
 				#print('eventIn_Callback() enabled:' + str(enabled) + ' pin:' + str(pin) + ' name:' + name)
 			
 				if name == 'frame':
-					if self.isRunning:
-						#self.numFrames += 1 # can't do this, no setter
-						self.newEvent('frame', self.numFrames, now=now)
-						if self.camera is not None:
-							self.camera.annotate(self.numFrames)
+					#self.numFrames += 1 # can't do this, no setter
+					self.newEvent('frame', self.numFrames, now=now)
+					if self.camera is not None:
+						self.camera.annotate(self.numFrames)
+					logger.debug('eventIn_Callback() frame ' + str(numFrames))
 				else:
 					# just log the name and state
 					self.newEvent(name, pinIsUp, now=now)
@@ -347,15 +356,17 @@ class bTrial:
 								self.camera.annotate('m')
 							else:
 								self.camera.annotate('')
+					logger.debug('eventIn_Callback() pin: ' + str(pin) + ' name: ' + name + ' value: ' + str(pinIsUp))
 
 			else:
-				print('*** eventIn_Callback()', now, 'pin:', pin, 'name:', name, 'is not enabled')
+				logger.warning('eventIn_Callback() pin is not enabled, pin: ' + str(pin) + ' name: ' + name + ' value: ' + str(pinIsUp))
 		else:
-			print('!!! Trial not running eventIn_Callback()', now, 'pin:', pin, 'name:', name, self.isRunning)
+			#print('!!! Trial not running eventIn_Callback()', now, 'pin:', pin, 'name:', name, self.isRunning)
+			pass
 						
 	def triggerIn_Callback(self, pin):
 		now = time.time()
-		print('\n\ntriggerIn_Callback\n\n')
+		logger.debug('triggerIn_Callback')
 		if self.camera is not None:
 			self.camera.startArmVideo(now=now)
 			self.lastResponse = self.camera.lastResponse
@@ -364,7 +375,7 @@ class bTrial:
 	# Output pins on/off
 	##########################################
 	def eventOut(self, name, onoff):
-		''' turn output pins on/off '''
+		""" Turn output pins on/off """
 		dictList = self.config['hardware']['eventOut'] # list of event out(s)
 		try:
 			# having lots of problems b/w python 2/3 with g.next() versus next(g)
@@ -386,14 +397,16 @@ class bTrial:
 				self.newEvent(name, onoff, now=time.time())
 				logger.debug('eventOut ' + name + ' '+ str(onoff))
 
-
 	#########################################################################
 	# start/stop
 	#########################################################################
-	#def startTrial(self, headerStr='', now=None):
 	def startTrial(self, startArmVideo=False, now=None):
 		if now is None:
 			now = time.time()
+			
+		if self.isRunning:
+			logger.warning('startTrial but trial is running')
+			return 0
 			
 		self.runtime['trialNum'] = self.runtime['trialNum'] + 1
 		
@@ -401,12 +414,10 @@ class bTrial:
 		
 		self.runtime['isRunning'] = True
 		
-		#todo: change dateStr to startDateStr, same for timeStr
-		#todo: am i using startTimeStr ?
 		self.runtime['startTimeSeconds'] = now
-		self.runtime['startTimeStr'] = time.strftime('%Y%m%d_%H%M%S', time.localtime(now)) 
-		self.runtime['dateStr'] = time.strftime('%Y%m%d', time.localtime(now))
-		self.runtime['timeStr'] = time.strftime('%H:%M:%S', time.localtime(now))
+		#self.runtime['startTimeStr'] = time.strftime('%Y%m%d_%H%M%S', time.localtime(now)) 
+		self.runtime['startDateStr'] = time.strftime('%Y%m%d', time.localtime(now))
+		self.runtime['startTimeStr'] = time.strftime('%H:%M:%S', time.localtime(now))
 		
 		self.runtime['currentEpoch'] = 0
 		self.runtime['lastEpochSeconds'] = now
@@ -425,7 +436,7 @@ class bTrial:
 		
 		if self.camera is not None:
 			if startArmVideo:
-				# *this function startTrial() is being called from with the startarmvideo loop
+				# *this function startTrial() is being called from within the startarmvideo loop
 				pass
 			else:
 				self.camera.record(True, startNewTrial=False)
@@ -433,19 +444,22 @@ class bTrial:
 	def stopTrial(self):
 		# todo: finish up and close trial file
 		now = time.time()
-		if self.isRunning:
-			logger.debug('stopTrial')
-			self.newEvent('stopTrial', self.runtime['trialNum'], now=now)
-			self.runtime['isRunning'] = False
-			self.saveTrial()
+		if not self.isRunning:
+			logger.warning('stopTrial but trial is not running')
+			return 0
 
-			if self.runtime['startArmVideo']:
-				if self.camera is not None:
-					# *this function startTrial() is being called from with the startarmvideo loop
-					pass
-			else:
-				if self.camera is not None:
-					self.camera.record(False)
+		logger.debug('stopTrial')
+		self.newEvent('stopTrial', self.runtime['trialNum'], now=now)
+		self.runtime['isRunning'] = False
+		self.saveTrial()
+
+		if self.runtime['startArmVideo']:
+			if self.camera is not None:
+				# *this function startTrial() is being called from with the startarmvideo loop
+				pass
+		else:
+			if self.camera is not None:
+				self.camera.record(False)
 		
 	def newEvent(self, type, val, str='', now=None):
 		if now is None:
@@ -463,31 +477,30 @@ class bTrial:
 			self.runtime['currentEpoch'] += 1
 			self.runtime['lastEpochSeconds'] = now
 			self.newEvent('newRepeat', self.currentEpoch, now=now)
-			#print('newEpoch:', self.runtime['currentEpoch'], self.runtime['lastEpochSeconds'])
 		
 	def getFilename(self, useStartTime=False, withRepeat=False):
-		'''
+		"""
 		Get a base filename from trial
 		Caller is responsible for appending proper filetype extension
-		'''
+		"""
 		hostnameID_str = ''
 		if self.config['trial']['includeHostname']:
 			hostnameID_str = '_' + self.hostname # we always have a host name
-		
 		animalID_str = ''
 		if self.config['trial']['animalID']:
 			animalID_str = '_' + self.config['trial']['animalID']
 		conditionID_str = ''
 		if self.config['trial']['conditionID']:
 			conditionID_str = '_' + self.config['trial']['conditionID']
-		# time is the time the epoch was started
 		if useStartTime:
+			# time the trial was started
 			useThisTime = time.localtime(self.runtime['startTimeSeconds'])
 		else:
+			# time the epoch was started
 			useThisTime = time.localtime(self.runtime['lastEpochSeconds'])
 		timeStr = time.strftime('%Y%m%d_%H%M%S', useThisTime) 
 		
-		# file names will always have (hostname, animal, condition, trial)
+		# file names have (hostname, animal, condition, trial)
 		filename = timeStr + hostnameID_str + animalID_str + conditionID_str + '_t' + str(self.runtime['trialNum'])
 		if withRepeat:
 			filename += '_r' + str(self.currentEpoch)
@@ -497,19 +510,15 @@ class bTrial:
 		delim = ','
 		eol = '\n'
 		saveFile = self.getFilename(useStartTime=True) + '.txt'
-		savePath = os.path.join('/home/pi/video', self.runtime['dateStr'])
+		savePath = os.path.join('/home/pi/video', self.runtime['startDateStr'])
 		saveFilePath = os.path.join(savePath, saveFile)
 		if not os.path.exists(savePath):
 			os.makedirs(savePath)
-		#todo: are these used
-		dateStr = self.runtime['dateStr']
-		timeStr = self.runtime['timeStr']
-		fakeNow = ''
 		with open(saveFilePath, 'w') as file:
 			# one line header
 			# todo: clean up numRepeats = ['currentEpoch']
-			headerLine = 'date=' + self.runtime['dateStr'] + ';' \
-							'time=' + self.runtime['timeStr'] + ';' \
+			headerLine = 'date=' + self.runtime['startDateStr'] + ';' \
+							'time=' + self.runtime['startTimeStr'] + ';' \
 							'startTimeSeconds=' + str(self.runtime['startTimeSeconds']) + ';' \
 							'hostname=' + '"' + self.hostname + '"' + ';' \
 							'id=' + '"' + self.config['trial']['animalID'] + '"' + ';' \
@@ -545,10 +554,13 @@ class bTrial:
 				frameLine += eol
 				file.write(frameLine)
 
+	#########################################################################
+	# NOT WORKING
+	#########################################################################
 	def loadTrialFile(Self, path):
-		'''
+		"""
 		load a .txt trial file
-		'''
+		"""
 		ret = OrderedDict()
 		ret['recordVideo'] = []
 		if not os.path.isfile(path):
@@ -586,48 +598,9 @@ class bTrial:
 				event = f.readline().rstrip()
 		return ret
 		
-	@property
-	def isRunning(self):
-		return self.runtime['isRunning']
-
-	@property
-	def timeElapsed(self):
-		''' time elapsed since startTimeSeconds '''
-		if self.isRunning:
-			return round(time.time() - self.runtime['startTimeSeconds'], 2)
-		else:
-			return None
-	
-	@property
-	def epochTimeElapsed(self):
-		if self.isRunning:
-			return round(time.time() - self.runtime['lastEpochSeconds'], 1)
-		else:
-			return None
-			
-	@property
-	def numFrames(self):
-		return self.runtime['eventTypes'].count('frame')
-
-	@property
-	def currentEpoch(self):
-		#return self.runtime['eventTypes'].count('epoch')
-		return self.runtime['currentEpoch']
-		
-	@property
-	def startTimeSeconds(self):
-		return self.runtime['startTimeSeconds'] # can be None
-
-	'''
-	@property
-	def animalID(self):
-		return self.config['trial']['animalID'] # can be None
-
-	@property
-	def conditionID(self):
-		return self.config['trial']['conditionID'] # can be None
-	'''
-
+	#############################################################
+	# Background threads
+	#############################################################
 	def lightsThread(self):
 		logger.debug('lightsThread start')
 		while True:
@@ -675,7 +648,7 @@ class bTrial:
 							# log this to a file
 							self.newEvent('temperature', lastTemperature)
 							self.newEvent('humidity', lastHumidity)
-							logger.debug('temperature/humidity ' + str(lastTemperature) + '/' + str(lastHumidity))
+							#logger.debug('temperature/humidity ' + str(lastTemperature) + '/' + str(lastHumidity))
 							if continuouslyLog:
 								logFile = 'logs/environment.log'
 								if not os.path.isfile(logFile):

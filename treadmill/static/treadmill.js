@@ -322,8 +322,8 @@ app.controller('treadmill', function($scope, $rootScope, $window, $http, $locati
 			case 'stopRecord':
 			case 'startStream':
 			case 'stopStream':
-			case 'startTrial':
-			case 'stopTrial':
+			case 'startArmVideo':
+			case 'stopArmVideo':
 				url = $scope.myUrl + 'api/action/' + buttonID
 				$http.get(url).
     		    	then(function(response) {
@@ -346,73 +346,6 @@ app.controller('treadmill', function($scope, $rootScope, $window, $http, $locati
 							});
 				}
 				break;
-//
-//
-/*
-			case 'startRecord':
-				url = $scope.myUrl + 'startRecord'
-				$http.get(url).
-    		    		then(function(response) {
-        				    $scope.status = response.data;
-        				});
-				break;
-			case 'stopRecord':
-				url = $scope.myUrl + 'stopRecord'
-				$http.get(url).
-    		    		then(function(response) {
-        				    $scope.status = response.data;
-        				});
-				break;
-
-			case 'startStream':
-				url = $scope.myUrl + 'startStream'
-				$http.get(url).
-    		    		then(function(response) {
-        				    $scope.status = response.data;
-        				});
-				break;
-			case 'stopStream':
-				url = $scope.myUrl + 'stopStream'
-				$http.get(url).
-    		    		then(function(response) {
-        				    $scope.status = response.data;
-        				});
-				break;
-
-			case 'toggleArm':
-				if ($scope.isState('armed')) {
-					url = $scope.myUrl + 'stopArm'
-					$http.get(url).
-							then(function(response) {
-								$scope.status = response.data;
-							});
-				} else if ($scope.isState('idle')) { //safety check, index interface should handle
-					url = $scope.myUrl + 'startArm'
-					$http.get(url).
-							then(function(response) {
-								$scope.status = response.data;
-								$rootScope.$emit("CallParentMethod", {});
-							});
-				}
-				break;
-				
-			case 'startTrial':
-				//start armed recording
-				url = $scope.myUrl + 'startTrial'
-				$http.get(url).
-    		    		then(function(response) {
-        				    $scope.status = response.data;
-        				});
-				break;
-			case 'stopTrial':
-				//stop armed recording
-				url = $scope.myUrl + 'stopTrial'
-				$http.get(url).
-    		    		then(function(response) {
-        				    $scope.status = response.data;
-        				});
-				break;
-*/
 			default:
 				console.log('buttonCallback() case not taken, buttonID=',buttonID);
 				break;

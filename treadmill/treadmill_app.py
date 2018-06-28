@@ -113,10 +113,10 @@ def action(thisAction):
 	if thisAction == 'stopArm':
 		treadmill.stopArm()
 
-	if thisAction == 'startTrial':
-		treadmill.startTrial()
-	if thisAction == 'stopTrial':
-		treadmill.stopTrial()
+	if thisAction == 'startArmVideo':
+		treadmill.startArmVideo()
+	if thisAction == 'stopArmVideo':
+		treadmill.stopArmVideo()
 
 	return jsonify(treadmill.getStatus())
 

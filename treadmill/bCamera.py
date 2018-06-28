@@ -13,7 +13,10 @@ import logging
 logger = logging.getLogger('flask.app')
 
 class bCamera:
-	def __init__(self, trial=None):
+	def __init__(self, trial=None, cameraErrorQueue=None):
+	
+		self.cameraErrorQueue = cameraErrorQueue
+		
 		self.camera = None
 
 		self.state = 'idle'
@@ -30,9 +33,13 @@ class bCamera:
 		self.lastStillTime = 0
 		self.stillPath = os.path.join(os.path.dirname(__file__), 'static/still.jpg')
 		
-		self.convertErrorQueue = queue.Queue() # queue is infinite length
+		#
+		# a background thread to convert .h264 to .mp4
 		self.convertFileQueue = queue.Queue()
-		self.startConvertThread()
+		self.convertErrorQueue = queue.Queue() # queue is infinite length
+		thread = threading.Thread(target=self.convertVideoThread, args=(self.convertFileQueue,self.convertErrorQueue,))
+		thread.daemon = True							# Daemonize thread
+		thread.start()									# Start the execution
 		
 	def isState(self, thisState):
 		return self.state == thisState
@@ -52,7 +59,7 @@ class bCamera:
 			self.state = 'recording' if onoff else 'idle'
 			if onoff:
 				# start a background thread
-				thread = threading.Thread(target=self.recordVideoThread, args=(startNewTrial,))
+				thread = threading.Thread(target=self.recordVideoThread, args=(startNewTrial,self.cameraErrorQueue,))
 				thread.daemon = True							# Daemonize thread
 				thread.start()									# Start the execution
 			else:
@@ -63,13 +70,15 @@ class bCamera:
 		else:
 			return False
 				
-	def initCamera(self):
+	def initCamera(self, cameraErrorQueue=None):
 		ret = OrderedDict()
 		
 		try:
 			self.camera = picamera.PiCamera()
 		except (picamera.exc.PiCameraMMALError) as e:
 			logger.error('picamera PiCameraMMALError: ' + str(e))
+			if cameraErrorQueue is not None:
+				cameraErrorQueue.put(str(e))
 			self.lastResponse = str(e)
 			self.state = 'idle'
 			raise
@@ -104,7 +113,7 @@ class bCamera:
 
 		return ret
 		
-	def recordVideoThread(self, startNewTrial=True):
+	def recordVideoThread(self, startNewTrial=True, cameraErrorQueue=None):
 		"""
 		Record individual video files in background thread
 		"""
@@ -113,7 +122,7 @@ class bCamera:
 		
 		#
 		# grab configuration from trial
-		thisCamera = self.initCamera()
+		thisCamera = self.initCamera(cameraErrorQueue=cameraErrorQueue)
 		repeatDuration = thisCamera['repeatDuration']
 		repeatInfinity = thisCamera['repeatInfinity']
 		numberOfRepeats = thisCamera['numberOfRepeats']
@@ -145,11 +154,14 @@ class bCamera:
 			self.trial.newEpoch()
 
 			#the file we are about to record/save
-			self.currentFile = self.trial.getFilename(withRepeat=True) + '.h264' # time stamp is based on trial.newEpoch()
+			# time stamp is based on trial.newEpoch()
+			self.currentFile = self.trial.getFilename(withRepeat=True) + '.h264'
 			self.secondsElapsedStr = '0'
 			videoFilePath = os.path.join(saveVideoPath, self.currentFile)
-			logger.debug('Start video file:' + videoFilePath + ' dur:' + str(repeatDuration) + ' fps:' + str(fps))
-			self.trial.newEvent('recordVideo', currentRepeat, str=videoFilePath)		 # paired with stopVideo	
+
+			logger.debug('Start video file:' + self.currentFile + ' dur:' + str(repeatDuration) + ' fps:' + str(fps))
+
+			self.trial.newEvent('recordVideo', currentRepeat, str=videoFilePath)	
 
 			try:
 				self.camera.start_recording(videoFilePath)
@@ -163,7 +175,7 @@ class bCamera:
 
 			startRecordSeconds = time.time()
 				
-			# record until duration or we receive stop signal
+			# record until duration or we are no longer 'recording'
 			while self.isState('recording') and (time.time() <= (startRecordSeconds + float(repeatDuration))):
 				self.camera.wait_recording()
 				if captureStill and time.time() > (self.lastStillTime + float(stillInterval)):
@@ -176,12 +188,13 @@ class bCamera:
 					
 			self.camera.stop_recording()
 
-			logger.debug('Stop video file:' + videoFilePath)
+			tmpFolderpath, tmpFilename = os.path.split(videoFilePath)
+			logger.debug('Stop video file: ' + tmpFilename)
+			
 			self.trial.newEvent('stopVideo', currentRepeat, str=videoFilePath) # paired with startVideo			
 			
 			currentRepeat += 1
 
-			# convert to mp4
 			if converttomp4:
 				self.convertVideo(videoFilePath, fps)
 
@@ -193,6 +206,7 @@ class bCamera:
 		
 		self.trial.stopTrial()
 		self.camera.close()
+		
 		logging.debug('recordVideoThread end')
 
 	def stream(self,onoff):
@@ -248,7 +262,7 @@ class bCamera:
 					if not os.path.isdir(saveVideoPath):
 						os.makedirs(saveVideoPath)
 
-					thread = threading.Thread(target=self.armVideoThread, args=([saveVideoPath]))
+					thread = threading.Thread(target=self.armVideoThread, args=([saveVideoPath, self.cameraErrorQueue]))
 					thread.daemon = True							# Daemonize thread
 					thread.start()									# Start the execution
 
@@ -268,28 +282,28 @@ class bCamera:
 			now = time.time()
 		if self.isState('armed'):
 			logger.debug('startArmVideo()')
-			self.state = 'armedrecording'
+			self.state = 'armedrecording' # will trigger armVideoThread()
 			self.lastResponse = 'Trigger in at ' + time.strftime('%H:%M:%s', time.localtime(now)) 
 			
 	def stopArmVideo(self):
 		if self.isState('armedrecording'):
 			now=time.time()
 			logger.debug('stopArmVideo()')
-			self.state = 'armed'
+			self.state = 'armed' # will force armVideoThread() out of while loop
 			self.lastResponse = 'Stopped armed video recording at ' + time.strftime('%H:%M:%s', time.localtime(now))
 
-	def armVideoThread(self, saveVideoPath):
-		'''
+	def armVideoThread(self, saveVideoPath, cameraErrorQueue):
+		"""
 		Arm the camera by starting a circular stream
 		
 		Start recording from circular stream in response to trigger.
 		This will record until (i) repeatDuration or (ii) stop trigger
-		'''
+		"""
 		if 1: #self.camera:
 			lastStill = 0
 			
 			#
-			thisCamera = self.initCamera()
+			thisCamera = self.initCamera(cameraErrorQueue=cameraErrorQueue)
 			repeatDuration = thisCamera['repeatDuration']
 			repeatInfinity = thisCamera['repeatInfinity']
 			numberOfRepeats = thisCamera['numberOfRepeats']
@@ -324,7 +338,7 @@ class bCamera:
 
 					self.trial.newEpoch()
 
-					# todo: get base file name form trial
+					# get base file name from trial
 					filePrefix = self.trial.getFilename(withRepeat=True) # uses ['lastEpochSeconds']
 					beforefilename = filePrefix + '_before.h264'
 					afterfilename = filePrefix + '_after.h264'					
@@ -339,14 +353,14 @@ class bCamera:
 					# As soon as we detect motion, split the recording to
 					# record the frames "after" motion
 					self.camera.split_recording(afterfilepath)					
-					# Write the 10 seconds "before" motion to disk as well
+					# Write the bufferSeconds seconds "before" motion to disk as well
 					circulario.copy_to(beforefilepath, seconds=bufferSeconds)
 					circulario.clear()
 			
 					startRecordSeconds = time.time()
 					self.secondsElapsedStr = '0'
 			
-					logger.debug('Start video file:' + afterfilename)
+					logger.debug('Start video file: ' + afterfilename)
 					self.currentFile = afterfilename
 				
 					# for now, record ONE video file per start trigger
@@ -372,9 +386,7 @@ class bCamera:
 										
 					# convert to mp4
 					if converttomp4:
-						# before
 						self.convertVideo(beforefilepath, fps)
-						# after
 						self.convertVideo(afterfilepath, fps)
 
 	def annotate(self, text):
@@ -389,19 +401,11 @@ class bCamera:
 	#########################################################################
 	# convert video thread
 	#########################################################################
-	# convertErrorQueue, convertFileQueue
-	def startConvertThread(self):
-		""" Call this in constructor """
-		#self.convertFileQueue = queue.Queue()
-		#self.convertErrorQueue = queue.Queue()
-		thread = threading.Thread(target=self.convertVideoThread, args=(self.convertFileQueue,self.convertErrorQueue,))
-		thread.daemon = True							# Daemonize thread
-		thread.start()									# Start the execution
-
 	def convertVideoThread(self, fileQueue, errorQueue):
-		""" A thread that will monitor fileQueue and call ./bin/convert_video.sh to convert .h264 to .mp4 """
-		#print('convertVideoThread() fileQueue:', fileQueue)
-		#print('convertVideoThread() errorQueue:', errorQueue)
+		"""
+		A thread that will monitor fileQueue
+		and call ./bin/convert_video.sh to convert .h264 to .mp4
+		"""
 		while True:
 			try:
 				file = fileQueue.get(block=False, timeout=0)
@@ -409,7 +413,8 @@ class bCamera:
 				pass
 			else:
 				#print('queue not empty')
-				logger.info('starting convertVideoThread:' + file['path'] + ' fps:' + str(file['fps']))
+				tmpFolderpath, tmpFilename = os.path.split(file['path'])
+				logger.info('starting convertVideoThread:' + tmpFilename + ' fps:' + str(file['fps']))
 				cmd = ["./bin/convert_video.sh", file['path'], str(file['fps']), "delete"]
 				try:
 					out = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
@@ -419,39 +424,19 @@ class bCamera:
 					pass
 				except:
 					raise	
-				logger.info('finished convertVideoThread:' + file['path'] + ' fps:' + str(file['fps']))
+				logger.info('finished convertVideoThread:' + tmpFilename + ' fps:' + str(file['fps']))
 				
 			time.sleep(1)
 	
 	def convertVideo(self, videoFilePath, fps):
 		"""
-		Add a file/fps to the convertFile queue. convertVideoThread() will process it
+		Add a file/fps to the convertFileQueue. convertVideoThread() will process it
 		"""
 		theDict = {}
 		theDict['path'] = videoFilePath
 		theDict['fps'] = fps
-		#print('convertVideo adding to file queue:', theDict)
 		self.convertFileQueue.put(theDict)
-		
-		'''
-		this was working
-		# at end of video recording, convert h264 to mp4
-		logger.debug('converting video:' + videoFilePath + ' fps:' + str(fps))
-		cmd = ["./bin/convert_video.sh", videoFilePath, str(fps)]
-		try:
-			out = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-			self.lastResponse = 'Converted video to mp4'
-		except (subprocess.CalledProcessError, OSError) as e:
-			#print('e:', e)
-			#print('e.returncode:', e.returncode) # 1 is failure, 0 is sucess
-			#print('e.output:', e.output)
-			logger.error('bin/convert_video exception: ' + str(e))
-			pass
-		except:
-			raise	
-		logger.debug('converting video finished')
-		'''
-			
+					
 if __name__ == '__main__':
 	logger = logging.getLogger()
 	handler = logging.StreamHandler()
