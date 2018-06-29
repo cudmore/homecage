@@ -3,6 +3,7 @@
 
 import os, sys, time
 from collections import OrderedDict
+from datetime import timedelta
 from pprint import pprint
 import serial
 import threading, queue
@@ -106,6 +107,8 @@ class treadmill():
 		
 		self.trial = treadmillTrial(self)
 
+		self.startTimeSeconds = time.time()
+		
 		#
 		# background serial thread
 		self.serialResponseStr = []
@@ -127,6 +130,9 @@ class treadmill():
 		status = OrderedDict()
 		
 		status['systemInfo'] = self.systemInfo # remember to update occasionally
+		status['systemInfo']['version'] = __version__
+		status['systemInfo']['uptime'] = status['systemInfo']['uptime'] = str(timedelta(seconds = time.time() - self.startTimeSeconds)).split('.')[0]
+
 		status['trial'] = self.trial.getStatus()
 
 		while not self.outSerialQueue.empty():

@@ -28,7 +28,6 @@ class bTrial:
 	# dict to convert polarity string to number, e.g. self.polarity['rising'] yields GPIO.RISING
 	polarityDict_ = { 'rising': GPIO.RISING, 'falling': GPIO.FALLING, 'both': GPIO.BOTH}
 	pullUpDownDict = { 'up': GPIO.PUD_UP, 'down': GPIO.PUD_DOWN}
-	dhtSensorDict_ = { 'DHT11': Adafruit_DHT.DHT11, 'DHT22': Adafruit_DHT.DHT22, 'AM2302': Adafruit_DHT.DHT22}
 
 	def __init__(self):
 
@@ -155,6 +154,9 @@ class bTrial:
 	def updateLED(self, configDict):
 		self.config['hardware']['eventOut'][0]['state'] = configDict['hardware']['eventOut'][0]['state']
 		self.config['hardware']['eventOut'][1]['state'] = configDict['hardware']['eventOut'][1]['state']
+		
+		# added for video wall
+		self.config['lights']['auto'] = configDict['lights']['auto']
 		
 	def updateAnimal(self, configDict):
 		self.config['trial']['animalID'] = configDict['trial']['animalID']
@@ -634,7 +636,11 @@ class bTrial:
 		lastTemperatureTime = 0
 		temperatureInterval = self.config['hardware']['dhtsensor']['temperatureInterval'] # seconds
 		continuouslyLog = self.config['hardware']['dhtsensor']['continuouslyLog']
+		
+		print('Adafruit_DHT.DHT11:', Adafruit_DHT.DHT11)
+		dhtSensorDict_ = { 'DHT11': Adafruit_DHT.DHT11, 'DHT22': Adafruit_DHT.DHT22, 'AM2302': Adafruit_DHT.DHT22}
 		sensorType = bTrial.dhtSensorDict_[self.config['hardware']['dhtsensor']['sensorType']]
+		
 		pin = self.config['hardware']['dhtsensor']['temperatureSensor']
 		while True:
 			if g_dhtLoaded:

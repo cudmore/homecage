@@ -1,14 +1,381 @@
-[2018-06-27 22:34:01,582] {bTrial.py <module>:18} DEBUG - Succesfully loaded Adafruit_DHT
-[2018-06-27 22:34:01,789] {bTrial.py loadConfigFile:167} DEBUG - loadConfigFile
-[2018-06-27 22:34:01,888] {bTrial.py lightsThread:605} DEBUG - lightsThread start
-[2018-06-27 22:34:01,888] {bTrial.py initGPIO_:293} DEBUG - Initialized DHT temperature sensor
-[2018-06-27 22:34:01,891] {bTrial.py tempThread:633} INFO - tempThread() start
-[2018-06-27 22:34:02,423] {treadmill.py run:78} DEBUG - mySerialThread starting
-[2018-06-27 22:34:02,519] {treadmill_app.py <module>:241} DEBUG - Running flask server with debug = False
-[2018-06-27 22:34:02,532] {treadmill_app.py <module>:244} DEBUG - Flask server is running at: http://192.168.1.4:5010
-[2018-06-27 22:34:03,740] {treadmill_app.py myAfterRequest:60} DEBUG - after /
-[2018-06-27 22:34:07,070] {treadmill_app.py myAfterRequest:60} DEBUG - after /templates/partials/config_table.html
-[2018-06-27 22:34:07,083] {treadmill_app.py myAfterRequest:60} DEBUG - after /templates/partials/motor_table.html
-[2018-06-27 22:34:10,630] {bCamera.py arm:249} DEBUG - arm onoff:True okGo:True
-[2018-06-27 22:34:10,667] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/startArm
-[2018-06-27 22:34:10,860] {bCamera.py initCamera:79} ERROR - picamera PiCameraMMALError: Failed to enable connection: Out of resources
+[2018-06-28 23:20:40,150] {bTrial.py <module>:21} WARNING - Did not load Adafruit_DHT
+[2018-06-28 23:20:40,335] {bTrial.py loadConfigFile:169} DEBUG - loadConfigFile
+[2018-06-28 23:20:40,340] {bTrial.py lightsThread:607} DEBUG - lightsThread start
+[2018-06-28 23:20:40,342] {treadmill.py __init__:70} ERROR - [Errno 2] could not open port /dev/ttyACM0: [Errno 2] No such file or directory: '/dev/ttyACM0'
+[2018-06-28 23:20:40,344] {treadmill.py run:79} DEBUG - mySerialThread starting
+[2018-06-28 23:20:40,431] {treadmill_app.py <module>:241} DEBUG - Running flask server with debug = True
+[2018-06-28 23:20:40,443] {treadmill_app.py <module>:244} DEBUG - Flask server is running at: http://192.168.1.4:5010
+[2018-06-28 23:25:47,455] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/ledparams
+[2018-06-28 23:25:47,942] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/ledparams
+[2018-06-28 23:25:48,428] {bTrial.py eventOut:400} DEBUG - eventOut irLED True
+[2018-06-28 23:33:13,805] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:13,876] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:15,140] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:15,377] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:16,625] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:16,693] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:16,790] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:16,799] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:17,166] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:17,234] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:20,944] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:21,033] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:22,586] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:22,626] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:23,072] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:23,135] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:23,522] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:23,585] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:24,011] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:24,625] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:24,675] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:24,764] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:24,767] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:24,813] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:25,834] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:26,076] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:26,241] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:26,334] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:27,546] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:27,635] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:27,754] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:27,763] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:28,017] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:28,070] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:29,148] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:29,272] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:29,633] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:30,420] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:31,007] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:31,073] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:32,086] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:32,880] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:35,068] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:35,136] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:36,767] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:37,036] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:37,274] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:37,363] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:41,901] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:33:41,974] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:34:04,896] {bTrial.py startTrial:436} DEBUG - startTrial startArmVideo=False
+[2018-06-28 23:34:04,907] {bCamera.py record:57} DEBUG - record onoff:True okGo:True
+[2018-06-28 23:34:05,009] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/startRecord
+[2018-06-28 23:34:05,009] {treadmill.py run:86} INFO - serialThread inSerialQueue: "start"
+[2018-06-28 23:34:05,017] {treadmill.py run:99} ERROR - other exception in mySerialThread run
+[2018-06-28 23:34:05,311] {bCamera.py recordVideoThread:162} DEBUG - Start video file:20180628_233405_aaa_bbb_t3_r1.h264 dur:2 fps:30
+[2018-06-28 23:34:07,351] {bCamera.py recordVideoThread:192} DEBUG - Stop video file: 20180628_233405_aaa_bbb_t3_r1.h264
+[2018-06-28 23:34:07,352] {bTrial.py stopTrial:453} DEBUG - stopTrial
+[2018-06-28 23:34:07,354] {bCamera.py record:57} DEBUG - record onoff:False okGo:False
+[2018-06-28 23:34:07,717] {bCamera.py convertVideoThread:417} INFO - starting convertVideoThread:20180628_233405_aaa_bbb_t3_r1.h264 fps:30
+[2018-06-28 23:34:08,200] {bCamera.py convertVideoThread:427} INFO - finished convertVideoThread:20180628_233405_aaa_bbb_t3_r1.h264 fps:30
+[2018-06-28 23:34:11,636] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:34:11,657] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:34:11,848] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:34:11,872] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:34:16,353] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:34:16,374] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:34:16,555] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:34:16,575] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:34:16,717] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:34:16,737] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:34:17,051] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:34:17,069] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:34:17,643] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:34:17,665] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:34:20,477] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:34:20,497] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:34:20,597] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:34:20,615] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:34:23,819] {bTrial.py startTrial:436} DEBUG - startTrial startArmVideo=False
+[2018-06-28 23:34:23,821] {bCamera.py record:57} DEBUG - record onoff:True okGo:True
+[2018-06-28 23:34:23,827] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/startRecord
+[2018-06-28 23:34:24,122] {bCamera.py recordVideoThread:162} DEBUG - Start video file:20180628_233424_aaa_bbb_t3_r1.h264 dur:5 fps:30
+[2018-06-28 23:34:29,153] {bCamera.py recordVideoThread:192} DEBUG - Stop video file: 20180628_233424_aaa_bbb_t3_r1.h264
+[2018-06-28 23:34:29,155] {bCamera.py recordVideoThread:162} DEBUG - Start video file:20180628_233429_aaa_bbb_t3_r2.h264 dur:5 fps:30
+[2018-06-28 23:34:29,248] {bCamera.py convertVideoThread:417} INFO - starting convertVideoThread:20180628_233424_aaa_bbb_t3_r1.h264 fps:30
+[2018-06-28 23:34:29,805] {bCamera.py convertVideoThread:427} INFO - finished convertVideoThread:20180628_233424_aaa_bbb_t3_r1.h264 fps:30
+[2018-06-28 23:34:34,199] {bCamera.py recordVideoThread:192} DEBUG - Stop video file: 20180628_233429_aaa_bbb_t3_r2.h264
+[2018-06-28 23:34:34,201] {bCamera.py recordVideoThread:162} DEBUG - Start video file:20180628_233434_aaa_bbb_t3_r3.h264 dur:5 fps:30
+[2018-06-28 23:34:34,847] {bCamera.py convertVideoThread:417} INFO - starting convertVideoThread:20180628_233429_aaa_bbb_t3_r2.h264 fps:30
+[2018-06-28 23:34:35,420] {bCamera.py convertVideoThread:427} INFO - finished convertVideoThread:20180628_233429_aaa_bbb_t3_r2.h264 fps:30
+[2018-06-28 23:34:39,242] {bCamera.py recordVideoThread:192} DEBUG - Stop video file: 20180628_233434_aaa_bbb_t3_r3.h264
+[2018-06-28 23:34:39,243] {bTrial.py stopTrial:453} DEBUG - stopTrial
+[2018-06-28 23:34:39,255] {bCamera.py record:57} DEBUG - record onoff:False okGo:False
+[2018-06-28 23:34:39,441] {bCamera.py convertVideoThread:417} INFO - starting convertVideoThread:20180628_233434_aaa_bbb_t3_r3.h264 fps:30
+[2018-06-28 23:34:39,921] {bCamera.py convertVideoThread:427} INFO - finished convertVideoThread:20180628_233434_aaa_bbb_t3_r3.h264 fps:30
+[2018-06-28 23:36:35,384] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:36:35,403] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:36:38,560] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:36:38,579] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:36:40,112] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:36:40,134] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:36:40,627] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:36:40,647] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:36:44,350] {bTrial.py startTrial:436} DEBUG - startTrial startArmVideo=False
+[2018-06-28 23:36:44,351] {bCamera.py record:57} DEBUG - record onoff:True okGo:True
+[2018-06-28 23:36:44,358] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/startRecord
+[2018-06-28 23:36:44,651] {bCamera.py recordVideoThread:162} DEBUG - Start video file:20180628_233644_aaa_bbb_t3_r1.h264 dur:5 fps:30
+[2018-06-28 23:36:49,674] {bCamera.py recordVideoThread:192} DEBUG - Stop video file: 20180628_233644_aaa_bbb_t3_r1.h264
+[2018-06-28 23:36:49,675] {bCamera.py recordVideoThread:162} DEBUG - Start video file:20180628_233649_aaa_bbb_t3_r2.h264 dur:5 fps:30
+[2018-06-28 23:36:50,110] {bCamera.py convertVideoThread:417} INFO - starting convertVideoThread:20180628_233644_aaa_bbb_t3_r1.h264 fps:30
+[2018-06-28 23:36:50,750] {bCamera.py convertVideoThread:427} INFO - finished convertVideoThread:20180628_233644_aaa_bbb_t3_r1.h264 fps:30
+[2018-06-28 23:36:51,310] {bTrial.py stopTrial:453} DEBUG - stopTrial
+[2018-06-28 23:36:51,320] {bCamera.py record:57} DEBUG - record onoff:False okGo:True
+[2018-06-28 23:36:51,333] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/stopRecord
+[2018-06-28 23:36:51,346] {bCamera.py recordVideoThread:192} DEBUG - Stop video file: 20180628_233649_aaa_bbb_t3_r2.h264
+[2018-06-28 23:36:51,795] {bCamera.py convertVideoThread:417} INFO - starting convertVideoThread:20180628_233649_aaa_bbb_t3_r2.h264 fps:30
+[2018-06-28 23:36:52,286] {bCamera.py convertVideoThread:427} INFO - finished convertVideoThread:20180628_233649_aaa_bbb_t3_r2.h264 fps:30
+[2018-06-28 23:36:54,281] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:36:54,318] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:36:54,560] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:36:54,578] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:36:54,862] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:36:54,881] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:36:55,070] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:36:55,089] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:36:55,263] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:36:55,282] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:37:04,648] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:37:04,669] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:37:05,605] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:37:05,623] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:37:08,115] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:37:08,135] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:37:12,111] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:37:12,131] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:37:15,871] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:37:15,893] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:37:16,726] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:37:16,745] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:37:42,335] {bTrial.py startTrial:436} DEBUG - startTrial startArmVideo=False
+[2018-06-28 23:37:42,336] {bCamera.py record:57} DEBUG - record onoff:True okGo:True
+[2018-06-28 23:37:42,342] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/startRecord
+[2018-06-28 23:37:42,637] {bCamera.py recordVideoThread:162} DEBUG - Start video file:20180628_233742_aaa_bbb_t3_r1.h264 dur:3 fps:30
+[2018-06-28 23:37:45,660] {bCamera.py recordVideoThread:192} DEBUG - Stop video file: 20180628_233742_aaa_bbb_t3_r1.h264
+[2018-06-28 23:37:45,661] {bCamera.py recordVideoThread:162} DEBUG - Start video file:20180628_233745_aaa_bbb_t3_r2.h264 dur:3 fps:30
+[2018-06-28 23:37:46,371] {bCamera.py convertVideoThread:417} INFO - starting convertVideoThread:20180628_233742_aaa_bbb_t3_r1.h264 fps:30
+[2018-06-28 23:37:46,749] {bTrial.py stopTrial:453} DEBUG - stopTrial
+[2018-06-28 23:37:46,769] {bCamera.py record:57} DEBUG - record onoff:False okGo:True
+[2018-06-28 23:37:46,787] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/stopRecord
+[2018-06-28 23:37:46,812] {bCamera.py recordVideoThread:192} DEBUG - Stop video file: 20180628_233745_aaa_bbb_t3_r2.h264
+[2018-06-28 23:37:46,921] {bCamera.py convertVideoThread:427} INFO - finished convertVideoThread:20180628_233742_aaa_bbb_t3_r1.h264 fps:30
+[2018-06-28 23:37:47,924] {bCamera.py convertVideoThread:417} INFO - starting convertVideoThread:20180628_233745_aaa_bbb_t3_r2.h264 fps:30
+[2018-06-28 23:37:48,402] {bCamera.py convertVideoThread:427} INFO - finished convertVideoThread:20180628_233745_aaa_bbb_t3_r2.h264 fps:30
+[2018-06-28 23:38:27,467] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:38:29,506] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:40:18,335] {bCamera.py stream:215} DEBUG - stream onoff:True okGo:True
+[2018-06-28 23:40:18,337] {bCamera.py stream:224} INFO - ['./bin/stream', 'start', '640', '480']
+[2018-06-28 23:40:18,507] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/startStream
+[2018-06-28 23:40:23,484] {bCamera.py stream:215} DEBUG - stream onoff:False okGo:True
+[2018-06-28 23:40:23,583] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/stopStream
+[2018-06-28 23:40:47,361] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:40:47,378] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:40:49,385] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:40:49,403] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:40:52,986] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:40:53,009] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:18,207] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:41:18,234] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:41:20,078] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:41:20,097] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:41:23,548] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:24,025] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:25,449] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:25,552] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:26,866] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:26,885] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:28,108] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:28,129] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:29,404] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:29,423] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:30,139] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:30,158] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:31,660] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:31,685] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:35,773] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:35,798] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:37,717] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:37,744] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:38,950] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:38,973] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:39,339] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:39,359] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:39,766] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:39,793] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:40,564] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:40,586] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:40,781] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:40,805] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:41,029] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:41,049] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:41,339] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:41,356] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:42,751] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:42,782] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/animalparams
+[2018-06-28 23:41:46,220] {bTrial.py startTrial:436} DEBUG - startTrial startArmVideo=False
+[2018-06-28 23:41:46,226] {bCamera.py record:57} DEBUG - record onoff:True okGo:True
+[2018-06-28 23:41:46,233] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/startRecord
+[2018-06-28 23:41:46,610] {bCamera.py recordVideoThread:162} DEBUG - Start video file:20180628_234146_aa_cdda_t3_r1.h264 dur:9 fps:30
+[2018-06-28 23:41:55,631] {bCamera.py recordVideoThread:192} DEBUG - Stop video file: 20180628_234146_aa_cdda_t3_r1.h264
+[2018-06-28 23:41:55,633] {bTrial.py stopTrial:453} DEBUG - stopTrial
+[2018-06-28 23:41:55,635] {bCamera.py record:57} DEBUG - record onoff:False okGo:False
+[2018-06-28 23:41:55,876] {bCamera.py convertVideoThread:417} INFO - starting convertVideoThread:20180628_234146_aa_cdda_t3_r1.h264 fps:30
+[2018-06-28 23:41:56,387] {bCamera.py convertVideoThread:427} INFO - finished convertVideoThread:20180628_234146_aa_cdda_t3_r1.h264 fps:30
+[2018-06-28 23:42:32,665] {bCamera.py stream:215} DEBUG - stream onoff:True okGo:True
+[2018-06-28 23:42:32,666] {bCamera.py stream:224} INFO - ['./bin/stream', 'start', '640', '480']
+[2018-06-28 23:42:32,830] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/startStream
+[2018-06-28 23:42:40,596] {bCamera.py stream:215} DEBUG - stream onoff:False okGo:True
+[2018-06-28 23:42:40,696] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/stopStream
+[2018-06-28 23:43:06,345] {bTrial.py startTrial:436} DEBUG - startTrial startArmVideo=False
+[2018-06-28 23:43:06,347] {bCamera.py record:57} DEBUG - record onoff:True okGo:True
+[2018-06-28 23:43:06,355] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/startRecord
+[2018-06-28 23:43:06,646] {bCamera.py recordVideoThread:162} DEBUG - Start video file:20180628_234306_aa_cdda_t4_r1.h264 dur:9 fps:30
+[2018-06-28 23:43:15,689] {bCamera.py recordVideoThread:192} DEBUG - Stop video file: 20180628_234306_aa_cdda_t4_r1.h264
+[2018-06-28 23:43:15,691] {bTrial.py stopTrial:453} DEBUG - stopTrial
+[2018-06-28 23:43:15,693] {bCamera.py record:57} DEBUG - record onoff:False okGo:False
+[2018-06-28 23:43:15,871] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/stopRecord
+[2018-06-28 23:43:16,496] {bCamera.py convertVideoThread:417} INFO - starting convertVideoThread:20180628_234306_aa_cdda_t4_r1.h264 fps:30
+[2018-06-28 23:43:16,982] {bCamera.py convertVideoThread:427} INFO - finished convertVideoThread:20180628_234306_aa_cdda_t4_r1.h264 fps:30
+[2018-06-28 23:43:22,814] {bTrial.py startTrial:436} DEBUG - startTrial startArmVideo=False
+[2018-06-28 23:43:22,815] {bCamera.py record:57} DEBUG - record onoff:True okGo:True
+[2018-06-28 23:43:22,821] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/startRecord
+[2018-06-28 23:43:23,146] {bCamera.py recordVideoThread:162} DEBUG - Start video file:20180628_234323_aa_cdda_t5_r1.h264 dur:9 fps:30
+[2018-06-28 23:43:32,168] {bCamera.py recordVideoThread:192} DEBUG - Stop video file: 20180628_234323_aa_cdda_t5_r1.h264
+[2018-06-28 23:43:32,169] {bTrial.py stopTrial:453} DEBUG - stopTrial
+[2018-06-28 23:43:32,172] {bCamera.py record:57} DEBUG - record onoff:False okGo:False
+[2018-06-28 23:43:33,063] {bCamera.py convertVideoThread:417} INFO - starting convertVideoThread:20180628_234323_aa_cdda_t5_r1.h264 fps:30
+[2018-06-28 23:43:33,572] {bCamera.py convertVideoThread:427} INFO - finished convertVideoThread:20180628_234323_aa_cdda_t5_r1.h264 fps:30
+[2018-06-28 23:47:26,151] {bTrial.py startTrial:436} DEBUG - startTrial startArmVideo=False
+[2018-06-28 23:47:26,152] {bCamera.py record:57} DEBUG - record onoff:True okGo:True
+[2018-06-28 23:47:26,159] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/startRecord
+[2018-06-28 23:47:26,522] {bCamera.py recordVideoThread:162} DEBUG - Start video file:20180628_234726_aa_cdda_t6_r1.h264 dur:9 fps:30
+[2018-06-28 23:47:35,541] {bCamera.py recordVideoThread:192} DEBUG - Stop video file: 20180628_234726_aa_cdda_t6_r1.h264
+[2018-06-28 23:47:35,543] {bTrial.py stopTrial:453} DEBUG - stopTrial
+[2018-06-28 23:47:35,545] {bCamera.py record:57} DEBUG - record onoff:False okGo:False
+[2018-06-28 23:47:36,081] {bCamera.py convertVideoThread:417} INFO - starting convertVideoThread:20180628_234726_aa_cdda_t6_r1.h264 fps:30
+[2018-06-28 23:47:36,593] {bCamera.py convertVideoThread:427} INFO - finished convertVideoThread:20180628_234726_aa_cdda_t6_r1.h264 fps:30
+[2018-06-28 23:47:40,408] {bTrial.py startTrial:436} DEBUG - startTrial startArmVideo=False
+[2018-06-28 23:47:40,409] {bCamera.py record:57} DEBUG - record onoff:True okGo:True
+[2018-06-28 23:47:40,415] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/startRecord
+[2018-06-28 23:47:40,787] {bCamera.py recordVideoThread:162} DEBUG - Start video file:20180628_234740_aa_cdda_t7_r1.h264 dur:9 fps:30
+[2018-06-28 23:47:49,808] {bCamera.py recordVideoThread:192} DEBUG - Stop video file: 20180628_234740_aa_cdda_t7_r1.h264
+[2018-06-28 23:47:49,809] {bTrial.py stopTrial:453} DEBUG - stopTrial
+[2018-06-28 23:47:49,812] {bCamera.py record:57} DEBUG - record onoff:False okGo:False
+[2018-06-28 23:47:50,651] {bCamera.py convertVideoThread:417} INFO - starting convertVideoThread:20180628_234740_aa_cdda_t7_r1.h264 fps:30
+[2018-06-28 23:47:51,150] {bCamera.py convertVideoThread:427} INFO - finished convertVideoThread:20180628_234740_aa_cdda_t7_r1.h264 fps:30
+[2018-06-28 23:47:51,715] {bTrial.py startTrial:436} DEBUG - startTrial startArmVideo=False
+[2018-06-28 23:47:51,717] {bCamera.py record:57} DEBUG - record onoff:True okGo:True
+[2018-06-28 23:47:51,723] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/startRecord
+[2018-06-28 23:47:52,014] {bCamera.py recordVideoThread:162} DEBUG - Start video file:20180628_234752_aa_cdda_t8_r1.h264 dur:9 fps:30
+[2018-06-28 23:47:54,411] {treadmill_app.py myAfterRequest:60} DEBUG - after /videolist
+[2018-06-28 23:47:57,501] {treadmill_app.py myAfterRequest:60} DEBUG - after /videolist/home/pi/video/20180628
+[2018-06-28 23:48:01,035] {bCamera.py recordVideoThread:192} DEBUG - Stop video file: 20180628_234752_aa_cdda_t8_r1.h264
+[2018-06-28 23:48:01,037] {bTrial.py stopTrial:453} DEBUG - stopTrial
+[2018-06-28 23:48:01,040] {bCamera.py record:57} DEBUG - record onoff:False okGo:False
+[2018-06-28 23:48:01,179] {bCamera.py convertVideoThread:417} INFO - starting convertVideoThread:20180628_234752_aa_cdda_t8_r1.h264 fps:30
+[2018-06-28 23:48:01,672] {bCamera.py convertVideoThread:427} INFO - finished convertVideoThread:20180628_234752_aa_cdda_t8_r1.h264 fps:30
+[2018-06-28 23:49:39,519] {bTrial.py startTrial:436} DEBUG - startTrial startArmVideo=False
+[2018-06-28 23:49:39,530] {bCamera.py record:57} DEBUG - record onoff:True okGo:True
+[2018-06-28 23:49:39,549] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/startRecord
+[2018-06-28 23:49:39,899] {bCamera.py recordVideoThread:162} DEBUG - Start video file:20180628_234939_aa_cdda_t9_r1.h264 dur:9 fps:30
+[2018-06-28 23:49:47,471] {bTrial.py stopTrial:453} DEBUG - stopTrial
+[2018-06-28 23:49:47,509] {bCamera.py record:57} DEBUG - record onoff:False okGo:True
+[2018-06-28 23:49:47,525] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/stopRecord
+[2018-06-28 23:49:47,533] {bCamera.py recordVideoThread:192} DEBUG - Stop video file: 20180628_234939_aa_cdda_t9_r1.h264
+[2018-06-28 23:49:47,825] {bCamera.py convertVideoThread:417} INFO - starting convertVideoThread:20180628_234939_aa_cdda_t9_r1.h264 fps:30
+[2018-06-28 23:49:48,308] {bCamera.py convertVideoThread:427} INFO - finished convertVideoThread:20180628_234939_aa_cdda_t9_r1.h264 fps:30
+[2018-06-28 23:49:50,304] {bTrial.py startTrial:436} DEBUG - startTrial startArmVideo=False
+[2018-06-28 23:49:50,306] {bCamera.py record:57} DEBUG - record onoff:True okGo:True
+[2018-06-28 23:49:50,313] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/startRecord
+[2018-06-28 23:49:50,644] {bCamera.py recordVideoThread:162} DEBUG - Start video file:20180628_234950_aa_cdda_t10_r1.h264 dur:9 fps:30
+[2018-06-28 23:49:58,237] {bTrial.py stopTrial:453} DEBUG - stopTrial
+[2018-06-28 23:49:58,283] {bCamera.py record:57} DEBUG - record onoff:False okGo:True
+[2018-06-28 23:49:58,299] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/stopRecord
+[2018-06-28 23:49:58,307] {bCamera.py recordVideoThread:192} DEBUG - Stop video file: 20180628_234950_aa_cdda_t10_r1.h264
+[2018-06-28 23:49:58,350] {bCamera.py convertVideoThread:417} INFO - starting convertVideoThread:20180628_234950_aa_cdda_t10_r1.h264 fps:30
+[2018-06-28 23:49:58,846] {bCamera.py convertVideoThread:427} INFO - finished convertVideoThread:20180628_234950_aa_cdda_t10_r1.h264 fps:30
+[2018-06-28 23:50:01,452] {bTrial.py startTrial:436} DEBUG - startTrial startArmVideo=False
+[2018-06-28 23:50:01,453] {bCamera.py record:57} DEBUG - record onoff:True okGo:True
+[2018-06-28 23:50:01,460] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/startRecord
+[2018-06-28 23:50:01,788] {bCamera.py recordVideoThread:162} DEBUG - Start video file:20180628_235001_aa_cdda_t11_r1.h264 dur:9 fps:30
+[2018-06-28 23:50:09,230] {bTrial.py stopTrial:453} DEBUG - stopTrial
+[2018-06-28 23:50:09,271] {bCamera.py record:57} DEBUG - record onoff:False okGo:True
+[2018-06-28 23:50:09,289] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/stopRecord
+[2018-06-28 23:50:09,309] {bCamera.py recordVideoThread:192} DEBUG - Stop video file: 20180628_235001_aa_cdda_t11_r1.h264
+[2018-06-28 23:50:09,908] {bCamera.py convertVideoThread:417} INFO - starting convertVideoThread:20180628_235001_aa_cdda_t11_r1.h264 fps:30
+[2018-06-28 23:50:10,390] {bCamera.py convertVideoThread:427} INFO - finished convertVideoThread:20180628_235001_aa_cdda_t11_r1.h264 fps:30
+[2018-06-28 23:50:15,206] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:50:15,226] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:50:16,373] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:50:16,404] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/submit/configparams
+[2018-06-28 23:51:00,034] {bTrial.py startTrial:436} DEBUG - startTrial startArmVideo=False
+[2018-06-28 23:51:00,036] {bCamera.py record:57} DEBUG - record onoff:True okGo:True
+[2018-06-28 23:51:00,044] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/startRecord
+[2018-06-28 23:51:00,338] {bCamera.py recordVideoThread:162} DEBUG - Start video file:20180628_235100_aa_cdda_t3_r1.h264 dur:9 fps:30
+[2018-06-28 23:51:08,567] {bTrial.py stopTrial:453} DEBUG - stopTrial
+[2018-06-28 23:51:08,797] {bCamera.py record:57} DEBUG - record onoff:False okGo:True
+[2018-06-28 23:51:08,819] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/stopRecord
+[2018-06-28 23:51:08,831] {bCamera.py recordVideoThread:192} DEBUG - Stop video file: 20180628_235100_aa_cdda_t3_r1.h264
+[2018-06-28 23:51:09,508] {bCamera.py convertVideoThread:417} INFO - starting convertVideoThread:20180628_235100_aa_cdda_t3_r1.h264 fps:30
+[2018-06-28 23:51:09,991] {bCamera.py convertVideoThread:427} INFO - finished convertVideoThread:20180628_235100_aa_cdda_t3_r1.h264 fps:30
+[2018-06-28 23:56:54,310] {bTrial.py startTrial:436} DEBUG - startTrial startArmVideo=False
+[2018-06-28 23:56:54,312] {bCamera.py record:57} DEBUG - record onoff:True okGo:True
+[2018-06-28 23:56:54,322] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/startRecord
+[2018-06-28 23:56:54,649] {bCamera.py recordVideoThread:162} DEBUG - Start video file:20180628_235654_aa_cdda_t4_r1.h264 dur:9 fps:30
+[2018-06-28 23:57:00,535] {bTrial.py stopTrial:453} DEBUG - stopTrial
+[2018-06-28 23:57:00,739] {bCamera.py record:57} DEBUG - record onoff:False okGo:True
+[2018-06-28 23:57:00,772] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/stopRecord
+[2018-06-28 23:57:00,796] {bCamera.py recordVideoThread:192} DEBUG - Stop video file: 20180628_235654_aa_cdda_t4_r1.h264
+[2018-06-28 23:57:01,705] {bCamera.py convertVideoThread:417} INFO - starting convertVideoThread:20180628_235654_aa_cdda_t4_r1.h264 fps:30
+[2018-06-28 23:57:02,226] {bCamera.py convertVideoThread:427} INFO - finished convertVideoThread:20180628_235654_aa_cdda_t4_r1.h264 fps:30
+[2018-06-28 23:57:12,778] {bTrial.py startTrial:436} DEBUG - startTrial startArmVideo=False
+[2018-06-28 23:57:12,780] {bCamera.py record:57} DEBUG - record onoff:True okGo:True
+[2018-06-28 23:57:12,786] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/startRecord
+[2018-06-28 23:57:13,079] {bCamera.py recordVideoThread:162} DEBUG - Start video file:20180628_235713_aa_cdda_t5_r1.h264 dur:9 fps:30
+[2018-06-28 23:57:21,031] {bTrial.py stopTrial:453} DEBUG - stopTrial
+[2018-06-28 23:57:21,059] {bCamera.py record:57} DEBUG - record onoff:False okGo:True
+[2018-06-28 23:57:21,081] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/stopRecord
+[2018-06-28 23:57:21,107] {bCamera.py recordVideoThread:192} DEBUG - Stop video file: 20180628_235713_aa_cdda_t5_r1.h264
+[2018-06-28 23:57:21,318] {bCamera.py convertVideoThread:417} INFO - starting convertVideoThread:20180628_235713_aa_cdda_t5_r1.h264 fps:30
+[2018-06-28 23:57:21,803] {bCamera.py convertVideoThread:427} INFO - finished convertVideoThread:20180628_235713_aa_cdda_t5_r1.h264 fps:30
+[2018-06-28 23:57:36,407] {bTrial.py startTrial:436} DEBUG - startTrial startArmVideo=False
+[2018-06-28 23:57:36,408] {bCamera.py record:57} DEBUG - record onoff:True okGo:True
+[2018-06-28 23:57:36,415] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/startRecord
+[2018-06-28 23:57:36,788] {bCamera.py recordVideoThread:162} DEBUG - Start video file:20180628_235736_aa_cdda_t6_r1.h264 dur:9 fps:30
+[2018-06-28 23:57:41,278] {bTrial.py stopTrial:453} DEBUG - stopTrial
+[2018-06-28 23:57:41,306] {bCamera.py record:57} DEBUG - record onoff:False okGo:True
+[2018-06-28 23:57:41,312] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/stopRecord
+[2018-06-28 23:57:41,403] {bCamera.py recordVideoThread:192} DEBUG - Stop video file: 20180628_235736_aa_cdda_t6_r1.h264
+[2018-06-28 23:57:41,848] {bCamera.py convertVideoThread:417} INFO - starting convertVideoThread:20180628_235736_aa_cdda_t6_r1.h264 fps:30
+[2018-06-28 23:57:42,329] {bCamera.py convertVideoThread:427} INFO - finished convertVideoThread:20180628_235736_aa_cdda_t6_r1.h264 fps:30
+[2018-06-28 23:58:06,464] {bTrial.py startTrial:436} DEBUG - startTrial startArmVideo=False
+[2018-06-28 23:58:06,466] {bCamera.py record:57} DEBUG - record onoff:True okGo:True
+[2018-06-28 23:58:06,473] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/startRecord
+[2018-06-28 23:58:06,765] {bCamera.py recordVideoThread:162} DEBUG - Start video file:20180628_235806_aa_cdda_t7_r1.h264 dur:9 fps:30
+[2018-06-28 23:58:15,786] {bCamera.py recordVideoThread:192} DEBUG - Stop video file: 20180628_235806_aa_cdda_t7_r1.h264
+[2018-06-28 23:58:15,788] {bTrial.py stopTrial:453} DEBUG - stopTrial
+[2018-06-28 23:58:15,790] {bCamera.py record:57} DEBUG - record onoff:False okGo:False
+[2018-06-28 23:58:16,412] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/stopRecord
+[2018-06-28 23:58:16,440] {bCamera.py convertVideoThread:417} INFO - starting convertVideoThread:20180628_235806_aa_cdda_t7_r1.h264 fps:30
+[2018-06-28 23:58:16,926] {bCamera.py convertVideoThread:427} INFO - finished convertVideoThread:20180628_235806_aa_cdda_t7_r1.h264 fps:30
+[2018-06-28 23:58:20,230] {bTrial.py startTrial:436} DEBUG - startTrial startArmVideo=False
+[2018-06-28 23:58:20,231] {bCamera.py record:57} DEBUG - record onoff:True okGo:True
+[2018-06-28 23:58:20,238] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/startRecord
+[2018-06-28 23:58:20,532] {bCamera.py recordVideoThread:162} DEBUG - Start video file:20180628_235820_aa_cdda_t8_r1.h264 dur:9 fps:30
+[2018-06-28 23:58:25,552] {bTrial.py stopTrial:453} DEBUG - stopTrial
+[2018-06-28 23:58:25,592] {bCamera.py record:57} DEBUG - record onoff:False okGo:True
+[2018-06-28 23:58:25,624] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/stopRecord
+[2018-06-28 23:58:25,668] {bCamera.py recordVideoThread:192} DEBUG - Stop video file: 20180628_235820_aa_cdda_t8_r1.h264
+[2018-06-28 23:58:25,955] {bCamera.py convertVideoThread:417} INFO - starting convertVideoThread:20180628_235820_aa_cdda_t8_r1.h264 fps:30
+[2018-06-28 23:58:26,455] {bCamera.py convertVideoThread:427} INFO - finished convertVideoThread:20180628_235820_aa_cdda_t8_r1.h264 fps:30
+[2018-06-28 23:58:34,448] {bTrial.py startTrial:436} DEBUG - startTrial startArmVideo=False
+[2018-06-28 23:58:34,449] {bCamera.py record:57} DEBUG - record onoff:True okGo:True
+[2018-06-28 23:58:34,456] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/startRecord
+[2018-06-28 23:58:34,799] {bCamera.py recordVideoThread:162} DEBUG - Start video file:20180628_235834_aa_cdda_t9_r1.h264 dur:9 fps:30
+[2018-06-28 23:58:41,150] {bTrial.py stopTrial:453} DEBUG - stopTrial
+[2018-06-28 23:58:41,180] {bCamera.py record:57} DEBUG - record onoff:False okGo:True
+[2018-06-28 23:58:41,196] {treadmill_app.py myAfterRequest:60} DEBUG - after /api/action/stopRecord
+[2018-06-28 23:58:41,209] {bCamera.py recordVideoThread:192} DEBUG - Stop video file: 20180628_235834_aa_cdda_t9_r1.h264
+[2018-06-28 23:58:41,514] {bCamera.py convertVideoThread:417} INFO - starting convertVideoThread:20180628_235834_aa_cdda_t9_r1.h264 fps:30
+[2018-06-28 23:58:41,982] {bCamera.py convertVideoThread:427} INFO - finished convertVideoThread:20180628_235834_aa_cdda_t9_r1.h264 fps:30

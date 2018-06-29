@@ -72,7 +72,7 @@ echo '==='
 sudo cp bin/treadmill.service /etc/systemd/system/treadmill.service
 sudo chmod 664 /etc/systemd/system/treadmill.service
 sudo systemctl daemon-reload
-sudo systemctl start treadmill.service
+#sudo systemctl start treadmill.service
 sudo systemctl enable treadmill.service
 #sudo systemctl status treadmill.service
 
